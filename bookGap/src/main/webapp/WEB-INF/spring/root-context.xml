@@ -18,7 +18,7 @@
 		<property name="dataSource" ref="dataSource" /><!-- 위의 db연결 bean을 참조 -->
 		<property name="configLocation" value="classpath:mybatis_config.xml"/>
 		<property name="mapperLocations" value="classpath:mappers/**/*Mapper.xml" /><!-- 실행해야 하는 sql들의 모음(매퍼) 위치 -->
-		<property name="typeAliasesPackage" value="com.bookHiatus.vo"/>
+		<property name="typeAliasesPackage" value="com.bookGap.vo"/>
 	</bean>
 	
 	<!-- 쿼리를 실행하는 객체 -->
@@ -28,7 +28,7 @@
 	
 	<!-- MyBatis 매퍼 파일 경로 확인 -->
 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-	    <property name="basePackage" value="com.bookHiatus.mapper"/>
+	    <property name="basePackage" value="com.bookGap.mapper"/>
 	</bean>
 		
 </beans>
