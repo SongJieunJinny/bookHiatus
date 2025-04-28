@@ -5,6 +5,7 @@
 	<!-- vo 별칭 지정 -->
 	<typeAliases>
 		<!-- 별칭 지정시 반드시 클래스부터 선언 후 별칭 지정! -->
+		<typeAlias type="com.bookGap.vo.ProductApiVO" alias="ProductApiVO"/>
 
 	</typeAliases>
 </configuration>

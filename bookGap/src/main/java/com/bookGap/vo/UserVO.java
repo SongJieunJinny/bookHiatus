@@ -5,7 +5,7 @@ import java.util.Collection;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
-public class UserVO  extends User{
+public class UserVO  extends User {
 	private String USER_ID; //아이디
 	private String USER_PW; //비밀번호
 	private boolean USER_ENABLED; //활성화여부(1활성화, 2비활성화)
