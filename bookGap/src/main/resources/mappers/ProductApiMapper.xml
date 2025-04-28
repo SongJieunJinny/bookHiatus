@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+			"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bookGap.mapper. productApiMapper">
+
+	<insert id="insertProductApi" parameterType="ProductApiVO">
+        INSERT INTO PRODUCT_API (isbn, title, discount, pubdate, publisher, author, description, image, link)
+        VALUES (#{isbn}, #{title}, #{discount}, #{pubdate}, #{publisher}, #{author}, #{description}, #{image}, #{link})
+    </insert>
+
+    <select id="selectProductApiByIsbn" parameterType="String" resultType="ProductApiVO">
+        SELECT * FROM PRODUCT_API WHERE isbn = #{isbn}
+    </select>
+    
+</mapper>
