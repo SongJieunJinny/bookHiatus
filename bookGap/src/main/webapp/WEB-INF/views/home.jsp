@@ -1,13 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
 	<meta charset="UTF-8">
 	<title>index</title>
-	<link href="<%=request.getContextPath()%>/resources/css/index.css" type="text/css" rel="stylesheet">
 	<script src="<%=request.getContextPath()%>/resources/js/jquery-3.7.1.js"></script>
+	<link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/resources/css/index.css"/>
 	<style>
 		#navMenu{
 			width: 100%;
@@ -109,7 +110,7 @@
 		<div id="navMenu">
 			<div id="new">NEW</div>
 			<div id="bookList">
-				<div id="leftPointer"><img id="leftPointerImg" src="<%=request.getContextPath()%>/resources/img/left.png"></div>
+				<div id="leftPointer"><img id="leftPointerImg" src="<%=request.getContextPath()%>/resources/img/icon/left.png"></div>
 				<div id="newBookList">
 					<div id="newBook1">
 						<div id="bookBack">
@@ -139,7 +140,7 @@
 						</div>
 					</div>
 				</div>
-				<div id="rightPointer"><img id="rightPointerImg" src="<%=request.getContextPath()%>/resources/img/right.png"></div>
+				<div id="rightPointer"><img id="rightPointerImg" src="<%=request.getContextPath()%>/resources/img/icon/right.png"></div>
 			</div>
 		</div>
 		<br><br>
