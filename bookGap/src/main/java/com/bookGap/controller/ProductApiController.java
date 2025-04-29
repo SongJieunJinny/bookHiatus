@@ -13,12 +13,12 @@ public class ProductApiController {
 	@Autowired
 	public ProductApiService productApiService;
 	
-	 @GetMapping("/fetchBooksByCategory")
-	    public String fetchBooksByCategory(@RequestParam String categoryId) {
-	        // 예시로 categoryId는 URL에서 입력받음
-	        productApiService.fetchAndStoreBooksByCategory(categoryId);
-	        return "수집 완료";
-	    }
+	@GetMapping("/fetchBooksByCategory")
+    public String fetchBooksByCategory() {
+        // 예시로 categoryId는 URL에서 입력받음
+        productApiService.fetchAndStoreBooksByCategory();
+        return "수집 완료";
+    }
 	 
 
 }

@@ -17,8 +17,8 @@ public class ProductApiScheduler {
 	
 	@Scheduled(cron= "0 */5 * * * * ") //초 분 시 일 월 요일 연도
 	public void  fetchBooks() throws Exception{
-		String categoryId = "100";
-		productApiService.fetchAndStoreBooksByCategory(categoryId);
+
+		productApiService.fetchAndStoreBooksByCategory();
 		System.out.println("스케줄러 실행됨");
 
 	}
