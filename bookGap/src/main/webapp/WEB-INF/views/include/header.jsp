@@ -1,7 +1,10 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-
-      <header>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec" %>
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
 		<div id="menu">
 
       <!-- 메뉴1 -->
@@ -15,7 +18,7 @@
 
       <!-- 로고 -->
 			<div id="menuLogo">
-				<div> <a href="./index.html"><img id="menuLogoImg" src="<%=request.getContextPath()%>/resources/img/logo.png"></a></div>
+				<div> <a href="./index.html"><img id="menuLogoImg" src="<%=request.getContextPath()%>/resources/img/icon/logo.png" alt="로고"></a></div>
 			</div>
 
       <!-- 메뉴2 -->
@@ -28,18 +31,18 @@
           </span>
           <input type="text" id="searchInput" placeholder="검색어 입력...">
           <span id="searchImgIcon">
-            <img id="searchImg" src="<%=request.getContextPath()%>/resources/img/search.png">
+            <img id="searchImg" src="<%=request.getContextPath()%>/resources/img/icon/search.png">
           </span>
       </div>
         <!--0221지은 추가시작-->
 				<div id="menuLogin" class="menuItem">
-          <a href="./login.html"><img id="loginImg" src="<%=request.getContextPath()%>/resources/img/login.png"></a>
+          <a href="./login.html"><img id="loginImg" src="<%=request.getContextPath()%>/resources/img/icon/login.png"></a>
         </div>
         <div id="menuMypage" class="menuItem">
-          <a href="./mypage.html"><img id="mypageImg" src="<%=request.getContextPath()%>/resources/img/edit.png"></a>
+          <a href="./mypage.html"><img id="mypageImg" src="<%=request.getContextPath()%>/resources/img/icon/edit.png"></a>
         </div>
 				<div id="menuCart" class="menuItem">
-          <a href="./cart.html"><img id="cartImg" src="<%=request.getContextPath()%>/resources/img/cart.png"></a>
+          <a href="./cart.html"><img id="cartImg" src="<%=request.getContextPath()%>/resources/img/icon/cart.png"></a>
           <span id="cart-count">0</span>
         </div>
         <!--0221지은 추가끝-->
