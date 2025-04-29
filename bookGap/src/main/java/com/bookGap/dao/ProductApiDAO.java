@@ -13,11 +13,11 @@ public class ProductApiDAO {
 	 private SqlSession sqlSession;
 	  
 	 public void insertProductApi(ProductApiVO book) {
-	        sqlSession.insert("ProductApiMapper.insertProductApi", book);
+	        sqlSession.insert("com.bookGap.mapper.ProductApiMapper.insertProductApi", book);
 	    }
 
 	    public boolean existsByIsbn(String isbn) {
-	        ProductApiVO result = sqlSession.selectOne("ProductApiMapper.selectProductApiByIsbn", isbn);
+	        ProductApiVO result = sqlSession.selectOne("com.bookGap.mapper.ProductApiMapper.selectProductApiByIsbn", isbn);
 	        return result != null;
 	    }
 }

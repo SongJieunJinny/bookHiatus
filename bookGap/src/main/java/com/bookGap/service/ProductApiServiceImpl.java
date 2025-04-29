@@ -30,9 +30,9 @@ public class ProductApiServiceImpl implements ProductApiService {
 	private final RestTemplate restTemplate = new RestTemplate();
 
 	@Override
-    public void fetchAndStoreBooksByCategory(String categoryId) {
-		String title = URLEncoder.encode("컴퓨터", StandardCharsets.UTF_8);
-		String apiUrl = "https://openapi.naver.com/v1/search/book_adv.json?d_titl=" + title + "&d_catg=" + categoryId;
+    public void fetchAndStoreBooksByCategory() {
+		String title = "인문학";
+		String apiUrl = "https://openapi.naver.com/v1/search/book_adv.json?d_titl=" + title + "&d_sort=date";
         System.out.println("호출 URL: " + apiUrl);
         
         // 인증 정보 추가
