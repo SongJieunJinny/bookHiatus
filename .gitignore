@@ -23,3 +23,13 @@
 hs_err_pid*
 replay_pid*
 /.project
+
+
+# macOS
+.DS_Store
+
+# Eclipse / STS
+.project
+.classpath
+.settings/
+target/
