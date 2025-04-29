@@ -19,5 +19,6 @@ public class ProductApiController {
 	        productApiService.fetchAndStoreBooksByCategory(categoryId);
 	        return "수집 완료";
 	    }
+	 
 
 }
