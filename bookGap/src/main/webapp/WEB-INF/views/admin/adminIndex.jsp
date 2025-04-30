@@ -34,7 +34,7 @@
 									<div class="card bg-secondary text-white mb-4">
 										<div class="card-body">Book</div>
 										<div class="card-footer d-flex align-items-center justify-content-between">
-											<a class="small text-white stretched-link" href="adminBook.html">View Details</a>
+											<a class="small text-white stretched-link" href="${pageContext.request.contextPath}/admin/adminBook.do">View Details</a>
 											<div class="small text-white"><i class="fas fa-angle-right"></i></div>
 										</div>
 									</div>
