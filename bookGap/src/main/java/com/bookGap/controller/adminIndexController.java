@@ -18,4 +18,4 @@ public class adminIndexController {
 	
 		return "admin/adminBook";
 	}
-}
+} 
