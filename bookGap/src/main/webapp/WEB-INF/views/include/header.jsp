@@ -3,6 +3,7 @@
 <%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec" %>
 <!DOCTYPE html>
 <html>
+	<link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/resources/css/index.css"/>
 <head>
 	<meta charset="UTF-8">
 		<div id="menu">
@@ -36,7 +37,7 @@
       </div>
         <!--0221지은 추가시작-->
 				<div id="menuLogin" class="menuItem">
-          <a href="./login.html"><img id="loginImg" src="<%=request.getContextPath()%>/resources/img/icon/login.png"></a>
+          <a href="login.do"><img id="loginImg" src="<%=request.getContextPath()%>/resources/img/icon/login.png"></a>
         </div>
         <div id="menuMypage" class="menuItem">
           <a href="./mypage.html"><img id="mypageImg" src="<%=request.getContextPath()%>/resources/img/icon/edit.png"></a>
