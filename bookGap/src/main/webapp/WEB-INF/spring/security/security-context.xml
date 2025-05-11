@@ -13,6 +13,7 @@
 		
 		<!-- hasAnyRole 제시된 권한 중 하나라도 가지고 있으면 true 하나만 가지고 있으면 false -->
 		<security:intercept-url pattern="/user/**" access="hasAnyRole('ROLE_USER','ROLE_ADMIN')"/>
+		<security:intercept-url pattern="/mypage/**" access="hasAnyRole('ROLE_USER,ROLE_ADMIN')"  />
 		
 		<!-- hasRole 로그인한 사용자가 제시한 권한이 있으면 true, 없으면 false -->
 		<security:intercept-url pattern="/admin/**" access="hasRole('ROLE_ADMIN')"/>
@@ -21,36 +22,32 @@
 							 login-processing-url="/loginOk.do"
 							 authentication-success-handler-ref="userLoginSuccessHandler"
 							 authentication-failure-handler-ref="userLoginFailureHandler"
-							 username-parameter="userid" password-parameter="passwd"/>
+							 username-parameter="USER_ID" password-parameter="USER_PW"/>
 	
 		<!-- 로그아웃 설정 -->
 		<security:logout logout-url="/logout.do" 
-						 logout-success-url="/login.do" 
+						 logout-success-url="/" 
 						 invalidate-session="true"
 						 delete-cookies="JSESSIONID,SPRING_SECURITY_REMEMBER_ME_COOKIE"/>
 						 
 		<!-- 로그인은 했으나 경로 접근 권한 없을시 호출 객체 설정 -->
 		<security:access-denied-handler ref="userDeniedHandler"/>
-								 
 	</security:http>
 	
-	<bean id="userLoginSuccessHandler" 
-		class="com.bookGap.service.UserLoginSuccessHandler" />
-	<bean id="userLoginFailureHandler" 
-		class="com.bookGap.service.UserLoginFailureHandler" />
-	<bean id="userDeniedHandler" 
-		class="com.bookGap.service.UserDeniedHandler" />
-	<bean id="userService" 
-		class="com.bookGap.service.UserAuthenticationService">
-		<constructor-arg index="0" ref="sqlSession" />
+	<bean id="userLoginSuccessHandler" class="com.bookGap.service.UserLoginSuccessHandler" />
+	<bean id="userLoginFailureHandler" class="com.bookGap.service.UserLoginFailureHandler" />
+	<bean id="userDeniedHandler" class="com.bookGap.service.UserDeniedHandler" />
+	<bean id="userService" class="com.bookGap.service.UserAuthenticationService">
+		<constructor-arg name="sqlSession" ref="sqlSession" />
 	</bean>
 	
 	<!-- 비밀번호 비교할 암호화 객체 선언 -->
 	<bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
 	
-	<!-- 로그인버튼 클릭시 security에서 어떤 userAuthenticationService를 
-	사용할 지와  반환된 User객체에서 어떤 비밀번호 암호화를 사용하여 비교 할 것인지에 대한
-	정보를 설정 영역 -->
+	<!-- 
+	로그인버튼 클릭시 security에서 어떤 userAuthenticationService를 
+	사용할 지와  반환된 User객체에서 어떤 비밀번호 암호화를 사용하여 비교 할 것인지에 대한 정보를 설정 영역 
+	-->
 	<security:authentication-manager>
 		<security:authentication-provider user-service-ref="userService"><!-- userVO 반환 객체 참조 -->
 			<security:password-encoder ref="passwordEncoder" />
