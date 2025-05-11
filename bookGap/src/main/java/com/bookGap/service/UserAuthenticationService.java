@@ -23,26 +23,21 @@ public class UserAuthenticationService implements UserDetailsService {
 	}
 	
 	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		
+	public UserDetails loadUserByUsername(String USER_ID) throws UsernameNotFoundException {
 		
 		//String USER_ID == 사용자 아이디
 		Map<String,Object> user
-			= sqlSession.selectOne("com.bookGap.mapper.userMapper.selectOneById", username);
+			= sqlSession.selectOne("com.bookGap.mapper.userMapper.selectOneById", USER_ID);
+		System.out.println("DB 조회 결과: " + user);
 		
 		
 		System.out.println("Map USER_ID : "+ (String)user.get("USER_ID"));
 		
+		String password = (String) user.get("USER_PW");
+		System.out.println("조회된 USER_PW: " + password);
 		
 		int enabled_map = (Integer)user.get("USER_ENABLED");
-		
-		boolean enabled = false;
-		
-		if(enabled_map == 1) {
-			enabled = true;
-		}else {
-			enabled = false;
-		}
+		boolean enabled = (enabled_map == 1);
 		
 		List<GrantedAuthority> authorities = new ArrayList<>();
 		
@@ -50,7 +45,7 @@ public class UserAuthenticationService implements UserDetailsService {
 		
 		UserVO vo = new UserVO(
 				(String)user.get("USER_ID")
-				,(String)user.get("USER_PASSWORD")
+				,(String)user.get("USER_PW")
 				,enabled
 				,true
 				,true
@@ -59,9 +54,6 @@ public class UserAuthenticationService implements UserDetailsService {
 				,(String)user.get("USER_AUTHORITY")
 				,(Integer)user.get("USER_STATE")
 				);	
-		
 		return vo;
 	}
-
 }
-

@@ -6,6 +6,8 @@
 	<typeAliases>
 		<!-- 별칭 지정시 반드시 클래스부터 선언 후 별칭 지정! -->
 		<typeAlias type="com.bookGap.vo.ProductApiVO" alias="ProductApiVO"/>
+		<typeAlias type="com.bookGap.vo.UserVO" alias="UserVO"/>
+		<typeAlias type="com.bookGap.vo.UserInfoVO" alias="UserInfoVO"/>
 
 	</typeAliases>
 </configuration>

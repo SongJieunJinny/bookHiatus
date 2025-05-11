@@ -1,79 +1,188 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec" %>
-<!DOCTYPE html>
-<html>
-	<link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/resources/css/index.css"/>
-<head>
-	<meta charset="UTF-8">
-		<div id="menu">
-
-      <!-- 메뉴1 -->
-			<div id="menu1">
-				<div id="menuBook" class="menuItem">BOOK</div>
-				<div id="menuAbout" class="menuItem"><!--0322상화 추가시작--><a href="about.html">ABOUT</a><!--0322상화 추가끝--></div>
-				<div id="menuEvent" class="menuItem"><!--0221지은 추가시작--><a href="eventList.html">EVENT</a><!--0221지은 추가끝--></div>
-				<div id="menuChoice" class="menuItem"><!--0322상화 추가시작--><a href="choice.html">CHOICE</a><!--0322상화 추가끝--></div>
-				<div id="menuCommunity" class="menuItem">COMMUNITY</div>
-			</div>
-
-      <!-- 로고 -->
-			<div id="menuLogo">
-				<div> <a href="./index.html"><img id="menuLogoImg" src="<%=request.getContextPath()%>/resources/img/icon/logo.png" alt="로고"></a></div>
-			</div>
-
-      <!-- 메뉴2 -->
-			<div id="menu2">
-        <!--0221지은 추가시작-->
-				<div id="menuSearch" class="menuItem">
-        <!--0221지은 추가끝-->
-          <span id="searchSwichBtn">
-              <span id="searchText">SEARCH</span>
-          </span>
-          <input type="text" id="searchInput" placeholder="검색어 입력...">
-          <span id="searchImgIcon">
-            <img id="searchImg" src="<%=request.getContextPath()%>/resources/img/icon/search.png">
-          </span>
-      </div>
-        <!--0221지은 추가시작-->
-				<div id="menuLogin" class="menuItem">
-          <a href="login.do"><img id="loginImg" src="<%=request.getContextPath()%>/resources/img/icon/login.png"></a>
-        </div>
-        <div id="menuMypage" class="menuItem">
-          <a href="./mypage.html"><img id="mypageImg" src="<%=request.getContextPath()%>/resources/img/icon/edit.png"></a>
-        </div>
-				<div id="menuCart" class="menuItem">
-          <a href="./cart.html"><img id="cartImg" src="<%=request.getContextPath()%>/resources/img/icon/cart.png"></a>
-          <span id="cart-count">0</span>
-        </div>
-        <!--0221지은 추가끝-->
-			</div>
+<sec:authorize access="isAnonymous()"> <!-- 로그인 전 -->
+<header>
+	<div id="menu">
+	
+	  <!-- 메뉴1 -->
+		<div id="menu1">
+			<div id="menuBook" class="menuItem">BOOK</div>
+			<div id="menuAbout" class="menuItem"><!--0322상화 추가시작--><a href="about.html">ABOUT</a><!--0322상화 추가끝--></div>
+			<div id="menuEvent" class="menuItem"><!--0221지은 추가시작--><a href="eventList.html">EVENT</a><!--0221지은 추가끝--></div>
+			<div id="menuChoice" class="menuItem"><!--0322상화 추가시작--><a href="choice.html">CHOICE</a><!--0322상화 추가끝--></div>
+			<div id="menuCommunity" class="menuItem">COMMUNITY</div>
 		</div>
+	
+	  <!-- 로고 -->
+		<div id="menuLogo">
+			<div> <a href="./index.html"><img id="menuLogoImg" src="<%=request.getContextPath()%>/resources/img/icon/logo.png" alt="로고"></a></div>
+		</div>
+	
+	  <!-- 메뉴2 -->
+		<div id="menu2">
+			<div id="menuSearch" class="menuItem">
+	      <span id="searchSwichBtn">
+	        <span id="searchText">SEARCH</span>
+	      </span>
+	      <input type="text" id="searchInput" placeholder="검색어 입력...">
+	      <span id="searchImgIcon">
+	        <img id="searchImg" src="<%=request.getContextPath()%>/resources/img/icon/search.png">
+	      </span>
+	    </div>
+			<div id="menuLogin" class="menuItem">
+			  <img id="loginImg" src="<%=request.getContextPath()%>/resources/img/icon/login.png">
+			</div>
+      <div id="menuMypage" class="menuItem">
+        <a href="./mypage.html"><img id="mypageImg" src="<%=request.getContextPath()%>/resources/img/icon/edit.png"></a>
+      </div>
+			<div id="menuCart" class="menuItem">
+	      <a href="./cart.html"><img id="cartImg" src="<%=request.getContextPath()%>/resources/img/icon/cart.png"></a>
+	      <span id="cart-count">0</span>
+      </div>
+		</div>
+	</div>
 
-    <!-- BOOK카테고리 메뉴 -->
-    <div id="bookCategory">
-      <a href="./bookList.html">모든 책</a>
-      <a href="./bookList.html">인문학</a>
-      <a href="./bookList.html">철학</a>
-      <a href="./bookList.html">언어학</a>
-      <a href="./bookList.html">미학</a>
-      <a href="./bookList.html">종교학</a>
-      <a href="./bookList.html">윤리학</a>
-      <a href="./bookList.html">심리학</a>
-     </div>
+	<!-- BOOK카테고리 메뉴 -->
+	<div id="bookCategory">
+	  <a href="./bookList.html">모든 책</a>
+	  <a href="./bookList.html">인문학</a>
+	  <a href="./bookList.html">철학</a>
+	  <a href="./bookList.html">언어학</a>
+	  <a href="./bookList.html">미학</a>
+	  <a href="./bookList.html">종교학</a>
+	  <a href="./bookList.html">윤리학</a>
+	  <a href="./bookList.html">심리학</a>
+	</div>
+	
+	<!-- COMMUNITY카테고리 메뉴 -->
+	<div id="communityCategory">
+		<a href="./list.html">공지사항</a>
+		<a href="./qnaList.html">Q&A</a>
+	</div>
+	
+	<div id="menuHr"><hr></div>
+</header>
+</sec:authorize>
 
-     <!-- COMMUNITY카테고리 메뉴 -->
-     <div id="communityCategory">
-      <a href="./list.html">공지사항</a>
-      <!--0223지은 추가시작-->
-      <a href="./qnaList.html">Q&A</a>
-      <!--0223지은 추가끝-->
+<sec:authorize access="isAuthenticated()"> <!-- 로그인 후 -->
+<header>
+	<div id="menu">
+	
+	  <!-- 메뉴1 -->
+		<div id="menu1">
+			<div id="menuBook" class="menuItem">BOOK</div>
+			<div id="menuAbout" class="menuItem"><!--0322상화 추가시작--><a href="about.html">ABOUT</a><!--0322상화 추가끝--></div>
+			<div id="menuEvent" class="menuItem"><!--0221지은 추가시작--><a href="eventList.html">EVENT</a><!--0221지은 추가끝--></div>
+			<div id="menuChoice" class="menuItem"><!--0322상화 추가시작--><a href="choice.html">CHOICE</a><!--0322상화 추가끝--></div>
+			<div id="menuCommunity" class="menuItem">COMMUNITY</div>
+		</div>
+	
+	  <!-- 로고 -->
+		<div id="menuLogo">
+			<div> <a href="./index.html"><img id="menuLogoImg" src="<%=request.getContextPath()%>/resources/img/icon/logo.png" alt="로고"></a></div>
+		</div>
+	
+	  <!-- 메뉴2 -->
+		<div id="menu2">
+			<div id="menuSearch" class="menuItem">
+	      <span id="searchSwichBtn">
+	        <span id="searchText">SEARCH</span>
+	      </span>
+	      <input type="text" id="searchInput" placeholder="검색어 입력...">
+	      <span id="searchImgIcon">
+	        <img id="searchImg" src="<%=request.getContextPath()%>/resources/img/icon/search.png">
+	      </span>
+	    </div>
+			<div id="menuLogout" class="menuItem">
+			  <a href="<%= request.getContextPath() %>/logout.do">
+			  	<img id="loginImg" src="<%=request.getContextPath()%>/resources/img/icon/logout.png">
+			  </a>
+			</div>
+      <div id="menuMypage" class="menuItem">
+        <a href="./mypage.html"><img id="mypageImg" src="<%=request.getContextPath()%>/resources/img/icon/edit.png"></a>
+      </div>
+			<div id="menuCart" class="menuItem">
+	      <a href="./cart.html"><img id="cartImg" src="<%=request.getContextPath()%>/resources/img/icon/cart.png"></a>
+	      <span id="cart-count">0</span>
+      </div>
+		</div>
+	</div>
+
+	<!-- BOOK카테고리 메뉴 -->
+	<div id="bookCategory">
+	  <a href="./bookList.html">모든 책</a>
+	  <a href="./bookList.html">인문학</a>
+	  <a href="./bookList.html">철학</a>
+	  <a href="./bookList.html">언어학</a>
+	  <a href="./bookList.html">미학</a>
+	  <a href="./bookList.html">종교학</a>
+	  <a href="./bookList.html">윤리학</a>
+	  <a href="./bookList.html">심리학</a>
+	</div>
+	
+	<!-- COMMUNITY카테고리 메뉴 -->
+	<div id="communityCategory">
+		<a href="./list.html">공지사항</a>
+		<a href="./qnaList.html">Q&A</a>
+	</div>
+	
+	<div id="menuHr"><hr></div>
+</header>
+</sec:authorize>
+
+<!-- 로그인 모달창 -->
+<div id="loginModal">
+ 	<div id="loginModalDiv">
+   	<span id="closeLoginModal">&times;</span>
+    <div id="loginMenu">
+      <div id="loginMenuDiv">
+        <div id="login"  class="tab active">LOGIN</div>
+        &nbsp;&nbsp;<div>|</div>&nbsp;&nbsp;
+        <div id="guest" class="tab">GUEST</div>
+      </div>
     </div>
-
-		<div id="menuHr"><hr></div>
-	</header>
+    <div id="loginMain" class="tabContent">
+      <div id="loginMainDiv">
+      	<form id="loginForm" method="post" action="${pageContext.request.contextPath}/loginOk.do">
+        	<div id="loginInput">
+          	<input id="loginId" type="text" name="USER_ID" placeholder="아이디"><br>
+          	<input id="loginPw" type="password" name="USER_PW" placeholder="비밀번호">
+        	</div>
+        	<button id="loginBtn" type="submit">LOGIN</button>
+        </form>
+      </div>
+      <div id="joinNpw">
+        <div id="findPw"><a href="./findPw.html">비밀번호 찾기</a></div>
+        &nbsp;&nbsp;<div>|</div>&nbsp;&nbsp;
+        <div id="join"><a href="./joinAgree.html">회원가입</a></div>
+      </div>
+      <div id="loginOption">
+	      <div id="kakaoLogin">카카오 간편 로그인</div>
+	      <div id="guestOrder"><a href="./guestOrder.html">비회원 주문하기</a></div>
+      </div>
+    </div>
+    <div id="guestMain" class="tabContent" style="display:none;">
+ 			<form id="guestForm" method="post" action="${pageContext.request.contextPath}/guestOrder.do">
+		 		<div id="guestMain">
+		      <div id="guestMainDiv">
+		        <div id="guestInput">
+		          <input id="guestId" type="text" name="GUEST_ID" placeholder="주문번호"><br>
+		          <input id="guestPw" type="password" name="GUEST_PW" placeholder="비밀번호">
+		        </div>
+		        <button id="guestBtn" type="submit">확인</button>
+		      </div>
+		    </div>
+		    <div id="guestInfoDiv">
+		      <div id="guestInfo1">※ 메일로 보내드린 주문번호를 정확히 기재해 주세요.</div>
+		      <div id="guestInfo2">※ 비회원 주문내역, 결제 취소등 확인 가능합니다.</div>
+		    </div>
+    	</form>
+ 		</div>
+ 	</div>
+</div>
+ 	
   <script src="<%=request.getContextPath()%>/resources/js/jquery-3.7.1.js"></script>
-  
   <script>
     function initHeaderEvents() {
     // 변수 선언
@@ -114,7 +223,7 @@
         searchInput.focus();
       }
     });
-
+    	
     // 화면 클릭 시 메뉴와 검색창 닫기
     document.addEventListener("click", function(event) {
       if (!bookCategory.contains(event.target) && !menuBook.contains(event.target)) {
@@ -129,6 +238,66 @@
         searchText.style.display = "inline"; // "SEARCH" 다시 표시
         searchImgIcon.style.display = "none"; // 검색 아이콘 숨김
         searchInput.style.display = "none"; // 검색 입력창 숨김
+      }
+    });
+    
+    
+    //모달열기
+    document.getElementById("menuLogin").onclick = function () {
+	    console.log("로그인 버튼 클릭됨!");
+	    document.getElementById("loginModal").classList.add("show");
+    };
+    
+   //모달 닫기 (배경 클릭 or X버튼)
+    window.addEventListener("click", function (event) {
+      if (event.target.id === "loginModal" || event.target.id === "closeLoginModal") {
+        document.getElementById("loginModal").classList.remove("show");
+      }
+    });
+   
+   //모달내 LOGIN&GUEST선택창
+    document.getElementById("login").addEventListener("click", function () {
+   	  document.getElementById("loginMain").style.display = "block";
+   	  document.getElementById("guestMain").style.display = "none";
+   	  this.classList.add("active");
+   	  document.getElementById("guest").classList.remove("active");
+   	});
+
+   	document.getElementById("guest").addEventListener("click", function () {
+   	  document.getElementById("loginMain").style.display = "none";
+   	  document.getElementById("guestMain").style.display = "block";
+   	  this.classList.add("active");
+   	  document.getElementById("login").classList.remove("active");
+   	});
+   
+   //모달 내 로그인 버튼 클릭 시 입력 확인
+    document.getElementById("loginBtn").addEventListener("click", function (event) {
+
+      var loginId = document.getElementById("loginId").value;
+      var loginPw = document.getElementById("loginPw").value;
+
+      if (!loginId || !loginPw) {
+        alert("아이디와 비밀번호를 입력해주세요.");
+        return;
+      }
+
+      var idPattern = /^[a-z0-9_.+-]+$/;
+      if (!idPattern.test(loginId)) {
+        alert("아이디는 소문자 영어, 특수문자(_ . + -), 숫자만 사용할 수 있습니다");
+        return;
+      }
+
+      if (loginPw.length < 6) {
+        alert("비밀번호는 6자 이상이어야 합니다.");
+        return;
+      }
+
+      // 로그인 성공 예시
+      if (loginPw !== loginPw) {
+        alert("로그인에 실패하셨습니다.");
+      } else {
+        // 비밀번호가 올바른 경우 로그인 성공 처리
+
       }
     });
   }

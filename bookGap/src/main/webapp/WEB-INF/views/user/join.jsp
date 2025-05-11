@@ -15,6 +15,7 @@
   <!-- header part -->
   <div id="header"></div>
   <section>
+  <form action="joinOk.do" method="post">
     <div id="navJoin">
       <div id="joinHead">
         <div id="join">회원가입</div>
@@ -23,42 +24,42 @@
         <div id="joinDiv">
           <div id="userId">
             <span id="title">ID * </span>
-            <input id="userIdInput" name="user_id" type="text">
+            <input id="userIdInput" name="USER_ID" type="text">
           </div>
           <div id="userEmail">
             <span id="title">E-MAIL * </span>
-            <input id="userEmailInput" name="user_email" type="email">
+            <input id="userEmailInput" name="USER_EMAIL" type="email">
           </div>
           <div id="userName">
             <span id="title">NAME * </span>
-            <input id="userNameInput" name="user_name" type="text" placeholder="한글이름만 입력">
+            <input id="userNameInput" name="USER_NAME" type="text" placeholder="한글이름만 입력">
           </div>
           <div id="userPw">
             <span id="title">PW * </span>
-            <input id="userPwInput" name="user_pw" type="password" placeholder="최소6자 이상 입력">
+            <input id="userPwInput" name="USER_PW" type="password" placeholder="최소6자 이상 입력">
           </div>
           <div id="userPwCheck">
             <span id="title">PW CHECK * </span>
-            <input id="userPwCheckInput" name="user_pw_check" type="password">
+            <input id="userPwCheckInput" name="USER_PW_CHECK" type="password">
           </div>
           <div id="userPhone">
             <span id="title">PHONE * </span>
-            <input id="userPhoneInput" name="user_phone" type="tel" placeholder="숫자만 입력">
+            <input id="userPhoneInput" name="USER_PHONE" type="tel" placeholder="숫자만 입력">
           </div>
           <div id="userAddressCode">
             <span id="titlePost">POST NO</span>
             <div id="userAddressCodeDiv">
-              <input id="userAddressCodeInput" name="user_address_code" type="text">
-              <input id="userAddressCodeButton" name="user_address_button" type="button" value="검색">
+              <input id="userAddressCodeInput" name="USER_ADDRESS_CODE" type="text">
+              <input id="userAddressCodeButton" name="USER_ADDRESS_BUTTON" type="button" value="검색">
             </div>
           </div>
           <div id="userAddress">
             <div id="userAddressDiv1">
               <span id="titleAddress">ADDRESS</span>
-              <input id="userAddress1Input" name="user_address_1" type="text">
+              <input id="userAddress1Input" name="USER_ADDRESS_1" type="text">
             </div>
             <div id="userAddressDiv2">
-              <input id="userAddress2Input" name="user_address_2" type="text">
+              <input id="userAddress2Input" name="USER_ADDRESS_2" type="text">
             </div>
           </div>
         </div>
@@ -70,6 +71,7 @@
         </div>
       </div>
     </div>
+    </form>
   </section>
   <!-- footer part -->
   <div id="footer"></div>

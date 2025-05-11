@@ -105,7 +105,7 @@
 	</style>
 </head>
 <body>
-	<div id="header"></div>
+	<jsp:include page="/WEB-INF/views/include/header.jsp" />
 	<nav>
 		<div id="navMenu">
 			<div id="new">NEW</div>
@@ -148,13 +148,16 @@
 	<div id="footer"></div>
 	<script>
 		$(document).ready(function () {
-			// 헤더 & 푸터 로드
-			$("#header").load("<%= request.getContextPath() %>/include/header", function () {
-				updateCartCount(); // 장바구니 개수 업데이트
-				initHeaderEvents();		
-			});
-			$("#footer").load("<%= request.getContextPath() %>/include/footer");
-		});
+	    const contextPath = "<%= request.getContextPath() %>";
+
+      // 서버 include 방식이므로 header는 이미 DOM에 있음
+      initHeaderEvents(); // 여전히 실행 필요함
+
+      // footer는 동적으로 불러와도 무방
+      $("#footer").load(contextPath + "/include/footer");
+
+      updateCartCount(); // 장바구니 카운트도 실행
+    });
 
 		// 장바구니 개수 업데이트 함수
 		function updateCartCount() {
@@ -168,6 +171,7 @@
 			}
 		}
 	</script>
+	<!-- <script src="<%=request.getContextPath()%>/resources/js/loginModal.js"></script> -->
 	<script>
 		const contextPath = "<%= request.getContextPath() %>";
 		const books = [
