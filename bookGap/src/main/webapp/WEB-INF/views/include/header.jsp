@@ -155,7 +155,7 @@
       <div id="joinNpw">
         <div id="findPw"><a href="./findPw.html">비밀번호 찾기</a></div>
         &nbsp;&nbsp;<div>|</div>&nbsp;&nbsp;
-        <div id="join"><a href="./joinAgree.html">회원가입</a></div>
+        <div id="join"><a href="<%=request.getContextPath()%>/join.do">회원가입</a></div>
       </div>
       <div id="loginOption">
 	      <div id="kakaoLogin">카카오 간편 로그인</div>
