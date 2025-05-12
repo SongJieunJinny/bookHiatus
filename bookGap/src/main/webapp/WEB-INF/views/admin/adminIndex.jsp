@@ -10,7 +10,7 @@
 </head>
 <body class="sb-nav-fixed">
 		<!--header삽입-->
-		<div id="adminHeader"></div>
+		<jsp:include page="/WEB-INF/views/include/adminHeader.jsp" />
 			<div id="layoutSidenav">
 				<div id="layoutSidenav_nav">
 					<nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
@@ -101,9 +101,7 @@
 			<script>
 				$(document).ready(function () {
 						// 헤더 & 푸터 로드
-						$("#adminHeader").load("<%= request.getContextPath() %>/include/adminHeader", function () {
 								initHeaderEvents();
-						});
 		
 						// adminNav.html 로드 후 initNavEvents() 실행
 						$("#adminNav").load("<%= request.getContextPath() %>/include/adminNav", function () {

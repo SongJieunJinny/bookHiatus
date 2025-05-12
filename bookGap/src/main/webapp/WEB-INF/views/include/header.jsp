@@ -99,9 +99,25 @@
 			  	<img id="loginImg" src="<%=request.getContextPath()%>/resources/img/icon/logout.png">
 			  </a>
 			</div>
-      <div id="menuMypage" class="menuItem">
-        <a href="./mypage.html"><img id="mypageImg" src="<%=request.getContextPath()%>/resources/img/icon/edit.png"></a>
-      </div>
+			
+			<sec:authorize access="hasRole('ROLE_ADMIN')">
+			  <!-- 관리자일 경우: 설정 아이콘 -->
+			  <div id="menuMypage" class="menuItem">
+			    <a href="admin/adminIndex.do">
+			      <img id="mypageImg" src="<%=request.getContextPath()%>/resources/img/icon/setting.png" alt="설정">
+			    </a>
+			  </div>
+			</sec:authorize>
+			
+			<sec:authorize access="!hasRole('ROLE_ADMIN')">
+			 <!-- 일반 사용자일 경우: 마이페이지 아이콘 -->
+			 <div id="menuMypage" class="menuItem">
+			   <a href="./mypage.html">
+			     <img id="mypageImg" src="<%=request.getContextPath()%>/resources/img/icon/edit.png" alt="마이페이지">
+			   </a>
+			 </div>
+			</sec:authorize>
+			
 			<div id="menuCart" class="menuItem">
 	      <a href="./cart.html"><img id="cartImg" src="<%=request.getContextPath()%>/resources/img/icon/cart.png"></a>
 	      <span id="cart-count">0</span>
