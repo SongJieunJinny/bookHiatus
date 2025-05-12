@@ -18,14 +18,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 public class HeaderController {
 	
-	 @GetMapping("/include/header")
-	    public String header() {
-	        return "include/header";  // /WEB-INF/views/include/header.jsp
-	    }
 
-	    @GetMapping("/include/footer")
-	    public String footer() {
-	        return "include/footer";
-	    }
 	
 }
