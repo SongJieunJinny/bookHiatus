@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8"> 
 <title>adminIndex</title>
 <link href="<%=request.getContextPath()%>/resources/css/styles.css" rel="stylesheet" />
 <script src="<%=request.getContextPath()%>/resources/js/jquery-3.7.1.js"></script>
