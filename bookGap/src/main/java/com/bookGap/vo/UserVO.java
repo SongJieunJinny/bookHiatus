@@ -6,106 +6,106 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
 public class UserVO  extends User {
-	private String USER_ID; //아이디
-	private String USER_PW; //비밀번호
-	private boolean USER_ENABLED; //활성화여부(1활성화, 2비활성화)
-	private String USER_AUTHORITY; //권한
-	private int USER_STATE; //가입여부(1 가입상태, 2 탈퇴상태)
-	private String USER_NAME; //이름
-	private String USER_JOIN_DATE; //가입일
-	private String USER_PHONE; //연락처
-	private String USER_EMAIL; //이메일
-	private int COMPLAIN_NO; //신고번호
+	private String userId; //아이디
+	private String userPw; //비밀번호
+	private boolean userEnabled; //활성화여부(1활성화, 2비활성화)
+	private String userAuthority; //권한
+	private int userState; //가입여부(1 가입상태, 2 탈퇴상태)
+	private String userName; //이름
+	private String userJoinDate; //가입일
+	private String userPhone; //연락처
+	private String userEmail; //이메일
+	private int complainNo; //신고번호
 	
 	public UserVO(String username, String password, boolean enabled, boolean accountNonExpired,
 			boolean credentialsNonExpired, boolean accountNonLocked,
 			Collection<? extends GrantedAuthority> authorities,String authority, int user_state) {
 		super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
 		
-		this.USER_ID = username;
-		this.USER_PW = password;
-		this.USER_ENABLED = enabled;
-		this.USER_AUTHORITY = authority;
-		this.USER_STATE = user_state;
+		this.userId = username;
+		this.userPw = password;
+		this.userEnabled = enabled;
+		this.userAuthority = authority;
+		this.userState = user_state;
 	}
 
-	public String getUSER_ID() {
-		return USER_ID;
+	public String getUserId() {
+		return userId;
 	}
 
-	public void setUSER_ID(String uSER_ID) {
-		USER_ID = uSER_ID;
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 
-	public String getUSER_PW() {
-		return USER_PW;
+	public String getUserPw() {
+		return userPw;
 	}
 
-	public void setUSER_PW(String uSER_PW) {
-		USER_PW = uSER_PW;
+	public void setUserPw(String userPw) {
+		this.userPw = userPw;
 	}
 
-	public boolean isUSER_ENABLED() {
-		return USER_ENABLED;
+	public boolean isUserEnabled() {
+		return userEnabled;
 	}
 
-	public void setUSER_ENABLED(boolean uSER_ENABLED) {
-		USER_ENABLED = uSER_ENABLED;
+	public void setUserEnabled(boolean userEnabled) {
+		this.userEnabled = userEnabled;
 	}
 
-	public String getUSER_AUTHORITY() {
-		return USER_AUTHORITY;
+	public String getUserAuthority() {
+		return userAuthority;
 	}
 
-	public void setUSER_AUTHORITY(String uSER_AUTHORITY) {
-		USER_AUTHORITY = uSER_AUTHORITY;
+	public void setUserAuthority(String userAuthority) {
+		this.userAuthority = userAuthority;
 	}
 
-	public int getUSER_STATE() {
-		return USER_STATE;
+	public int getUserState() {
+		return userState;
 	}
 
-	public void setUSER_STATE(int uSER_STATE) {
-		USER_STATE = uSER_STATE;
+	public void setUserState(int userState) {
+		this.userState = userState;
 	}
 
-	public String getUSER_NAME() {
-		return USER_NAME;
+	public String getUserName() {
+		return userName;
 	}
 
-	public void setUSER_NAME(String uSER_NAME) {
-		USER_NAME = uSER_NAME;
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 
-	public String getUSER_JOIN_DATE() {
-		return USER_JOIN_DATE;
+	public String getUserJoinDate() {
+		return userJoinDate;
 	}
 
-	public void setUSER_JOIN_DATE(String uSER_JOIN_DATE) {
-		USER_JOIN_DATE = uSER_JOIN_DATE;
+	public void setUserJoinDate(String userJoinDate) {
+		this.userJoinDate = userJoinDate;
 	}
 
-	public String getUSER_PHONE() {
-		return USER_PHONE;
+	public String getUserPhone() {
+		return userPhone;
 	}
 
-	public void setUSER_PHONE(String uSER_PHONE) {
-		USER_PHONE = uSER_PHONE;
+	public void setUserPhone(String userPhone) {
+		this.userPhone = userPhone;
 	}
 
-	public String getUSER_EMAIL() {
-		return USER_EMAIL;
+	public String getUserEmail() {
+		return userEmail;
 	}
 
-	public void setUSER_EMAIL(String uSER_EMAIL) {
-		USER_EMAIL = uSER_EMAIL;
+	public void setUserEmail(String userEmail) {
+		this.userEmail = userEmail;
 	}
 
-	public int getCOMPLAIN_NO() {
-		return COMPLAIN_NO;
+	public int getComplainNo() {
+		return complainNo;
 	}
 
-	public void setCOMPLAIN_NO(int cOMPLAIN_NO) {
-		COMPLAIN_NO = cOMPLAIN_NO;
+	public void setComplainNo(int complainNo) {
+		this.complainNo = complainNo;
 	}
 }

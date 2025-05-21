@@ -14,7 +14,7 @@
 			  ,USER_EMAIL 
 			  ,COMPLAIN_NO 
 		 FROM  USER  
-		 WHERE USER_ID = #{USER_ID} 
+		 WHERE USER_ID = #{userId} 
 	</select>
 	
 	<insert id="insertUser" parameterType="userInfoVO">
@@ -29,14 +29,14 @@
 			  ,USER_JOIN_DATE
 			) 
 			VALUES (
-			 #{USER_ID}
-			,#{USER_PW}
-			,#{USER_ENABLED}
+			 #{userId}
+			,#{userPw}
+			,#{userEnabled}
 			,'ROLE_USER'
-			,#{USER_NAME}
-			,#{USER_PHONE}
-			,#{USER_EMAIL}
-			,NOW()
+			,#{userName}
+			,#{userPhone}
+			,#{userEmail}
+			,now()
 			);
 	</insert>
 	
