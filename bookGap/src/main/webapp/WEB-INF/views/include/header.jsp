@@ -16,7 +16,7 @@
 	
 	  <!-- 로고 -->
 		<div id="menuLogo">
-			<div> <a href="./index.html"><img id="menuLogoImg" src="<%=request.getContextPath()%>/resources/img/icon/logo.png" alt="로고"></a></div>
+			<div> <a href="<%=request.getContextPath()%>"><img id="menuLogoImg" src="<%=request.getContextPath()%>/resources/img/icon/logo.png" alt="로고"></a></div>
 		</div>
 	
 	  <!-- 메뉴2 -->
@@ -80,7 +80,7 @@
 	
 	  <!-- 로고 -->
 		<div id="menuLogo">
-			<div> <a href="./index.html"><img id="menuLogoImg" src="<%=request.getContextPath()%>/resources/img/icon/logo.png" alt="로고"></a></div>
+			<div> <a href="<%=request.getContextPath()%>"><img id="menuLogoImg" src="<%=request.getContextPath()%>/resources/img/icon/logo.png" alt="로고"></a></div>
 		</div>
 	
 	  <!-- 메뉴2 -->
@@ -112,7 +112,7 @@
 			<sec:authorize access="!hasRole('ROLE_ADMIN')">
 			 <!-- 일반 사용자일 경우: 마이페이지 아이콘 -->
 			 <div id="menuMypage" class="menuItem">
-			   <a href="./mypage.html">
+			   <a href="<%=request.getContextPath()%>/mypage.do">
 			     <img id="mypageImg" src="<%=request.getContextPath()%>/resources/img/icon/edit.png" alt="마이페이지">
 			   </a>
 			 </div>

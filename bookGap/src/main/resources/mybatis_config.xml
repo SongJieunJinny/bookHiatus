@@ -8,6 +8,7 @@
 		<typeAlias type="com.bookGap.vo.ProductApiVO" alias="ProductApiVO"/>
 		<typeAlias type="com.bookGap.vo.UserVO" alias="UserVO"/>
 		<typeAlias type="com.bookGap.vo.UserInfoVO" alias="UserInfoVO"/>
+		<typeAlias type="com.bookGap.vo.MypageVO" alias="MypageVO"/>
 
 	</typeAliases>
 </configuration>

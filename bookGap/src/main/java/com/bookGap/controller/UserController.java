@@ -22,10 +22,10 @@ public class UserController {
 	
 	@RequestMapping(value="/joinOk.do", method = RequestMethod.POST)
 	public String joinOk(UserInfoVO userInfoVO) {
-		System.out.println("USER_ID:" + userInfoVO.getUSER_ID());
+		System.out.println("USER_ID:" + userInfoVO.getUserId());
 		BCryptPasswordEncoder epwe = new BCryptPasswordEncoder();
-		String encodedPassword = epwe.encode(userInfoVO.getUSER_PW());
-		userInfoVO.setUSER_PW(encodedPassword);
+		String encodedPassword = epwe.encode(userInfoVO.getUserPw());
+		userInfoVO.setUserPw(encodedPassword);
 		System.out.println("암호화된 비밀번호: " + encodedPassword);
 		
 		int result = userService.insertUser(userInfoVO);

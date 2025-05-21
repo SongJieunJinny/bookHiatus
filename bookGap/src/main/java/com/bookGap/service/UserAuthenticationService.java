@@ -23,14 +23,11 @@ public class UserAuthenticationService implements UserDetailsService {
 	}
 	
 	@Override
-	public UserDetails loadUserByUsername(String USER_ID) throws UsernameNotFoundException {
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		
 		//String USER_ID == 사용자 아이디
 		Map<String,Object> user
-			= sqlSession.selectOne("com.bookGap.mapper.userMapper.selectOneById", USER_ID);
-		System.out.println("DB 조회 결과: " + user);
-		
-		
+			= sqlSession.selectOne("com.bookGap.mapper.userMapper.selectOneById", username);
 		System.out.println("Map USER_ID : "+ (String)user.get("USER_ID"));
 		
 		String password = (String) user.get("USER_PW");

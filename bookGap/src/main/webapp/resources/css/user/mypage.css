@@ -1,0 +1,471 @@
+@charset "UTF-8";
+
+/* mypage part */
+#navMypage{
+	width: 100%;
+	height: 70%;
+}
+#mypageHead{
+  width: 100%;
+  height: 20%;
+}
+#mypage{
+	margin-top: 3%;
+	margin-bottom: 2.5%;
+	text-align: center;
+	font-size: 25px;
+}
+#mypageMid{
+  width: 60%;
+  height: 40%;
+  display: flex;
+  margin-left: 20%;
+  align-items: center;
+  flex-direction: column;
+}
+#mypageDiv{
+  width: 480px;
+  height: 200px;
+  border: 1px solid lightgrey;
+  border-radius: 30px;
+  background-color: lightgrey;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+}
+#mypageContainer{
+  font-size: 20px;
+  margin: 3%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+}
+#mypageId{
+  border: 1px solid black;
+  border-radius: 5px;
+  background-color: white;
+  width: 220px;
+  height: 100%;
+}
+#mypagePw{
+  border: 1px solid black;
+  border-radius: 5px;
+  background-color: white;
+  width: 220px;
+  height: 100%;
+}
+#mypageEnd{
+  width: 60%;
+  height: 30%;
+  margin-left: 20%;
+  margin-top: 1.5%;
+  margin-bottom: 2%;
+  display: flex;
+  justify-content: center;
+}
+#mypageBtn{
+  width: 18%;
+  padding: 0.7%;
+  border: 1px solid black;
+  border-radius: 5px;
+  background-color: black;
+  color: white;
+  text-align: center;
+  cursor: pointer;
+  font-size: 17px;
+}
+
+/* mypageInfo part */
+#navMyInfo{
+	width: 90%;
+  height: 70%;
+  margin-left: 5%;
+  margin-right: 5%;
+}
+#myInfoHead{
+  width: 100%;
+  height: 20%;
+}
+#myInfoDiv{
+  margin-top: 3%;
+	margin-bottom: 2%;
+  margin-left: 3.5%;
+	text-align: center;
+	font-size: 25px;
+  display: flex;
+  justify-items: center;
+  justify-content: center;
+}
+#myInfoDiv a:link {
+  color : black;
+  text-decoration: none;
+}
+#myInfoDiv a:visited {
+  color : black;
+  text-decoration: none;
+}
+#myInfoDiv a:hover {
+  color : black;
+  border: 1px solid black;
+  text-decoration: underline;
+  font-weight:bold;
+}
+#myInfoDiv a:active  {
+  color : black;
+  border: 1px;
+  text-decoration: underline;
+  font-weight:bold;
+}
+#myInfoMid{
+  width: 100%;
+  height: 40%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+#myInfoInput{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-items: center;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+}
+#title{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 7%;
+}
+#userName{
+  margin: 1%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+#userNameInput{
+  padding: 0.5%;
+  width: 18%;
+  border: 1px solid black;
+  border-radius: 8px;
+  background-color: white;
+  color: black;
+  font-size: 15px;
+}
+#userPhone{
+  margin: 1%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+#userPhoneInput{
+  padding: 0.5%;
+  width: 18%;
+  border: 1px solid black;
+  border-radius: 8px;
+  background-color: white;
+  color: black;
+  font-size: 15px;
+}
+#userEmail{
+  margin: 1%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+#userEmailInput{
+  padding: 0.5%;
+  width: 18%;
+  border: 1px solid black;
+  border-radius: 8px;
+  background-color: white;
+  color: black;
+  font-size: 15px;
+}
+#userAddressCode{
+  margin: 1% 0.8% 0.8% 0.8%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+#userAddressCodeDiv{
+  width: 20%;
+  padding: 0%;
+  display: flex;
+  align-items: center;
+}
+#titleAddressCode{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 7%;
+}
+#userAddressCodeInput{
+  padding: 2.6%;
+  width: 65%;
+  height: 50%;
+  border: 1px solid black;
+  border-radius: 8px;
+  background-color: white;
+  color: black;
+  font-size: 15px;
+  margin-left: 2.3%;
+  margin-right: 2.5%;
+}
+#userAddressCodeBtn{
+	padding: 2%;
+    width: 22%;
+    border: 1px solid black;
+    border-radius: 8px;
+    background-color: black;
+    color: white;
+    font-size: 17px;
+    text-align: center;
+    cursor: pointer;
+}
+#userAddress{
+  width: 100%;
+  margin: 1%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  margin-right: 2%;
+}
+#userAddressDiv1{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+#titleAddress{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 7%;
+  margin-left: 0.5%;
+  margin-right: 0.6%;
+}
+#userAddress1Input{
+  padding: 0.5%;
+  width: 18%;
+  border: 1px solid black;
+  border-radius: 8px;
+  background-color: white;
+  color: black;
+  font-size: 15px;
+}
+#userAddressDiv2{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin: 0.5%;
+  margin-left: 3.1%;
+}
+#userAddress2Input{
+  padding: 0.5%;
+  width: 18%;
+  border: 1px solid black;
+  border-radius: 8px;
+  background-color: white;
+  color: black;
+  font-size: 15px;
+  margin-left: 1.9%;
+}
+#changePw{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1%;
+  margin-left: 1%;
+}
+#changePwBtn{
+  padding: 10px;
+  width: 200px;
+  font-size: 20px;
+  border: 1px solid lightgray;
+  border-radius: 10px;
+  background-color: lightgray;
+  color: red;
+  font-weight:bold;
+  text-align: center;
+  cursor: pointer;
+}
+#myInfoEnd{
+  width: 100%;
+  height: 30%;
+  margin-top: 1.5%;
+  margin-bottom: 2%;
+  display: flex;
+  justify-content: center;
+}
+#myInfoBtnDiv{
+  display: flex;
+  justify-content: space-evenly;
+}
+#myInfoBtn{
+  padding: 9px;
+  width: 150px;
+  font-size: 18px;
+  border: 1px solid black;
+  border-radius: 10px;
+  background-color: black;
+  color: white;
+  text-align: center;
+  cursor: pointer;
+}
+#myInfoCancelBtn{
+  padding: 9px;
+  width: 150px;
+  font-size: 18px;
+  border: 1px solid black;
+  border-radius: 10px;
+  background-color: white;
+  color: black;
+  text-align: center;
+  cursor: pointer;
+}
+/* 모달 창 스타일 추가 */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.4);
+}
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 400px;
+  border-radius: 5px;
+  text-align: center;
+}
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+#modalEmail{
+  display: flex;
+  flex-direction: column;
+}
+#changePwModalEmail{
+  display: flex;
+}
+#emailDiv{
+  width: 15%;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#emailInput {
+  padding: 2%;
+  margin: 1%;
+  width: 60%;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+#emailBtn {
+  padding: 2%;
+  margin: 1%;
+  width: 15%;
+  font-size: 15px;
+  border-radius: 5px;
+  border: 1px solid black;
+  background-color: black;
+  color: white;
+  cursor: pointer;
+}
+#changePwModalEmailCheck{
+  display: flex;
+}
+#emailCheckDiv{
+  width: 15%;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#code{
+  padding: 2%;
+  margin: 1%;
+  width: 60%;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+#emailCheckBtn {
+  padding: 2%;
+  margin: 1%;
+  width: 15%;
+  font-size: 15px;
+  border-radius: 5px;
+  border: 1px solid black;
+  background-color: black;
+  color: white;
+  cursor: pointer;
+}
+#changePwModalNewPw{
+  display: flex;
+  justify-content: flex-end;
+  margin-right: 2%;
+}
+#newPwDiv{
+  width: 22%;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#newPwInput{
+  padding: 2.8%;
+  margin: 1%;
+  width: 70%;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+#changePwModalNewPwCheck{
+  display: flex;
+  margin-right: 2%;
+}
+#newPwCheckDiv{
+  width: 25%;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#newPwCheckInput{
+  padding: 2.8%;
+  margin: 1%;
+  width: 70%;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+#changePasswordBtn {
+  padding: 2%;
+  margin: 1%;
+  width: 15%;
+  font-size: 15px;
+  border-radius: 5px;
+  border: 1px solid black;
+  background-color: black;
+  color: white;
+  cursor: pointer;
+}
