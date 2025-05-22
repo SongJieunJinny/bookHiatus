@@ -24,4 +24,8 @@ public class MypageDAO {
 		return sqlSession.update(name_space+"userUpdate",mypageVO);
 	} 
 	
+	public int userPwUpdate (MypageVO mypageVO) {
+		return sqlSession.update(name_space+"userPwUpdate",mypageVO);
+	}
+	
 }

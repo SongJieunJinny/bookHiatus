@@ -29,5 +29,10 @@
 			     a.DETAIL_ADDRESS = #{detailAddress}
 		 WHERE u.USER_ID = #{userId}
 	</update>
+	<update id="userPwUpdate" parameterType="com.bookGap.vo.MypageVO">
+		UPDATE USER 
+			 SET USER_PW = #{userPw}
+		 WHERE USER_ID = #{userId}
+	</update>
 
 </mapper>
