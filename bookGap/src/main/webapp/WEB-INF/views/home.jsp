@@ -10,98 +10,98 @@
 	<script src="<%=request.getContextPath()%>/resources/js/jquery-3.7.1.js"></script>
 	<link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/resources/css/index.css"/>
 	<style>
-		#navMenu{
-			width: 100%;
-			height: 70%;
-		}
-		#new{
-			margin-top: 3%;
-			margin-bottom: 5%;
-			text-align: center;
-			font-size: 25px;
-		}
-		#bookList{
-			width: 100%;
-			height: 50%;
-			display:flex;
-			justify-content: space-evenly;
-			align-items: center;
-		}
-		#leftPointer{
-			width: 20%;
-			height: 20%;
-			display: flex;
-			justify-content: flex-end;
-		}
-		#leftPointerImg{
-			width: 20%;
-			height: 20%;
-			cursor: pointer;
-		}
-		#rightPointer{
-			width: 20%;
-			height: 20%;
-			display: flex;
-			justify-content: flex-start;
-		}
-		#rightPointerImg{
-			width: 20%;
-			height: 20%;
-			cursor: pointer;
-		}
-		#newBookList{
-			width: 100%;
-			margin-left: 5%;
-			margin-right: 5%;
-			display:flex;
-			justify-content: space-evenly;
-			align-items: center;
-		}
-		#newBook1{
-			width: 50%;
-			height: 30%;
-			margin-left: 5%;
-			margin-right: 5%;
-		}
-		#newBookImg1{
-			width: 100%;
-			height: 100%;
-		}
-		#newBookAlt1{
-			text-align: center;
-			margin-top: 2%;
-			margin-bottom: 7%;
-		}
-		#newBook2{
-			width: 50%;
-			height: 30%;
-			margin-left: 5%;
-			margin-right: 5%;
-		}
-		#newBookImg2{
-			width: 100%;
-			height: 100%;
-		}
-		#newBookAlt2{
-			text-align: center;
-			margin-top: 2%;
-			margin-bottom: 7%;
-		}
-		#newBook3{
-			width: 50%;
-			height: 30%;
-			margin-left: 5%;
-			margin-right: 5%;
-		}
-		#newBookImg3{
-			width: 100%;
-			height: 100%;
-		}
-		#newBookAlt3{
-			text-align: center;
-			margin-top: 2%;
-			margin-bottom: 7%;
-		}
+	#navMenu{
+		width: 100%;
+		height: 70%;
+	}
+	#new{
+		margin-top: 3%;
+		margin-bottom: 5%;
+		text-align: center;
+		font-size: 25px;
+	}
+	#bookList{
+		width: 100%;
+		height: 50%;
+		display:flex;
+		justify-content: space-evenly;
+		align-items: center;
+	}
+	#leftPointer{
+		width: 20%;
+		height: 20%;
+		display: flex;
+		justify-content: flex-end;
+	}
+	#leftPointerImg{
+		width: 20%;
+		height: 20%;
+		cursor: pointer;
+	}
+	#rightPointer{
+		width: 20%;
+		height: 20%;
+		display: flex;
+		justify-content: flex-start;
+	}
+	#rightPointerImg{
+		width: 20%;
+		height: 20%;
+		cursor: pointer;
+	}
+	#newBookList{
+		width: 100%;
+		margin-left: 5%;
+		margin-right: 5%;
+		display:flex;
+		justify-content: space-evenly;
+		align-items: center;
+	}
+	#newBook1{
+		width: 50%;
+		height: 30%;
+		margin-left: 5%;
+		margin-right: 5%;
+	}
+	#newBookImg1{
+		width: 100%;
+		height: 100%;
+	}
+	#newBookAlt1{
+		text-align: center;
+		margin-top: 2%;
+		margin-bottom: 7%;
+	}
+	#newBook2{
+		width: 50%;
+		height: 30%;
+		margin-left: 5%;
+		margin-right: 5%;
+	}
+	#newBookImg2{
+		width: 100%;
+		height: 100%;
+	}
+	#newBookAlt2{
+		text-align: center;
+		margin-top: 2%;
+		margin-bottom: 7%;
+	}
+	#newBook3{
+		width: 50%;
+		height: 30%;
+		margin-left: 5%;
+		margin-right: 5%;
+	}
+	#newBookImg3{
+		width: 100%;
+		height: 100%;
+	}
+	#newBookAlt3{
+		text-align: center;
+		margin-top: 2%;
+		margin-bottom: 7%;
+	}
 	</style>
 </head>
 <body>
@@ -168,11 +168,11 @@
 	<script>
 		const contextPath = "<%= request.getContextPath() %>";
 		const books = [
-    		[
-		        { imgSrc: contextPath + "/resources/img/문화이론.jpg", name: "문화이론", price: "29,800" },
-		        { imgSrc: contextPath + "/resources/img/고흐로읽는심리수업.jpg", name: "고흐로 읽는 심리수업", price: "23,000" },
-		        { imgSrc: contextPath + "/resources/img/필사는도끼다.jpg", name: "필사는 도끼다", price: "22,000" }
-    		],
+    	[
+        { imgSrc: contextPath + "/resources/img/문화이론.jpg", name: "문화이론", price: "29,800" },
+        { imgSrc: contextPath + "/resources/img/고흐로읽는심리수업.jpg", name: "고흐로 읽는 심리수업", price: "23,000" },
+        { imgSrc: contextPath + "/resources/img/필사는도끼다.jpg", name: "필사는 도끼다", price: "22,000" }
+    	],
 			[
 				{imgSrc: contextPath + "/resources/img/군주론인생공부.jpg", name: "군주론 인생공부", price: "18,500"},
 				{imgSrc: contextPath + "/resources/img/더인간적인건축.jpg", name: "더 인간적인 건축", price: "30,000"},
@@ -185,12 +185,12 @@
 			]
 		];
 	
-	let currentIndex = 0;
+		let currentIndex = 0;
 
-	document.getElementById("rightPointerImg").onclick = () => changeBooks(1);
-	document.getElementById("leftPointerImg").onclick = () => changeBooks(-1);
+		document.getElementById("rightPointerImg").onclick = () => changeBooks(1);
+		document.getElementById("leftPointerImg").onclick = () => changeBooks(-1);
 
-	function changeBooks(direction) {
+		function changeBooks(direction) {
 			currentIndex = (currentIndex + direction + books.length) % books.length;
 
 			document.getElementById("newBookImg1").src = books[currentIndex][0].imgSrc;
@@ -210,11 +210,11 @@
 			newBookList.style.transform = 'translateX(-100%)';
 
 			setTimeout(() => {
-					newBookList.style.transition = 'none';
-					newBookList.style.transform = 'translateX(0)';
-					setTimeout(() => {
-							newBookList.style.transition = 'transform 0.5s ease';
-					}, 0);
+				newBookList.style.transition = 'none';
+				newBookList.style.transform = 'translateX(0)';
+				setTimeout(() => {
+					newBookList.style.transition = 'transform 0.5s ease';
+				}, 0);
 			}, 500);
 		}
 	</script>	

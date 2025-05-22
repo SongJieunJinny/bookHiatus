@@ -40,6 +40,7 @@
 		<param-value>
 			/WEB-INF/spring/root-context.xml
 			/WEB-INF/spring/security/security-context.xml<!-- 추가 -->
+			/WEB-INF/spring/email-context.xml<!-- 추가 -->
 		</param-value>
 	</context-param>
 	

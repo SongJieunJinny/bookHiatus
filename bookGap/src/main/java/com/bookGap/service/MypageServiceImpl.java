@@ -32,5 +32,10 @@ public class MypageServiceImpl implements MypageService{
 	public int userUpdate(MypageVO mypageVO) {
 		return mypageDAO.userUpdate(mypageVO);
 	}
+
+	@Override
+	public int userPwUpdate(MypageVO mypageVO) {
+		return mypageDAO.userPwUpdate(mypageVO);
+	}
 	
 }
