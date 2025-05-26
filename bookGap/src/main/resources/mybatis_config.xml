@@ -9,6 +9,8 @@
 		<typeAlias type="com.bookGap.vo.UserVO" alias="UserVO"/>
 		<typeAlias type="com.bookGap.vo.UserInfoVO" alias="UserInfoVO"/>
 		<typeAlias type="com.bookGap.vo.MypageVO" alias="MypageVO"/>
+		<typeAlias type="com.bookGap.vo.SearchVO" alias="SearchVO"/>
+		<typeAlias type="com.bookGap.vo.BoardVO" alias="BoardVO"/>
 
 	</typeAliases>
 </configuration>
