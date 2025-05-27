@@ -18,7 +18,7 @@ import com.bookGap.vo.SearchVO;
 @Controller
 public class BoardController {
 
-	@Autowired
+	@Autowired 
     private BoardService boardService;
 	
 	/* GET List */

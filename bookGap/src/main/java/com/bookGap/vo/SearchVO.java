@@ -20,7 +20,7 @@ public class SearchVO extends PagingUtil {
 	private String author; //저자
 	
 	/* BOOK TABLE */
-	private String book_trans; //번역가
+	private String book_trans; //번역가 
 	
 
 	public String getSearchType() {

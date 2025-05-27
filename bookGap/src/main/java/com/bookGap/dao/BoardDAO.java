@@ -12,7 +12,7 @@ import com.bookGap.vo.SearchVO;
 @Repository
 public class BoardDAO {
 	
-	@Autowired
+	@Autowired 
 	private SqlSession sqlSession;
 	
 	private final String name_space = "com.bookGap.mapper.boardMapper.";

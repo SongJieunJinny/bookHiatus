@@ -71,7 +71,7 @@
 	</script>
   <script>
   function confirmDelete() {
-    let isConfirmed = confirm("정말 삭제하시겠습니까?");
+    let isConfirmed = confirm("정말 삭제하시겠습니까?"); 
     if (isConfirmed) {
       document.deletefrm.submit(); // 삭제 요청 실행
     }

@@ -27,7 +27,7 @@
           </div>
         </div>
         <br>
-        <table id="noticeTable">
+        <table id="noticeTable"> 
           <thead>
             <tr>
               <td id="line">글번호</td>

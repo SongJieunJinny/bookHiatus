@@ -10,7 +10,7 @@ import com.bookGap.vo.BoardVO;
 import com.bookGap.vo.SearchVO;
 
 @Service
-public class BoardServiceImpl implements BoardService{
+public class BoardServiceImpl implements BoardService{ 
 	
 	@Autowired
 	public BoardDAO boardDAO;

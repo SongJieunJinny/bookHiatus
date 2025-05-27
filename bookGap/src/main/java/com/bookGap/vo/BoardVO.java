@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class BoardVO {
 	/* user 테이블 */
-	private String userId; //아이디
+	private String userId; //아이디 
 	
 	/* board list에 보이는 displayNo */
 	private int displayNo;
