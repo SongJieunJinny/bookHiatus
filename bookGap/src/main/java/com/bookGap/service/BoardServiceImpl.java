@@ -35,4 +35,9 @@ public class BoardServiceImpl implements BoardService{
 		return boardDAO.update(boardNo);
 	}
 
+	@Override
+	public int changeState(int boardNo) {
+		return boardDAO.changeState(boardNo);
+	}
+
 }

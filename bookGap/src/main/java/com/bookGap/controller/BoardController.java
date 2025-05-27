@@ -3,8 +3,6 @@ package com.bookGap.controller;
 import java.security.Principal;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -98,25 +96,26 @@ public class BoardController {
 	
 	/* POST Modify */
 	@RequestMapping(value="/noticeModifyOk.do", method=RequestMethod.POST)
-    public String noticeModifyOk(BoardVO boardVO,HttpServletRequest request) {
-    	
-    	if(request.getAttribute("boardTitle") != null && !request.getAttribute("boardTitle").equals("")) {
-    		boardVO.setBoardTitle((String)request.getAttribute("boardTitle"));
-    	}
-    	if(request.getAttribute("boardContent") != null && !request.getAttribute("boardContent").equals("")) {
-    		boardVO.setBoardContent((String)request.getAttribute("boardContent"));
-    	}
-    	
-        int result = boardService.update(boardVO);
-        
-        if(result > 0) {
-        	System.out.println("수정성공");
-        }else {
-        	System.out.println("수정실패");
-        }
-        
-        return "redirect:noticeList.do?boardType="+boardVO.getBoardType();
-    }
+	public String noticeModifyOk(BoardVO boardVO) {
+	    int result = boardService.update(boardVO);
+
+	    if(result > 0) {
+	        System.out.println("수정성공");
+	    } else {
+	        System.out.println("수정실패");
+	    }
+
+	    return "redirect:noticeList.do?boardType=" + boardVO.getBoardType();
+	}
+	
+	/* GET Delete */
+	@RequestMapping(value="/noticeDelete.do",method=RequestMethod.POST)
+	public String noticeDelete(int boardNo) {
+		
+		int result = boardService.changeState(boardNo);
+		
+		return "redirect:noticeList.do";
+	}
 
 
 	

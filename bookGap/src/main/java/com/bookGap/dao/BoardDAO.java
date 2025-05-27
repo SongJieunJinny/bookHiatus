@@ -25,6 +25,10 @@ public class BoardDAO {
 		return sqlSession.insert(name_space+"noticeInsert", boardVO);
 	}
 	
+	public int changeState(int boardNo) {
+		return sqlSession.update(name_space+"changeState",boardNo);
+	}
+	
 	public BoardVO selectOne(int boardNo) {
 		return sqlSession.selectOne(name_space+"selectOne", boardNo);
 	}
