@@ -14,13 +14,8 @@
 <body>
   <jsp:include page="/WEB-INF/views/include/header.jsp" />
   <section>
-  <br><br><br>
-    <div id="navNotice">
-	    <div id="noticeHead">
-				<c:if test="${param.boardType eq 1}">
-	      	<div id="notice">공지사항</div>
-				</c:if>
-	    </div>
+    <div id="noticeMain">
+	    <div id="notice">공지사항</div>
 	    <div id="noticeMid">
 	      <table id="noticeViewTable">
 	        <thead>
@@ -43,7 +38,7 @@
 	      </table><br>
 	      <div id="noticeViewBtn">
 	      	<c:if test="${sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal.userAuthority eq 'ROLE_ADMIN'}">
-		        <button id="noticeViewwrite" onclick="document.deletefrm.submit();">삭제하기</button>&nbsp;&nbsp;&nbsp;
+		        <button id="noticeViewwrite" onclick="confirmDelete();">삭제하기</button>&nbsp;&nbsp;&nbsp;
 		        <form id="noticeViewwriteForm" name="deletefrm" action="noticeDelete.do" method="post">
 							<input id="noticeViewwriteFormInput" type="hidden" name="boardNo" value="${vo.boardNo}">
 						</form>
@@ -58,7 +53,7 @@
 	      </div>
 	    </div>
     </div>
-    <br>
+  	<br>
   </section>
   <jsp:include page="/WEB-INF/views/include/footer.jsp" />
   <script>
@@ -73,6 +68,14 @@
 				cartCountElement.style.visibility = cartCount > 0 ? "visible" : "hidden";
 		}
 	}
+	</script>
+  <script>
+  function confirmDelete() {
+    let isConfirmed = confirm("정말 삭제하시겠습니까?");
+    if (isConfirmed) {
+      document.deletefrm.submit(); // 삭제 요청 실행
+    }
+  }
 	</script>
   <script>
 	$(document).ready(function() {

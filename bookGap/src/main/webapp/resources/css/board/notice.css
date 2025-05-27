@@ -46,8 +46,7 @@ td a{
   padding: 0.4%;
   width: 7%;
   border-radius: 8px;
-  margin-top: 2%;
-  margin-bottom: 2%;
+  margin-top: 1%;
   margin-left: 70%;
   cursor: pointer;
 }
@@ -290,4 +289,31 @@ td a{
   border-radius: 8px;
   margin-left: 58%;
   cursor: pointer;
+}
+
+/* paging 영역 */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 3%;
+  margin-top: 0%;
+}
+.pagination a {
+  text-decoration: none;
+  color: #222222;
+  font-size: 16px;
+  padding: 8px 15px;
+  margin: 0 5px;
+  border: 1px solid #E2E2E2;
+  border-radius: 5px;
+  transition: all 0.3s;
+}
+.pagination a.active {
+  background: #E2E2E2;
+  color: white;
+}
+.pagination a:hover {
+  background: #E2E2E2;
+
 }

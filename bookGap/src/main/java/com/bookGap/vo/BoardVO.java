@@ -6,6 +6,9 @@ public class BoardVO {
 	/* user 테이블 */
 	private String userId; //아이디
 	
+	/* board list에 보이는 displayNo */
+	private int displayNo;
+	
 	/* board 테이블 */
 	private int boardNo; //게시글번호
 	private String boardTitle; //게시글제목
@@ -130,4 +133,11 @@ public class BoardVO {
 	public void setFormattedBoardRdate(String formattedBoardRdate) {
 		this.formattedBoardRdate = formattedBoardRdate;
 	}
+	public int getDisplayNo() {
+		return displayNo;
+	}
+	public void setDisplayNo(int displayNo) {
+		this.displayNo = displayNo;
+	}
+	
 }

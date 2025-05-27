@@ -24,12 +24,25 @@
 					 USER_ID AS userId 
 			FROM BOARD WHERE BOARD_TYPE = 1 <!--  숫자형 비교로 변경  -->
 			 AND BOARD_STATE = 1 <!--  숫자형 비교로 변경  -->
-		<if test="search_type != null and search_type.equalsIgnoreCase('board_title')"> 
-			AND BOARD_TITLE LIKE CONCAT('%', #{search_value}, '%') 
+		<if test="searchType != null and searchType.equalsIgnoreCase('board_title')"> 
+			AND BOARD_TITLE LIKE CONCAT('%', #{searchValue}, '%') 
 		</if>
-		ORDER BY BOARD_RDATE DESC, BOARD_NO DESC
+		ORDER BY BOARD_NO DESC
+		limit #{start},#{perPage}
 	</select>
 	
+	<!--  boardListSearch mapper  -->
+	<select id="boardListSearch" parameterType="com.bookGap.vo.SearchVO" resultType="int">
+    SELECT COUNT(*) AS total
+    	FROM BOARD b
+    	JOIN USER u ON b.USER_ID = u.USER_ID
+     WHERE b.BOARD_STATE != '2'
+    	 AND b.BOARD_TYPE = #{boardType}
+    <if test="searchType != null and searchType.equals('board_title')">
+       AND b.BOARD_TITLE LIKE CONCAT('%', #{searchValue}, '%')
+    </if>
+	</select>
+
 	<!--  write, modify mapper  -->
 	<insert id="noticeInsert" parameterType="com.bookGap.vo.BoardVO"> 
 		INSERT INTO BOARD( USER_ID 
@@ -56,7 +69,13 @@
 	      ON b.USER_ID = u.USER_ID 
 		 WHERE b.BOARD_NO = #{boardNo} 
 	</select>
-		
+			
+	<update id="updateHit" parameterType="int">
+    UPDATE BOARD
+    	 SET BOARD_HIT = BOARD_HIT + 1
+     WHERE BOARD_NO = #{boardNo}
+	</update>
+	
 	<!-- modifyOk mapper  -->
 	<update id="update" parameterType="com.bookGap.vo.BoardVO">
   	UPDATE BOARD
