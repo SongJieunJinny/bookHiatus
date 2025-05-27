@@ -1,6 +1,6 @@
 package com.bookGap.util;
 
-public class PagingUtil {
+public class PagingUtil { 
 	private int nowPage;  
 	private int startPage;
 	private int endPage;  

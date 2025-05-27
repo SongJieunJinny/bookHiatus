@@ -7,7 +7,7 @@ import com.bookGap.vo.SearchVO;
 
 public interface BoardService {
 	
-	public List<BoardVO> list(SearchVO searchVO);
+	public List<BoardVO> list(SearchVO searchVO); 
 	
 	public int boardListSearch(SearchVO searchVO);
 	

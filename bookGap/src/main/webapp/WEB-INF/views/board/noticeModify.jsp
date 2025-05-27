@@ -12,7 +12,7 @@
 	<link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/resources/css/board/notice.css"/>
 </head>
 <body>
-  <jsp:include page="/WEB-INF/views/include/header.jsp" />
+  <jsp:include page="/WEB-INF/views/include/header.jsp" /> 
   <section>
     <div id="noticeMain">
     	<form action="noticeModifyOk.do" method="post">
