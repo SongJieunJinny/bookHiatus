@@ -1,15 +1,18 @@
 package com.bookGap.vo;
 
-public class SearchVO {
+import com.bookGap.util.PagingUtil;
+
+public class SearchVO extends PagingUtil {
 	/* search */
-	private String search_type; //검색조건
-	private String search_value; //검색내용
+	private String searchType; //검색조건
+	private String searchValue; //검색내용
 	
 	/* USER TABLE */
 	private String userId; //아이디
 	
 	/* BOARD TABLE */
 	private String boardTitle; //게시글제목
+	private Integer boardType; 
 	
 	/* PRODUCT_API TABLE */
 	private String title; //책제목
@@ -18,22 +21,22 @@ public class SearchVO {
 	
 	/* BOOK TABLE */
 	private String book_trans; //번역가
-
 	
-	public String getSearch_type() {
-		return search_type;
+
+	public String getSearchType() {
+		return searchType;
 	}
 
-	public void setSearch_type(String search_type) {
-		this.search_type = search_type;
+	public void setSearchType(String searchType) {
+		this.searchType = searchType;
 	}
 
-	public String getSearch_value() {
-		return search_value;
+	public String getSearchValue() {
+		return searchValue;
 	}
 
-	public void setSearch_value(String search_value) {
-		this.search_value = search_value;
+	public void setSearchValue(String searchValue) {
+		this.searchValue = searchValue;
 	}
 
 	public String getUserId() {
@@ -50,6 +53,14 @@ public class SearchVO {
 
 	public void setBoardTitle(String boardTitle) {
 		this.boardTitle = boardTitle;
+	}
+
+	public Integer getBoardType() {
+		return boardType;
+	}
+
+	public void setBoardType(Integer boardType) {
+		this.boardType = boardType;
 	}
 
 	public String getTitle() {

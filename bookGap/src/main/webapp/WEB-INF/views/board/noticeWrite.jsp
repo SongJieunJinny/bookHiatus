@@ -28,7 +28,7 @@
 	          <br>
 	          <div id="noticeWriteTableContent">
 	            <div id="content">내용</div>
-	            <input id="contentMemo" type="text" name="boardContent">
+	            <textarea id="contentMemo" name="boardContent"></textarea>
 	          </div>
 	        </div>
 	      </div>

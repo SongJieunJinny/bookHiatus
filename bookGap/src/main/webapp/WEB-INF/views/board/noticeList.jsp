@@ -39,7 +39,7 @@
           <tbody>
           <c:forEach items="${list}" var="vo">
             <tr>
-              <td>${vo.boardNo}</td>
+              <td>${vo.displayNo}</td>
               <td>
               	<a href="noticeView.do?boardNo=${vo.boardNo}&boardType=${param.boardType}">${vo.boardTitle}</a>
               </td>
@@ -53,7 +53,34 @@
       <sec:authorize access="hasAuthority('ROLE_ADMIN')">
       	<button id="writeButton">등록하기</button>&nbsp;&nbsp;&nbsp;
       </sec:authorize>
-      <br><br>
+			<!-- 페이징 영역 -->
+			<div class="pagination">
+			  <c:if test="${paging.startPage > 1}">
+			    <a href="noticeList.do?nowpage=${paging.startPage - 1}
+			      &boardType=${param.boardType}
+			      &searchType=${param.searchType}
+			      &searchValue=${param.searchValue}">&lt;</a>
+			  </c:if>
+			
+			  <c:forEach begin="${paging.startPage}" end="${paging.endPage}" var="cnt">
+			    <c:if test="${paging.nowPage eq cnt}">
+			      <a id="default" style="color:#FF5722; cursor:default;">${cnt}</a>
+			    </c:if>
+			    <c:if test="${paging.nowPage ne cnt}">
+			      <a href="noticeList.do?nowpage=${cnt}
+			        &boardType=${param.boardType}
+			        &searchType=${param.searchType}
+			        &searchValue=${param.searchValue}">${cnt}</a>
+			    </c:if>
+			  </c:forEach>
+			
+			  <c:if test="${paging.endPage < paging.lastPage}">
+			    <a href="noticeList.do?nowpage=${paging.endPage + 1}
+			      &boardType=${param.boardType}
+			      &searchType=${param.searchType}
+			      &searchValue=${param.searchValue}">&gt;</a>
+			  </c:if>
+			</div>
     </div>
   </section>
   <jsp:include page="/WEB-INF/views/include/footer.jsp" />

@@ -21,6 +21,10 @@ public class BoardDAO {
 		return sqlSession.selectList(name_space+"noticeList",searchVO);
 	}
 	
+	public int boardListSearch(SearchVO searchVO) {
+		return sqlSession.selectOne(name_space+"boardListSearch",searchVO);
+	}
+
 	public int noticeInsert(BoardVO boardVO) {
 		return sqlSession.insert(name_space+"noticeInsert", boardVO);
 	}
@@ -32,8 +36,14 @@ public class BoardDAO {
 	public BoardVO selectOne(int boardNo) {
 		return sqlSession.selectOne(name_space+"selectOne", boardNo);
 	}
-
+	
+	public int updateHit(int boardNo) {
+		return sqlSession.update(name_space+"updateHit",boardNo);
+	}
+	
     public int update(BoardVO boardNo) {
 		return sqlSession.update(name_space+"update", boardNo);
 	}
+    
+    
 }

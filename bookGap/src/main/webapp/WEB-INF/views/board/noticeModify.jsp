@@ -29,7 +29,7 @@
 	          <br>
 	          <div id="noticeWriteTableContent">
 	            <div id="content">내용</div>
-	            <input id="contentMemo" type="text" name="boardContent" value="${vo.boardContent}">
+	            <textarea id="contentMemo" name="boardContent">${vo.boardContent}</textarea>
 	          </div>
 	        </div>
 	      </div>
@@ -54,7 +54,18 @@
 	}
 	</script>
 	<script>
+  $(document).ready(function() {
+        $("#modify").click(function() {
+      $("form").submit(); // 제출 버튼 클릭 시 정상 제출
+    });
+  });
+	</script>
+	
+	<script>
 	$(document).ready(function() {
+		  $("#modify").click(function() {
+		    $("form").submit(); // 제출 버튼 클릭 시 정상 제출
+		  });
 		$('#reset').click(function() {
 		  window.location.href = '<%=request.getContextPath()%>/noticeList.do';
 		});

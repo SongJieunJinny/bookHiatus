@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.bookGap.service.BoardService;
+import com.bookGap.util.PagingUtil;
 import com.bookGap.vo.BoardVO;
 import com.bookGap.vo.SearchVO;
 
@@ -22,20 +23,47 @@ public class BoardController {
 	
 	/* GET List */
 	@RequestMapping(value="/noticeList.do", method = RequestMethod.GET)
-	public String noticeList(Model model, SearchVO searchVO) {
-		List<BoardVO> list=boardService.list(searchVO);
-		model.addAttribute("list",list);
+	public String noticeList(Model model, SearchVO searchVO
+							,@RequestParam(value="nowpage"
+							,required = false
+							,defaultValue="1")int nowpage) {
+	  
+	  if (searchVO.getBoardType()== null) {
+		searchVO.setBoardType(1); // 공지사항 타입 기본값
+	  }
+	  
+	  int total = boardService.boardListSearch(searchVO);
+	  
+	  System.out.println("전체 게시글 수: " + total);
 		
-		System.out.println("받은 검색어: " + searchVO.getSearch_value());
-		System.out.println("게시글 개수: " + list.size());
-		return "board/noticeList";
+	  PagingUtil paging = new PagingUtil(nowpage, total, 5);
+		
+	  searchVO.setStart(paging.getStart());
+	  searchVO.setPerPage(paging.getPerPage());
+		
+	  List<BoardVO> list=boardService.list(searchVO);
+		
+	  // 번호 계산 및 설정
+	  int displayNo = total - (nowpage - 1) * paging.getPerPage();
+	  for(BoardVO vo : list) {
+	    vo.setDisplayNo(displayNo--); // 각 게시물 번호 설정
+	    vo.setBoardTitle(restoreSanitizedInput(vo.getBoardTitle()));
+	    vo.setBoardContent(restoreSanitizedInput(vo.getBoardContent()));		
+	  }
+	  
+	  model.addAttribute("list",list);
+	  model.addAttribute("paging",paging);
+		
+	  System.out.println("받은 검색어: " + searchVO.getSearchValue());
+	  System.out.println("게시글 개수: " + list.size());
+      return "board/noticeList";
 	}
 	
 	/* GET Write */
 	@RequestMapping(value="/noticeWrite.do", method = RequestMethod.GET)
 	public String noticeWrite() {
-		System.out.println("methodGET : board/noticeWrite.do");
-		return "board/noticeWrite";
+	  System.out.println("methodGET : board/noticeWrite.do");
+	  return "board/noticeWrite";
 	}
 	
 	/* POST Write */
@@ -62,7 +90,8 @@ public class BoardController {
 	/* GET View */
 	@RequestMapping(value="/noticeView.do", method = RequestMethod.GET)
 	public String noticeView(@RequestParam("boardNo") int boardNo, Model model) {
-	    
+	  
+	  boardService.updateHit(boardNo); // 조회수 증가
 	  BoardVO vo = boardService.selectOne(boardNo);
 
 	  if (vo == null) {
@@ -81,8 +110,8 @@ public class BoardController {
 	  BoardVO vo = boardService.selectOne(boardNo); // 게시글 조회
 
 	  if (vo == null) {
-		  // 게시글이 존재하지 않을 경우 목록으로 리디렉트
-	      return "redirect:noticeList.do";
+		// 게시글이 존재하지 않을 경우 목록으로 리디렉트
+	    return "redirect:noticeList.do";
 	  }
 
 	  if (!loginUser.equals(vo.getUserId())) {
@@ -97,26 +126,39 @@ public class BoardController {
 	/* POST Modify */
 	@RequestMapping(value="/noticeModifyOk.do", method=RequestMethod.POST)
 	public String noticeModifyOk(BoardVO boardVO) {
-	    int result = boardService.update(boardVO);
+	  int result = boardService.update(boardVO);
 
-	    if(result > 0) {
-	        System.out.println("수정성공");
-	    } else {
-	        System.out.println("수정실패");
-	    }
+	  if(result > 0) {
+	    System.out.println("수정성공");
+	  } else {
+	    System.out.println("수정실패");
+	  }
 
-	    return "redirect:noticeList.do?boardType=" + boardVO.getBoardType();
+	  return "redirect:noticeList.do?boardType=" + boardVO.getBoardType();
 	}
 	
 	/* GET Delete */
 	@RequestMapping(value="/noticeDelete.do",method=RequestMethod.POST)
 	public String noticeDelete(int boardNo) {
 		
-		int result = boardService.changeState(boardNo);
+	  int result = boardService.changeState(boardNo);
 		
-		return "redirect:noticeList.do";
+	  return "redirect:noticeList.do";
 	}
 
-
+	/* 특수문자 input */
+	private String restoreSanitizedInput(String input) {
+      if(input == null) {
+        return null;
+      }input = input
+        .replaceAll("&lt;", "<")
+        .replaceAll("&gt;", ">")
+        .replaceAll("&quot;", "\"")
+        .replaceAll("&#x27;", "'")
+        .replaceAll("&amp;", "&")
+        .replaceAll("<br>", "\n");
+      
+      return input;
+    }
 	
 }

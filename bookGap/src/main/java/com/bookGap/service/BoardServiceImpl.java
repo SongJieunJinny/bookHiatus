@@ -19,6 +19,11 @@ public class BoardServiceImpl implements BoardService{
 	public List<BoardVO> list(SearchVO searchVO) {
 		return boardDAO.list(searchVO);
 	}
+	
+	@Override
+	public int boardListSearch(SearchVO searchVO) {
+		return boardDAO.boardListSearch(searchVO);
+	}
 
 	@Override
 	public int noticeInsert(BoardVO boardVO) {
@@ -31,6 +36,11 @@ public class BoardServiceImpl implements BoardService{
 	}
 
 	@Override
+	public int updateHit(int boardNo) {
+		return boardDAO.updateHit(boardNo);
+	}
+
+	@Override
 	public int update(BoardVO boardNo) {
 		return boardDAO.update(boardNo);
 	}
@@ -40,4 +50,7 @@ public class BoardServiceImpl implements BoardService{
 		return boardDAO.changeState(boardNo);
 	}
 
+
+
+	
 }

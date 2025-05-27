@@ -9,9 +9,13 @@ public interface BoardService {
 	
 	public List<BoardVO> list(SearchVO searchVO);
 	
+	public int boardListSearch(SearchVO searchVO);
+	
 	public int noticeInsert(BoardVO boardVO);
 	
 	public BoardVO selectOne(int boardNo);
+	
+	public int updateHit(int boardNo);
 	
 	public int update(BoardVO boardNo);
 	
