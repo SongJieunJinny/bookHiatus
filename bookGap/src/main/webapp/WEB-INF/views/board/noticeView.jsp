@@ -43,7 +43,10 @@
 	      </table><br>
 	      <div id="noticeViewBtn">
 	      	<c:if test="${sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal.userAuthority eq 'ROLE_ADMIN'}">
-		        <button id="noticeViewwrite">등록하기</button>&nbsp;&nbsp;&nbsp;
+		        <button id="noticeViewwrite" onclick="document.deletefrm.submit();">삭제하기</button>&nbsp;&nbsp;&nbsp;
+		        <form id="noticeViewwriteForm" name="deletefrm" action="noticeDelete.do" method="post">
+							<input id="noticeViewwriteFormInput" type="hidden" name="boardNo" value="${vo.boardNo}">
+						</form>
 		        <a href="noticeModify.do?boardNo=${vo.boardNo}" style="text-decoration: none;">
 		        	<button id="noticeViewmodify">수정하기</button>&nbsp;&nbsp;&nbsp;
 		        </a>
@@ -73,9 +76,6 @@
 	</script>
   <script>
 	$(document).ready(function() {
-		$('#noticeViewwrite').click(function() {
-		  window.location.href = '<%=request.getContextPath()%>/noticeWrite.do';
-		});
 		$('#noticeViewmodify').click(function() {
 			  window.location.href = '<%=request.getContextPath()%>/noticeModify.do';
 		});

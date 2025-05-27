@@ -236,6 +236,12 @@ td a{
 #noticeViewBtn{
   width: 100%;
 }
+#noticeViewwriteForm{
+	display: none;
+}
+#noticeViewwriteFormInput{
+	display: none;
+}
 #noticeViewwrite{
   padding: 0.3%;
   width: 5.5%;

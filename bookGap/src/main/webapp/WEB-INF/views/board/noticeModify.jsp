@@ -21,7 +21,8 @@
 	        <div id="noticeWriteTable">
 	          <div id="noticeWriteTableTitle">
 	            <div id="title">제목</div>
-	            <input id="userIdNoticeWriteOkForm" type="hidden" name="userId">
+	            <input id="boardNoNoticeWriteOkForm" type="hidden" name="boardNo" value="${vo.boardNo}">
+	            <input id="userIdNoticeWriteOkForm" type="hidden" name="userId" value="${vo.userId}">
 		          <input id="boardTypeNoticeWriteOkForm" type="hidden" name="boardType" value="1">
 	            <input id="titleMemo" type="text" name="boardTitle" value="${vo.boardTitle}">
 	          </div>
