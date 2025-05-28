@@ -44,7 +44,7 @@
 	</select>
 
 	<!--  write, modify mapper  -->
-	<insert id="noticeInsert" parameterType="com.bookGap.vo.BoardVO"> 
+	<insert id="insert" parameterType="com.bookGap.vo.BoardVO"> 
 		INSERT INTO BOARD( USER_ID 
 											,BOARD_TITLE 
 											,BOARD_CONTENT 
@@ -91,4 +91,23 @@
 		 WHERE BOARD_NO = #{boardNo}
 	</update>
 
+ <!--  qna list mapper  -->
+	<select id="qnaList" parameterType="com.bookGap.vo.SearchVO" resultType="com.bookGap.vo.BoardVO" flushCache="true">
+    SELECT BOARD_TITLE AS boardTitle, 
+           BOARD_CONTENT AS boardContent,
+           u.USER_ID AS userId,
+           BOARD_TYPE AS boardType,
+           BOARD_NO AS boardNo, 
+   (SELECT COUNT(*) FROM COMMENT c WHERE b.BOARD_NO = c.BOARD_NO) AS commentCount,
+           DATE_FORMAT(BOARD_RDATE, '%Y.%m.%d %H:%i') AS boardRdate
+      FROM BOARD b
+      JOIN USER u ON b.USER_ID = u.USER_ID
+     WHERE b.BOARD_STATE != '2'
+       AND b.BOARD_TYPE = #{boardType}
+    <if test="searchType != null and searchType == 'board_title'">
+       AND b.BOARD_TITLE LIKE CONCAT('%', #{searchValue}, '%')
+    </if>
+     ORDER BY BOARD_NO DESC
+     LIMIT #{start}, #{perPage}
+	</select>
 </mapper>

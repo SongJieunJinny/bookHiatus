@@ -26,8 +26,8 @@ public class BoardServiceImpl implements BoardService{
 	}
 
 	@Override
-	public int noticeInsert(BoardVO boardVO) {
-		return boardDAO.noticeInsert(boardVO);
+	public int insert(BoardVO boardVO) {
+		return boardDAO.insert(boardVO);
 	}
 
 	@Override
@@ -48,6 +48,11 @@ public class BoardServiceImpl implements BoardService{
 	@Override
 	public int changeState(int boardNo) {
 		return boardDAO.changeState(boardNo);
+	}
+
+	@Override
+	public List<BoardVO> qnaList(SearchVO searchVO) {
+		return boardDAO.list(searchVO);
 	}
 
 

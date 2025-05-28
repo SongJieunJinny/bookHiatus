@@ -11,7 +11,7 @@ public interface BoardService {
 	
 	public int boardListSearch(SearchVO searchVO);
 	
-	public int noticeInsert(BoardVO boardVO);
+	public int insert(BoardVO boardVO);
 	
 	public BoardVO selectOne(int boardNo);
 	
@@ -20,5 +20,7 @@ public interface BoardService {
 	public int update(BoardVO boardNo);
 	
 	public int changeState(int boardNo);
+	
+	public List<BoardVO> qnaList(SearchVO searchVO);
 
 }

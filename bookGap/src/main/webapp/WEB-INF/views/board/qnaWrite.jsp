@@ -6,36 +6,35 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title>noticeModify</title>
+	<title>qnaWrite</title>
 	<script src="<%=request.getContextPath()%>/resources/js/jquery-3.7.1.js"></script>
 	<link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/resources/css/index.css"/>
-	<link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/resources/css/board/notice.css"/>
+	<link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/resources/css/board/qna.css"/>
 </head>
 <body>
-  <jsp:include page="/WEB-INF/views/include/header.jsp" /> 
+  <jsp:include page="/WEB-INF/views/include/header.jsp" />
   <section>
-    <div id="noticeMain">
-    	<form action="noticeModifyOk.do" method="post">
-	      <div id="notice">공지사항</div>
-	      <div id="noticeWrite">
-	        <div id="noticeWriteTable">
-	          <div id="noticeWriteTableTitle">
+  	<div id="qnaMain">
+    	<div id="qna">QnA</div>
+    	<form action="qnaWriteOk.do" method="POST">
+	      <div id="qnaWrite">
+	        <div id="qnaWriteTable">
+	          <div id="qnaWriteTitleTable">
 	            <div id="title">제목</div>
-	            <input id="boardNoNoticeWriteOkForm" type="hidden" name="boardNo" value="${vo.boardNo}">
-	            <input id="userIdNoticeWriteOkForm" type="hidden" name="userId" value="${vo.userId}">
-		          <input id="boardTypeNoticeWriteOkForm" type="hidden" name="boardType" value="1">
-	            <input id="titleMemo" type="text" name="boardTitle" value="${vo.boardTitle}">
+	            <input id="userIdNoticeWriteOkForm" type="hidden" name="userId">
+	            <input id="boardTypeNoticeWriteOkForm" type="hidden" name="boardType" value="2">
+	            <input id="titleMemo" type="text" name="boardTitle">
 	          </div>
-	          <br>
-	          <div id="noticeWriteTableContent">
+	          <div id="qnaWriteContentTable">
 	            <div id="content">내용</div>
-	            <textarea id="contentMemo" name="boardContent">${vo.boardContent}</textarea>
+	            <textarea id="contentMemo" name="boardContent"></textarea>
 	          </div>
 	        </div>
+	        <div id="qnaButtonDiv">
+		        <button id="qnaWriteButton" type="submit">등록하기</button>&nbsp;&nbsp;&nbsp;
+		    	  <button id="resetButton" type="button">취소하기</button>
+	    	  </div>
 	      </div>
-    		<br>
-    		<input id="modify" type="submit" value="수정하기">&nbsp;&nbsp;&nbsp;
-    		<button id="reset" type="button">취소하기</button>
     	</form>
     </div>
   </section>
@@ -60,11 +59,8 @@
 	</script>
 	<script>
 	$(document).ready(function() {
-		  $("#modify").click(function() {
-		    $("form").submit(); // 제출 버튼 클릭 시 정상 제출
-		  });
-		$('#reset').click(function() {
-		  window.location.href = '<%=request.getContextPath()%>/noticeList.do';
+		$('#resetButton').click(function() {
+		  window.location.href = '<%=request.getContextPath()%>/qnaList.do';
 		});
 	});
 	</script>

@@ -166,6 +166,18 @@
   $(document).ready(function() {
 	  console.log("DOM ready!"); // 페이지가 정상적으로 로드되었는지 확인
 		updateCartCount(); // 장바구니 개수 업데이트
+		initHeaderEvents();
+		
+		function updateCartCount() {
+			let cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
+			let cartCount = cartItems.length;
+			let cartCountElement = document.getElementById("cart-count");
+
+			if (cartCountElement) {
+					cartCountElement.textContent = cartCount;
+					cartCountElement.style.visibility = cartCount > 0 ? "visible" : "hidden";
+			}
+		}
 
 		$(document).on("click", "#userAddressCodeBtn", function() {
 		  console.log("버튼 클릭됨!"); // 콘솔 확인용
@@ -177,19 +189,7 @@
 		      $("#userAddress2Input").focus();
 		    }
 		  }).open();
-		});
-		
-    // 장바구니 개수 업데이트 함수
-		function updateCartCount() {
-			let cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
-			let cartCount = cartItems.length;
-			let cartCountElement = document.getElementById("cart-count");
-
-			if (cartCountElement) {
-					cartCountElement.textContent = cartCount;
-					cartCountElement.style.visibility = cartCount > 0 ? "visible" : "hidden";
-			}
-		}
+		});		
 
     $('#myInfoBtn').click(function() {
       var userName = $('#userNameInput').val().trim();

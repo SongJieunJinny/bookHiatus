@@ -53,7 +53,7 @@
 	<!-- COMMUNITY카테고리 메뉴 -->
 	<div id="communityCategory">
 		<a href="<%= request.getContextPath() %>/noticeList.do">공지사항</a>
-		<a href="./qnaList.html">Q&A</a>
+		<a href="<%= request.getContextPath() %>/qnaList.do?boardType=2">Q&A</a>
 	</div>
 	<div id="menuHr"><hr></div>
 </header>
@@ -128,7 +128,7 @@
 	<!-- COMMUNITY카테고리 메뉴 -->
 	<div id="communityCategory">
 		<a href="<%= request.getContextPath() %>/noticeList.do">공지사항</a>
-		<a href="./qnaList.html">Q&A</a>
+		<a href="<%= request.getContextPath() %>/qnaList.do?boardType=2">Q&A</a>
 	</div>
 	<div id="menuHr"><hr></div>
 </header>

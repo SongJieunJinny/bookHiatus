@@ -58,6 +58,11 @@
   <jsp:include page="/WEB-INF/views/include/footer.jsp" />
   <script>
   // 장바구니 개수 업데이트 함수
+  $(document).ready(function() {
+	  updateCartCount(); // 장바구니 개수 업데이트
+    initHeaderEvents();
+  });
+  
 	function updateCartCount() {
 		let cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
 		let cartCount = cartItems.length;

@@ -3,16 +3,16 @@
 			"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.bookGap.mapper.userMapper">
 	<select id="selectOneById" parameterType="String" resultType="java.util.Map">
-		SELECT USER_ID 
-			  ,USER_PW
-			  ,USER_ENABLED 
-			  ,USER_AUTHORITY 
-			  ,USER_STATE 
-			  ,USER_NAME 
-			  ,USER_JOIN_DATE 
-			  ,USER_PHONE 
-			  ,USER_EMAIL 
-			  ,COMPLAIN_NO 
+		SELECT USER_ID        AS userId,
+			  	 USER_PW        AS userPw,
+			 		 USER_ENABLED   AS userEnabled, 
+			  	 USER_AUTHORITY AS userAuthority,
+			  	 USER_STATE     AS userState,
+			  	 USER_NAME      AS userName,
+			     USER_JOIN_DATE AS userJoinDate,
+			  	 USER_PHONE     AS userPhone,
+			     USER_EMAIL     AS userEmail,
+			     COMPLAIN_NO    AS complainNo
 		 FROM  USER  
 		 WHERE USER_ID = #{userId} 
 	</select>
@@ -31,7 +31,7 @@
 			VALUES (
 			 #{userId}
 			,#{userPw}
-			,#{userEnabled}
+			,1
 			,'ROLE_USER'
 			,#{userName}
 			,#{userPhone}
@@ -41,8 +41,14 @@
 	</insert>
 	
 	<select id="selectAllUser" resultType="userInfoVO">
-		SELECT USER_ID, USER_NAME, USER_PHONE, USER_EMAIL, USER_JOIN_DATE, NOTE
-		  FROM USER   ORDER BY USER_JOIN_DATE DESC
+		SELECT USER_ID AS userId, 
+					 USER_NAME AS userName, 
+					 USER_PHONE AS userPhone, 
+					 USER_EMAIL AS userEmail, 
+					 USER_JOIN_DATE AS userJoinDate, 
+					 NOTE AS note
+			FROM USER   
+		 ORDER BY USER_JOIN_DATE DESC
 	</select>
 	
 </mapper>
