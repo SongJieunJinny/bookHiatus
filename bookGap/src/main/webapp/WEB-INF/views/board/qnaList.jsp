@@ -37,7 +37,7 @@
             </tr>
           </thead>
           <tbody>
-          	<c:forEach items="${list}" var="vo">
+          	<c:forEach items="${qanList}" var="vo">
 	            <tr>
 	              <td>${vo.displayNo}</td>
 	              <td>

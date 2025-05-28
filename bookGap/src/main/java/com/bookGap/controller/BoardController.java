@@ -164,23 +164,23 @@ public class BoardController {
 	  
 	  System.out.println("🚀 최종적으로 MyBatis에 전달하는 boardType: " + searchVO.getBoardType());
 
-	  List<BoardVO> list = boardService.qnaList(searchVO);
+	  List<BoardVO> qanList = boardService.qnaList(searchVO);
 	  
 	  System.out.println("💡 DB에서 가져온 리스트:");
-	  for (BoardVO vo : list) {
+	  for (BoardVO vo : qanList) {
 	      System.out.println("게시글 번호: " + vo.getBoardNo() + ", 제목: " + vo.getBoardTitle() + ", boardType: " + vo.getBoardType());
 	  }
 
 		
 	  // 번호 계산 및 설정
 	  int displayNo = total - (nowpage - 1) * paging.getPerPage();
-	  for(BoardVO vo : list) {
+	  for(BoardVO vo : qanList) {
 	    vo.setDisplayNo(displayNo--); // 각 게시물 번호 설정
         vo.setBoardTitle(restoreSanitizedInput(vo.getBoardTitle()));
         vo.setBoardContent(restoreSanitizedInput(vo.getBoardContent()));
 	  }
 		
-	  model.addAttribute("list",list);
+	  model.addAttribute("list",qanList);
 	  model.addAttribute("paging",paging);
 	  System.out.println("넘어온 boardType: " + searchVO.getBoardType());
 		
