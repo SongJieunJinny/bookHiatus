@@ -185,145 +185,17 @@
 										<th>NOTE</th>
 									</tr>
 								</thead>
-								<tfoot>
-									<tr>
-										<th>ID</th>
-										<th>NAME</th>
-										<th>PHONE</th>
-										<th>E-MAIL</th>
-										<th>STATE</th>
-										<th>NOTE</th>
-									</tr>
-								</tfoot>
 								<tbody>
+								<c:forEach items="${getAllUser}" var="vo">
 									<tr>
-										<td>user01</td>
-										<td>유저일</td>
-										<td>010-0000-0001</td>
-										<td>user01@user.com</td>
-										<td>활동중</td>
-										<td></td>
+										<td>${vo.userId} </td>
+										<td>${vo.userName }</td>
+										<td>${vo.userPhone }</td>
+										<td>${vo. userEmail }</td>
+										<td>${vo.userState }</td>
+										<td>${vo.note}</td>
 									</tr>
-									<tr>
-										<td>user01</td>
-										<td>유저일</td>
-										<td>010-0000-0001</td>
-										<td>user01@user.com</td>
-										<td>활동중</td>
-										<td>활동정지2회</td>
-									</tr>
-									<tr>
-										<td>user01</td>
-										<td>유저일</td>
-										<td>010-0000-0001</td>
-										<td>user01@user.com</td>
-										<td>활동중</td>
-										<td></td>
-									</tr>
-									<tr>
-										<td>user01</td>
-										<td>유저일</td>
-										<td>010-0000-0001</td>
-										<td>user01@user.com</td>
-										<td>활동중</td>
-										<td></td>
-									</tr>
-									<tr>
-										<td>user01</td>
-										<td>유저일</td>
-										<td>010-0000-0001</td>
-										<td>user01@user.com</td>
-										<td>활동중</td>
-										<td></td>
-									</tr>
-									<tr>
-										<td>user01</td>
-										<td>유저일</td>
-										<td>010-0000-0001</td>
-										<td>user01@user.com</td>
-										<td>활동중</td>
-										<td></td>
-									</tr>
-									<tr>
-										<td>user01</td>
-										<td>유저일</td>
-										<td>010-0000-0001</td>
-										<td>user01@user.com</td>
-										<td>활동중</td>
-										<td></td>
-									</tr>
-									<tr>
-										<td>user01</td>
-										<td>유저일</td>
-										<td>010-0000-0001</td>
-										<td>user01@user.com</td>
-										<td>활동중</td>
-										<td></td>
-									</tr>
-									<tr>
-										<td>user01</td>
-										<td>유저일</td>
-										<td>010-0000-0001</td>
-										<td>user01@user.com</td>
-										<td>활동중</td>
-										<td></td>
-									</tr>
-									<tr>
-										<td>user01</td>
-										<td>유저일</td>
-										<td>010-0000-0001</td>
-										<td>user01@user.com</td>
-										<td>활동중</td>
-										<td></td>
-									</tr>
-									<tr>
-										<td>user01</td>
-										<td>유저일</td>
-										<td>010-0000-0001</td>
-										<td>user01@user.com</td>
-										<td>활동중</td>
-										<td></td>
-									</tr>
-									<tr>
-										<td>user01</td>
-										<td>유저일</td>
-										<td>010-0000-0001</td>
-										<td>user01@user.com</td>
-										<td>활동중</td>
-										<td></td>
-									</tr>
-									<tr>
-										<td>user01</td>
-										<td>유저일</td>
-										<td>010-0000-0001</td>
-										<td>user01@user.com</td>
-										<td>활동중</td>
-										<td></td>
-									</tr>
-									<tr>
-										<td>user01</td>
-										<td>유저일</td>
-										<td>010-0000-0001</td>
-										<td>user01@user.com</td>
-										<td>활동중</td>
-										<td></td>
-									</tr>
-									<tr>
-										<td>user01</td>
-										<td>유저일</td>
-										<td>010-0000-0001</td>
-										<td>user01@user.com</td>
-										<td>활동중</td>
-										<td></td>
-									</tr>
-									<tr>
-										<td>user01</td>
-										<td>유저일</td>
-										<td>010-0000-0001</td>
-										<td>user01@user.com</td>
-										<td>활동중</td>
-										<td></td>
-									</tr>
+								</c:forEach>
 								</tbody>
 							</table>
 				             <!--회원정보 모달창-->
@@ -527,5 +399,17 @@
 	  }
 	});
  </script>
+ <script>
+	document.addEventListener("DOMContentLoaded", function() {
+	    const table = new simpleDatatables.DataTable("#datatablesSimple", {
+	      labels: {
+	        perPage: "",  // 이 부분이 'entries per page' 문구를 담당
+	        placeholder: "검색어 입력...",
+	        noRows: "데이터가 없습니다.",
+	        info: ""
+	      }
+	    });
+	  });
+</script>
 </body>
 </html>

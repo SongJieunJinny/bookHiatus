@@ -57,7 +57,7 @@ public class adminBookController {
     }
 
     // 도서 삭제 처리
-    @RequestMapping(value = "admin/bookDelete.do", method = RequestMethod.POST)
+    @PostMapping("/bookDelete")
     public String deleteBook(@RequestParam("bookNo") int bookNo) {
     	adminBookService.deleteBook(bookNo);
         return "redirect:/admin/adminBook.do";

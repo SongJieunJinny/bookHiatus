@@ -1,7 +1,7 @@
 package com.bookGap.vo;
 
 public class BookVO {
-	 private int bookNo;
+		private int bookNo;
 	    private String bookRdate;
 	    private String bookTrans;
 	    private int bookStock;
@@ -15,7 +15,6 @@ public class BookVO {
 	    private int discount;    
 	    private String pubdate;    
 
-	    // Getters and Setters
 	    public int getBookNo() {
 	        return bookNo;
 	    }

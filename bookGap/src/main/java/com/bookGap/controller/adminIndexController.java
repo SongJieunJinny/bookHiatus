@@ -9,16 +9,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.bookGap.service.AdminBookService;
+import com.bookGap.service.AdminUserInfoService;
 import com.bookGap.service.ProductApiService;
 import com.bookGap.vo.BookVO;
+import com.bookGap.vo.UserInfoVO;
 
 @Controller
 public class adminIndexController {
 	
 	@Autowired
-	ProductApiService productApiService;
+	private ProductApiService productApiService;
 	@Autowired
     private AdminBookService adminBookService;
+	@Autowired
+	private AdminUserInfoService adminUserInfoService;
 	
 	
 	@RequestMapping(value = "admin/adminIndex.do", method = RequestMethod.GET)
@@ -52,7 +56,9 @@ public class adminIndexController {
 		return "admin/adminSales";
 	}
 	@RequestMapping(value = "admin/adminUserInfo.do", method = RequestMethod.GET)
-	public String adminUserInfo() {
+	public String adminUserInfo(Model model) {
+		List<UserInfoVO> getAllUser = adminUserInfoService.getAllUser();
+		model.addAttribute("getAllUser",getAllUser);
 	
 		return "admin/adminUserInfo";
 	}

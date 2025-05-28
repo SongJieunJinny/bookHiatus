@@ -40,4 +40,9 @@
 			);
 	</insert>
 	
+	<select id="selectAllUser" resultType="userInfoVO">
+		SELECT USER_ID, USER_NAME, USER_PHONE, USER_EMAIL, USER_JOIN_DATE, NOTE
+		  FROM USER   ORDER BY USER_JOIN_DATE DESC
+	</select>
+	
 </mapper>

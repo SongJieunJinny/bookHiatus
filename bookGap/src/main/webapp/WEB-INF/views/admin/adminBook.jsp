@@ -14,23 +14,48 @@
 <script src="<%=request.getContextPath()%>/resources/js/jquery-3.7.1.js"></script>
 <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
 <style>
-    #datatablesSimple {
-        width: 100%;
-        table-layout: fixed;  /* 컬럼 크기 고정 */
-        text-align: center;  /* 가운데 정렬 */
-        border-collapse: collapse; /* 테두리 정렬 */
-    }
+  #datatablesSimple {
+    width: 100%;
+    table-layout: fixed;  /* 컬럼 크기 고정 */
+    border-collapse: collapse; /* 테두리 정렬 */
+  }
 
-    #datatablesSimple th, #datatablesSimple td {
-        padding: 10px;
-        border: 1px solid #ddd; /* 테두리 추가 */
-        white-space: nowrap;  /* 텍스트 줄바꿈 방지 */
-        overflow: hidden;
-       
-    }
+  #datatablesSimple th, #datatablesSimple td {
+    text-align: left;
+    padding: 10px;
+    border: 1px solid #ddd;
+    white-space: nowrap;
+    overflow: hidden;
+  }
     .adminIndexStyle {
     	color: black;
     }
+  #datatablesSimple th:nth-child(1),
+  #datatablesSimple td:nth-child(1) {
+    width: 230px;
+  }
+  /* 상품번호(판매번호) 너비 줄이기 */
+  #datatablesSimple th:nth-child(11),
+  #datatablesSimple td:nth-child(11) {
+    width: 80px;
+  }
+  /* ISBN 너비 늘리기 */
+  #datatablesSimple th:nth-child(5),
+  #datatablesSimple td:nth-child(5) {
+    width: 130px;
+  }
+  #datatablesSimple th:nth-child(12),
+  #datatablesSimple td:nth-child(12) {
+    width: 111px;
+  }
+  #datatablesSimple th:nth-child(10),
+  #datatablesSimple td:nth-child(10) {
+    width: 80px;
+  }
+   #datatablesSimple th:nth-child(9),
+   #datatablesSimple td:nth-child(9) {
+    width: 100px;
+  }
 </style>
 </head>
 <body class="sb-nav-fixed">
@@ -159,12 +184,18 @@
                                       <td>${vo.bookTrans}</td>
                                       <td>${vo.publisher}</td>
                                       <td>${vo.isbn}</td>
-                                      <td>${vo.discount}</td>
+                                      <td>${vo.discount}원 </td>
                                       <td>${vo.bookCategory}</td>
                                       <td>${vo.bookStock}</td>
                                       <td>${vo.pubdate}</td>
                                       <td>${vo.bookNo}</td>
-                                      <td>${vo.bookState}</td>
+                                      <td>
+										  <c:choose>
+										    <c:when test="${vo.bookState == 0}">품절</c:when>
+										    <c:when test="${vo.bookState == 1}">판매중</c:when>
+										    <c:otherwise>알 수 없음</c:otherwise>
+										  </c:choose>
+									   </td>
                                       <td> <button class="btn btn-warning btn-sm editBook">수정</button>
                 								<button class="btn btn-danger btn-sm deleteBook">삭제</button></td>
                                   </tr>
@@ -262,7 +293,7 @@
 			        success: function(response) {
 			          alert('등록 성공!');
 			          location.reload();
-			          loadBookList();
+			          //loadBookList();
 			          $('#bookForm')[0].reset();
 			          $('#bookFormContainer').hide();
 			          $('#toggleFormBtn').show();
@@ -288,6 +319,7 @@
 			      $('#bookCategory').val(row.find('td:eq(6)').text());
 			      $('#bookStock').val(row.find('td:eq(7)').text());
 			      $('#pubdate').val(row.find('td:eq(8)').text());
+			      $('#bookNo').val(row.find('td:eq(9)').text());
 			      $('#bookState').val(row.find('td:eq(10)').text() === '판매중' ? '1' : '0');
 	
 			      $('#bookFormContainer').show();
@@ -302,11 +334,12 @@
 			    // 수정 완료
 			    $(document).on('click', '#updateBook', function() {
 			      const formData = {
+			    	bookNo: $('#bookNo').val(),
 			        bookTrans: $('#bookTrans').val(),
 			        isbn: $('#isbn').val(),
 			        bookCategory: $('#bookCategory').val(),
-			        bookStock: $('#bookStock').val(), 
-			        bookState: $('#bookState').val()
+			        bookStock: parseInt($('#bookStock').val()),
+		    		bookState: parseInt($('#bookState').val())
 			      };
 	
 			      $.ajax({
@@ -326,13 +359,13 @@
 			    // 삭제 버튼 클릭 시
 			    $(document).on('click', '.deleteBook', function() {
 			      const row = $(this).closest('tr');
-			      const isbn = row.find('td:eq(4)').text(); // isbn 값 가져오기
+			      const bookNo = row.find('td:eq(9)').text();
 	
 			      if (confirm("정말 삭제하시겠습니까?")) {
 			        $.ajax({
-			          url: '${pageContext.request.contextPath}/admin/bookDelete.do',
+			          url: '${pageContext.request.contextPath}/admin/books/bookDelete',
 			          type: 'POST',
-			          data: { isbn: isbn },
+			          data: { bookNo: bookNo },
 			          success: function(response) {
 			            alert('삭제 성공!');
 			            location.reload();
@@ -353,8 +386,20 @@
 			    });
 			  });
 		</script>
+		<script>
+			document.addEventListener("DOMContentLoaded", function() {
+			    const table = new simpleDatatables.DataTable("#datatablesSimple", {
+			      labels: {
+			        perPage: "",  // 이 부분이 'entries per page' 문구를 담당
+			        placeholder: "검색어 입력...",
+			        noRows: "데이터가 없습니다.",
+			        info: ""
+			      }
+			    });
+			  });
+		</script>
+		<script src="<%=request.getContextPath()%>/resources/js/scripts.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-      <script src="<%=request.getContextPath()%>/resources/js/scripts.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
       <script src="<%=request.getContextPath()%>/resources/js/datatables-simple-demo.js"></script>
     </body>
