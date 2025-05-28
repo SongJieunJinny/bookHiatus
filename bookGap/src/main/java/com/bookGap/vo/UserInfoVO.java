@@ -12,7 +12,14 @@ public class UserInfoVO {
 	private String userEmail; //이메일
 	private int complainNo; //신고번호
 	private String beforePw; //비밀번호 암호화 전
+	private String note;
 	
+	public String getNote() {
+		return note;
+	}
+	public void setNote(String note) {
+		this.note = note;
+	}
 	public String getUserId() {
 		return userId;
 	}
