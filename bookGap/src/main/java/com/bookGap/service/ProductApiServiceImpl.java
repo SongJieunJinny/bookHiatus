@@ -29,55 +29,58 @@ public class ProductApiServiceImpl implements ProductApiService {
 	
 	private final RestTemplate restTemplate = new RestTemplate();
 
-	@Override
-    public void fetchAndStoreBooksByCategory() {
-		String title = "인문학";
-		String apiUrl = "https://openapi.naver.com/v1/search/book_adv.json?d_titl=" + title + "&d_sort=date";
-        System.out.println("호출 URL: " + apiUrl);
-        
-        // 인증 정보 추가
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("X-Naver-Client-Id", "5or5pHzpLqM1xNLNfCw3");
-        headers.set("X-Naver-Client-Secret", "7f_dQthAKG");
-
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-
+    @Override
+    public ProductApiVO fetchAndStoreBooksByCategory(String searchKeyword) {
         try {
-            // 헤더가 포함된 GET 요청
+           String encodedTitle = searchKeyword;
+           System.out.println("검색어들어옴 "+searchKeyword);
+           String apiUrl = "https://openapi.naver.com/v1/search/book.json?query=" + encodedTitle + "&display=1";
+
+            System.out.println("NAVER API 호출 URL:" + apiUrl);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("X-Naver-Client-Id", "5or5pHzpLqM1xNLNfCw3");
+            headers.set("X-Naver-Client-Secret", "7f_dQthAKG");
+
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+           
             ResponseEntity<NaverBookResponse> response = restTemplate.exchange(
-                    apiUrl,
-                    HttpMethod.GET,
-                    entity,
-                    NaverBookResponse.class
-            );
+	             apiUrl,
+	             HttpMethod.GET,
+	             entity,
+	             NaverBookResponse.class
+            	);
+            ResponseEntity<String> rawResponse = restTemplate.exchange(
+            	    apiUrl,
+            	    HttpMethod.GET,
+            	    entity,
+            	    String.class
+            	);
+            System.out.println("응답 JSON:\n" + rawResponse.getBody());
+            System.out.println("NAVER API 응답 상태:"+response.getStatusCode());
 
-            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-                NaverBookResponse body = response.getBody();
-                if (body.getItems() != null) {
-                    System.out.println("응답받은 책 개수: " + body.getItems().size());
-                    for (ProductApiVO book : body.getItems()) {
-                        System.out.println("책 제목: " + book.getTitle() + ", ISBN: " + book.getIsbn());
+            if (response.getStatusCode().is2xxSuccessful()
+                    && response.getBody() != null
+                    && !response.getBody().getItems().isEmpty()) {
 
-                        if (book.getIsbn() != null && !book.getIsbn().isBlank() && !productApiDAO.existsByIsbn(book.getIsbn())) {
-                            productApiDAO.insertProductApi(book);
-                            System.out.println("저장 완료: " + book.getTitle());
-                        } else {
-                            System.out.println("저장 스킵됨(ISBN 없음 또는 이미 존재): " + book.getTitle());
-                        }
-                    }
-                } else {
-                    System.out.println("items가 없습니다. body: " + body);
+                ProductApiVO book = response.getBody().getItems().get(0);
+                System.out.println("도서 정보: {}"+book);
+                System.out.println("응답 아이템 수: " + response.getBody().getItems().size());
+
+                if (book.getIsbn() != null && !book.getIsbn().isBlank()
+                        && !productApiDAO.existsByIsbn(book.getIsbn())) {
+                    productApiDAO.insertProductApi(book);
                 }
-            } else {
-                System.out.println("응답은 성공했지만 body가 비어있음.");
+                System.out.println("응답 전체 내용: " + response.getBody());
+                return book;
             }
-        } catch (HttpClientErrorException e) {
-            // HTTP 오류가 발생했을 경우 응답 메시지 출력
-            System.out.println("HTTP 오류 발생: " + e.getStatusCode());
-            System.out.println("응답 메시지: " + e.getResponseBodyAsString());
+
+        } catch (HttpClientErrorException httpEx) {
+            System.out.println("NAVER API 요청 오류: {}"+ httpEx.getResponseBodyAsString());
         } catch (Exception e) {
-            // 다른 예외 처리
-            System.out.println("예기치 않은 오류 발생: " + e.getMessage());
+            System.out.println("예외 발생: "+ e);
         }
+        
+        return null;
     }
 }

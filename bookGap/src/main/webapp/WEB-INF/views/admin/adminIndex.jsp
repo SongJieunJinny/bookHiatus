@@ -16,7 +16,7 @@
 					<nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
 						<div class="sb-sidenav-menu">
 							<!--nav삽입-->
-							<div class="nav" id="adminNav"></div>
+							<jsp:include page="/WEB-INF/views/include/adminNav.jsp" />
 						</div>
 						<div class="sb-sidenav-footer">
 							<div class="small">BOOK틈 관리자페이지</div>
@@ -43,7 +43,7 @@
 									<div class="card bg-secondary text-white mb-4">
 										<div class="card-body">Order</div>
 										<div class="card-footer d-flex align-items-center justify-content-between">
-											<a class="small text-white stretched-link" href="adminOrder.html">View Details</a>
+											<a class="small text-white stretched-link" href="${pageContext.request.contextPath}/admin/adminOrder.do">View Details</a>
 											<div class="small text-white"><i class="fas fa-angle-right"></i></div>
 										</div>
 									</div>
@@ -52,7 +52,7 @@
 									<div class="card bg-secondary text-white mb-4">
 										<div class="card-body">User Info</div>
 										<div class="card-footer d-flex align-items-center justify-content-between">
-											<a class="small text-white stretched-link" href="adminUserInfo.html">View Details</a>
+											<a class="small text-white stretched-link" href="${pageContext.request.contextPath}/admin/adminUserInfo.do">View Details</a>
 											<div class="small text-white"><i class="fas fa-angle-right"></i></div>
 										</div>
 									</div>
@@ -61,7 +61,7 @@
 									<div class="card bg-secondary text-white mb-4">
 										<div class="card-body">Guset Order Info</div>
 										<div class="card-footer d-flex align-items-center justify-content-between">
-											<a class="small text-white stretched-link" href="adminGusetOrderInfo.html">View Details</a>
+											<a class="small text-white stretched-link" href="${pageContext.request.contextPath}/admin/adminGusetOrderInfo.do">View Details</a>
 											<div class="small text-white"><i class="fas fa-angle-right"></i></div>
 										</div>
 									</div>
@@ -89,8 +89,8 @@
 							</div>	
 						</div>
 					</main>
+					<jsp:include page="/WEB-INF/views/include/adminFooter.jsp" />
 					<!--footer 삽입-->
-					<footer class="py-4 bg-light mt-auto" id="adminFooter"></footer>
 				</div>
 			</div>
 			<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
@@ -98,21 +98,5 @@
 			<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
 			<script src="<%=request.getContextPath()%>/resources/assets/demo/chart-area-demo.js"></script>
 			<script src="<%=request.getContextPath()%>/resources/assets/demo/chart-bar-demo.js"></script>
-			<script>
-				$(document).ready(function () {
-						// 헤더 & 푸터 로드
-								initHeaderEvents();
-		
-						// adminNav.html 로드 후 initNavEvents() 실행
-						$("#adminNav").load("<%= request.getContextPath() %>/include/adminNav", function () {
-								initNavEvents();
-						});
-
-						// adminNav.html 로드 후 initNavEvents() 실행
-						$("#adminFooter").load("<%= request.getContextPath() %>/include/adminFooter", function () {
-								initFooterEvents();
-						});
-				});
-		</script>
 		</body>
 </html> 

@@ -12,14 +12,14 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ProductApiScheduler {
 	
-	@Autowired
-	public ProductApiService productApiService;
+	//@Autowired
+	//public ProductApiService productApiService;
 	
-	@Scheduled(cron= "0 */5 * * * * ") //초 분 시 일 월 요일 연도
-	public void  fetchBooks() throws Exception{
+	//@Scheduled(cron= "0 */5 * * * * ") //초 분 시 일 월 요일 연도
+	//public void  fetchBooks() throws Exception{
 
-		productApiService.fetchAndStoreBooksByCategory();
-		System.out.println("스케줄러 실행됨");
+		//productApiService.fetchAndStoreBooksByCategory();
+		//System.out.println("스케줄러 실행됨");
 
-	}
+	//}
 }
