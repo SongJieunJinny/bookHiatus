@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 public class NaverBookResponse {
 	 private List<ProductApiVO> items;
+	 
 
 	public List<ProductApiVO> getItems() {
 		return items;

@@ -1,5 +1,6 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"  pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -96,18 +97,22 @@
 			.modalOrderInfoContainer{
 				margin: 1% 2% 0% 1%;
 			}
+			.datatable-selector {
+			    padding: 8px;
+    			width: 40%;
+			}
 		</style>
 		
 	</head>
 	<body class="sb-nav-fixed">
 		<!--header삽입-->
-		<div id="adminHeader"></div>
+		<jsp:include page="/WEB-INF/views/include/adminHeader.jsp" />
 		<div id="layoutSidenav">
 			<div id="layoutSidenav_nav">
 				<nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
 					<div class="sb-sidenav-menu">
 						<!--nav삽입-->
-						<div class="nav" id="adminNav"></div>
+						<jsp:include page="/WEB-INF/views/include/adminNav.jsp" />
 					</div>
 					<div class="sb-sidenav-footer">
 						<div class="small">BOOK틈 관리자페이지</div>
@@ -246,20 +251,15 @@
 					</div>
 				</main>
 				<!--footer 삽입-->
-				<footer class="py-4 bg-light mt-auto" id="adminFooter"></footer>
+				<jsp:include page="/WEB-INF/views/include/adminFooter.jsp" />
 			</div>
 		</div>
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-		<script src="js/scripts.js"></script>
+		<script src="<%=request.getContextPath()%>/resources/js/scripts.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
-		<script src="js/datatables-simple-demo.js"></script>
+		<script src="<%=request.getContextPath()%>/resources/js/datatables-simple-demo.js"></script>
 		<script>
       $(document).ready(function () {
-        // 공통 레이아웃 로드
-        $("#adminHeader").load("<%= request.getContextPath() %>/include/adminHeader");
-        $("#adminNav").load("<%= request.getContextPath() %>/include/adminNav");
-        $("#adminFooter").load("<%= request.getContextPath() %>/include/adminFooter");
-    
         // 모달 관련 변수
         let selectedRow = null;
     
