@@ -25,8 +25,8 @@ public class BoardDAO {
 		return sqlSession.selectOne(name_space+"boardListSearch",searchVO);
 	}
 
-	public int noticeInsert(BoardVO boardVO) {
-		return sqlSession.insert(name_space+"noticeInsert", boardVO);
+	public int insert(BoardVO boardVO) {
+		return sqlSession.insert(name_space+"insert", boardVO);
 	}
 	
 	public int changeState(int boardNo) {
@@ -43,6 +43,10 @@ public class BoardDAO {
 	
     public int update(BoardVO boardNo) {
 		return sqlSession.update(name_space+"update", boardNo);
+	}
+    
+    public List<BoardVO> qnaList(SearchVO searchVO){
+		return sqlSession.selectList(name_space+"qnaList",searchVO);
 	}
     
     

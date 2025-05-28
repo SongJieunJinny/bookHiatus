@@ -46,24 +46,24 @@
     </div>
   </section>
   <!-- footer part -->
-  	<jsp:include page="/WEB-INF/views/include/footer.jsp" />
+  <jsp:include page="/WEB-INF/views/include/footer.jsp" />
 	<script>
-    $(document).ready(function() {
-	    updateCartCount(); // 장바구니 개수 업데이트
-      initHeaderEvents();
-    });
-    
-     // 장바구니 개수 업데이트 함수
-			function updateCartCount() {
-				let cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
-				let cartCount = cartItems.length;
-				let cartCountElement = document.getElementById("cart-count");
+  $(document).ready(function() {
+   updateCartCount(); // 장바구니 개수 업데이트
+    initHeaderEvents();
+  });
+  
+   // 장바구니 개수 업데이트 함수
+	function updateCartCount() {
+		let cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
+		let cartCount = cartItems.length;
+		let cartCountElement = document.getElementById("cart-count");
 
-				if (cartCountElement) {
-						cartCountElement.textContent = cartCount;
-						cartCountElement.style.visibility = cartCount > 0 ? "visible" : "hidden";
-				}
-			}
+		if (cartCountElement) {
+				cartCountElement.textContent = cartCount;
+				cartCountElement.style.visibility = cartCount > 0 ? "visible" : "hidden";
+		}
+	}
 	</script>
 </body>
 </html>

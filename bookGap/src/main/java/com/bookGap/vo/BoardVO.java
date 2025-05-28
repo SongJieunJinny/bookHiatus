@@ -2,10 +2,7 @@ package com.bookGap.vo;
 
 import java.util.Date;
 
-public class BoardVO {
-	/* user 테이블 */
-	private String userId; //아이디 
-	
+public class BoardVO extends UserInfoVO{
 	/* board list에 보이는 displayNo */
 	private int displayNo;
 	
@@ -18,6 +15,7 @@ public class BoardVO {
 	private Date boardRdate; //등록일자
 	private String formattedBoardRdate;
 	private int boardType; //게시글종류(NOTICE, BOOK)
+	private String userId; //아이디 
 	
 	/* attach 테이블 */
 	private int attachNo; //파일번호
@@ -30,6 +28,8 @@ public class BoardVO {
 	private String commentState; //활성화여부(1활성화, 2비활성화)
 	private Date commentRdate; //등록일자
 	private int commentRating; //별점
+	
+	private int commentCount; //댓글 갯수
 	
 	public String getUserId() {
 		return userId;
@@ -138,6 +138,12 @@ public class BoardVO {
 	}
 	public void setDisplayNo(int displayNo) {
 		this.displayNo = displayNo;
+	}
+	public int getCommentCount() {
+		return commentCount;
+	}
+	public void setCommentCount(int commentCount) {
+		this.commentCount = commentCount;
 	}
 	
 }
