@@ -17,25 +17,25 @@
     <div id="noticeMain">
 	    <div id="notice">공지사항</div>
 	    <div id="noticeMid">
-	      <table id="noticeViewTable">
-	        <thead>
-	          <tr>
-	            <td id="noticeViewtitle">${vo.boardTitle}</td>
-	          </tr>
-	          <tr>
-	            <td id="noticeViewwriter">${vo.userId}</td>
-	            <td id="noticeViewrdate">
+	      <div id="noticeViewTable">
+	        
+	          <div id="noticeViewTitleDiv">
+	            <div id="noticeViewTitle">${vo.boardTitle}</div>
+	          </div>
+	          <div id="noticeViewWriterRdateDiv">
+	            <span id="noticeViewWriter">${vo.userId}</span>
+	            <span id="noticeViewRdate">
 	            	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	            	<fmt:formatDate value="${vo.boardRdate}" pattern="yyyy-MM-dd" />
-	            </td>
-	          </tr>
-	        </thead>
-	        <tbody>
-	          <tr>
-	            <td id="noticeViewcontent">${vo.boardContent}</td>
-	          </tr>
-	        </tbody>
-	      </table><br>
+	            </span>
+	          </div>
+	        
+	        
+	          <div id="noticeViewContentDiv">
+	            <div id="noticeViewContent">${vo.boardContent}</div>
+	          </div>
+	       
+	      </div><br>
 	      <div id="noticeViewBtn">
 	      	<c:if test="${sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal.userAuthority eq 'ROLE_ADMIN'}">
 		        <button id="noticeViewwrite" onclick="confirmDelete();">삭제하기</button>&nbsp;&nbsp;&nbsp;

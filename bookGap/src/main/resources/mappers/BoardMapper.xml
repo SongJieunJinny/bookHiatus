@@ -3,13 +3,13 @@
 			"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.bookGap.mapper.boardMapper"> 
 	<resultMap id="boardResultMap" type="com.bookGap.vo.BoardVO">
-		<id property="boardNo" column="BOARD_NO"/>
-		<result property="boardTitle" column="BOARD_TITLE"/>
-		<result property="boardContent" column="BOARD_CONTENT"/>
-		<result property="boardType" column="BOARD_TYPE"/>
-		<result property="boardRdate" column="BOARD_RDATE"/>
+    <id property="boardNo" column="BOARD_NO"/>
+    <result property="boardTitle" column="BOARD_TITLE"/>
+    <result property="boardContent" column="BOARD_CONTENT"/>
+    <result property="boardType" column="BOARD_TYPE"/>
+		<result property="boardRdate" column="BOARD_RDATE" jdbcType="TIMESTAMP"/>
 		<result property="formattedBoardRdate" column="formattedBoardRdate"/>
-		<result property="userId" column="USER_ID"/>
+    <result property="userId" column="USER_ID"/>
 	</resultMap>
 	
 	<!--  list mapper  -->
@@ -91,23 +91,24 @@
 		 WHERE BOARD_NO = #{boardNo}
 	</update>
 
- <!--  qna list mapper  -->
+<!--  qna list mapper  -->
 	<select id="qnaList" parameterType="com.bookGap.vo.SearchVO" resultType="com.bookGap.vo.BoardVO" flushCache="true">
-    SELECT BOARD_TITLE AS boardTitle, 
-           BOARD_CONTENT AS boardContent,
-           u.USER_ID AS userId,
-           BOARD_TYPE AS boardType,
-           BOARD_NO AS boardNo, 
-   (SELECT COUNT(*) FROM COMMENT c WHERE b.BOARD_NO = c.BOARD_NO) AS commentCount,
-           DATE_FORMAT(BOARD_RDATE, '%Y.%m.%d %H:%i') AS boardRdate
-      FROM BOARD b
-      JOIN USER u ON b.USER_ID = u.USER_ID
-     WHERE b.BOARD_STATE != '2'
-       AND b.BOARD_TYPE = #{boardType}
-    <if test="searchType != null and searchType == 'board_title'">
-       AND b.BOARD_TITLE LIKE CONCAT('%', #{searchValue}, '%')
-    </if>
-     ORDER BY BOARD_NO DESC
-     LIMIT #{start}, #{perPage}
+    SELECT  BOARD_TITLE AS boardTitle,  
+		        BOARD_CONTENT AS boardContent,  
+		        u.USER_ID AS userId,  
+		        BOARD_TYPE AS boardType,  
+		        BOARD_NO AS boardNo,  
+		        (SELECT COUNT(*) FROM COMMENT c WHERE b.BOARD_NO = c.BOARD_NO) AS commentCount,  
+		        BOARD_RDATE AS boardRdate,  
+		        DATE_FORMAT(BOARD_RDATE, '%Y.%m.%d %H:%i') AS formattedBoardRdate  
+		    FROM BOARD b  
+		    JOIN USER u ON b.USER_ID = u.USER_ID  
+		    WHERE b.BOARD_STATE = 1  
+		      AND b.BOARD_TYPE = 2  
+		  <if test="searchType != null and searchType.equalsIgnoreCase('board_title')">  
+		      AND b.BOARD_TITLE LIKE CONCAT('%', #{searchValue}, '%')  
+		  </if>  
+		    ORDER BY BOARD_NO DESC  
+		    LIMIT #{start}, #{perPage}  
 	</select>
 </mapper>

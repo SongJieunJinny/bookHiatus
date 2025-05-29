@@ -180,7 +180,7 @@ public class BoardController {
         vo.setBoardContent(restoreSanitizedInput(vo.getBoardContent()));
 	  }
 		
-	  model.addAttribute("list",qanList);
+	  model.addAttribute("qanList",qanList);
 	  model.addAttribute("paging",paging);
 	  System.out.println("넘어온 boardType: " + searchVO.getBoardType());
 		

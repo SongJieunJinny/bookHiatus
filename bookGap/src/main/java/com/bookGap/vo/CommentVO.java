@@ -5,7 +5,7 @@ public class CommentVO extends UserInfoVO{
 	private int commentNo; //댓글 번호
 	private String commentContent; //댓글 내용
 	private String commentState; //댓글 활성화여부(1활성화, 2비활성화)
-	private String commentRdate;//댓글 등록일자
+	private java.sql.Timestamp commentRdate;//댓글 등록일자
 	private String commentRating; //별점
 	private int boardNo; //게시글번호
 	private String userId; //아이디
@@ -29,10 +29,10 @@ public class CommentVO extends UserInfoVO{
 	public void setCommentState(String commentState) {
 		this.commentState = commentState;
 	}
-	public String getCommentRdate() {
+	public java.sql.Timestamp getCommentRdate() {
 		return commentRdate;
 	}
-	public void setCommentRdate(String commentRdate) {
+	public void setCommentRdate(java.sql.Timestamp commentRdate) {
 		this.commentRdate = commentRdate;
 	}
 	public String getCommentRating() {

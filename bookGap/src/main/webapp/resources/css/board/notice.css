@@ -188,49 +188,51 @@ td a{
 }
 #noticeViewTable{
 	padding: 2% 1% 2% 1%;
-  width: 60%;
+  width: 50%;
   border-collapse: separate; /* 셀 간 간격 유지 */
 	border-spacing: 0; /* 셀 간 간격 설정 */
 	border: 2px solid black; /* 테이블 외곽 테두리 */
   border-radius: 20px;
   overflow: hidden;
 }
-#noticeViewTable th,
-#noticeViewTable td {
-  padding: 8px; /* 내부 여백 설정 */
-  text-align: left; /* 텍스트 정렬 */
-  padding-left: 5%;
+#noticeViewTitleDiv{
+	width: 100%;
+  padding: 1%;
 }
-#noticeViewtitle{
+#noticeViewTitle{
+  font-size: 20px;
+  margin-left: 2%;
+}
+#noticeViewWriterRdateDiv{
+	width: 100%;
+  margin: 2%;
+}
+#noticeViewWriter{
+  position: relative;
   font-size: 18px;
-  padding-top: 4%;
+  padding-left: 2%;
 }
-#noticeViewwriter{
-  position: relative;
-}
-#noticeViewwriter::after{
-  content: "";
+#noticeViewWriter::after{
+	content: "";
   position: absolute;
   bottom: 0;
-  left: 5%; /* 원하는 위치 조정 */
-  width: 120%; /* 테두리 길이 조정 */
+  left: -10%;
+  width: 1050%;
   height: 1px;
   background-color: black;
+
 }
-#noticeViewrdate{
+#noticeViewRdate{
   position: relative;
+  font-size: 18px;
+  margin-left: 50%;
 }
-#noticeViewrdate::after{
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 1%; /* 원하는 위치 조정 */
-  width: 88%; /* 테두리 길이 조정 */
-  height: 1px;
-  background-color: black;
+#noticeViewContentDiv{
+	display: flex;
 }
-#noticeViewcontent{
-  padding-bottom: 4%;
+#noticeViewContent{
+	white-space: pre-line;
+	padding : 2%
 }
 #noticeViewBtn{
   width: 100%;
@@ -250,7 +252,7 @@ td a{
   font-size: medium;
   text-align: center;
   border-radius: 8px;
-  margin-left: 60%;
+  margin-left: 50%;
   cursor: pointer;
 }
 #noticeViewmodify{

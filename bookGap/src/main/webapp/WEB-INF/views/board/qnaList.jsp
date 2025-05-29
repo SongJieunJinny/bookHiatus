@@ -37,18 +37,18 @@
             </tr>
           </thead>
           <tbody>
-          	<c:forEach items="${qanList}" var="vo">
+          	<c:forEach items="${qanList}" var="qanVo">
 	            <tr>
-	              <td>${vo.displayNo}</td>
+	              <td>${qanVo.displayNo}</td>
 	              <td>
-	              	<a href="qnaView.do?boardNo=${vo.boardNo}&boardType=2">${vo.boardTitle}
-	              		<c:if test="${vo.commentCount > 0}">
-											<span style="color:#FF5722;">(${vo.commentCount })</span>
+	              	<a href="qnaView.do?boardNo=${qanVo.boardNo}&boardType=2">${qanVo.boardTitle}
+	              		<c:if test="${qanVo.commentCount > 0}">
+											<span style="color:#FF5722;">(${qanVo.commentCount })</span>
 										</c:if>
 									</a>
 	              </td>
-	              <td>${vo.userId}</td>
-	              <td><fmt:formatDate value="${vo.boardRdate}" pattern="yyyy-MM-dd" /></td>
+	              <td>${qanVo.userId}</td>
+	              <td><fmt:formatDate value="${qanVo.boardRdate}" pattern="yyyy-MM-dd" /></td>
 	            </tr>
             </c:forEach>
           </tbody>

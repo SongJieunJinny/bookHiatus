@@ -19,45 +19,38 @@
         <div id="qna">QnA</div>
       </div>
       <div id="qnaMid">
-        <table id="qnaViewTable">
-          <thead>
-            <tr>
-              <td id="titleView">${vo.boardTitle}</td>
-            </tr>
-            <tr>
-              <td id="writerView">${vo.userId}</td>
-              <td id="rdateView"><fmt:formatDate value="${vo.boardRdate}" pattern="yyyy-MM-dd" /></td>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td id="contentView">${vo.boardContent}</td>
-            </tr>
-          </tbody>
-        </table><br>
+        <div id="qnaViewTable">
+            <div id="titleViewDiv">
+              <div id="titleView">${vo.boardTitle}</div>
+            </div>
+            <div id="writeRrdateViewDiv">
+              <span id="writerView">${vo.userId}</span>
+              <span id="rdateView">
+              	<fmt:formatDate value="${vo.boardRdate}" pattern="yyyy-MM-dd" />
+              </span>
+            </div>
+            <div id="contentViewDiv">
+              <div id="contentView">${vo.boardContent}</div>
+            </div>
+        </div><br>
 				<div id="qnaViewBtn">
-				  <!-- 작성자 본인일 경우: 삭제 + 수정 -->
-				  <c:if test="${sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal.username eq vo.userId}">
+				
+				  <c:if test="${sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal.username eq vo.userId || 
+				               sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal.userAuthority eq 'ROLE_ADMIN'}">
 				    <form id="qnaViewwriteForm" name="deletefrm" action="qnaDelete.do" method="post" style="display: inline;">
 				      <input type="hidden" name="boardNo" value="${vo.boardNo}">
 				      <button id="writeView" onclick="return confirmDelete();">삭제하기</button>&nbsp;&nbsp;&nbsp;
 				    </form>
+				  </c:if>
 				
+				  <c:if test="${sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal.username eq vo.userId}">
 				    <a href="qnaModify.do?boardNo=${vo.boardNo}" style="text-decoration: none;">
 				      <button id="modifyView">수정하기</button>
 				    </a>&nbsp;&nbsp;&nbsp;
 				  </c:if>
 				
-				  <!-- 관리자일 경우: 삭제만 가능 -->
-				  <c:if test="${sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal.userAuthority eq 'ROLE_ADMIN'}">
-				    <form id="qnaViewwriteForm" name="deletefrm" action="qnaDelete.do" method="post" style="display: inline;">
-				      <input type="hidden" name="boardNo" value="${vo.boardNo}">
-				      <button id="writeView" onclick="return confirmDelete();">삭제하기</button>&nbsp;&nbsp;&nbsp;
-				    </form>
-				  </c:if>
-				
-				  <!-- 누구나 볼 수 있는 목록 버튼 -->
 				  <button id="listView">목록으로</button>
+				
 				</div>
       </div>
       
@@ -86,8 +79,7 @@
                 </div>
                 <!-- 기존 리뷰 내용 -->
                 <div class="qnaContainer">
-                  <textarea class="qnaContentArea">설 연휴는 택배사 휴무기간이라 설 연휴가 끝난 후 부터 발송시작이 될것으로 예상됩니다.
-양해 부탁드립니다!
+                  <textarea class="qnaContentArea">설 연휴는 택배사 휴무기간이라 설 연휴가 끝난 후 부터 발송시작이 됩니다.
                   </textarea>
                   <div class="qnaOptions">
                     <span class="qnaOptionsToggle" onclick="toggleOptions(this)">⋯</span>
@@ -138,10 +130,10 @@
   <script>
 	$(document).ready(function() {
 		$('#modifyView').click(function() {
-			  window.location.href = '<%=request.getContextPath()%>/noticeModify.do';
+			  window.location.href = '<%=request.getContextPath()%>/qnaModify.do';
 		});
 		$('#listView').click(function() {
-			  window.location.href = '<%=request.getContextPath()%>/noticeList.do';
+			  window.location.href = '<%=request.getContextPath()%>/qnaList.do';
 		});
 	});
 	</script>
