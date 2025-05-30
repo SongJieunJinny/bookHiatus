@@ -18,39 +18,39 @@
 	    <div id="notice">공지사항</div>
 	    <div id="noticeMid">
 	      <div id="noticeViewTable">
-	        
-	          <div id="noticeViewTitleDiv">
-	            <div id="noticeViewTitle">${vo.boardTitle}</div>
-	          </div>
-	          <div id="noticeViewWriterRdateDiv">
-	            <span id="noticeViewWriter">${vo.userId}</span>
-	            <span id="noticeViewRdate">
-	            	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	            	<fmt:formatDate value="${vo.boardRdate}" pattern="yyyy-MM-dd" />
-	            </span>
-	          </div>
-	        
-	        
-	          <div id="noticeViewContentDiv">
-	            <div id="noticeViewContent">${vo.boardContent}</div>
-	          </div>
-	       
+          <div id="noticeViewTitleDiv">
+            <div id="noticeViewTitle">${vo.boardTitle}</div>
+          </div>
+          <div id="noticeViewWriterRdateDiv">
+            <span id="noticeViewWriter">${vo.userId}</span>
+            <span id="noticeViewRdate">
+            	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            	<fmt:formatDate value="${vo.boardRdate}" pattern="yyyy-MM-dd" />
+            </span>
+          </div>
+          <div id="noticeViewContentDiv">
+            <div id="noticeViewContent">${vo.boardContent}</div>
+          </div>
 	      </div><br>
 	      <div id="noticeViewBtn">
+	      
 	      	<c:if test="${sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal.userAuthority eq 'ROLE_ADMIN'}">
 		        <button id="noticeViewwrite" onclick="confirmDelete();">삭제하기</button>&nbsp;&nbsp;&nbsp;
 		        <form id="noticeViewwriteForm" name="deletefrm" action="noticeDelete.do" method="post">
 							<input id="noticeViewwriteFormInput" type="hidden" name="boardNo" value="${vo.boardNo}">
 						</form>
-		        <a href="noticeModify.do?boardNo=${vo.boardNo}" style="text-decoration: none;">
+		        <a href="noticeModify.do?boardNo=${vo.boardNo}" style="text-decoration: none; display: contents;">
 		        	<button id="noticeViewmodify">수정하기</button>&nbsp;&nbsp;&nbsp;
 		        </a>
 		        <button id="noticeViewlist" >목록으로</button>
 	        </c:if>
+	        
 					<c:if test="${sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal.userAuthority eq 'ROLE_USER'}">
-		        <button id="noticeViewlist" style="margin-left: 70%;">목록으로</button>
+		        <button id="noticeViewlist">목록으로</button>
 	        </c:if>
+	        
 	      </div>
+	      <br>
 	    </div>
     </div>
   	<br>

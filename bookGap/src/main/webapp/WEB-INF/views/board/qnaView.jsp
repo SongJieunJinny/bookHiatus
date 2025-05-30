@@ -37,7 +37,7 @@
 				
 				  <c:if test="${sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal.username eq vo.userId || 
 				               sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal.userAuthority eq 'ROLE_ADMIN'}">
-				    <form id="qnaViewwriteForm" name="deletefrm" action="qnaDelete.do" method="post" style="display: inline;">
+				    <form id="qnaViewwriteForm" name="deletefrm" action="qnaDelete.do" method="post" style="display: inline-flex;">
 				      <input type="hidden" name="boardNo" value="${vo.boardNo}">
 				      <button id="writeView" onclick="return confirmDelete();">삭제하기</button>&nbsp;&nbsp;&nbsp;
 				    </form>
@@ -49,7 +49,9 @@
 				    </a>&nbsp;&nbsp;&nbsp;
 				  </c:if>
 				
-				  <button id="listView">목록으로</button>
+				  <a href="<%= request.getContextPath() %>/qnaList.do?boardType=2">    
+					  <button id="listView">목록으로</button>
+					</a>
 				
 				</div>
       </div>
@@ -128,12 +130,9 @@
   }
 	</script>
   <script>
-	$(document).ready(function() {
+	$(document).ready(function() {		
 		$('#modifyView').click(function() {
 			  window.location.href = '<%=request.getContextPath()%>/qnaModify.do';
-		});
-		$('#listView').click(function() {
-			  window.location.href = '<%=request.getContextPath()%>/qnaList.do';
 		});
 	});
 	</script>

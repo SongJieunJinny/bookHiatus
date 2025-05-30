@@ -170,7 +170,6 @@ public class BoardController {
 	  for (BoardVO vo : qanList) {
 	      System.out.println("게시글 번호: " + vo.getBoardNo() + ", 제목: " + vo.getBoardTitle() + ", boardType: " + vo.getBoardType());
 	  }
-
 		
 	  // 번호 계산 및 설정
 	  int displayNo = total - (nowpage - 1) * paging.getPerPage();
