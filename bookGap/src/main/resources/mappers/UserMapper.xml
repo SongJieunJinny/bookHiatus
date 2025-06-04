@@ -2,6 +2,15 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
 			"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.bookGap.mapper.userMapper">
+<resultMap id="userInfoResultMap" type="com.bookGap.vo.UserInfoVO">
+    <result property="userId" column="USER_ID"/>
+    <result property="userName" column="USER_NAME"/>
+    <result property="userPhone" column="USER_PHONE"/>
+    <result property="userEmail" column="USER_EMAIL"/>
+    <result property="userJoinDate" column="USER_JOIN_DATE"/>
+    <result property="note" column="NOTE"/>
+    <result property="userEnabled" column="USER_ENABLED"/>
+</resultMap>
 	<select id="selectOneById" parameterType="String" resultType="java.util.Map">
 		SELECT USER_ID,
 			  	 USER_PW,
@@ -40,12 +49,13 @@
 			);
 	</insert>
 	
-	<select id="selectAllUser" resultType="userInfoVO">
+	<select id="selectAllUser" resultMap="userInfoResultMap">
 		SELECT USER_ID, 
 					 USER_NAME, 
 					 USER_PHONE, 
 					 USER_EMAIL, 
 					 USER_JOIN_DATE, 
+					 USER_ENABLED,
 					 NOTE
 			FROM USER   
 		 ORDER BY USER_JOIN_DATE DESC
