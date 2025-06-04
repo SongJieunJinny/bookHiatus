@@ -19,7 +19,7 @@ import com.bookGap.vo.BookVO;
 
 @Controller
 @RequestMapping("/admin/books")
-public class adminBookController {
+public class AdminBookController {
 	@Autowired
     private AdminBookService adminBookService;
 	// 도서 등록 처리 

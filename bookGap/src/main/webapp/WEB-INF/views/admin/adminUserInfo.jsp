@@ -140,6 +140,22 @@
     			margin-bottom:10px;
     			margin-right: 20px;
 			}
+			#datatablesSimple th:nth-child(4),
+			#datatablesSimple td:nth-child(4) {
+			  width: 200px; /* 원하는 너비로 조절 */
+			}
+			#datatablesSimple th:nth-child(5),
+			#datatablesSimple td:nth-child(5) {
+			  width: 150px; /* 원하는 너비로 조절 */
+			}
+			#datatablesSimple th:nth-child(6),
+			#datatablesSimple td:nth-child(6) {
+			  width: 150px; /* 원하는 너비로 조절 */
+			}
+			#datatablesSimple th:nth-child(7),
+			#datatablesSimple td:nth-child(7) {
+			  width: 250px; /* 원하는 너비로 조절 */
+			}
     </style>
 </head>
 <body class="sb-nav-fixed">
@@ -181,7 +197,8 @@
 										<th>NAME</th>
 										<th>PHONE</th>
 										<th>E-MAIL</th>
-										<th>STATE</th>
+										<th>Enabled</th>
+										<th>JOIN DATE</th>
 										<th>NOTE</th>
 									</tr>
 								</thead>
@@ -191,8 +208,14 @@
 										<td>${vo.userId} </td>
 										<td>${vo.userName }</td>
 										<td>${vo.userPhone }</td>
-										<td>${vo. userEmail }</td>
-										<td>${vo.userState }</td>
+										<td>${vo.userEmail }</td>
+										<td>
+											 <c:choose>
+											    <c:when test="${vo.userEnabled}">활성화</c:when>
+											    <c:otherwise>비활성화</c:otherwise>
+											  </c:choose>
+										</td>
+										<td>${vo.userJoinDate}</td>
 										<td>${vo.note}</td>
 									</tr>
 								</c:forEach>
@@ -240,7 +263,7 @@
 				                   </div>
 				                   <!--모달 State Container -->
 				                   <div class="userInfoModalItemContainer">
-				                     <div class="userInfoModalItem">STATE : </div>
+				                     <div class="userInfoModalItem">ENABLED : </div>
 				                     <label style="width: 20%; padding-left: 2%;">
 										<input id="userInfoModalStateInput1" class="userInfoModalItemCheckbox" type="radio" name="state" > 활성화 
 									</label>&nbsp;
@@ -250,10 +273,12 @@
 				                   </div>
 				                   <!--모달 Joindate Container -->
 				                   <div class="userInfoModalItemContainer">
-				                     <div class="userInfoModalItem">JOIN DATE : </div>
-				                     <input id="userInfoModalDateInput" class="userInfoModalItemInput" type="date" name="joindate">
-				                   </div>
-				                 </div>
+									  <div class="userInfoModalItem">JOIN DATE : </div>
+									  <!-- 표시용 텍스트 -->
+									 	 <span class="userInfoModalItemText" data-field="joindate"></span>
+									  <!-- 실제 input (초기에 숨겨짐) -->
+									  <input id="userInfoModalDateInput" class="userInfoModalItemInput" data-field="joindate" type="date" style="display:none;">
+									</div>
 				                 <div class="userInfoModalFooter">
                    <!--모달 Note Container -->
 			                      <div class="userInfoModalItemInputContainer">
@@ -342,21 +367,18 @@
 		        document.querySelector('.userInfoModalItemText[data-field="name"]').innerText = cells[1].innerText;
 		        document.querySelector('.userInfoModalItemText[data-field="phone"]').innerText = cells[2].innerText;
 		        document.querySelector('.userInfoModalItemText[data-field="email"]').innerText = cells[3].innerText;
-		
-		        // 라디오 버튼 상태 설정
-		        if (cells[4].innerText.trim() === '활동중') {
+
+		        if (cells[4].innerText.trim() === '활성화') {
 		          document.getElementById('userInfoModalStateInput1').checked = true;
 		        } else {
 		          document.getElementById('userInfoModalStateInput2').checked = true;
 		        }
-		
-		        // 메모란
-		        document.getElementById('userInfoModalNoteInput').value = cells[5].innerText;
-		
-		        // 입력 필드 초기화
+		        document.querySelector('.userInfoModalItemText[data-field="joindate"]').innerText = cells[5].innerText;
+		        document.getElementById('userInfoModalNoteInput').value = cells[6].innerText;
+
 		        document.querySelectorAll('.userInfoModalItemInput').forEach(input => input.style.display = 'none');
 		        document.querySelectorAll('.userInfoModalItemText').forEach(span => span.style.display = 'inline-block');
-		
+
 		        document.getElementById('userInfoModal').style.display = 'flex';
 		      }
 		
@@ -367,7 +389,8 @@
 		        const name = document.querySelector('.userInfoModalItemInput[data-field="name"]').value.trim();
 		        const phone = document.querySelector('.userInfoModalItemInput[data-field="phone"]').value.trim();
 		        const email = document.querySelector('.userInfoModalItemInput[data-field="email"]').value.trim();
-		        const state = document.querySelector('#userInfoModalStateInput1').checked ? '활동중' : '비활성화';
+		        const enabled = document.querySelector('#userInfoModalStateInput1').checked ? '활성화' : '비활성화';
+		        const joinDate = document.querySelector('.userInfoModalItemText[data-field="joindate"]');
 		        const note = document.querySelector('#userInfoModalNoteInput').value.trim();
 		
 		        const cells = selectedRow.querySelectorAll('td');
@@ -375,8 +398,9 @@
 		        cells[1].innerText = name;
 		        cells[2].innerText = phone;
 		        cells[3].innerText = email;
-		        cells[4].innerText = state;
-		        cells[5].innerText = note;
+		        cells[4].innerText = enabled;
+		        cells[5].innerText = joinDate;
+		        cells[6].innerText = note;
 		
 		        closeModal(); // 모달 닫기
       		}

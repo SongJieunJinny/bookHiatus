@@ -31,6 +31,9 @@
     .adminIndexStyle {
     	color: black;
     }
+   a{
+   	color:black;
+   }
     </style>
 </head>
 <body class="sb-nav-fixed">
@@ -103,84 +106,76 @@
 		    <!-- https://fullcalendar.io 에서 참조 -->
 		    <!-- https://develop-cat.tistory.com/3 참조 --> 
 		    <!-- https://kyurasi.tistory.com/entry/달력-뷰-만들기-fullcalendar-사용하기-일정-달력-만들기-캘린더-만들기 참조 -->  
-      <script>
-         document.addEventListener("DOMContentLoaded", function () {
-            var calendarEl = document.getElementById("calendar");
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-              headerToolbar: {
-                left: "prevYear,prev,next,nextYear today",
-                center: "title",
-                right: "addEventButton dayGridMonth,timeGridWeek,timeGridDay"
-              },
-              customButtons: { //버튼 추가
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
+        	timeZone: 'local',
+            initialView: 'dayGridMonth',
+            headerToolbar: {   left: "prevYear,prev,next,nextYear today",
+    	      center: "title",
+    	      right: "addEventButton dayGridMonth,timeGridWeek,timeGridDay" },
+            customButtons: {
                 addEventButton: {
-                  text: "일정추가",
-                  click: function () {
-                    openEventModal();
-                  }
+                    text: '일정 추가',
+                    click: function () { openEventModal(); }
                 }
-              },
-              selectable: true, //selectable, editable: 드래그로 일정 생성 및 수정 가능
-              editable: true,
-              navLinks: true,//날짜 클릭 시 → 해당 날짜로 이동 요일 이름 클릭 시 → 해당 요일의 주간 보기로 이동
-              select: function (info) {
-                openEventModal(info.startStr, info.endStr);
-              },
-              eventClick: function (info) {
-                openEventModal(info.event.startStr, info.event.endStr, info.event);
-              }
+            },
+            selectable: true,
+    	    editable: true,
+    	    navLinks: true,
+            eventSources: [
+                {
+                    url: '${pageContext.request.contextPath}/admin/schedule/list.do',
+                    method: 'GET',
+                    failure: function() { alert('일정을 불러오는데 실패했습니다.'); }
+                }
+            ],
+            select: function(info) { openEventModal(info.startStr, info.endStr); },
+            eventClick: function(info) { openEventModal(info.event.startStr, info.event.endStr, info.event); }
+        });
+        calendar.render();
+
+        function openEventModal(start, end, event = null) {
+            const modal = new bootstrap.Modal(document.getElementById("eventModal"));
+
+            const toLocalDatetime = (dateStr) => {
+                if (!dateStr) return "";
+                const local = new Date(dateStr);
+                // local datetime-local 형식으로 변환
+                return new Date(local.getTime() - local.getTimezoneOffset() * 60000)
+                    .toISOString().slice(0, 16);
+            };
+
+            document.getElementById("event-id").value = event ? event.id : "";
+            document.getElementById("event-title").value = event ? event.title : "";
+            document.getElementById("event-color").value = event ? event.backgroundColor : "#0d6efd";
+            document.getElementById("event-start").value = toLocalDatetime(start);
+            document.getElementById("event-end").value = toLocalDatetime(end);
+            document.getElementById("delete-event").style.display = event ? "inline-block" : "none";
+            modal.show();
+        }
+
+        document.getElementById("save-event").onclick = function () {
+            const data = {
+                scheduleId: document.getElementById("event-id").value,
+                title: document.getElementById("event-title").value,
+                startDate: document.getElementById("event-start").value,
+                endDate: document.getElementById("event-end").value,
+                color: document.getElementById("event-color").value
+            };
+            fetch(data.scheduleId ? '${pageContext.request.contextPath}/admin/schedule/update.do' : '${pageContext.request.contextPath}/admin/schedule/insert.do', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data)
+            }).then(() => { calendar.refetchEvents(); alert("일정이 등록되었습니다. "); });
+        };
+
+        document.getElementById("delete-event").onclick = function () {
+            const id = document.getElementById("event-id").value;
+            fetch('${pageContext.request.contextPath}/admin/schedule/delete.do?scheduleId=' + id, { method: 'POST' }).then(() => {
+                calendar.refetchEvents(); alert("일정이 삭제되었습니다. ");
             });
-            calendar.render();
-
-            function openEventModal(start, end, event = null) {
-              const modal = new bootstrap.Modal(document.getElementById("eventModal"));
-
-              // 초기화
-              document.getElementById("event-id").value = event ? event.id : "";
-              document.getElementById("event-title").value = event ? event.title : "";
-              document.getElementById("event-color").value = event ? (event.backgroundColor || "#0d6efd") : "#0d6efd";
-              document.getElementById("event-start").value = start ? new Date(start).toISOString().slice(0, 16) : "";
-              document.getElementById("event-end").value = end ? new Date(end).toISOString().slice(0, 16) : "";
-              document.getElementById("delete-event").style.display = event ? "inline-block" : "none";
-
-              modal.show();
-
-              document.getElementById("save-event").onclick = function () {
-                let title = document.getElementById("event-title").value;
-                let color = document.getElementById("event-color").value;
-                let startDate = document.getElementById("event-start").value;
-                let endDate = document.getElementById("event-end").value;
-
-                if (title && startDate) {
-                  if (event) {
-                    event.setProp("title", title);
-                    event.setStart(startDate);
-                    event.setEnd(endDate);
-                    event.setProp("backgroundColor", color);
-                    event.setProp("borderColor", color);
-                  } else {
-                    calendar.addEvent({
-                      title: title,
-                      start: startDate,
-                      end: endDate,
-                      backgroundColor: color,
-                      borderColor: color,
-                      allDay: false
-                    });
-                  }
-                }
-                modal.hide();
-              };
-
-              document.getElementById("delete-event").onclick = function () {
-                if (event) {
-                  event.remove();
-                }
-                modal.hide();
-              };
-            }
-          });
-      </script>
+        };
+    });
+    </script>
       <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.17/index.global.min.js'></script>
       <script src='https://cdn.jsdelivr.net/npm/fullcalendar/daygrid@6.1.17/index.global.min.js'></script>
       <script src='https://cdn.jsdelivr.net/npm/fullcalendar/timegrid@6.1.17/index.global.min.js'></script>

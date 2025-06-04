@@ -8,7 +8,7 @@
 		<property name="driverClassName" value="com.mysql.cj.jdbc.Driver" />
 		<!-- &amp;  :: & 기호 -->
 		<property name="url" 
-		value="jdbc:mysql://localhost:3306/bookHiatus?useUnicode=true&amp;characterEncoding=utf-8&amp;serverTimezone=UTC&amp;useSSL=false&amp;allowPublicKeyRetrieval=true" />
+		value="jdbc:mysql://localhost:3306/bookHiatus?useUnicode=true&amp;characterEncoding=utf-8&amp;serverTimezone=Asia/Seoul&amp;useSSL=false&amp;allowPublicKeyRetrieval=true" />
 		<property name="username" value="root" />
 		<property name="password" value="ezen" />
 	</bean>

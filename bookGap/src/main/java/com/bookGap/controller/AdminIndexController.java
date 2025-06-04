@@ -15,7 +15,7 @@ import com.bookGap.vo.BookVO;
 import com.bookGap.vo.UserInfoVO;
 
 @Controller
-public class adminIndexController {
+public class AdminIndexController {
 	
 	@Autowired
 	private ProductApiService productApiService;
