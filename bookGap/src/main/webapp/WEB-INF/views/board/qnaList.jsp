@@ -42,8 +42,8 @@
 	              <td>${qanVo.displayNo}</td>
 	              <td>
 	              	<a href="qnaView.do?boardNo=${qanVo.boardNo}&boardType=2">${qanVo.boardTitle}
-	              		<c:if test="${qanVo.commentCount > 0}">
-											<span style="color:#FF5722;">(${qanVo.commentCount })</span>
+	              		<c:if test="${qanVo.qCommentCount > 0}">
+											<span style="color:#FF5722;">(${qanVo.qCommentCount })</span>
 										</c:if>
 									</a>
 	              </td>
