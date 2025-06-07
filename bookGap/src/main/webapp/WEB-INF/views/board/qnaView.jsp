@@ -20,21 +20,21 @@
       </div>
       <div id="qnaMid">
         <div id="qnaViewTable">
-            <div id="titleViewDiv">
-              <div id="titleView">${vo.boardTitle}</div>
-            </div>
-            <div id="writeRrdateViewDiv">
-              <span id="writerView">${vo.userId}</span>
-              <span id="rdateView">
-              	<fmt:formatDate value="${vo.boardRdate}" pattern="yyyy-MM-dd" />
-              </span>
-            </div>
-            <div id="contentViewDiv">
-              <div id="contentView">${vo.boardContent}</div>
-            </div>
+          <div id="titleViewDiv">
+            <div id="titleView">${vo.boardTitle}</div>
+          </div>
+          <div id="writeRrdateViewDiv">
+            <span id="writerView">${vo.userId}</span>
+            <span id="rdateView">
+            	<fmt:formatDate value="${vo.boardRdate}" pattern="yyyy-MM-dd" />
+            </span>
+          </div>
+          <div id="contentViewDiv">
+            <div id="contentView">${vo.boardContent}</div>
+          </div>
         </div><br>
 				<div id="qnaViewBtn">
-				
+					<!-- 글쓴이랑 어드민이랑 -->
 				  <c:if test="${sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal.username eq vo.userId || 
 				               sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal.userAuthority eq 'ROLE_ADMIN'}">
 				    <form id="qnaViewwriteForm" name="deletefrm" action="qnaDelete.do" method="post" style="display: inline-flex;">
@@ -42,64 +42,249 @@
 				      <button id="writeView" onclick="return confirmDelete();">삭제하기</button>&nbsp;&nbsp;&nbsp;
 				    </form>
 				  </c:if>
-				
+					<!-- 글쓴이만 -->
 				  <c:if test="${sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal.username eq vo.userId}">
 				    <a href="qnaModify.do?boardNo=${vo.boardNo}" style="text-decoration: none;">
 				      <button id="modifyView">수정하기</button>
 				    </a>&nbsp;&nbsp;&nbsp;
 				  </c:if>
-				
+					<!-- 모두가 -->
 				  <a href="<%= request.getContextPath() %>/qnaList.do?boardType=2">    
 					  <button id="listView">목록으로</button>
 					</a>
-				
 				</div>
-      </div>
-      
-     <!-- 댓글라인 -->
-      <div id="qnaEnd">
-        <div id="qnaComments">
-          <div id="commentLayout">
-            <div id="qnaCommentTitle">QnA(1)</div>
-          </div>
-          <div id="reviewView">
-            <div id="qnaComment">
-              <h2>&nbsp;QnA</h2>
-              <form onsubmit="return qnaContentForm(this)">
-                <div id="qnaCommentContentBox">
-                  <textarea id="qnaCommentContent" name="content"></textarea>
-                  <div id="qnaCommentButtonBox">
-                    <button id="qnaCommentButton">등록</button>
-                  </div>
-                </div>
-              </form>
-              <div class="qnaBox">
-                <div class="qnaIdBox">
-                  <div class="qnaId">관리자</div>
-                  <div style="color: gray; font-size: 15px; margin-top: 0.2%; margin-left: 1%; margin-right: 1%;">|</div>
-                  <div class="qnaRdate">2024-01-26</div>
-                </div>
-                <!-- 기존 리뷰 내용 -->
-                <div class="qnaContainer">
-                  <textarea class="qnaContentArea">설 연휴는 택배사 휴무기간이라 설 연휴가 끝난 후 부터 발송시작이 됩니다.
-                  </textarea>
-                  <div class="qnaOptions">
-                    <span class="qnaOptionsToggle" onclick="toggleOptions(this)">⋯</span>
-                    <div class="qnaOptionsMenu">
-                      <button onclick="qnaOptionModify(this)">수정</button>
-                      <button onclick="qnaOptionDelete(this)">삭제</button>
-                    </div>
-                  </div>
-                  <div class="qnaEditButtons">
-                    <button onclick="qnaEditCompl(this)">수정완료</button>
-                    <button onclick="qnaEditCancel(this)">취소</button>
-                  </div>
-                </div>
-              </div>
-            </div>                        
-          </div>
-        </div>
-      </div>
+			</div>
+	<sec:authentication var="loginUser" property="principal" />
+  <script type="text/javascript">
+		let boardNo = "";
+		let boardType = "";
+	  let userId = '${loginUser.username}';
+	  let userRole = '${loginUser.authorities}';
+	  console.log("✅ 로그인된 사용자 ID:", userId);
+	  console.log("✅ 로그인된 사용자 권한:", userRole);
+	  
+		$(document).ready(function() {
+			boardNo = ${vo.boardNo};
+			boardType = ${vo.boardType};
+			console.log(boardNo);
+	    loadComment(boardNo);
+	       
+	    // 메뉴 버튼 이벤트 초기화
+	    $(document).on('click', '.qnaOptions', function(event) {
+	     event.stopPropagation(); // 이벤트 전파 방지
+	     let qCommentNo = $(this).data("qnaBox");
+	     $(".qnaOptionsMenu").hide(); // 다른 메뉴 숨김
+	     $("#qnaOptionsMenu" + qCommentNo).toggle(); // 현재 메뉴 토글
+	    });
+	
+	    // 문서의 다른 곳 클릭하면 모든 메뉴 숨김
+	    $(document).click(function() {
+	    	$(".qnaOptionsMenu").hide();
+	    });
+	
+	    // 메뉴 내부 클릭 시 메뉴가 닫히지 않도록 방지
+	    $(document).on('click', '.qnaOptionsMenu', function(event) {
+	    	event.stopPropagation();
+	    });
+		});
+
+		//두번째 변수 생략시 1로 들어감
+		function loadComment(boardNo,page = 1) {
+			
+			console.log("📥 loadComment 호출됨: boardNo =", boardNo, "page =", page); 
+			
+	    $.ajax({
+	      url: "<%= request.getContextPath()%>/comment/loadComment.do",
+	      type: "get",
+	      data: { boardNo: boardNo , cnowpage:page },
+	      success: function(data) { 
+									let html = "";
+									for(qcvo of data.clist){
+										console.log("🧾 댓글 작성자:", qcvo.userId);
+										console.log("👤 현재 로그인:", userId);
+										console.log("🔑 관리자 여부:", userRole);
+										console.log("✅ 버튼 보일 조건:",
+										  (qcvo.userId && userId && qcvo.userId.trim() === userId.trim()) ||
+										  (userRole && userRole.includes('ROLE_ADMIN'))
+										);
+										html +=`<div id="qnaBox\${qcvo.qCommentNo}" class="qnaBox">
+															<div class="qnaIdBox">
+																<div class="qnaId">\${qcvo.userId}</div>
+																<div style="color: gray; font-size: 15px; margin-top: 0.2%; margin-left: 1%; margin-right: 1%;">|</div>
+																<div class="qnaRdate">\${qcvo.formattedQCommentRdate}</div>
+															</div>`;
+													if(qcvo.userId && qcvo.userId.trim() === userId.trim()){
+										 html += `<div id="commentContentContainer\${qcvo.qCommentNo}" class="qnaContainer">
+													      <div id="commentContent\${qcvo.qCommentNo}" class="qnaContentArea">\${qcvo.qCommentContent}</div>
+													      <div class="qnaOptions" data-qna-box="\${qcvo.qCommentNo}">⋯
+														      <div id="qnaOptionsMenu\${qcvo.qCommentNo}" class="qnaOptionsMenu">
+														        <button onclick="commentUpdate(\${qcvo.qCommentNo})">수정</button>
+														        <button onclick="commentDel(\${qcvo.qCommentNo})">삭제</button>
+														      </div>
+														    </div>
+													    </div>`;
+												}
+											html +=`</div>`;
+									}
+									if(data.cpaging){
+										paging = data.cpaging;
+										html += `<div class="pagination">`;
+										if(paging.startPage > 1){
+											html += `<a class="paging-link" data-page="\${paging.startPage - 1}">&lt;</a>`;
+										} 
+										for(let cnt = paging.startPage; cnt <= paging.endPage; cnt++){
+											if(paging.nowPage == cnt){
+												html += `<a id="default" style="color:#FF5722; cursor:default;">\${cnt }</a>`;
+											}else{
+												html += `<a class="paging-link" data-page="\${cnt}">\${cnt}</a>`;
+											}
+										}	
+										if(paging.endPage < paging.lastPage){
+											html += `<a class="paging-link" data-page="\${paging.endPage + 1}">&gt;</a>`;
+										}
+										html += `</div>`;
+									}
+					        $(".comment-list").html(html);
+					        
+					        // 페이징 링크에 이벤트 바인딩
+					        $(".paging-link").click(function(e) {
+						        e.preventDefault();
+						        let page = $(this).data("page");
+						        loadComment(boardNo, page);
+					        });
+							},
+				error: function(xhr, status, error) {
+								console.error("AJAX Error:", status, error);  // AJAX 오류 상태 및 에러 메시지 출력
+								alert("댓글 로딩 중 오류가 발생했습니다.");
+							 }
+			});
+		}
+		
+		function commentInsert(boardNo,boardType){
+			$.ajax({
+				url : "<%= request.getContextPath()%>/comment/write.do",
+				type : "post",
+				data : {boardNo : boardNo,
+								boardType : boardType,
+								userId : userId,
+								qCommentContent : $("#qnaCommentContent").val()},
+				success: function (result) {
+						      if (result === "Success") {
+						        alert("댓글이 등록되었습니다.");
+						        $("#qnaCommentContent").val(""); // 입력창 초기화
+						        loadComment(boardNo);            // 목록 새로고침
+						      } else {
+						        alert("등록에 실패했습니다.");
+						      }
+						    },
+				error: function () {
+					      alert("서버 통신 오류가 발생했습니다.");
+					    }
+			});
+		}
+		
+		function commentUpdate(qCommentNo){
+			
+		  const commentElement = $("#qnaBox" + qCommentNo);
+		  const currentText = $("#commentContent" + qCommentNo).text().trim();
+		  
+		  const inputElement = $(`<div id="qnaCommentContentBox">
+																<textarea id="qnaCommentContent-\${qCommentNo}" class="qnaCommentContent" name="qCommentContent">\${currentText}</textarea>
+																<div id="qnaCommentButtonBox">
+																	<button class="save-btn">수정완료</button>
+																	<button class="cancel-btn">취소</button>
+																</div>
+															</div>`);
+		  
+		  	commentElement.replaceWith(inputElement);
+		  
+		  	inputElement.find(".cancel-btn").on("click", function (e) {
+		    	e.preventDefault();
+		    	inputElement.replaceWith(commentElement); 
+		  	});
+		
+		  	inputElement.find(".save-btn").on("click", function (e) {
+		    	e.preventDefault();
+		    	
+					const newText = inputElement.find(`#qnaCommentContent-\${qCommentNo}`).val(); 
+		
+		    	if(newText && newText !== currentText) {
+		      	saveComment(qCommentNo, newText, inputElement, commentElement); 
+		    	}else{
+		      	alert("댓글 내용이 비어있거나 변경되지 않았습니다.");
+		    	}
+		  	});
+		}
+		
+		function saveComment(qCommentNo, newText, inputElement,commentElement){
+			
+			const originalElement = commentElement.text(inputElement.val().trim());
+			
+			$.ajax({
+				url : "<%= request.getContextPath()%>/comment/modify.do",
+				type : "post",
+				data : { qCommentNo : qCommentNo,
+								 qCommentContent : newText,
+								 userId : userId },
+				success : function(result){
+										if(result === "Success"){
+											const updatedElement = $("#commentContent" + qCommentNo).text(newText);
+			            		inputElement.replaceWith(updatedElement);
+			            		loadComment(boardNo);
+										}else{
+											inputElement.replaceWith(originalElement);
+											alert("댓글 수정에 실패하였습니다.");
+										}
+									},
+				error: function () {
+								alert("서버 오류로 인해 수정에 실패했습니다.");
+		      			inputElement.replaceWith(originalElement);
+		    			 }
+						 });
+		}
+		
+		function commentDel(qCommentNo){
+			$.ajax({
+				url : "<%= request.getContextPath()%>/comment/delete.do",
+				type : "post",
+				data : {qCommentNo : qCommentNo},
+				success : function(result){
+										if(result === "Success"){
+											loadComment(boardNo);
+											alert("댓글이 삭제 되었습니다.");
+										}else{
+											alert("댓글 삭제에 실패하였습니다.");
+										}
+									}
+			});
+		}
+  </script>
+                
+			<!-- 댓글 입력란 시작 -->
+		  <div id="qnaEnd">
+		    <div id="qnaComments">
+		      <div id="commentLayout">
+		        <div id="qnaCommentTitle">QnA</div>
+		      </div>
+		      <div id="reviewView">
+		        <div id="qnaComment">
+		          <h2>&nbsp;QnA</h2>
+		          <div id="qnaCommentContentBox">
+		            <textarea id="qnaCommentContent" name="qCommentContent"></textarea>
+		            <div id="qnaCommentButtonBox">
+		              <button id="qnaCommentButton" onclick="commentInsert(${vo.boardNo},${vo.boardType});">등록</button>
+		            </div>
+		          </div>
+							<!-- 댓글 목록 출력 시작 -->
+							<div class="comment-list">
+							</div>
+	          	<!-- 댓글 목록 출력 끝 -->
+		        </div>
+		      </div>
+		    </div>
+		    <!-- 댓글 입력란 종료 -->
+		    
+		  </div>
     </div>
   </section>
   <jsp:include page="/WEB-INF/views/include/footer.jsp" />
@@ -107,7 +292,7 @@
   // 장바구니 개수 업데이트 함수
   $(document).ready(function() {
 	  updateCartCount(); // 장바구니 개수 업데이트
-    initHeaderEvents();
+	  initHeaderEvents();		
   });
   
 	function updateCartCount() {
@@ -135,92 +320,6 @@
 			  window.location.href = '<%=request.getContextPath()%>/qnaModify.do';
 		});
 	});
-	</script>
-	<script>
-	// QNA 댓글 ...토글 버튼 클릭 이벤트 (옵션 메뉴 열기/닫기)
-	function toggleOptions(element) {
-    let menu = element.nextElementSibling;
-    if (menu.style.display === "block") {
-        menu.style.display = "none";
-    } else {
-        // 다른 열린 메뉴 닫기
-        document.querySelectorAll(".qnaOptionsMenu").forEach(menu => menu.style.display = "none");
-        menu.style.display = "block";
-    }
-	}
-
-	// 수정 기능 (예제)
-	function qnaOptionModify(button) {
-            alert("수정 기능이 실행됩니다!");
-        }
-
-        // 삭제 기능 (예제)
-        function qnaOptionDelete(button) {
-            if (confirm("정말 삭제하시겠습니까?")) {
-                alert("삭제되었습니다.");
-            }
-        }
-
-// QNA 수정 버튼 클릭 이벤트
-function qnaOptionModify(button) {
-    let qnaBox = button.closest('.qnaBox');
-    let qnaContentArea = qnaBox.querySelector('.qnaContainer textarea');
-    let qnaOptionsMenu = qnaBox.querySelector('.qnaOptionsMenu');
-    let qnaEditButtons = qnaBox.querySelector('.qnaEditButtons');
-
-    // 기존 값 저장 (취소 시 복구)
-    qnaContentArea.dataset.originalText = qnaContentArea.value;
-
-    // 수정 가능하도록 설정
-    qnaContentArea.removeAttribute('readonly');
-
-    // 옵션 메뉴 숨기기
-    qnaOptionsMenu.style.display = "none";
-
-    // 수정 완료 & 취소 버튼 표시
-    $(qnaEditButtons).fadeIn();
-}
-
-// 수정 완료 버튼 클릭 이벤트
-function qnaEditCompl(button) {
-    let qnaBox = button.closest('.qnaBox');
-    let qnaContentArea = qnaBox.querySelector('.qnaContainer textarea');
-    let qnaOptionsMenu = qnaBox.querySelector('.qnaOptionsMenu');
-    let qnaEditButtons = qnaBox.querySelector('.qnaEditButtons');
-
-    // 변경된 값 저장
-    let newContent = qnaContentArea.value;
-    console.log(`새 리뷰 내용: ${newContent}`);
-
-    // 수정 완료 후 다시 읽기 전용 설정
-    qnaContentArea.setAttribute('readonly', 'readonly');
-
-    // 옵션 메뉴 다시 보이기
-    qnaOptionsMenu.style.display = "block";
-
-    // 수정 완료 & 취소 버튼 숨기기
-    $(qnaEditButtons).fadeOut();
-}
-
-// 수정 취소 버튼 클릭 이벤트
-function qnaEditCancel(button) {
-    let qnaBox = button.closest('.qnaBox');
-    let qnaContentArea = qnaBox.querySelector('.qnaContainer textarea');
-    let qnaOptionsMenu = qnaBox.querySelector('.qnaOptionsMenu');
-    let qnaEditButtons = qnaBox.querySelector('.qnaEditButtons');
-
-    // 원래 값으로 복구
-    qnaContentArea.value = qnaContentArea.dataset.originalText;
-
-    // 수정 취소 후 다시 읽기 전용 설정
-    qnaContentArea.setAttribute('readonly', 'readonly');
-
-    // 옵션 메뉴 다시 보이기
-    qnaOptionsMenu.style.display = "block";
-
-    // 수정 완료 & 취소 버튼 숨기기
-    $(qnaEditButtons).fadeOut();
-}
 	</script>
 </body>
 </html>

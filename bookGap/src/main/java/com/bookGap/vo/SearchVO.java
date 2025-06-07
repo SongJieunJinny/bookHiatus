@@ -11,6 +11,7 @@ public class SearchVO extends PagingUtil {
 	private String userId; //아이디
 	
 	/* BOARD TABLE */
+	private int boardNo;
 	private String boardTitle; //게시글제목
 	private Integer boardType; 
 	
@@ -22,6 +23,17 @@ public class SearchVO extends PagingUtil {
 	/* BOOK TABLE */
 	private String book_trans; //번역가 
 	
+	/* Comment TABLE */
+	private int commentType; //게시글종류(BOOK, QNA)
+	
+	
+	public int getBoardNo() {
+		return boardNo;
+	}
+
+	public void setBoardNo(int boardNo) {
+		this.boardNo = boardNo;
+	}
 
 	public String getSearchType() {
 		return searchType;
@@ -94,4 +106,13 @@ public class SearchVO extends PagingUtil {
 	public void setBook_trans(String book_trans) {
 		this.book_trans = book_trans;
 	}
+
+	public int getCommentType() {
+		return commentType;
+	}
+
+	public void setCommentType(int commentType) {
+		this.commentType = commentType;
+	}
+	
 }

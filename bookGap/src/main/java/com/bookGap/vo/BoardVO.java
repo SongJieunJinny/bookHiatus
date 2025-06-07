@@ -15,7 +15,7 @@ public class BoardVO extends UserInfoVO{
 	private Timestamp boardRdate;//등록일자
 	private String formattedBoardRdate;
 
-	private int boardType; //게시글종류(NOTICE, BOOK)
+	private int boardType; //게시글종류(NOTICE, QnA)
 	private String userId; //아이디 
 	
 	/* attach 테이블 */
@@ -24,13 +24,12 @@ public class BoardVO extends UserInfoVO{
 	private String fakeAttachName; //변경된파일이름
 	
 	/* comment 테이블 */
-	private int commentNo; //댓글번호
-	private String commentContent; //댓글내용
-	private String commentState; //활성화여부(1활성화, 2비활성화)
-	private Timestamp commentRdate; //등록일자
-	private int commentRating; //별점
+	private int qCommentNo; //댓글번호
+	private String qCommentContent; //댓글내용
+	private String qCommentState; //활성화여부(1활성화, 2비활성화)
+	private Timestamp qCommentRdate; //등록일자
 	
-	private int commentCount; //댓글 갯수
+	private int qCommentCount; //댓글 갯수
 
 	public int getDisplayNo() {
 		return displayNo;
@@ -136,52 +135,43 @@ public class BoardVO extends UserInfoVO{
 		this.fakeAttachName = fakeAttachName;
 	}
 
-	public int getCommentNo() {
-		return commentNo;
+	public int getqCommentNo() {
+		return qCommentNo;
 	}
 
-	public void setCommentNo(int commentNo) {
-		this.commentNo = commentNo;
+	public void setqCommentNo(int qCommentNo) {
+		this.qCommentNo = qCommentNo;
 	}
 
-	public String getCommentContent() {
-		return commentContent;
+	public String getqCommentContent() {
+		return qCommentContent;
 	}
 
-	public void setCommentContent(String commentContent) {
-		this.commentContent = commentContent;
+	public void setqCommentContent(String qCommentContent) {
+		this.qCommentContent = qCommentContent;
 	}
 
-	public String getCommentState() {
-		return commentState;
+	public String getqCommentState() {
+		return qCommentState;
 	}
 
-	public void setCommentState(String commentState) {
-		this.commentState = commentState;
+	public void setqCommentState(String qCommentState) {
+		this.qCommentState = qCommentState;
 	}
 
-	public Timestamp getCommentRdate() {
-		return commentRdate;
+	public Timestamp getqCommentRdate() {
+		return qCommentRdate;
 	}
 
-	public void setCommentRdate(Timestamp commentRdate) {
-		this.commentRdate = commentRdate;
+	public void setqCommentRdate(Timestamp qCommentRdate) {
+		this.qCommentRdate = qCommentRdate;
 	}
 
-	public int getCommentRating() {
-		return commentRating;
+	public int getqCommentCount() {
+		return qCommentCount;
 	}
 
-	public void setCommentRating(int commentRating) {
-		this.commentRating = commentRating;
+	public void setqCommentCount(int qCommentCount) {
+		this.qCommentCount = qCommentCount;
 	}
-
-	public int getCommentCount() {
-		return commentCount;
-	}
-
-	public void setCommentCount(int commentCount) {
-		this.commentCount = commentCount;
-	}
-
 }
