@@ -1,0 +1,52 @@
+package com.bookGap.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.bookGap.dao.BookDAO;
+import com.bookGap.vo.ProductApiVO;
+import com.bookGap.vo.SearchVO;
+
+@Service
+public class BookServiceImpl implements  BookService{
+	
+	@Autowired
+    private BookDAO bookDAO;
+	
+	 @Override
+	    public List<ProductApiVO> getBooksWithProductInfo() {
+	        return bookDAO.selectBooksWithProductInfo();
+	    }
+	 
+	 @Override
+	 public List<String> getDistinctCategories() {
+	     return bookDAO.selectDistinctCategories();
+	 }
+	 
+	 @Override
+	 public List<ProductApiVO> getBooksByCategory(String category) {
+	     return bookDAO.selectBooksByCategory(category);
+	 }
+	 
+	 @Override
+	 public List<ProductApiVO> getBooksPaging(SearchVO vo) {
+	     return bookDAO.selectBooksPaging(vo);
+	 }
+
+	 @Override
+	 public List<ProductApiVO> getBooksByCategoryPaging(SearchVO vo) {
+	     return bookDAO.selectBooksByCategoryPaging(vo);
+	 }
+
+	 @Override
+	 public int getTotalBookCount(SearchVO vo) {
+	     return bookDAO.getBookTotalCount(vo);
+	 }
+
+	 @Override
+	 public int getTotalByCategory(SearchVO vo) {
+	     return bookDAO.getBookTotalCountByCategory(vo);
+	 }
+}

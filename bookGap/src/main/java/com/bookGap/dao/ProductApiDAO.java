@@ -1,5 +1,7 @@
 package com.bookGap.dao;
 
+import java.util.List;
+
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -20,4 +22,8 @@ public class ProductApiDAO {
 	        ProductApiVO result = sqlSession.selectOne("com.bookGap.mapper.ProductApiMapper.selectProductApiByIsbn", isbn);
 	        return result != null;
 	    }
+	    
+	   // public List<ProductApiVO> selectBookImg() {
+	    	// return sqlSession.selectList("com.bookGap.mapper.ProductApiMapper.selectBookImg");
+	   // }
 }

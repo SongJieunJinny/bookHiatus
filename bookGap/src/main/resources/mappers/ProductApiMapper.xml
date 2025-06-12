@@ -11,5 +11,9 @@
     <select id="selectProductApiByIsbn" parameterType="String" resultType="ProductApiVO">
         SELECT * FROM PRODUCT_API WHERE isbn = #{isbn}
     </select>
-    
+    <!--  
+   	<select id="selectBookImg"  resultType="ProductApiVO">
+   		SELECT isbn, title , discount, image FROM PRODUCT_API
+   	</select>
+    -->
 </mapper>

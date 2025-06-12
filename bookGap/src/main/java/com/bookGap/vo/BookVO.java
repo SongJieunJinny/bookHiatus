@@ -14,8 +14,15 @@ public class BookVO {
 	    private String publisher;  
 	    private int discount;    
 	    private String pubdate;    
+	    private String description;
 
-	    public int getBookNo() {
+	    public String getDescription() {
+			return description;
+		}
+		public void setDescription(String description) {
+			this.description = description;
+		}
+		public int getBookNo() {
 	        return bookNo;
 	    }
 	    public void setBookNo(int bookNo) {

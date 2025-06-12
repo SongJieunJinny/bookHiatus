@@ -6,7 +6,9 @@ public class SearchVO extends PagingUtil {
 	/* search */
 	private String searchType; //검색조건
 	private String searchValue; //검색내용
+	private String category;
 	
+
 	/* USER TABLE */
 	private String userId; //아이디
 	
@@ -50,7 +52,14 @@ public class SearchVO extends PagingUtil {
 	public void setSearchValue(String searchValue) {
 		this.searchValue = searchValue;
 	}
+	public String getCategory() {
+		return category;
+	}
 
+	public void setCategory(String category) {
+		this.category = category;
+	}
+	
 	public String getUserId() {
 		return userId;
 	}

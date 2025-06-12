@@ -7,9 +7,9 @@
 	  <!-- 메뉴1 -->
 		<div id="menu1">
 			<div id="menuBook" class="menuItem">BOOK</div>
-			<div id="menuAbout" class="menuItem"><!--0322상화 추가시작--><a href="about.html">ABOUT</a><!--0322상화 추가끝--></div>
-			<div id="menuEvent" class="menuItem"><!--0221지은 추가시작--><a href="eventList.html">EVENT</a><!--0221지은 추가끝--></div>
-			<div id="menuChoice" class="menuItem"><!--0322상화 추가시작--><a href="choice.html">CHOICE</a><!--0322상화 추가끝--></div>
+			<div id="menuAbout" class="menuItem"><!--0322상화 추가시작--><a href="<%=request.getContextPath()%>/about.do">ABOUT</a><!--0322상화 추가끝--></div>
+			<div id="menuEvent" class="menuItem"><!--0221지은 추가시작--><a href="<%=request.getContextPath()%>/eventList.do">EVENT</a><!--0221지은 추가끝--></div>
+			<div id="menuChoice" class="menuItem"><!--0322상화 추가시작--><a href="<%=request.getContextPath()%>/choice/choiceList.do">CHOICE</a><!--0322상화 추가끝--></div>
 			<div id="menuCommunity" class="menuItem">COMMUNITY</div>
 		</div>
 	  <!-- 로고 -->
@@ -41,14 +41,12 @@
 	</div>
 	<!-- BOOK카테고리 메뉴 -->
 	<div id="bookCategory">
-	  <a href="./bookList.html">모든 책</a>
-	  <a href="./bookList.html">인문학</a>
-	  <a href="./bookList.html">철학</a>
-	  <a href="./bookList.html">언어학</a>
-	  <a href="./bookList.html">미학</a>
-	  <a href="./bookList.html">종교학</a>
-	  <a href="./bookList.html">윤리학</a>
-	  <a href="./bookList.html">심리학</a>
+	  <a href="${pageContext.request.contextPath}/product/bookList.do">모든 책</a>
+	  <c:forEach var="category" items="${bookCategories}">
+	    <a href="${pageContext.request.contextPath}/product/bookList.do?category=${category}">
+	      ${category}
+	    </a>
+  	</c:forEach>
 	</div>
 	<!-- COMMUNITY카테고리 메뉴 -->
 	<div id="communityCategory">
@@ -65,9 +63,9 @@
 	  <!-- 메뉴1 -->
 		<div id="menu1">
 			<div id="menuBook" class="menuItem">BOOK</div>
-			<div id="menuAbout" class="menuItem"><!--0322상화 추가시작--><a href="about.html">ABOUT</a><!--0322상화 추가끝--></div>
-			<div id="menuEvent" class="menuItem"><!--0221지은 추가시작--><a href="eventList.html">EVENT</a><!--0221지은 추가끝--></div>
-			<div id="menuChoice" class="menuItem"><!--0322상화 추가시작--><a href="choice.html">CHOICE</a><!--0322상화 추가끝--></div>
+			<div id="menuAbout" class="menuItem"><!--0322상화 추가시작--><a href="<%=request.getContextPath()%>/about.do">ABOUT</a><!--0322상화 추가끝--></div>
+			<div id="menuEvent" class="menuItem"><!--0221지은 추가시작--><a href="<%=request.getContextPath()%>/eventList.do">EVENT</a><!--0221지은 추가끝--></div>
+			<div id="menuChoice" class="menuItem"><!--0322상화 추가시작--><a href="<%=request.getContextPath()%>/choice/choiceList.do">CHOICE</a><!--0322상화 추가끝--></div>
 			<div id="menuCommunity" class="menuItem">COMMUNITY</div>
 		</div>
 	  <!-- 로고 -->
@@ -116,14 +114,12 @@
 	</div>
 	<!-- BOOK카테고리 메뉴 -->
 	<div id="bookCategory">
-	  <a href="./bookList.html">모든 책</a>
-	  <a href="./bookList.html">인문학</a>
-	  <a href="./bookList.html">철학</a>
-	  <a href="./bookList.html">언어학</a>
-	  <a href="./bookList.html">미학</a>
-	  <a href="./bookList.html">종교학</a>
-	  <a href="./bookList.html">윤리학</a>
-	  <a href="./bookList.html">심리학</a>
+	   <a href="${pageContext.request.contextPath}/product/bookList.do">모든 책</a>
+	  <c:forEach var="category" items="${bookCategories}">
+	    <a href="${pageContext.request.contextPath}/product/bookList.do?category=${category}">
+	      ${category}
+	    </a>
+  	</c:forEach>
 	</div>
 	<!-- COMMUNITY카테고리 메뉴 -->
 	<div id="communityCategory">

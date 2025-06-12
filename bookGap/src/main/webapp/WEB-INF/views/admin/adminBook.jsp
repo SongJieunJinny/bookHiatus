@@ -197,7 +197,9 @@
 										  </c:choose>
 									   </td>
                                       <td> <button class="btn btn-warning btn-sm editBook">수정</button>
-                								<button class="btn btn-danger btn-sm deleteBook">삭제</button></td>
+                								<button class="btn btn-danger btn-sm deleteBook">삭제</button>
+                					  </td>
+                					  <td class="bookDesc" style="display: none;">${vo.description}</td>
                                   </tr>
                                   </c:forEach>
                               </tbody>
@@ -291,7 +293,7 @@
 			        type: 'POST',
 			        data: formData,
 			        success: function(response) {
-			          alert('등록 성공!');
+			          alert('도서 등록되었습니다. ');
 			          location.reload();
 			          //loadBookList();
 			          $('#bookForm')[0].reset();
@@ -301,7 +303,7 @@
 			          $('#updateBook').remove();
 			        },
 			        error: function(xhr) {
-			            alert(xhr.responseText || '도서 등록 실패!');
+			            alert(xhr.responseText || '도서 등록에  실패하셨습니다. ');
 			        }
 			      });
 			    });
@@ -315,12 +317,13 @@
 			      $('#bookTrans').val(row.find('td:eq(2)').text());
 			      $('#publisher').val(row.find('td:eq(3)').text());
 			      $('#isbn').val(row.find('td:eq(4)').text());
-			      $('#discount').val(row.find('td:eq(5)').text().replace('₩', '').trim());
+			      $('#discount').val(row.find('td:eq(5)').text().replace(/[^\d]/g, '').trim());
 			      $('#bookCategory').val(row.find('td:eq(6)').text());
 			      $('#bookStock').val(row.find('td:eq(7)').text());
 			      $('#pubdate').val(row.find('td:eq(8)').text());
 			      $('#bookNo').val(row.find('td:eq(9)').text());
 			      $('#bookState').val(row.find('td:eq(10)').text() === '판매중' ? '1' : '0');
+			      $('#description').val(row.find('.bookDesc').text());
 	
 			      $('#bookFormContainer').show();
 			      $('#toggleFormBtn').hide();
@@ -347,11 +350,11 @@
 			        type: 'POST',
 			        data: formData,
 			        success: function(response) {
-			          alert('수정 성공!');
+			          alert('도서가 수정되었습니다. ');
 			          location.reload();
 			        },
 			        error: function() {
-			          alert('수정 실패!');
+			          alert('도서 수정에 실패하셨습니다. ');
 			        }
 			      });
 			    });
@@ -367,11 +370,11 @@
 			          type: 'POST',
 			          data: { bookNo: bookNo },
 			          success: function(response) {
-			            alert('삭제 성공!');
+			            alert('도서가 삭제되었습니다. ');
 			            location.reload();
 			          },
 			          error: function() {
-			            alert('삭제 실패!');
+			            alert('도서를 삭제하는데 실패하셨습니다. ');
 			          }
 			        });
 			      }
