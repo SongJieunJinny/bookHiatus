@@ -20,6 +20,8 @@ public class AdminIndexHeaderController {
 	    public String adminNav() {
 	        return "include/adminNav";  // /WEB-INF/views/include/header.jsp
 	    }
+	    
+	    
 
 	
 }

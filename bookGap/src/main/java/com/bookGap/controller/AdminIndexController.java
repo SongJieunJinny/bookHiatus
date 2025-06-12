@@ -68,4 +68,19 @@ public class AdminIndexController {
 		return "admin/adminGuestOrderInfo";
 	}
 	
+	@RequestMapping(value = "admin/err401.do", method = RequestMethod.GET)
+	public String err401() {
+	
+		return "admin/err401";
+	}
+	@RequestMapping(value = "admin/err404.do", method = RequestMethod.GET)
+	public String err404() {
+	
+		return "admin/err404";
+	}
+	@RequestMapping(value = "admin/err500.do", method = RequestMethod.GET)
+	public String err500() {
+	
+		return "admin/err500";
+	}
 } 

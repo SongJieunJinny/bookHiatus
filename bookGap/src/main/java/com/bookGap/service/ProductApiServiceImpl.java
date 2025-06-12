@@ -4,6 +4,7 @@ import org.springframework.http.HttpHeaders;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -83,4 +84,9 @@ public class ProductApiServiceImpl implements ProductApiService {
         
         return null;
     }
+    
+    //@Override
+    //public List<ProductApiVO> selectBookImg(){
+    	// return productApiDAO.selectBookImg();
+   // }
 }

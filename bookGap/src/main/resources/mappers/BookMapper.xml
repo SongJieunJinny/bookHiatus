@@ -23,33 +23,89 @@
     <delete id="deleteBook" parameterType="int">
         DELETE FROM BOOK WHERE BOOK_NO = #{bookNo}
     </delete>
-
     <!-- 도서 상세 조회 -->
-    <select id="selectBookByNo" parameterType="int" resultType="BookVO">
-        SELECT * FROM BOOK WHERE BOOK_NO = #{bookNo}
-    </select>
+	<select id="selectBookByNo" parameterType="int" resultType="BookVO">
+		SELECT * FROM BOOK WHERE BOOK_NO = #{bookNo}
+	</select>
     <!-- 도서 isbn조회 -->
-    <select id="isIsbnExists" parameterType="String" resultType="int">
-    SELECT COUNT(*) FROM PRODUCT_API WHERE isbn = #{isbn}
-</select>
+	<select id="isIsbnExists" parameterType="String" resultType="int">
+		SELECT COUNT(*) FROM PRODUCT_API WHERE isbn = #{isbn}
+	</select>
 
 	 <!-- 도서 목록 조회 -->
 	<select id="selectAllBooks" resultType="BookVO">
-	    SELECT
-		      p.title,
-		      p.author,
-		      b.BOOK_TRANS AS bookTrans,
-		      p.publisher,
-		      p.isbn,
-		      p.discount,
-		      b.BOOK_CATEGORY AS bookCategory,
-		      b.BOOK_STOCK AS bookStock,
-		      p.pubdate,
-		      b.BOOK_NO AS bookNo,
-		      b.BOOK_STATE AS bookState
-		    FROM BOOK b
-		    INNER JOIN PRODUCT_API p ON b.isbn = p.isbn
-		    ORDER BY b.BOOK_RDATE DESC
+		SELECT
+		   p.title,
+		   p.author,
+		   b.BOOK_TRANS AS bookTrans,
+		   p.publisher,
+		   p.isbn,
+		   p.discount,
+		   b.BOOK_CATEGORY AS bookCategory,
+		   b.BOOK_STOCK AS bookStock,
+		   p.pubdate,
+		   b.BOOK_NO AS bookNo,
+		   b.BOOK_STATE AS bookState,
+		   p.description
+		 FROM BOOK b
+		 INNER JOIN PRODUCT_API p ON b.isbn = p.isbn
+		 ORDER BY b.BOOK_RDATE DESC
 	</select>
-    
+	
+	<select id="selectBooksWithProductInfo" resultType="com.bookGap.vo.ProductApiVO">
+		SELECT 
+		    p.isbn,
+		    p.title,
+		    p.image,
+		    p.discount
+		FROM BOOK b
+		INNER JOIN PRODUCT_API p ON b.isbn = p.isbn
+	</select>
+	
+	<select id="selectDistinctCategories" resultType="String">
+		SELECT DISTINCT BOOK_CATEGORY FROM BOOK ORDER BY BOOK_CATEGORY ASC
+	</select>
+	
+	<select id="selectBooksByCategory" parameterType="String" resultType="com.bookGap.vo.ProductApiVO">
+		SELECT 
+		    p.isbn,
+		    p.title,
+		    p.image,
+		    p.discount
+		FROM BOOK b
+		INNER JOIN PRODUCT_API p ON b.isbn = p.isbn
+		WHERE b.BOOK_CATEGORY = #{category}
+		ORDER BY b.BOOK_RDATE DESC
+	</select>
+		
+		
+	<select id="selectBooksPaging" parameterType="SearchVO" resultType="com.bookGap.vo.ProductApiVO">
+		SELECT p.isbn, p.title, p.image, p.discount
+		FROM BOOK b
+		INNER JOIN PRODUCT_API p ON b.isbn = p.isbn
+		ORDER BY b.BOOK_RDATE DESC
+		LIMIT #{start}, #{perPage}
+	</select>
+	
+	<select id="getBookTotalCount" parameterType="SearchVO" resultType="int">
+		SELECT COUNT(*)
+		FROM BOOK b
+		INNER JOIN PRODUCT_API p ON b.isbn = p.isbn
+	</select>
+	
+	<select id="selectBooksByCategoryPaging" parameterType="SearchVO" resultType="com.bookGap.vo.ProductApiVO">
+		SELECT p.isbn, p.title, p.image, p.discount
+		FROM BOOK b
+		INNER JOIN PRODUCT_API p ON b.isbn = p.isbn
+		WHERE b.BOOK_CATEGORY = #{category}
+		ORDER BY b.BOOK_RDATE DESC
+		LIMIT #{start}, #{perPage}
+	</select>
+	
+	<select id="getBookTotalCountByCategory" parameterType="SearchVO" resultType="int">
+		SELECT COUNT(*)
+		FROM BOOK b
+		INNER JOIN PRODUCT_API p ON b.isbn = p.isbn
+		WHERE b.BOOK_CATEGORY = #{category}
+	</select>
 </mapper>
