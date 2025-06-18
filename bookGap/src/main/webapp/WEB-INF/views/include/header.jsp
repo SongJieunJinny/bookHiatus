@@ -95,7 +95,7 @@
 			      <img id="mypageImg" src="<%=request.getContextPath()%>/resources/img/icon/setting.png" alt="설정">
 			    </a>
 			  </div>
-			</sec:authorize>
+			</sec:authorize> 
 			
 			<sec:authorize access="!hasRole('ROLE_ADMIN')">
 			 <!-- 일반 사용자일 경우: 마이페이지 아이콘 -->
