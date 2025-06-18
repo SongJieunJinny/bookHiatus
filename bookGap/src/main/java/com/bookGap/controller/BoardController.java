@@ -294,6 +294,33 @@ public class BoardController {
       return "board/eventList";
 	}
 	
+	/* GET eventWrite */
+	@RequestMapping(value="/eventWrite.do", method = RequestMethod.GET)
+	public String eventWrite(Model model, @RequestParam("boardType") int boardType) {
+	  model.addAttribute("boardType", boardType);
+	  return "board/eventWrite";
+	}
+	
+	/* POST eventWriteOk */
+	@RequestMapping(value = "/eventWriteOk.do", method = RequestMethod.POST)
+	public String eventWriteOk(BoardVO boardVO, Principal principal,
+	                           @RequestParam("boardTitle") String boardTitle,
+	                           @RequestParam("boardContent") String boardContent,
+	                           @RequestParam("boardType") int boardType) {
+	    
+	  boardVO.setUserId(principal.getName());  // 로그인 사용자 설정
+	  boardVO.setBoardTitle(boardTitle);
+	  boardVO.setBoardContent(boardContent);
+	  boardVO.setBoardType(boardType); // 정수형으로 바인딩
+
+	  int result = boardService.insert(boardVO);
+	  if(result > 0){
+	    return "redirect:eventList.do?boardNo=" + boardVO.getBoardNo() + "&boardType=" + boardVO.getBoardType();
+	  }else{
+	    return "redirect:eventWrite.do?boardType=" + boardVO.getBoardType();
+	  }
+	}
+
 	
 	/* 특수문자 input */
 	private String restoreSanitizedInput(String input) {
