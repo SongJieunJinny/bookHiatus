@@ -85,7 +85,7 @@
   cursor: pointer;
   font-size: 14px;
 }
-/* eventWrite */
+/* eventWrite, eventModify */
 #eventWrite{
 	width: 100%;
 	height: 50%;
@@ -106,10 +106,6 @@
   border-collapse: separate;
   border-spacing: 30px 30px;
   margin-bottom: 2%;
-}
-#qnaEventTable{
-  padding: 2%;
-  padding-bottom: 10%;
 }
 #eventWriteTitleTable{
   width: 100%;	
