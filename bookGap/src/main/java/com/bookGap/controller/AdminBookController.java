@@ -27,10 +27,13 @@ public class AdminBookController {
     @ResponseBody
     public ResponseEntity<String> insertBook(
     		@RequestParam("bookTrans") String bookTrans,
-    		 @RequestParam("isbn") String isbn,
+    		@RequestParam("isbn") String isbn,
     	    @RequestParam("bookCategory") String bookCategory,
     	    @RequestParam("bookStock") int bookStock,
-    	    @RequestParam("bookState") int bookState) {
+    	    @RequestParam("bookState") int bookState,
+    	    @RequestParam("bookImgUrl") String bookImgUrl, 
+    	    @RequestParam("bookIndex") String bookIndex,
+    	    @RequestParam("publisherBookReview") String publisherBookReview ) {
 
         // ISBN 존재 확인
         if (!adminBookService.isIsbnExists(isbn)) {
@@ -44,6 +47,9 @@ public class AdminBookController {
         bookVO.setBookCategory(bookCategory);
         bookVO.setBookStock(bookStock);
         bookVO.setBookState(bookState);
+        bookVO.setBookImgUrl(bookImgUrl);
+        bookVO.setBookIndex(bookIndex);
+        bookVO.setPublisherBookReview(publisherBookReview);
 
         // 등록
         adminBookService.insertBook(bookVO);

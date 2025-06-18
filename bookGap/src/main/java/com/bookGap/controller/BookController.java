@@ -1,6 +1,8 @@
 package com.bookGap.controller;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -74,6 +76,16 @@ public class BookController {
 	    model.addAttribute("category", category); // 선택된 카테고리 유지용
 
 	    return "product/bookList";
+	}
+	
+	@RequestMapping(value = "/product/bookView.do", method = RequestMethod.GET)
+	public String bookDetail(@RequestParam("isbn") String isbn, Model model) {
+		BookVO bookDetail = bookService.getBookDetailByIsbn(isbn);
+	    List<String> categories = bookService.getDistinctCategories();
+	    
+	    model.addAttribute("bookCategories", categories);
+	    model.addAttribute("bookDetail", bookDetail);
+	    return "product/bookView"; // 해당 JSP 파일명
 	}
 
 	

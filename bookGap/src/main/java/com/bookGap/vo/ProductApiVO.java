@@ -14,13 +14,12 @@ public class ProductApiVO {
 	  private String image;//섬네일URL
 	  private String link;//도서정보 url
 	  
-	
 		public String getIsbn() {
-		return isbn;
-	}
-	public void setIsbn(String isbn) {
-		this.isbn = isbn;
-	}
+			return isbn;
+		}
+		public void setIsbn(String isbn) {
+			this.isbn = isbn;
+		}
 		public String getTitle() {
 			return title;
 		}
@@ -69,6 +68,6 @@ public class ProductApiVO {
 		public void setLink(String link) {
 			this.link = link;
 		}
-	  
+
 	  
 }
