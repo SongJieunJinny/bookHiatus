@@ -40,5 +40,9 @@ public class QCommentDAO {
 	public int update(QCommentVO vo) {
 		return sqlSession.update(name_space+"update", vo);
 	}
+	
+	public String getBoardWriterId(int boardNo){
+		return sqlSession.selectOne(name_space+"getBoardWriterId", boardNo);
+	}
 
 }

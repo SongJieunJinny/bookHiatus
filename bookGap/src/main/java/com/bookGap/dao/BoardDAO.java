@@ -49,5 +49,9 @@ public class BoardDAO {
 		return sqlSession.selectList(name_space+"qnaList",searchVO);
 	}
     
+    public List<BoardVO> eventList(SearchVO searchVO){
+		return sqlSession.selectList(name_space+"eventList",searchVO);
+	}
+    
     
 }

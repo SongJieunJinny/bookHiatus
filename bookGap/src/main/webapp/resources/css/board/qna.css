@@ -272,6 +272,7 @@
   font-size: 18px;
   border-radius: 8px;
   cursor: pointer;
+  margin-bottom: 20%;
 }
 #modifyView{
   width: 100%;
@@ -281,6 +282,7 @@
   font-size: 18px;
   border-radius: 8px;
   cursor: pointer;
+  margin-bottom: 20%;
 }
 #listView{
   width: 100%;
@@ -290,6 +292,7 @@
   font-size: 18px;
   border-radius: 8px;
   cursor: pointer;
+  margin-bottom: 20%;
 }
 #qnaViewwriteForm{
 	display:none;
@@ -328,7 +331,7 @@
   height: auto;
   border-radius: 20px;
   border:  1px solid black;
-  margin-bottom: 10%;
+  margin-bottom: 5%;
 }
 #qnaComment h2{
   margin-left: 2%;
@@ -361,14 +364,15 @@ textarea.qnaCommentContent{
   margin-right: 3.2%;
 }
 #qnaCommentButton{
-  width: 7%;
+  width: 8%;
   padding: 0.5%;
   border: solid 1px black;
   background-color: black;
   color: white;
   border-radius: 5px;
-  font-size: medium;
+  font-size: 18px;
   cursor: pointer;
+  margin-bottom: 2%;
 }
 .qnaBox{
   width: 91%;
@@ -500,27 +504,27 @@ textarea.qnaCommentContent{
   color: white;
 }
 .save-btn{
-	width: 78px;
-	height: 30px;
+	width: 90px;
+	height: 35px;
 	border: none;
 	background-color: black;
 	border-radius: 8px;
 	color: white;
 	text-align: center;
 	cursor: pointer;
-	font-size: 15px;
+	font-size: 18px;
 	margin: 1%;
 }
 .cancel-btn{
-	width: 78px;
-	height: 30px;
+	width: 90px;
+	height: 35px;
 	border: none;
 	background-color: black;
 	border-radius: 8px;
 	color: white;
 	text-align: center;
 	cursor: pointer;
-	font-size: 15px;
+	font-size: 18px;
 	margin: 1%;
 }
 

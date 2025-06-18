@@ -2,6 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -66,6 +67,7 @@
 		$(document).ready(function() {
 			boardNo = ${vo.boardNo};
 			boardType = ${vo.boardType};
+			
 			console.log(boardNo);
 	    loadComment(boardNo);
 	       
@@ -90,41 +92,34 @@
 
 		//두번째 변수 생략시 1로 들어감
 		function loadComment(boardNo,page = 1) {
-			
+			const boardWriter = '${vo.userId}'; 
 			console.log("📥 loadComment 호출됨: boardNo =", boardNo, "page =", page); 
 			
 	    $.ajax({
 	      url: "<%= request.getContextPath()%>/comment/loadComment.do",
 	      type: "get",
 	      data: { boardNo: boardNo , cnowpage:page },
-	      success: function(data) { 
-									let html = "";
-									for(qcvo of data.clist){
-										console.log("🧾 댓글 작성자:", qcvo.userId);
-										console.log("👤 현재 로그인:", userId);
-										console.log("🔑 관리자 여부:", userRole);
-										console.log("✅ 버튼 보일 조건:",
-										  (qcvo.userId && userId && qcvo.userId.trim() === userId.trim()) ||
-										  (userRole && userRole.includes('ROLE_ADMIN'))
-										);
-										html +=`<div id="qnaBox\${qcvo.qCommentNo}" class="qnaBox">
-															<div class="qnaIdBox">
-																<div class="qnaId">\${qcvo.userId}</div>
-																<div style="color: gray; font-size: 15px; margin-top: 0.2%; margin-left: 1%; margin-right: 1%;">|</div>
-																<div class="qnaRdate">\${qcvo.formattedQCommentRdate}</div>
+	      success : function(data) { 
+						    	  let html = "";
+										for(qcvo of data.clist){
+											html +=`<div id="qnaBox\${qcvo.qCommentNo}" class="qnaBox">
+																<div class="qnaIdBox">
+																	<div class="qnaId">\${qcvo.userId}</div>
+																	<div style="color: gray; font-size: 15px; margin-top: 0.2%; margin-left: 1%; margin-right: 1%;">|</div>
+																	<div class="qnaRdate">\${qcvo.formattedQCommentRdate}</div>
+																</div>
+																<div id="commentContentContainer\${qcvo.qCommentNo}" class="qnaContainer">
+																	<div class="qnaContentArea">\${qcvo.qCommentContent}</div>`;
+	if(qcvo.userId &&(qcvo.userId.trim() === userId.trim() || userRole.includes("ROLE_ADMIN"))){
+													html +=`<div class="qnaOptions" data-qna-box="\${qcvo.qCommentNo}">⋯
+															      <div id="qnaOptionsMenu\${qcvo.qCommentNo}" class="qnaOptionsMenu">
+															        <button onclick="commentUpdate(\${qcvo.qCommentNo})">수정</button>
+															        <button onclick="commentDel(\${qcvo.qCommentNo})">삭제</button>
+															      </div>
+															    </div>`;
+	}
+												html +=`</div>
 															</div>`;
-													if(qcvo.userId && qcvo.userId.trim() === userId.trim()){
-										 html += `<div id="commentContentContainer\${qcvo.qCommentNo}" class="qnaContainer">
-													      <div id="commentContent\${qcvo.qCommentNo}" class="qnaContentArea">\${qcvo.qCommentContent}</div>
-													      <div class="qnaOptions" data-qna-box="\${qcvo.qCommentNo}">⋯
-														      <div id="qnaOptionsMenu\${qcvo.qCommentNo}" class="qnaOptionsMenu">
-														        <button onclick="commentUpdate(\${qcvo.qCommentNo})">수정</button>
-														        <button onclick="commentDel(\${qcvo.qCommentNo})">삭제</button>
-														      </div>
-														    </div>
-													    </div>`;
-												}
-											html +=`</div>`;
 									}
 									if(data.cpaging){
 										paging = data.cpaging;
@@ -144,43 +139,49 @@
 										}
 										html += `</div>`;
 									}
-					        $(".comment-list").html(html);
-					        
-					        // 페이징 링크에 이벤트 바인딩
-					        $(".paging-link").click(function(e) {
+					      $(".comment-list").html(html);
+					      
+					      // 페이징 링크에 이벤트 바인딩
+					      $(".paging-link").click(function(e) {
 						        e.preventDefault();
 						        let page = $(this).data("page");
 						        loadComment(boardNo, page);
-					        });
+					      });
 							},
-				error: function(xhr, status, error) {
+					error: function(xhr, status, error) {
 								console.error("AJAX Error:", status, error);  // AJAX 오류 상태 및 에러 메시지 출력
 								alert("댓글 로딩 중 오류가 발생했습니다.");
 							 }
-			});
+					});
 		}
 		
 		function commentInsert(boardNo,boardType){
-			$.ajax({
-				url : "<%= request.getContextPath()%>/comment/write.do",
-				type : "post",
-				data : {boardNo : boardNo,
-								boardType : boardType,
-								userId : userId,
-								qCommentContent : $("#qnaCommentContent").val()},
-				success: function (result) {
-						      if (result === "Success") {
-						        alert("댓글이 등록되었습니다.");
-						        $("#qnaCommentContent").val(""); // 입력창 초기화
-						        loadComment(boardNo);            // 목록 새로고침
-						      } else {
-						        alert("등록에 실패했습니다.");
-						      }
-						    },
-				error: function () {
-					      alert("서버 통신 오류가 발생했습니다.");
-					    }
-			});
+			
+			if (!(userId === '${vo.userId}' || userRole.includes("ROLE_ADMIN"))) {
+		    alert("댓글 작성 권한이 없습니다.");
+		    return;
+		  }
+			
+		  $.ajax({
+		    url : "<%= request.getContextPath()%>/comment/write.do",
+		    type : "post",
+		    data : { boardNo : boardNo,
+					       boardType : boardType,
+					       userId : userId,
+			      		 qCommentContent : $("#qnaCommentContent").val() },
+		    success : function (result){
+							      if(result === "Success"){
+							        alert("댓글이 등록되었습니다.");
+							        $("#qnaCommentContent").val(""); 
+							        loadComment(boardNo);
+							      }else{
+							        alert("등록에 실패했습니다.");
+							      }
+							    },
+		    error : function(){
+		      alert("서버 통신 오류가 발생했습니다.");
+		    }
+		  });
 		}
 		
 		function commentUpdate(qCommentNo){
@@ -259,32 +260,40 @@
 			});
 		}
   </script>
-                
-			<!-- 댓글 입력란 시작 -->
-		  <div id="qnaEnd">
-		    <div id="qnaComments">
-		      <div id="commentLayout">
-		        <div id="qnaCommentTitle">QnA</div>
-		      </div>
-		      <div id="reviewView">
-		        <div id="qnaComment">
-		          <h2>&nbsp;QnA</h2>
-		          <div id="qnaCommentContentBox">
-		            <textarea id="qnaCommentContent" name="qCommentContent"></textarea>
-		            <div id="qnaCommentButtonBox">
-		              <button id="qnaCommentButton" onclick="commentInsert(${vo.boardNo},${vo.boardType});">등록</button>
-		            </div>
-		          </div>
-							<!-- 댓글 목록 출력 시작 -->
-							<div class="comment-list">
-							</div>
-	          	<!-- 댓글 목록 출력 끝 -->
-		        </div>
-		      </div>
-		    </div>
-		    <!-- 댓글 입력란 종료 -->
-		    
-		  </div>
+    	<sec:authorize access="isAuthenticated()">
+  			<c:if test="${loginUser.username eq vo.userId or fn:contains(loginUser.authorities, 'ROLE_ADMIN')}">         
+					<!-- 댓글 입력란 시작 -->
+				  <div id="qnaEnd">
+				    <div id="qnaComments">
+				      <div id="commentLayout">
+				        <div id="qnaCommentTitle">
+				        	QnA<a href="qnaView.do?boardNo=${qanVo.boardNo}&boardType=2">${qanVo.boardTitle}
+	              		<c:if test="${qanVo.qCommentCount > 0}">
+											<span style="color:#FF5722;">(${qanVo.qCommentCount })</span>
+										</c:if>
+									</a>
+				        </div>
+				      </div>
+				      <div id="reviewView">
+				        <div id="qnaComment">
+				          <h2>&nbsp;QnA</h2>
+				          <div id="qnaCommentContentBox">
+				            <textarea id="qnaCommentContent" name="qCommentContent"></textarea>
+				            <div id="qnaCommentButtonBox">
+				              <button id="qnaCommentButton" onclick="commentInsert(${vo.boardNo},${vo.boardType});">등록</button>
+				            </div>
+				          </div>
+									<!-- 댓글 목록 출력 시작 -->
+									<div class="comment-list">
+									</div>
+			          	<!-- 댓글 목록 출력 끝 -->
+				        </div>
+				      </div>
+				    </div>
+				    <!-- 댓글 입력란 종료 -->
+				  </div>
+			  </c:if>
+			</sec:authorize>
     </div>
   </section>
   <jsp:include page="/WEB-INF/views/include/footer.jsp" />

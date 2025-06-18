@@ -29,52 +29,69 @@ public class QCommentController {
 	
   @ResponseBody
   @RequestMapping(value="/loadComment.do",method=RequestMethod.GET, produces = "application/json; charset=utf-8")
-  public Map<String,Object> loadComment(int boardNo, Model model, SearchVO searchVO,
-										@RequestParam(value="cnowpage",required = false,defaultValue="1")int cnowpage){
-	  
-	searchVO.setBoardNo(boardNo); 
-		
+  public Map<String,Object> loadComment(int boardNo, Model model, SearchVO searchVO, 
+		  								Principal principal, HttpServletRequest request,
+										@RequestParam(value="cnowpage",required = false, defaultValue="1")int cnowpage){
+	
+    String loginUserId = (principal != null) ? principal.getName() : null;
+    boolean isAdmin = request.isUserInRole("ROLE_ADMIN");
+    String boardWriterId = qCommentService.getBoardWriterId(boardNo);
+
+    searchVO.setBoardNo(boardNo);
     int total = qCommentService.selectTotal(searchVO);
-		
-	PagingUtil paging = new PagingUtil(cnowpage, total, 5);
-		
-	searchVO.setStart(paging.getStart());
-	searchVO.setPerPage(paging.getPerPage());
-		
-	List<QCommentVO> clist = qCommentService.clist(searchVO);
-		
-	// 번호 계산 및 설정
-	int displayNo = total - (cnowpage - 1) * paging.getPerPage();
-	
-	for(QCommentVO qcvo : clist){
-	    System.out.println("댓글 작성자: " + qcvo.getUserId());
+    PagingUtil paging = new PagingUtil(cnowpage, total, 5);
+
+    searchVO.setStart(paging.getStart());
+    searchVO.setPerPage(paging.getPerPage());
+
+    List<QCommentVO> clist = qCommentService.clist(searchVO);
+
+    int displayNo = total - (cnowpage - 1) * paging.getPerPage();
+    
+    for (QCommentVO qcvo : clist) {
+      qcvo.setDisplayNo(displayNo--);
+
+      System.out.println("loginUserId: " + loginUserId);
+      System.out.println("boardWriterId: " + boardWriterId);
+      System.out.println("commentUserId: " + qcvo.getUserId());
+
+      boolean canView = loginUserId != null &&
+              (loginUserId.equals(boardWriterId) ||
+               loginUserId.equals(qcvo.getUserId()) ||
+               isAdmin);
+    }
+    
+    Map<String, Object> map = new HashedMap<>();
+    map.put("clist", clist);
+    map.put("cpaging", paging);
+    map.put("boardType", searchVO.getBoardType());
+
+    return map;
+
 	}
-	for(QCommentVO qcvo : clist){
-	    qcvo.setDisplayNo(displayNo--); // 각 게시물 번호 설정
-	    qcvo.setqCommentContent(restoreSanitizedInput(qcvo.getqCommentContent()));
-	}
-	    
-	Map<String,Object> map = new HashedMap<String, Object>();
-	map.put("clist",clist);
-	map.put("cpaging",paging);
-	map.put("boardType",searchVO.getBoardType());
-	
-	return map;
-  }
   
   @ResponseBody
   @RequestMapping(value="/write.do",method=RequestMethod.POST)
   public String write(QCommentVO vo,HttpServletRequest request,Principal principal,
 					  @RequestParam("boardType") int boardType){
 	
-	vo.setUserId(principal.getName());
+	String loginUserId = principal.getName(); 
+	String boardWriterId = qCommentService.getBoardWriterId(vo.getBoardNo()); // 게시글 작성자
+    boolean isAdmin = request.isUserInRole("ROLE_ADMIN"); // 관리자 여부 확인
 		
-	if(request.getParameter("qCommentContent") != null && !request.getParameter("qCommentContent").equals("")){
-		vo.setqCommentContent(request.getParameter("qCommentContent"));
-	}
-		
-	int result = qCommentService.insert(vo);
+    // 댓글 작성 권한 체크
+    if (!(loginUserId.equals(boardWriterId) || isAdmin)) {
+      return "AccessDenied"; // 또는 403 응답 처리
+    }
+    
+    vo.setUserId(loginUserId);
+    
+    if (request.getParameter("qCommentContent") != null && !request.getParameter("qCommentContent").isEmpty()) {
+        vo.setqCommentContent(request.getParameter("qCommentContent"));
+    }
 
+    int result = qCommentService.insert(vo);
+    
     return result > 0 ? "Success" : "Fail";
   }
   

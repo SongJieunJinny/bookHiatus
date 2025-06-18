@@ -22,5 +22,7 @@ public interface BoardService {
 	public int changeState(int boardNo);
 	
 	public List<BoardVO> qnaList(SearchVO searchVO);
+	
+	public List<BoardVO> eventList(SearchVO searchVO);
 
 }

@@ -15,7 +15,7 @@ public class BoardVO extends UserInfoVO{
 	private Timestamp boardRdate;//등록일자
 	private String formattedBoardRdate;
 
-	private int boardType; //게시글종류(NOTICE, QnA)
+	private int boardType; //게시글종류(NOTICE, QnA, EVENT)
 	private String userId; //아이디 
 	
 	/* attach 테이블 */

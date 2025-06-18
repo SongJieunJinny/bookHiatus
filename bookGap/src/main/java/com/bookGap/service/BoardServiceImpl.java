@@ -52,10 +52,11 @@ public class BoardServiceImpl implements BoardService{
 
 	@Override
 	public List<BoardVO> qnaList(SearchVO searchVO) {
-	    return boardDAO.qnaList(searchVO); // 
+	    return boardDAO.qnaList(searchVO);
 	}
 
-
-
-	
+	@Override
+	public List<BoardVO> eventList(SearchVO searchVO) {
+		return boardDAO.eventList(searchVO);
+	}
 }

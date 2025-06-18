@@ -34,7 +34,7 @@
         <a href="./mypage.html"><img id="mypageImg" src="<%=request.getContextPath()%>/resources/img/icon/edit.png"></a>
       </div>
 			<div id="menuCart" class="menuItem">
-	      <a href="./cart.html"><img id="cartImg" src="<%=request.getContextPath()%>/resources/img/icon/cart.png"></a>
+	      <a href="<%=request.getContextPath()%>/product/cart.do"><img id="cartImg" src="<%=request.getContextPath()%>/resources/img/icon/cart.png"></a>
 	      <span id="cart-count">0</span>
       </div>
 		</div>
@@ -107,7 +107,7 @@
 			</sec:authorize>
 			
 			<div id="menuCart" class="menuItem">
-	      <a href="./cart.html"><img id="cartImg" src="<%=request.getContextPath()%>/resources/img/icon/cart.png"></a>
+	      <a href="<%=request.getContextPath()%>/product/cart.do"><img id="cartImg" src="<%=request.getContextPath()%>/resources/img/icon/cart.png"></a>
 	      <span id="cart-count">0</span>
       </div>
 		</div>

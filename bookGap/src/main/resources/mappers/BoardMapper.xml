@@ -112,4 +112,27 @@
 		 ORDER BY BOARD_NO DESC  
 		 LIMIT #{start}, #{perPage}  
 	</select>
+	
+	<!--  EVENT list mapper  -->
+	<select id="eventList" parameterType="com.bookGap.vo.SearchVO" resultType="com.bookGap.vo.BoardVO">
+		SELECT BOARD_NO AS boardNo,
+					 (SELECT COUNT(*) FROM ECOMMENT e WHERE e.BOARD_NO = b.BOARD_NO AND e.ECOMMENT_STATE = 1) AS eCommentCount,
+					 BOARD_TYPE AS boardType, 
+					 BOARD_TITLE AS boardTitle, 
+					 BOARD_CONTENT AS boardContent, 
+					 BOARD_HIT AS boardHit, 
+					 BOARD_STATE AS boardState, 
+					 BOARD_RDATE   AS boardRdate,  
+		       DATE_FORMAT(BOARD_RDATE, '%Y.%m.%d %H:%i') AS formattedBoardRdate,  
+					 u.USER_ID AS userId 
+			FROM BOARD b  
+		  JOIN USER u ON b.USER_ID = u.USER_ID 
+		 WHERE b.BOARD_STATE = 1  
+		   AND b.BOARD_TYPE = 3  
+		<if test="searchType != null and searchType.equalsIgnoreCase('board_title')">  
+		   AND b.BOARD_TITLE LIKE CONCAT('%', #{searchValue}, '%')  
+		</if>  
+		 ORDER BY BOARD_NO DESC  
+		 LIMIT #{start}, #{perPage} 
+	</select>
 </mapper>
