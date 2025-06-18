@@ -301,17 +301,16 @@ public class BoardController {
 	  return "board/eventWrite";
 	}
 	
-	/* POST eventWriteOk */
+	/* POST eventWrite */
 	@RequestMapping(value = "/eventWriteOk.do", method = RequestMethod.POST)
 	public String eventWriteOk(BoardVO boardVO, Principal principal,
 	                           @RequestParam("boardTitle") String boardTitle,
-	                           @RequestParam("boardContent") String boardContent,
-	                           @RequestParam("boardType") int boardType) {
-	    
-	  boardVO.setUserId(principal.getName());  // 로그인 사용자 설정
+	                           @RequestParam("boardContent") String boardContent) {
+
+	  boardVO.setUserId(principal.getName());
 	  boardVO.setBoardTitle(boardTitle);
 	  boardVO.setBoardContent(boardContent);
-	  boardVO.setBoardType(boardType); // 정수형으로 바인딩
+	  // boardType은 VO로 자동 들어옴
 
 	  int result = boardService.insert(boardVO);
 	  if(result > 0){
@@ -321,6 +320,39 @@ public class BoardController {
 	  }
 	}
 
+	/* GET qnaModify */
+	@RequestMapping(value="/eventModify.do", method=RequestMethod.GET)
+	public String eventModify(Principal principal, Model model, @RequestParam("boardNo") int boardNo) {
+	  String loginUser = principal.getName(); // 로그인 사용자 ID
+	  BoardVO vo = boardService.selectOne(boardNo); // 게시글 조회
+
+	  if(vo == null){
+		// 게시글이 존재하지 않을 경우 목록으로 리디렉트
+	    return "redirect:eventList.do";
+	  }
+	  if(!loginUser.equals(vo.getUserId())){
+	    // 작성자와 로그인 사용자가 다르면 리디렉트
+	    return "redirect:eventList.do?BoardType=" + vo.getBoardType();
+	  }
+
+	  model.addAttribute("vo", vo); // 뷰에 게시글 정보 전달
+	  return "board/eventModify"; // 수정 폼 JSP
+	}
+	
+	/* POST eventModifyOk */
+	@RequestMapping(value="/eventModifyOk.do", method=RequestMethod.POST)
+	public String eventModifyOk(BoardVO boardVO) {
+	  int result = boardService.update(boardVO);
+
+	  if(result > 0){
+	    System.out.println("수정성공");
+	  }else{
+	    System.out.println("수정실패");
+	  }
+
+	  return "redirect:eventList.do?boardType=" + boardVO.getBoardType();
+	}
+	
 	
 	/* 특수문자 input */
 	private String restoreSanitizedInput(String input) {

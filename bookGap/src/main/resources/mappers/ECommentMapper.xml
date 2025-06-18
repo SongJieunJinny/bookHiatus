@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+			"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bookGap.mapper.eCommentMapper"> 
+	<select id="clist" parameterType="com.bookGap.vo.SearchVO" resultType="com.bookGap.vo.ECommentVO">
+	  SELECT ECOMMENT_NO      AS eCommentNo,  
+	         ECOMMENT_CONTENT AS eCommentContent,  
+	         ECOMMENT_STATE   AS eCommentState,  
+	         ECOMMENT_RDATE   AS eCommentRdate,  
+	         DATE_FORMAT(ECOMMENT_RDATE, '%Y.%m.%d') AS formattedECommentRdate,  
+	         u.USER_ID       AS userId,  
+	         BOARD_NO        AS boardNo  
+	    FROM ECOMMENT e  
+	   INNER JOIN USER u ON e.USER_ID = u.USER_ID  
+	   WHERE e.ECOMMENT_STATE != 2
+	     AND BOARD_NO = #{boardNo}  
+	   ORDER BY ECOMMENT_NO DESC  
+	   LIMIT #{start}, #{perPage}
+	</select>
+	
+	<select id="selectTotal" parameterType="com.bookGap.vo.SearchVO" resultType="int">
+		SELECT COUNT(*) as total
+		  FROM ECOMMENT e  
+     INNER JOIN USER u ON e.USER_ID = u.USER_ID  
+       AND e.ECOMMENT_STATE != 2  
+		   AND BOARD_NO = #{boardNo} 
+	</select>
+	
+	<insert id="insert" parameterType="com.bookGap.vo.ECommentVO">
+    INSERT INTO ECOMMENT (ECOMMENT_CONTENT,  
+                          USER_ID,  
+                          BOARD_NO,  
+                          ECOMMENT_RDATE)  
+    VALUES (#{eCommentContent},  
+            #{userId},  
+            #{boardNo},  
+            NOW());
+	</insert>
+
+	<select id="selectOne" parameterType="int" resultType="com.bookGap.vo.ECommentVO">
+	  SELECT ECOMMENT_NO      AS eCommentNo,  
+	         ECOMMENT_CONTENT AS eCommentContent,  
+	         ECOMMENT_STATE   AS eCommentState,  
+	         ECOMMENT_RDATE   AS eCommentRdate,  
+	         DATE_FORMAT(ECOMMENT_RDATE, '%Y.%m.%d') AS formattedECommentRdate,   
+           u.USER_ID       AS userId,  
+           BOARD_NO        AS boardNo  
+      FROM ECOMMENT e    
+      JOIN USER u ON e.USER_ID = u.USER_ID 
+     WHERE e.ECOMMENT_NO = #{eCommentNo}
+	</select>
+	
+  <update id="update" parameterType="com.bookGap.vo.ECommentVO">
+    UPDATE ECOMMENT
+			 SET ECOMMENT_CONTENT = #{eCommentContent} 
+     WHERE ECOMMENT_NO = #{eCommentNo}
+  </update>
+	
+	<update id="changeState" parameterType="int">
+		UPDATE ECOMMENT
+		   SET ECOMMENT_STATE = '2'
+		 WHERE ECOMMENT_NO = #{eCommentNo}
+	</update>
+	
+	<select id="getBoardWriterId" parameterType="int" resultType="String">
+  	SELECT USER_ID FROM BOARD WHERE BOARD_NO = #{boardNo}
+	</select>
+</mapper>
