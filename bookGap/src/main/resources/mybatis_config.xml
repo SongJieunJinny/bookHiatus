@@ -12,6 +12,7 @@
 		<typeAlias type="com.bookGap.vo.SearchVO" alias="SearchVO"/>
 		<typeAlias type="com.bookGap.vo.BoardVO" alias="BoardVO"/>
 		<typeAlias type="com.bookGap.vo.QCommentVO" alias="QCommentVO"/>
+		<typeAlias type="com.bookGap.vo.ECommentVO" alias="ECommentVO"/>
 	</typeAliases>
 
 </configuration>

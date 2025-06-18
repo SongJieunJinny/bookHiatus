@@ -61,4 +61,8 @@
 		   SET QCOMMENT_STATE = '2'
 		 WHERE QCOMMENT_NO = #{qCommentNo}
 	</update>
+	
+	<select id="getBoardWriterId" parameterType="int" resultType="String">
+  	SELECT USER_ID FROM BOARD WHERE BOARD_NO = #{boardNo}
+	</select>
 </mapper>

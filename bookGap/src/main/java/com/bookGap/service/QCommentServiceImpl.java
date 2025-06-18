@@ -44,4 +44,9 @@ public class QCommentServiceImpl implements QCommentService{
 	public int update(QCommentVO vo) {
 		return qCommentDAO.update(vo);
 	}
+
+	@Override
+	public String getBoardWriterId(int boardNo) {
+		return qCommentDAO.getBoardWriterId(boardNo);
+	}
 }

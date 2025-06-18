@@ -256,7 +256,45 @@ public class BoardController {
 		
 	  return "redirect:qnaList.do";
 	}
+	
+	/*-----------------------------------------------------------------------------------------------------*/
+	
+	/* GET eventList */
+	@RequestMapping(value="/eventList.do", method = RequestMethod.GET)
+	public String eventList(Model model, SearchVO searchVO,
+							@RequestParam(value="nowpage",required = false,defaultValue="1")int nowpage) {
+	  
+	  if(searchVO.getBoardType()== null){
+		searchVO.setBoardType(3); // 공지사항 타입 기본값
+	  }
+	  
+	  int total = boardService.boardListSearch(searchVO);
+	  
+	  System.out.println("전체 게시글 수: " + total);
+		
+	  PagingUtil paging = new PagingUtil(nowpage, total, 5);
+	
+	  searchVO.setStart(paging.getStart());
+	  searchVO.setPerPage(paging.getPerPage());
 
+	  List<BoardVO> eventList = boardService.eventList(searchVO);
+		
+	  // 번호 계산 및 설정
+	  int displayNo = total - (nowpage - 1) * paging.getPerPage();
+	  for(BoardVO vo : eventList){
+	    vo.setDisplayNo(displayNo--); // 각 게시물 번호 설정
+        vo.setBoardTitle(restoreSanitizedInput(vo.getBoardTitle()));
+        vo.setBoardContent(restoreSanitizedInput(vo.getBoardContent()));
+	  }
+		
+	  model.addAttribute("eventList",eventList);
+	  model.addAttribute("paging",paging);
+	  System.out.println("넘어온 boardType: " + searchVO.getBoardType());
+
+      return "board/eventList";
+	}
+	
+	
 	/* 특수문자 input */
 	private String restoreSanitizedInput(String input) {
       if(input == null) {

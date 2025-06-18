@@ -18,4 +18,6 @@ public interface QCommentService {
 	public int changeState(int qCommentNo);
 	
 	public int update(QCommentVO vo);
+	
+	public String getBoardWriterId(int boardNo);
 }
