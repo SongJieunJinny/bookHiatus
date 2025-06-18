@@ -15,9 +15,8 @@ public class AboutController {
 	@Autowired
 	public BookService bookService;
 	@RequestMapping(value = "/about.do", method = RequestMethod.GET)
-	public String about(Model model) {
-		List<String> categories = bookService.getDistinctCategories();
-	    model.addAttribute("bookCategories", categories);
+	public String about() {
+		
 		return "about";
 	}
 

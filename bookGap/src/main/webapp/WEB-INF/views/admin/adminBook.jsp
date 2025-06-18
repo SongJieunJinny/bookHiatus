@@ -109,14 +109,14 @@
                               </div>
                               <div class="mb-3">
                                 <label class="form-label">ISBN</label>
-                                <input type="number" id="isbn" class="form-control" required>
+                                <input type="text" id="isbn" class="form-control" required>
                               </div>
                               <div class="mb-3">
                                 <label class="form-label">가격 (₩)</label>
                                 <input type="number" id="discount" class="form-control" min="0" required>
                               </div>
                               <div class="mb-3">
-                                <label class="form-label">도서 상세 내용</label>
+                                <label class="form-label">책 소개</label>
                                 <textarea id="description" class="form-control" rows="3"></textarea>
                               </div>
                               <div class="mb-3">
@@ -145,6 +145,22 @@
                                   <option value="0">품절</option>
                                   <option value="1">판매중</option>
                                 </select>
+                              </div>
+                              <div class="mb-3">
+                                <label class="form-label">도서정보링크</label>
+                                <input type="text" id="link" class="form-control" required>
+                              </div>
+                              <div class="mb-3">
+                                <label class="form-label">도서상세이미지URL</label>
+                                <input type="text" id="bookImgUrl" class="form-control" required>
+                              </div>
+                               <div class="mb-3">
+                                <label class="form-label">책 목차 </label>
+                                <textarea id="bookIndex" class="form-control" rows="10"></textarea>
+                              </div>
+                               <div class="mb-3">
+                                <label class="form-label">출판사 서평 </label>
+                                <textarea id="publisherBookReview" class="form-control" rows="10"></textarea>
                               </div>
                               <button type="button" class="btn btn-dark" id="saveBook">등록</button>
                               <button type="button" class="btn btn-secondary" id="cancelForm">취소</button>
@@ -200,6 +216,10 @@
                 								<button class="btn btn-danger btn-sm deleteBook">삭제</button>
                 					  </td>
                 					  <td class="bookDesc" style="display: none;">${vo.description}</td>
+                					  <td class="bookLink" style="display: none;">${vo.link}</td>
+                					  <td class="bookImgUrl" style="display: none;">${vo.bookImgUrl}</td>
+                					  <td class="bookIndex" style="display: none;">${vo.bookIndex}</td>
+                					  <td class="publisherBookReview" style="display: none;">${vo.publisherBookReview}</td>
                                   </tr>
                                   </c:forEach>
                               </tbody>
@@ -239,7 +259,7 @@
 		        document.getElementById("isbn").value = data.isbn?.split(" ")[0] || "";
 		        document.getElementById("discount").value = data.discount || "";
 		        document.getElementById("description").value = data.description || "";
-		
+				document.getElementById("link").value = data.link || "";
 		        const pubdateInput = document.getElementById("pubdate");
 		        let rawDate = (data.pubdate || '').toString().replace(/[^\d]/g, ''); // 숫자만 남기기
 		        console.log("정제된 rawDate:", rawDate);
@@ -277,15 +297,26 @@
 			      $('#bookFormContainer').show();
 			      $(this).hide();
 			    });
-	
+				
 			    // 등록
 			    $('#saveBook').click(function() {
+			    	 	const stockVal = $('#bookStock').val();
+					   
+					    if (!stockVal || isNaN(stockVal)) {
+					      alert('재고 수량이 올바르지 않습니다.');
+					      return;
+					    }
+					   
 			      const formData = {
 			    		  bookTrans: $('#bookTrans').val(),
 			    		  isbn: $('#isbn').val(),
 			    		  bookCategory: $('#bookCategory').val(),
 			    		  bookStock: parseInt($('#bookStock').val()),
-			    		  bookState: parseInt($('#bookState').val())
+			    		  bookState: parseInt($('#bookState').val()),
+			    		  bookImgUrl: $('#bookImgUrl').val(),
+			    		  bookIndex: $('#bookIndex').val(),
+			    		  publisherBookReview: $('#publisherBookReview').val()
+			    		  
 			      };
 	
 			      $.ajax({
@@ -324,6 +355,12 @@
 			      $('#bookNo').val(row.find('td:eq(9)').text());
 			      $('#bookState').val(row.find('td:eq(10)').text() === '판매중' ? '1' : '0');
 			      $('#description').val(row.find('.bookDesc').text());
+			      $('#link').val(row.find('.bookLink').text());
+			      $('#bookImgUrl').val(row.find('.bookImgUrl').text());
+			      $('#bookIndex').val(row.find('.bookIndex').text());
+			      $('#publisherBookReview').val(row.find('.publisherBookReview').text());
+			     
+			      
 	
 			      $('#bookFormContainer').show();
 			      $('#toggleFormBtn').hide();
@@ -342,7 +379,10 @@
 			        isbn: $('#isbn').val(),
 			        bookCategory: $('#bookCategory').val(),
 			        bookStock: parseInt($('#bookStock').val()),
-		    		bookState: parseInt($('#bookState').val())
+		    		bookState: parseInt($('#bookState').val()),
+		    		bookImgUrl: $('#bookImgUrl').val(),
+		    		bookIndex: $('#bookIndex').val(),
+		    		publisherBookReview: $('#publisherBookReview').val()
 			      };
 	
 			      $.ajax({

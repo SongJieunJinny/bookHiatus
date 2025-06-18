@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.bookGap.dao.BookDAO;
+import com.bookGap.vo.BookVO;
 import com.bookGap.vo.ProductApiVO;
 import com.bookGap.vo.SearchVO;
 
@@ -48,5 +49,10 @@ public class BookServiceImpl implements  BookService{
 	 @Override
 	 public int getTotalByCategory(SearchVO vo) {
 	     return bookDAO.getBookTotalCountByCategory(vo);
+	 }
+	 
+	 @Override
+	 public BookVO getBookDetailByIsbn(String isbn) {
+	     return bookDAO.selectBookDetailByIsbn(isbn);
 	 }
 }
