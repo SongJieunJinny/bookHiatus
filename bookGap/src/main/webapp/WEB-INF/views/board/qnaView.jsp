@@ -96,7 +96,7 @@
 			console.log("📥 loadComment 호출됨: boardNo =", boardNo, "page =", page); 
 			
 	    $.ajax({
-	      url: "<%= request.getContextPath()%>/comment/loadComment.do",
+	      url: "<%= request.getContextPath()%>/qComment/loadComment.do",
 	      type: "get",
 	      data: { boardNo: boardNo , cnowpage:page },
 	      success : function(data) { 
@@ -163,7 +163,7 @@
 		  }
 			
 		  $.ajax({
-		    url : "<%= request.getContextPath()%>/comment/write.do",
+		    url : "<%= request.getContextPath()%>/qComment/write.do",
 		    type : "post",
 		    data : { boardNo : boardNo,
 					       boardType : boardType,
@@ -222,7 +222,7 @@
 			const originalElement = commentElement.text(inputElement.val().trim());
 			
 			$.ajax({
-				url : "<%= request.getContextPath()%>/comment/modify.do",
+				url : "<%= request.getContextPath()%>/qComment/modify.do",
 				type : "post",
 				data : { qCommentNo : qCommentNo,
 								 qCommentContent : newText,
@@ -246,7 +246,7 @@
 		
 		function commentDel(qCommentNo){
 			$.ajax({
-				url : "<%= request.getContextPath()%>/comment/delete.do",
+				url : "<%= request.getContextPath()%>/qComment/delete.do",
 				type : "post",
 				data : {qCommentNo : qCommentNo},
 				success : function(result){
