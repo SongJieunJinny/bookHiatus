@@ -21,13 +21,14 @@ public class BoardController {
 	@Autowired 
     private BoardService boardService;
 	
+	/*-----------------------------------------------------------------------------------------------------*/
 	/* GET noticeList */
 	@RequestMapping(value="/noticeList.do", method = RequestMethod.GET)
 	public String noticeList(Model model, SearchVO searchVO,
-							@RequestParam(value="nowpage",required = false,defaultValue="1")int nowpage) {
+							             @RequestParam(value="nowpage",required = false,defaultValue="1")int nowpage) {
 	  
 	  if(searchVO.getBoardType()== null){
-		searchVO.setBoardType(1); // 공지사항 타입 기본값
+  		searchVO.setBoardType(1); // 공지사항 타입 기본값
 	  }
 	  
 	  int total = boardService.boardListSearch(searchVO);
@@ -54,7 +55,7 @@ public class BoardController {
 		
 	  System.out.println("받은 검색어: " + searchVO.getSearchValue());
 	  System.out.println("게시글 개수: " + list.size());
-      return "board/noticeList";
+    return "board/noticeList";
 	}
 	
 	/* GET noticeWrite */
@@ -77,6 +78,7 @@ public class BoardController {
 	  boardVO.setBoardType(boardType); // 정수형으로 바인딩
 
 	  int result = boardService.insert(boardVO);
+	  
 	  if(result > 0){
 	    return "redirect:noticeList.do?boardNo=" + boardVO.getBoardNo() + "&boardType=" + boardVO.getBoardType();
 	  }else{
@@ -92,8 +94,8 @@ public class BoardController {
 	  BoardVO vo = boardService.selectOne(boardNo);
 
 	  if(vo == null){
-        System.out.println("해당 게시글이 없습니다. boardNo=" + boardNo);
-        return "redirect:/noticeList.do";
+      System.out.println("해당 게시글이 없습니다. boardNo=" + boardNo);
+      return "redirect:/noticeList.do";
 	  }
 
 	  model.addAttribute("vo", vo);
@@ -147,7 +149,7 @@ public class BoardController {
 	/* GET qnaList */
 	@RequestMapping(value="/qnaList.do", method = RequestMethod.GET)
 	public String qnaList(Model model,SearchVO searchVO,
-						  @RequestParam(value="nowpage",required = false,defaultValue="1")int nowpage) { 
+						            @RequestParam(value="nowpage",required = false,defaultValue="1")int nowpage) { 
 
 	  int total = boardService.boardListSearch(searchVO);
 		
@@ -162,12 +164,13 @@ public class BoardController {
 	  int displayNo = total - (nowpage - 1) * paging.getPerPage();
 	  for(BoardVO vo : qanList){
 	    vo.setDisplayNo(displayNo--); // 각 게시물 번호 설정
-        vo.setBoardTitle(restoreSanitizedInput(vo.getBoardTitle()));
-        vo.setBoardContent(restoreSanitizedInput(vo.getBoardContent()));
+      vo.setBoardTitle(restoreSanitizedInput(vo.getBoardTitle()));
+      vo.setBoardContent(restoreSanitizedInput(vo.getBoardContent()));
 	  }
 		
 	  model.addAttribute("qanList",qanList);
 	  model.addAttribute("paging",paging);
+	  
 	  System.out.println("넘어온 boardType: " + searchVO.getBoardType());
 		
 	  return "board/qnaList";
@@ -193,6 +196,7 @@ public class BoardController {
 	  boardVO.setBoardType(boardType); // 정수형으로 바인딩
 
 	  int result = boardService.insert(boardVO);
+	  
 	  if(result > 0){
 	    return "redirect:qnaList.do?boardNo=" + boardVO.getBoardNo() + "&boardType=" + boardVO.getBoardType();
 	  }else{
@@ -240,8 +244,8 @@ public class BoardController {
 	  BoardVO vo = boardService.selectOne(boardNo);
 
 	  if(vo == null){
-        System.out.println("해당 게시글이 없습니다. boardNo=" + boardNo);
-        return "redirect:/qnaList.do";
+      System.out.println("해당 게시글이 없습니다. boardNo=" + boardNo);
+      return "redirect:/qnaList.do";
 	  }
 
 	  model.addAttribute("vo", vo);
@@ -262,10 +266,10 @@ public class BoardController {
 	/* GET eventList */
 	@RequestMapping(value="/eventList.do", method = RequestMethod.GET)
 	public String eventList(Model model, SearchVO searchVO,
-							@RequestParam(value="nowpage",required = false,defaultValue="1")int nowpage) {
+							            @RequestParam(value="nowpage",required = false,defaultValue="1")int nowpage) {
 	  
 	  if(searchVO.getBoardType()== null){
-		searchVO.setBoardType(3); // 공지사항 타입 기본값
+	    searchVO.setBoardType(3); // 공지사항 타입 기본값
 	  }
 	  
 	  int total = boardService.boardListSearch(searchVO);
@@ -283,21 +287,24 @@ public class BoardController {
 	  int displayNo = total - (nowpage - 1) * paging.getPerPage();
 	  for(BoardVO vo : eventList){
 	    vo.setDisplayNo(displayNo--); // 각 게시물 번호 설정
-        vo.setBoardTitle(restoreSanitizedInput(vo.getBoardTitle()));
-        vo.setBoardContent(restoreSanitizedInput(vo.getBoardContent()));
+      vo.setBoardTitle(restoreSanitizedInput(vo.getBoardTitle()));
+      vo.setBoardContent(restoreSanitizedInput(vo.getBoardContent()));
 	  }
 		
 	  model.addAttribute("eventList",eventList);
 	  model.addAttribute("paging",paging);
+	  
 	  System.out.println("넘어온 boardType: " + searchVO.getBoardType());
 
-      return "board/eventList";
+    return "board/eventList";
 	}
 	
 	/* GET eventWrite */
 	@RequestMapping(value="/eventWrite.do", method = RequestMethod.GET)
 	public String eventWrite(Model model, @RequestParam("boardType") int boardType) {
+	  
 	  model.addAttribute("boardType", boardType);
+	  
 	  return "board/eventWrite";
 	}
 	
@@ -313,6 +320,7 @@ public class BoardController {
 	  // boardType은 VO로 자동 들어옴
 
 	  int result = boardService.insert(boardVO);
+	  
 	  if(result > 0){
 	    return "redirect:eventList.do?boardNo=" + boardVO.getBoardNo() + "&boardType=" + boardVO.getBoardType();
 	  }else{
@@ -353,19 +361,44 @@ public class BoardController {
 	  return "redirect:eventList.do?boardType=" + boardVO.getBoardType();
 	}
 	
+	 /* GET eventView */
+  @RequestMapping(value="/eventView.do", method = RequestMethod.GET)
+  public String eventView(Model model, @RequestParam("boardNo") int boardNo) {
+    
+    BoardVO vo = boardService.selectOne(boardNo);
+
+    if(vo == null){
+      System.out.println("해당 게시글이 없습니다. boardNo=" + boardNo);
+      return "redirect:/eventList.do";
+    }
+
+    model.addAttribute("vo", vo);
+    return "board/eventView";
+  }
+  
+  /* GET eventDelete */
+  @RequestMapping(value="/eventDelete.do",method=RequestMethod.POST)
+  public String eventDelete(int boardNo) {
+    
+    int result = boardService.changeState(boardNo);
+    
+    return "redirect:eventList.do";
+  }
 	
 	/* 특수문자 input */
-	private String restoreSanitizedInput(String input) {
-      if(input == null) {
-        return null;
-      }input = input
-        .replaceAll("&lt;", "<")
-        .replaceAll("&gt;", ">")
-        .replaceAll("&quot;", "\"")
-        .replaceAll("&#x27;", "'")
-        .replaceAll("&amp;", "&")
-        .replaceAll("<br>", "\n");
-      
-      return input;
+	private String restoreSanitizedInput(String input){
+	  
+    if(input == null) {
+      return null;
     }
+    input = input
+      .replaceAll("&lt;", "<")
+      .replaceAll("&gt;", ">")
+      .replaceAll("&quot;", "\"")
+      .replaceAll("&#x27;", "'")
+      .replaceAll("&amp;", "&")
+      .replaceAll("<br>", "\n");
+      
+    return input;
+  }
 }
