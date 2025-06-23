@@ -52,8 +52,11 @@
 		<script>
 			let boardNo = "";
 			let boardType = "";
-			let userId = '${loginUser.username}';
-			let userRole = '${loginUser.authorities}';
+			let userId = '<sec:authentication property="name" />';
+			let userRole = '<sec:authentication property="authorities" htmlEscape="false" />';
+			
+			console.log("✅ userId:", userId);
+			console.log("✅ userRole:", userRole);
 			
 			$(document).ready(function() {
 				boardNo = ${vo.boardNo};
@@ -101,7 +104,7 @@
 												</div>
 												<div id="commentContentContainer\${ecvo.eCommentNo}" class="eventContainer">
 													<div class="eventContentArea">\${ecvo.eCommentContent}</div>`;
-								if(ecvo.userId &&(ecvo.userId.trim() === userId.trim() || userRole.includes("ROLE_ADMIN"))){
+								if(userRole.includes("ROLE_ADMIN") || (ecvo.userId && ecvo.userId.trim() === userId.trim())){
 									html +=`<div class="eventOptions" data-event-box="\${ecvo.eCommentNo}">⋯
 											      <div id="eventOptionsMenu\${ecvo.eCommentNo}" class="eventOptionsMenu">
 											        <button onclick="commentUpdate(\${ecvo.eCommentNo})">수정</button>

@@ -24,148 +24,266 @@
 </c:choose>
 	<section>
 		<div id="bookView">
-          <div class="bookPart">   
-            <div class="bookItem">
-              <a href="#"><img src="${bookDetail.image}" alt="${bookDetail.title}"></a>
-            </div>
-            <div class="bookInfo">
-              <div id="bookTitle" name="title">${bookDetail.title}</div>
-							<div id="bookDiscount" name="discount">가격: <fmt:formatNumber value="${bookPrice}" type="number"/>원</div>
-							<div id="bookAuthor" name="author"> 저자: ${bookDetail.author}</div>
-							<div id="bookPublisher" name="publisher">출판사: ${bookDetail.publisher}</div>
-							<div id="bookPubdate" name="pubdate">출간일: ${bookDetail.pubdate}</div>
-							<div id="bookIsbn" name="isbn">ISBN: ${bookDetail.isbn}</div>
-							<div>배송비 : 3,000원 (50,000원 이상 구매 시 무료)<br>
-							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;제주 및 도서 산간 3,000원 추가 </div>
-							<div id="bookOrderCheck">
-							<div id="bookTitle1" name="title">${bookDetail.title}</div>
-							<div id="bookQuantity">
-								<div class="quantity">
-									<button class="minus">−</button>
-									<input type="text" value="1" class="num">
-									<button class="plus">+</button>
-								</div>
-								<div id="totalPrice" name="TOTAL-PRICE">26,000원</div>
+      <div class="bookPart">   
+        <div class="bookItem">
+          <a href="#"><img src="${bookDetail.image}" alt="${bookDetail.title}"></a>
+        </div>
+        <div class="bookInfo">
+          <div id="bookTitle" name="title">${bookDetail.title}</div>
+					<div id="bookDiscount" name="discount">가격: <fmt:formatNumber value="${bookPrice}" type="number"/>원</div>
+					<div id="bookAuthor" name="author"> 저자: ${bookDetail.author}</div>
+					<div id="bookPublisher" name="publisher">출판사: ${bookDetail.publisher}</div>
+					<div id="bookPubdate" name="pubdate">출간일: ${bookDetail.pubdate}</div>
+					<div id="bookIsbn" name="isbn">ISBN: ${bookDetail.isbn}</div>
+					<div>배송비 : 3,000원 (50,000원 이상 구매 시 무료)<br>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;제주 및 도서 산간 3,000원 추가 </div>
+					<div id="bookOrderCheck">
+						<div id="bookTitle1" name="title">${bookDetail.title}</div>
+						<div id="bookQuantity">
+							<div class="quantity">
+								<button class="minus">−</button>
+								<input type="text" value="1" class="num">
+								<button class="plus">+</button>
 							</div>
-							</div>
-							<div id="bookCheckBtn">
-								<div >
-									<button  id="bookChartBtn">장바구니</button>
-								</div>
-								<div >
-									<button id="bookOrderBtn">바로구매</button>
-								</div>
-							</div>
+							<div id="totalPrice" name="TOTAL-PRICE">26,000원</div>
 						</div>
-					</div> 
-				</div>
-				<div id="bookDetails">
-					<c:if test="${not empty bookDetail.bookImgUrl}">
-					  <div id="bookImgS">
-					    <div id="bookDetailsImgs">
-					      <img src="${bookDetail.bookImgUrl}" alt="${bookDetail.title}" >
-					    </div>
-					  </div>
-					</c:if>
-					<div id="bookDescription">
-						<c:if test="${not empty bookDetail.description}">
-						  <div style="margin-top: 50px;" class="book-section">
-						    <strong>책 소개</strong>
-						    <div  id="descriptionText" class="collapsible-text"><c:out value="${bookDetail.description}" escapeXml="false" /></div>
-						    <button class="toggle-btn" data-target="descriptionText">
-						    </button>
-						  </div>
-						</c:if>
-						
-						<c:if test="${not empty bookDetail.bookIndex}">
-						  <div style="margin-top: 30px;" class="book-section">
-						    <strong>목차</strong>
-						    <div id="bookIndexText" class="collapsible-text"><c:out value="${bookDetail.bookIndex}" escapeXml="false" /></div>
-						    <button class="toggle-btn" data-target="bookIndexText" >
-						    </button>
-						  </div>
-						</c:if>
-						
-						<c:if test="${not empty bookDetail.publisherBookReview}">
-						  <div style="margin-top: 30px;" class="book-section">
-						    <strong>출판사 서평</strong>
-						   <div id="publisherBookReviewText" class="collapsible-text"><c:out value="${bookDetail.publisherBookReview}" escapeXml="false" /></div>
-						    <button class="toggle-btn" data-target="publisherBookReviewText">
-						    </button>
-						  </div>
-						</c:if>
 					</div>
-				</div>
-				<div id="bookComments">
-					<div id="commentLayout">
-						<div id="commentTitle">전체리뷰(3)</div>
-					</div>
-					<div id="review">
-						<div id="bookComment">
-							<h2>리뷰</h2>
-							<form onsubmit="return validateReviewForm(this)">
-								<div class="bookCommentBox">
-									<span class="star">★★★★★
-										<span>★★★★★</span>
-										<input type="range" oninput="drawStar(this)" value="0" step="1" min="0" max="5" name="rating">
-									</span>
-									<div>
-										<textarea class="reviewComment" placeholder="&nbsp;리뷰를 입력해주세요" name="content"></textarea>
-									</div>
-									<div class="bookCommentButton">
-										<button>등록</button>
-									</div>
-								</div>
-							</form>
-							<div class="reviewBox">
-								<div>
-									<div class="reviewIdBox">
-										<div class="reviewId">qortmddn***</div>
-										<div style="color: gray; margin-top: 1%;">|</div>
-										<div class="reviewRdate">2024-12-02</div>
-										<div class="reviewLike">
-											<span>🤍</span>
-											<input type="checkbox" onclick="toggleLike(this)">
-										</div>
-									</div>
-									<div>
-										<span class="star1">★★★★★
-											<span> ★★★★★</span>
-											<input type="range" class="reviewStar" value="3" step="1" min="0" max="5" disabled>
-										</span>
-									</div>
-									<!-- 기존 리뷰 내용 -->
-									<div class="reviewContent">
-										<textarea class="reviewContent" readonly="readonly">리뷰내용입니다.</textarea>
-										<div class="reviewOptions">
-											<span class="optionsToggle" onclick="toggleOptions(this)">⋯</span>
-											<div class="optionsMenu">
-												<button onclick="editReview(this)">수정</button>
-												<button onclick="deleteReview(this)">삭제</button>
-												<button onclick="reportReview(this)">신고</button>
-											</div>
-											<div class="editButtons">
-												<button onclick="saveReview(this)">수정완료</button>
-												<button onclick="cancelEdit(this)">취소</button>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="paging">
-								<ul class="pagination">
-									<li class="disabled"><a href="#">«</a></li>
-									<li class="active"><a href="#">1</a></li>
-									<li><a href="#">2</a></li>
-									<li><a href="#">3</a></li>
-									<li><a href="#">4</a></li>
-									<li><a href="#">5</a></li>
-									<li><a href="#">»</a></li>
-								</ul>
-							</div>                        
+					<div id="bookCheckBtn">
+						<div >
+							<button  id="bookChartBtn">장바구니</button>
+						</div>
+						<div >
+							<button id="bookOrderBtn">바로구매</button>
 						</div>
 					</div>
 				</div>
+			</div> 
+		</div>
+		<div id="bookDetails">
+			<c:if test="${not empty bookDetail.bookImgUrl}">
+			  <div id="bookImgS">
+			    <div id="bookDetailsImgs">
+			      <img src="${bookDetail.bookImgUrl}" alt="${bookDetail.title}" >
+			    </div>
+			  </div>
+			</c:if>
+			<div id="bookDescription">
+				<c:if test="${not empty bookDetail.description}">
+				  <div style="margin-top: 50px;" class="book-section">
+				    <strong>책 소개</strong>
+				    <div id="descriptionText" class="collapsible-text"><c:out value="${bookDetail.description}" escapeXml="false" /></div>
+				    <button class="toggle-btn" data-target="descriptionText">
+				    </button>
+				  </div>
+				</c:if>
+				
+				<c:if test="${not empty bookDetail.bookIndex}">
+				  <div style="margin-top: 30px;" class="book-section">
+				    <strong>목차</strong>
+				    <div id="bookIndexText" class="collapsible-text"><c:out value="${bookDetail.bookIndex}" escapeXml="false" /></div>
+				    <button class="toggle-btn" data-target="bookIndexText" >
+				    </button>
+				  </div>
+				</c:if>
+				
+				<c:if test="${not empty bookDetail.publisherBookReview}">
+				  <div style="margin-top: 30px;" class="book-section">
+				    <strong>출판사 서평</strong>
+				   <div id="publisherBookReviewText" class="collapsible-text"><c:out value="${bookDetail.publisherBookReview}" escapeXml="false" /></div>
+				    <button class="toggle-btn" data-target="publisherBookReviewText">
+				    </button>
+				  </div>
+				</c:if>
+			</div>
+		</div>
+		<script type="text/javascript">
+			let bookNo = "";
+			let userId = '<sec:authentication property="name" />';
+			let userRole = '<sec:authentication property="authorities" htmlEscape="false" />';
+			
+			console.log("✅ userId:", userId);
+			console.log("✅ userRole:", userRole);
+			
+			$(document).ready(function() {
+				bookNo = ${vo.bookNo};
+				
+				console.log(bookNo);
+		    loadComment(bookNo);
+		       
+		    // 메뉴 버튼 이벤트 초기화
+		    $(document).on('click', '.eventOptions', function(event) {
+		     event.stopPropagation(); // 이벤트 전파 방지
+		     let commentNo = $(this).data("reviewBox");
+		     $(".optionsMenu").hide(); // 다른 메뉴 숨김
+		     $("#optionsMenu" + eCommentNo).toggle(); // 현재 메뉴 토글
+		    });
+		
+		    // 문서의 다른 곳 클릭하면 모든 메뉴 숨김
+		    $(document).click(function() {
+		    	$(".optionsMenu").hide();
+		    });
+		
+		    // 메뉴 내부 클릭 시 메뉴가 닫히지 않도록 방지
+		    $(document).on('click', '.optionsMenu', function(event) {
+		    	event.stopPropagation();
+		    });
+			});
+			
+			//두번째 변수 생략시 1로 들어감
+			function loadComment(boardNo,page = 1) {
+				const boardWriter = '${vo.userId}'; 
+				console.log("📥 loadComment 호출됨: bookNo =", bookNo, "page =", page); 
+				
+		    $.ajax({
+		      url: "<%= request.getContextPath()%>/comment/loadComment.do",
+		      type: "get",
+		      data: { bookNo: bookNo , cnowpage:page },
+		      success : function(data) { 
+							    	  let html = "";
+						for(cvo of data.clist){
+							html +=`<div id="reviewBox\${cvo.commentNo}" class="reviewBox">
+												<div>
+													<div class="reviewIdBox">
+														<div class="reviewId">\${cvo.userId}</div>
+														<div style="color: gray; font-size: 15px; margin-top: 0.2%; margin-left: 1%; margin-right: 1%;">|</div>
+														<div class="reviewRdate">\${cvo.formattedCommentRdate}</div>
+														<div class="reviewLike">
+															<span>🤍</span>
+															<input type="checkbox" onclick="toggleLike(this)">
+														</div>
+													</div>
+													<div>
+														<span class="star1">★★★★★
+															<span> ★★★★★</span>
+															<input type="range" class="reviewStar" value="3" step="1" min="0" max="5" disabled>
+														</span>
+													</div>
+													<div class="reviewContent">
+														<div class="reviewContent\${cvo.commentNo}">\${cvo.eCommentContent}</div>`;
+								if(userRole.includes("ROLE_ADMIN") || (cvo.userId && cvo.userId.trim() === userId.trim())){
+										html +=`<div class="reviewOptions">
+															<span class="optionsToggle" onclick="toggleOptions(this)" data-box="\${cvo.commentNo}">⋯</span>
+															<div class="optionsMenu" id="optionsMenu\${cvo.commentNo}">
+																<button onclick="editReview(\${cvo.commentNo})">수정</button>
+																<button onclick="deleteReview(\${cvo.commentNo})">삭제</button>
+																<button onclick="reportReview(this)">신고</button>
+															</div>
+															<div class="editButtons">
+																<button onclick="saveReview(this)">수정완료</button>
+																<button onclick="cancelEdit(this)">취소</button>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>`;
+								}
+						}
+						if(data.cpaging){
+							paging = data.cpaging;
+							html += `<div class="pagination">`;
+							if(paging.startPage > 1){
+								html += `<a class="paging-link" data-page="\${paging.startPage - 1}">&lt;</a>`;
+							} 
+							for(let cnt = paging.startPage; cnt <= paging.endPage; cnt++){
+								if(paging.nowPage == cnt){
+									html += `<a id="default" style="color:#FF5722; cursor:default;">\${cnt }</a>`;
+								}else{
+									html += `<a class="paging-link" data-page="\${cnt}">\${cnt}</a>`;
+								}
+							}	
+							if(paging.endPage < paging.lastPage){
+								html += `<a class="paging-link" data-page="\${paging.endPage + 1}">&gt;</a>`;
+							}
+							html += `</div>`;
+						}
+						      		$(".comment-list").html(html);
+						      
+								      // 페이징 링크에 이벤트 바인딩
+								      $(".paging-link").click(function(e) {
+									        e.preventDefault();
+									        let page = $(this).data("page");
+									        loadComment(boardNo, page);
+								      });
+										},
+					error: function(xhr, status, error) {
+									console.error("AJAX Error:", status, error);  // AJAX 오류 상태 및 에러 메시지 출력
+									alert("댓글 로딩 중 오류가 발생했습니다.");
+								 }
+				});
+			}
+		</script>
+		<sec:authorize access="isAuthenticated()">
+		<div id="bookComments">
+			<div id="commentLayout">
+				<div id="commentTitle">전체리뷰(3)</div>
+			</div>
+			<div id="review">
+				<div id="bookComment">
+					<h2>리뷰</h2>
+					<form onsubmit="return validateReviewForm(this)">
+						<div class="bookCommentBox">
+							<span class="star">★★★★★
+								<span>★★★★★</span>
+								<input type="range" oninput="drawStar(this)" value="0" step="1" min="0" max="5" name="rating">
+							</span>
+							<div>
+								<textarea class="reviewComment" placeholder="&nbsp;리뷰를 입력해주세요" name="content"></textarea>
+							</div>
+							<div class="bookCommentButton">
+								<button>등록</button>
+							</div>
+						</div>
+					</form>
+					<div class="reviewBox">
+						<div>
+							<div class="reviewIdBox">
+								<div class="reviewId">qortmddn***</div>
+								<div style="color: gray; margin-top: 1%;">|</div>
+								<div class="reviewRdate">2024-12-02</div>
+								<div class="reviewLike">
+									<span>🤍</span>
+									<input type="checkbox" onclick="toggleLike(this)">
+								</div>
+							</div>
+							<div>
+								<span class="star1">★★★★★
+									<span> ★★★★★</span>
+									<input type="range" class="reviewStar" value="3" step="1" min="0" max="5" disabled>
+								</span>
+							</div>
+							<!-- 기존 리뷰 내용 -->
+							<div class="reviewContent">
+								<textarea class="reviewContent" readonly="readonly">리뷰내용입니다.</textarea>
+								<div class="reviewOptions">
+									<span class="optionsToggle" onclick="toggleOptions(this)">⋯</span>
+									<div class="optionsMenu" id="optionsMenu">
+										<button onclick="editReview(this)">수정</button>
+										<button onclick="deleteReview(this)">삭제</button>
+										<button onclick="reportReview(this)">신고</button>
+									</div>
+									<div class="editButtons">
+										<button onclick="saveReview(this)">수정완료</button>
+										<button onclick="cancelEdit(this)">취소</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="paging">
+						<ul class="pagination">
+							<li class="disabled"><a href="#">«</a></li>
+							<li class="active"><a href="#">1</a></li>
+							<li><a href="#">2</a></li>
+							<li><a href="#">3</a></li>
+							<li><a href="#">4</a></li>
+							<li><a href="#">5</a></li>
+							<li><a href="#">»</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+		</sec:authorize>
 	</section>
 <jsp:include page="/WEB-INF/views/include/footer.jsp" />
 <script>

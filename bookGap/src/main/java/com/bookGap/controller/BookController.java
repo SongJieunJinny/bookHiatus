@@ -88,6 +88,4 @@ public class BookController {
 	    return "product/bookView"; // 해당 JSP 파일명
 	}
 
-	
-
 }
