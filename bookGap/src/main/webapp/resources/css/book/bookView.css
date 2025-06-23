@@ -36,83 +36,107 @@ section{
 }
 .bookItem img {
 	width: 100%;
-	border-radius: 5px; /* 이미지 모서리 둥글게 */
+	border-radius: 5px; 
 }
-#bookOrderCheck{
-	background-color: #D3D3D3;
-	margin-top: 10%;
-	width: 100%;
-	border-radius: 5px;
+
+#bookOrderCheck {
+  background-color: #D3D3D3;
+  margin-top: 10%;
+  width: 100%;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  gap: 15px;
 }
-#bookTitle1{
-	font-size: 25px;
-	text-align: center;
-	margin-top: 1%;
-	margin-left: 0.5%;
-	padding-top: 3%;
+
+#bookTitle1 {
+  font-size: 25px;
+  text-align: center;
+  padding-top: 5px;
+  width: 100%;
 }
+
+#bookQuantity {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 20px;
+  background-color: #D3D3D3;
+  padding: 10px;
+  width: 100%;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  box-sizing: border-box;
+  margin-left:20px;
+}
+
 .quantity {
-	display: flex;
-	align-items: center;
-	background: white; /* 배경색 */
-	border-radius: 10px; /* 모서리 둥글게 */
-	padding: 0.5%;
-	width: fit-content;
-	margin-left: 80px;
+  display: flex;
+  align-items: center;
+  background: white;
+  border-radius: 10px;
+  padding: 5px;
 }
-/* 버튼 스타일 (-, +) */
+
 .quantity button {
-	background: transparent; /* 버튼 배경 투명 */
-	border: none;
-	font-size: 20px;
-	padding: 10px 15px;
-	cursor: pointer;
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  padding: 10px 15px;
+  cursor: pointer;
 }
-/* 가운데 숫자 입력 필드 */
+
 .quantity .num {
-	width: 40px;
-	text-align: center;
-	font-size: 18px;
-	border: none;
-	background: white;
-	outline: none;
+  width: 40px;
+  text-align: center;
+  font-size: 18px;
+  border: none;
+  background: white;
+  outline: none;
 }
-#bookQuantity{
-	display: flex; 
-	align-items: center; 
-	gap: 20px;
-	font-size: 20px;
-	background-color: #D3D3D3;
-	height: 80px;
-	align-items: center;
-	flex-wrap: nowrap;
+
+#totalPrice {
+  font-size: 20px;
+  white-space: nowrap;
+  margin-left: auto;
+  margin-right: auto;
 }
-#totalPrice{
-	margin-right: 5%;
+
+#bookCheckBtn {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
+  flex-wrap: wrap; 
+  margin-top: 25px;
+  margin-left: 25px;
 }
-#bookCheckBtn{
-	display: flex; 
-	align-items: center; 
-	gap: 8%;
-	margin-top: 10%;
-	margin-left: 10%;
+
+#bookChartBtn,
+#bookOrderBtn {
+  flex: 1 1 40%;
+  max-width: 180px;
+  height: 50px;
+  font-size: 20px;
+  border-radius: 15px;
+  min-width: 140px;
 }
-#bookChartBtn button{
-	width: 150px;
-	height: 50px;
-	font-size: 25px;
-	background-color: white;
-	border-radius: 15px;
-	border: soild 1px black;
+
+#bookChartBtn {
+  background-color: white;
+  border: solid 1px black;
 }
-#bookOrderBtn button{
-	width: 150px;
-	height: 50px;
-	font-size: 25px;
-	background-color: black;
-	border-radius: 15px;
-	color: white;
+
+#bookOrderBtn {
+  background-color: black;
+  color: white;
+  border: none;
 }
+
 #bookAuthor {
 	margin-bottom: 2%;
 	font-size: 17px;
@@ -135,6 +159,7 @@ section{
   text-align: center;
   max-width: 1000px;
   margin: 5% auto;
+  border-radius: 15px;
 }
 #bookDetails {
   padding-top: 30px; /* 또는 margin-top */
