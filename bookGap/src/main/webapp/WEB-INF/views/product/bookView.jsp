@@ -14,6 +14,14 @@
 </head>
 <body>
 <jsp:include page="/WEB-INF/views/include/header.jsp" />
+<c:choose>
+  <c:when test="${not empty bookDetail.discount and bookDetail.discount > 0}">
+    <c:set var="bookPrice" value="${bookDetail.discount}" />
+  </c:when>
+  <c:otherwise>
+    <c:set var="bookPrice" value="0" />
+  </c:otherwise>
+</c:choose>
 	<section>
 		<div id="bookView">
           <div class="bookPart">   
@@ -22,7 +30,7 @@
             </div>
             <div class="bookInfo">
               <div id="bookTitle" name="title">${bookDetail.title}</div>
-							<div id="bookDiscount" name="discount">가격: ${bookDetail.discount}원</div>
+							<div id="bookDiscount" name="discount">가격: <fmt:formatNumber value="${bookPrice}" type="number"/>원</div>
 							<div id="bookAuthor" name="author"> 저자: ${bookDetail.author}</div>
 							<div id="bookPublisher" name="publisher">출판사: ${bookDetail.publisher}</div>
 							<div id="bookPubdate" name="pubdate">출간일: ${bookDetail.pubdate}</div>
@@ -38,14 +46,14 @@
 									<button class="plus">+</button>
 								</div>
 								<div id="totalPrice" name="TOTAL-PRICE">26,000원</div>
-								</div>
+							</div>
 							</div>
 							<div id="bookCheckBtn">
-								<div id="bookChartBtn">
-									<button >장바구니</button>
+								<div >
+									<button  id="bookChartBtn">장바구니</button>
 								</div>
-								<div id="bookOrderBtn">
-									<button >바로구매</button>
+								<div >
+									<button id="bookOrderBtn">바로구매</button>
 								</div>
 							</div>
 						</div>
@@ -168,57 +176,104 @@ $(document).ready(function() {
 });
  
 function updateCartCount() {
-	let cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
-	let cartCount = cartItems.length;
-	let cartCountElement = document.getElementById("cart-count");
+	  let cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
+	  if (!Array.isArray(cartItems)) {
+	    cartItems = Object.values(cartItems).filter(item => typeof item === 'object');
+	  }
 
-	if (cartCountElement) {
-			cartCountElement.textContent = cartCount;
-			cartCountElement.style.visibility = cartCount > 0 ? "visible" : "hidden";
+	  const cartCount = cartItems.length;
+	  const cartCountElement = document.getElementById("cart-count");
+
+	  if (cartCountElement) {
+	    cartCountElement.textContent = cartCount;
+	    cartCountElement.style.visibility = cartCount > 0 ? "visible" : "hidden";
+	  }
 	}
-}
+
+document.addEventListener("DOMContentLoaded", function() {
+	const minusBtn = document.querySelector(".minus");
+	const plusBtn = document.querySelector(".plus");
+	const numInput = document.querySelector(".num");
+	const totalPrice = document.getElementById("totalPrice");
+
+	const unitPrice = ${bookDetail.discount}; // 개당 가격
+
+	// 총 금액 업데이트 함수
+	function updateTotalPrice() {
+			let quantity = parseInt(numInput.value);
+			totalPrice.textContent = (unitPrice * quantity).toLocaleString() + "원"; // 천 단위 콤마 추가
+	}
+
+	// 숫자 감소 기능
+	minusBtn.addEventListener("click", function() {
+			let currentValue = parseInt(numInput.value);
+			if (currentValue > 1) { // 최소값 제한
+					numInput.value = currentValue - 1;
+					updateTotalPrice();
+			}
+	});
+
+	// 숫자 증가 기능
+	plusBtn.addEventListener("click", function() {
+			let currentValue = parseInt(numInput.value);
+			numInput.value = currentValue + 1;
+			updateTotalPrice();
+	});
+
+	// 숫자 입력 필드 직접 수정 시 숫자만 입력 가능하도록 처리
+	numInput.addEventListener("input", function() {
+			this.value = this.value.replace(/[^0-9]/g, ''); // 숫자만 허용
+			if (this.value === "" || parseInt(this.value) < 1) {
+					this.value = 1; // 최소값 제한
+			}
+			updateTotalPrice();
+	});
+
+	// 초기 총 금액 설정
+	updateTotalPrice();
+});
 
 //책 상세페이지에서 장바구니 버튼 클릭 시 실행
 document.addEventListener("click", function (event) {
-	if (event.target.closest("#bookChartBtn")) {
-			event.preventDefault();
+  if (event.target.closest("#bookChartBtn")) {
+    event.preventDefault();
 
-			// 로컬 스토리지에서 기존 장바구니 데이터 가져오기
-			let cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
+    let quantity = parseInt(document.querySelector(".num").value) || 1;
 
-			// 추가할 책 정보
-			let newItem = {
-					id: "${bookDetail.isbn}", // 책의 고유 ID
-					title: "${bookDetail.title}",
-					price: 26000,
-					quantity: 1
-			};
+    let cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
+    if (!Array.isArray(cartItems)) {
+      cartItems = Object.values(cartItems).filter(item => typeof item === 'object');
+    }
 
-			// 기존 장바구니에 동일한 책이 있는지 확인
-			let existingItem = cartItems.find(item => item.id === newItem.id);
+    let newItem = {
+      id: "${bookDetail.isbn}",
+      title: "${bookDetail.title}",
+      price: Number("${bookPrice}"),
+      image: "${bookDetail.image}",
+      quantity: quantity
+    };
 
-			if (existingItem) {
-					// 같은 책이 이미 있으면 수량만 증가
-					existingItem.quantity += 1;
-			} else {
-					// 장바구니에 없으면 새로운 아이템 추가
-					cartItems.push(newItem);
-			}
+    console.log("현재 장바구니 (before push):", cartItems);
+    console.log("추가하려는 아이템:", newItem);
 
-			// 업데이트된 장바구니 데이터를 다시 localStorage에 저장
-			localStorage.setItem("cartItems", JSON.stringify(cartItems));
+    let existingItem = cartItems.find(item => item.id === newItem.id);
+    if (existingItem) {
+      existingItem.quantity += quantity;
+    } else {
+      cartItems.push(newItem);
+    }
 
-			// 장바구니 개수 업데이트
-			updateCartCount();
+    localStorage.setItem("cartItems", JSON.stringify(cartItems));
+    console.log("저장된 로컬스토리지:", localStorage.getItem("cartItems"));
 
-			// 사용자에게 장바구니 이동 여부 확인
-			const goToCart = confirm("장바구니로 이동하시겠습니까?");
-			if (goToCart) {
-					window.location.href = "<%= request.getContextPath() %>/cart.do";
-			}
-		}
+    updateCartCount(); // 장바구니 개수 갱신
+
+    const goToCart = confirm("장바구니 페이지로 이동하시겠습니까?");
+    if (goToCart) {
+      window.location.href = "<%= request.getContextPath() %>/product/cart.do";
+    }
+  }
 });
-
 document.addEventListener("click", function (event) {
 	if (event.target.closest("#bookOrderBtn")) {
 			event.preventDefault();
@@ -286,49 +341,6 @@ document.addEventListener("DOMContentLoaded", function () {
 	});
 </script>
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-		const minusBtn = document.querySelector(".minus");
-		const plusBtn = document.querySelector(".plus");
-		const numInput = document.querySelector(".num");
-		const totalPrice = document.getElementById("totalPrice");
-
-		const unitPrice = 23000; // 개당 가격
-
-		// 총 금액 업데이트 함수
-		function updateTotalPrice() {
-				let quantity = parseInt(numInput.value);
-				totalPrice.textContent = (unitPrice * quantity).toLocaleString() + "원"; // 천 단위 콤마 추가
-		}
-
-		// 숫자 감소 기능
-		minusBtn.addEventListener("click", function() {
-				let currentValue = parseInt(numInput.value);
-				if (currentValue > 1) { // 최소값 제한
-						numInput.value = currentValue - 1;
-						updateTotalPrice();
-				}
-		});
-
-		// 숫자 증가 기능
-		plusBtn.addEventListener("click", function() {
-				let currentValue = parseInt(numInput.value);
-				numInput.value = currentValue + 1;
-				updateTotalPrice();
-		});
-
-		// 숫자 입력 필드 직접 수정 시 숫자만 입력 가능하도록 처리
-		numInput.addEventListener("input", function() {
-				this.value = this.value.replace(/[^0-9]/g, ''); // 숫자만 허용
-				if (this.value === "" || parseInt(this.value) < 1) {
-						this.value = 1; // 최소값 제한
-				}
-				updateTotalPrice();
-		});
-
-		// 초기 총 금액 설정
-		updateTotalPrice();
-});
-
 function validateReviewForm(form) {
 		const content = form.querySelector('textarea[name="content"]').value.trim();
 		const rating = form.querySelector('input[name="rating"]').value;
@@ -428,7 +440,7 @@ function editReview(button) {
 		reviewRating.removeAttribute('disabled');
 		reviewRating.style.pointerEvents = "auto"; 
 
-		// ⭐ 슬라이더 변경 시 UI 업데이트
+		// 슬라이더 변경 시 UI 업데이트
 		reviewRating.addEventListener("input", function () {
 				drawStar(reviewRating);
 		});
