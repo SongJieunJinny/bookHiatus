@@ -23,13 +23,21 @@ public class BoardVO extends UserInfoVO{
 	private String attachName; //파일이름
 	private String fakeAttachName; //변경된파일이름
 	
-	/* comment 테이블 */
+	/* qcomment 테이블 */
 	private int qCommentNo; //댓글번호
 	private String qCommentContent; //댓글내용
 	private String qCommentState; //활성화여부(1활성화, 2비활성화)
 	private Timestamp qCommentRdate; //등록일자
 	
 	private int qCommentCount; //댓글 갯수
+	
+	/* ecomment 테이블 */
+	private int eCommentNo; //댓글번호
+	private String eCommentContent; //댓글내용
+	private String eCommentState; //활성화여부(1활성화, 2비활성화)
+	private Timestamp eCommentRdate; //등록일자
+	
+	private int eCommentCount; //댓글 갯수
 
 	public int getDisplayNo() {
 		return displayNo;
@@ -173,5 +181,45 @@ public class BoardVO extends UserInfoVO{
 
 	public void setqCommentCount(int qCommentCount) {
 		this.qCommentCount = qCommentCount;
+	}
+
+	public int geteCommentNo() {
+		return eCommentNo;
+	}
+
+	public void seteCommentNo(int eCommentNo) {
+		this.eCommentNo = eCommentNo;
+	}
+
+	public String geteCommentContent() {
+		return eCommentContent;
+	}
+
+	public void seteCommentContent(String eCommentContent) {
+		this.eCommentContent = eCommentContent;
+	}
+
+	public String geteCommentState() {
+		return eCommentState;
+	}
+
+	public void seteCommentState(String eCommentState) {
+		this.eCommentState = eCommentState;
+	}
+
+	public Timestamp geteCommentRdate() {
+		return eCommentRdate;
+	}
+
+	public void seteCommentRdate(Timestamp eCommentRdate) {
+		this.eCommentRdate = eCommentRdate;
+	}
+
+	public int geteCommentCount() {
+		return eCommentCount;
+	}
+
+	public void seteCommentCount(int eCommentCount) {
+		this.eCommentCount = eCommentCount;
 	}
 }

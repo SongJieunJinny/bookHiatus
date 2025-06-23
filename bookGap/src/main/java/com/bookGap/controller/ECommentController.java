@@ -15,48 +15,48 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.bookGap.service.QCommentService;
+import com.bookGap.service.ECommentService;
 import com.bookGap.util.PagingUtil;
-import com.bookGap.vo.QCommentVO;
+import com.bookGap.vo.ECommentVO;
 import com.bookGap.vo.SearchVO;
 
-@RequestMapping(value="/qComment")
+@RequestMapping(value="/eComment")
 @Controller
-public class QCommentController {
-	
+public class ECommentController {
+  
   @Autowired 
-  private QCommentService qCommentService;
+  private ECommentService eCommentService;
   
   /* loadComment GET */
   
   @ResponseBody
   @RequestMapping(value="/loadComment.do",method=RequestMethod.GET, produces = "application/json; charset=utf-8")
   public Map<String,Object> loadComment(int boardNo, Model model, SearchVO searchVO, Principal principal, HttpServletRequest request,
-										                    @RequestParam(value="cnowpage",required = false, defaultValue="1")int cnowpage){
-	
+                                        @RequestParam(value="cnowpage",required = false, defaultValue="1")int cnowpage){
+
     String loginUserId = (principal != null) ? principal.getName() : null;
     boolean isAdmin = request.isUserInRole("ROLE_ADMIN");
-    String boardWriterId = qCommentService.getBoardWriterId(boardNo);
+    String boardWriterId = eCommentService.getBoardWriterId(boardNo);
     searchVO.setBoardNo(boardNo);
-    
-    int total = qCommentService.selectTotal(searchVO);
+
+    int total = eCommentService.selectTotal(searchVO);
     
     PagingUtil paging = new PagingUtil(cnowpage, total, 5);
     searchVO.setStart(paging.getStart());
     searchVO.setPerPage(paging.getPerPage());
 
-    List<QCommentVO> clist = qCommentService.clist(searchVO);
+    List<ECommentVO> clist = eCommentService.clist(searchVO);
 
     int displayNo = total - (cnowpage - 1) * paging.getPerPage();
     
-    for (QCommentVO qcvo : clist) {
-      qcvo.setDisplayNo(displayNo--);
+    for(ECommentVO ecvo : clist){
+      ecvo.setDisplayNo(displayNo--);
 
       System.out.println("loginUserId: " + loginUserId);
       System.out.println("boardWriterId: " + boardWriterId);
-      System.out.println("commentUserId: " + qcvo.getUserId());
+      System.out.println("commentUserId: " + ecvo.getUserId());
 
-      boolean canView = loginUserId != null && (loginUserId.equals(boardWriterId) || loginUserId.equals(qcvo.getUserId()) || isAdmin);
+      boolean canView = loginUserId != null && (loginUserId.equals(boardWriterId) ||loginUserId.equals(ecvo.getUserId()) ||isAdmin);
     }
     
     Map<String, Object> map = new HashedMap<>();
@@ -65,32 +65,24 @@ public class QCommentController {
     map.put("boardType", searchVO.getBoardType());
 
     return map;
-
-	}
+  }
   
   /* write POST */
   
   @ResponseBody
   @RequestMapping(value="/write.do",method=RequestMethod.POST)
-  public String write(QCommentVO vo,HttpServletRequest request,Principal principal,
-					            @RequestParam("boardType") int boardType){
-	
+  public String write(ECommentVO vo,HttpServletRequest request,Principal principal,
+                      @RequestParam("boardType") int boardType){
+  
     String loginUserId = principal.getName(); 
-	  String boardWriterId = qCommentService.getBoardWriterId(vo.getBoardNo()); // 게시글 작성자
-    boolean isAdmin = request.isUserInRole("ROLE_ADMIN"); // 관리자 여부 확인
-		
-    // 댓글 작성 권한 체크
-    if(!(loginUserId.equals(boardWriterId) || isAdmin)){
-      return "AccessDenied"; // 또는 403 응답 처리
-    }
-    
+
     vo.setUserId(loginUserId);
     
-    if(request.getParameter("qCommentContent") != null && !request.getParameter("qCommentContent").isEmpty()){
-        vo.setqCommentContent(request.getParameter("qCommentContent"));
+    if(request.getParameter("eCommentContent") != null && !request.getParameter("eCommentContent").isEmpty()){
+      vo.seteCommentContent(request.getParameter("eCommentContent"));
     }
 
-    int result = qCommentService.insert(vo);
+    int result = eCommentService.insert(vo);
     
     return result > 0 ? "Success" : "Fail";
   }
@@ -99,13 +91,13 @@ public class QCommentController {
   
   @ResponseBody
   @RequestMapping(value="/modify.do", method=RequestMethod.POST)
-  public String modify(QCommentVO vo,HttpServletRequest request){
-    	
-  	if(request.getParameter("qCommentContent") != null && !request.getParameter("qCommentContent").equals("")){
-  		vo.setqCommentContent(request.getParameter("qCommentContent"));
-  	}
-      	
-    int result = qCommentService.update(vo);
+  public String modify(ECommentVO vo,HttpServletRequest request){
+      
+    if(request.getParameter("eCommentContent") != null && !request.getParameter("eCommentContent").equals("")){
+      vo.seteCommentContent(request.getParameter("eCommentContent"));
+    }
+      
+    int result = eCommentService.update(vo);
         
     if(result > 0){
       System.out.println("수정성공");
@@ -120,10 +112,10 @@ public class QCommentController {
   
   @ResponseBody
   @RequestMapping(value="/delete.do",method=RequestMethod.POST)
-  public String delete(int qCommentNo){
-		
-  	int result = qCommentService.changeState(qCommentNo);
-  	
+  public String delete(int eCommentNo){
+    
+  int result = eCommentService.changeState(eCommentNo);
+  
     if(result > 0){
       System.out.println("삭제성공");
       return "Success";
@@ -132,5 +124,5 @@ public class QCommentController {
       return "Fail";
     }
   }
-
+  
 }

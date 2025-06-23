@@ -50,9 +50,6 @@
               <td>${evo.boardHit}</td>
               <td><fmt:formatDate value="${evo.boardRdate}" pattern="yyyy-MM-dd"/></td>
             </tr>
-            <tr>
-              <td>1</td><td><a href="./eventView.html">1월의 추천책 (3)</a></td><td>25</td><td>2024-01-01</td>
-            </tr>
             </c:forEach>
           </tbody>
         </table>
@@ -114,7 +111,7 @@
 	<script>
 	$(document).ready(function() {
 		$('#write').click(function() {
-		  window.location.href = '<%=request.getContextPath()%>/eventWrite.do';
+		  window.location.href = '<%=request.getContextPath()%>/eventWrite.do?boardType=3';
 		});
 	});
 	</script>
