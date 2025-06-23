@@ -159,7 +159,7 @@ section{
   text-align: center;
   max-width: 1000px;
   margin: 5% auto;
-  border-radius: 15px;
+  border-radius: 15px; 
 }
 #bookDetails {
   padding-top: 30px; /* 또는 margin-top */

@@ -20,7 +20,7 @@ public class CartController {
 	public String cart() {
 		
 	    return "product/cart"; // 해당 JSP 파일명
-	}
+	} 
 	
 
 }

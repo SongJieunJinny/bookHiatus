@@ -65,7 +65,7 @@ public class BookController {
 	            System.out.println(" - " + vo.getTitle());
 	        }
 	    }
-
+ 
 	    List<String> categories = bookService.getDistinctCategories();
 
 	    model.addAttribute("selectBookList", selectBookList);

@@ -309,7 +309,7 @@ function renderCartItems() {
 	      const bookPrice = parseInt(cartItem.getAttribute("dataPrice"), 10);
 	      const totalPriceEl = cartItem.querySelector(".totalPrice");
 	      const quantity = parseInt(cartItem.querySelector(".num").value, 10);
-	      if (totalPriceEl && !isNaN(bookPrice) && !isNaN(quantity)) {
+	      if (totalPriceEl && !isNaN(bookPrice) && !isNaN(quantity)) { 
 	        const total = bookPrice * quantity;
 	        totalPriceEl.textContent = total.toLocaleString() + "원";
 	      }

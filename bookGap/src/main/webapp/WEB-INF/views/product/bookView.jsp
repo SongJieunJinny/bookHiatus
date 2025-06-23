@@ -361,7 +361,7 @@ function validateReviewForm(form) {
 
 		return true;  // 폼 제출 진행
 }
-
+ 
 document.addEventListener("DOMContentLoaded", function () {
 		drawStarInit(); // 페이지 로드 시 별점 초기화
 });
