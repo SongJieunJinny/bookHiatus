@@ -36,7 +36,7 @@
 						<div class="bookTitle">${vo.title}</div>
 						<div class="bookPrice">${vo.discount}원</div>
 					</div>
-		        </c:forEach>
+		        </c:forEach> 
 		    </div>
 	</section>
  		<div class="pagination">
