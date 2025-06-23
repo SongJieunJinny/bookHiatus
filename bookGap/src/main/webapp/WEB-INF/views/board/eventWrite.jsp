@@ -18,7 +18,8 @@
       <div id="event">EVENT</div>
       <form action="eventWriteOk.do" method="POST">
       <div id="eventWrite">
-	      <div id="eventWriteTable">
+      <div id="eventWriteTable">
+	      <div id="eventWriteTitleTable">
 	        <div id="title">제목</div>
 	        <input id="userIdEventWriteOkForm" type="hidden" name="userId">
 	        <input id="boardTypeEventWriteOkForm" type="hidden" name="boardType" value="3">
@@ -32,6 +33,7 @@
       <div id="eventButtonDiv">
         <button id="eventWriteButton" type="submit">등록하기</button>&nbsp;&nbsp;&nbsp;
         <button id="resetButton" type="button">취소하기</button>
+    	</div>
     	</div>
     	</form>
     </div>
