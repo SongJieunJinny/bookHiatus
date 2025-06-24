@@ -18,7 +18,7 @@
 		margin-top: 3%;
 		margin-bottom: 5%;
 		text-align: center;
-		font-size: 25px;
+		font-size: 30px;
 	}
 	#bookList{
 		width: 100%;

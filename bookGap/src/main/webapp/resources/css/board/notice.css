@@ -2,14 +2,16 @@
 
 /* noticeList */
 #noticeMain{
-	width: 100%;
+	width: 90%;
 	height: 70%;
+	margin-left: 5%;
+  margin-right: 5%;
 }
 #notice{
-	margin-top: 3%;
-	margin-bottom: 3%;
-	text-align: center;
-	font-size: 25px;
+  margin-top: 3%;
+  margin-bottom: 3%;
+  font-size: 30px;
+  text-align: center;
 }
 #noticeList{
 	width: 100%;
@@ -20,10 +22,10 @@
   align-items: center;
 }
 #noticeTable{
-  font-size: medium;
+  font-size: 20px;
   border: 1px none black;
   border-collapse: separate;
- border-spacing: 0 20px;
+ border-spacing: 0 30px;
 }
 td{
   text-align: center;
@@ -190,7 +192,7 @@ td a{
 }
 #noticeViewTable{
 	padding: 2% 1% 2% 1%;
-  width: 50%;
+  width: 70%;
   border-collapse: separate; /* 셀 간 간격 유지 */
 	border-spacing: 0; /* 셀 간 간격 설정 */
 	border: 2px solid black; /* 테이블 외곽 테두리 */

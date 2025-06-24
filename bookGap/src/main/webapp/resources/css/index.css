@@ -20,8 +20,8 @@ nav{
 #menu1{
   width: 40%;
   height: 30%;
-  margin-top: 3%;
-  font-size: 20px;
+  margin-top: 2.5%;
+  font-size: 30px;
   display:inline-flex;
   justify-content: space-evenly;
 }
@@ -49,12 +49,13 @@ nav{
   color: white;
   padding: 10px;
   width: 100px;
-  left: 20px;
-  top: 60px;
-  text-align: left;
+  left: 100px;
+  top: 55px;
+  text-align: center;
   margin-top: 2%;
   margin-left: 6%;
   cursor: pointer;
+  font-size: 18px;
 }
 #bookCategory a {
   display: block;
@@ -73,12 +74,13 @@ nav{
   color: white;
   padding: 10px;
   width: 100px;
-  left: 20px;
-  top: 60px;
-  text-align: left;
+  left: 180px;
+  top: 57px;
+  text-align: center;
   margin-top: 2%;
   margin-left: 29%;
   cursor: pointer;
+  font-size: 18px;
 }
 #communityCategory a {
   display: block;
@@ -90,23 +92,17 @@ nav{
 #communityCategory a:hover{
   background: darkgray;
 }
-#menuLogo{
-  width: 20%;
-  height: 30%;
-  display: flex;
-  align-items: center;
-  text-align: center;
-}
 #menuLogoImg{
-  width: 45%;
-  height: 45%;
+  width: 6%;
+  height: 7%;
   cursor: pointer;
+  text-align: center;
 }
 #menu2{
   width: 40%;
   height: 30%;
-  margin-top: 3%;
-  font-size:20px;
+  margin-top: 2.5%;
+  font-size: 30px;
   display:inline-flex;
   justify-content: space-evenly;
 }
@@ -130,38 +126,38 @@ nav{
   border: none;
   border-bottom: 1px solid black;
   outline: none;
-  font-size: 16px;
-  width: 200px;
+  font-size: 20px;
+  width: 250px;
   /*transition: all 0.3s ease;*/
 }
 #searchImg{
-  width: 25px;
-  height: 25px;
+  width:30px;
+  height: 30px;
 }
 #searchImgIcon{
   display: none;
 }
 #loginImg{
-  width:25px;
-  height: 25px;
+  width:30px;
+  height: 30px;
   cursor: pointer;
 }
 #logoutImg{
-	width:25px;
-  height: 25px;
+  width:30px;
+  height: 30px;
   cursor: pointer;
 }
 #mypageImg{
-  width:25px;
-  height: 25px;
+  width:30px;
+  height: 30px;
   cursor: pointer;
 }
 #menuCart{
   cursor: pointer;
 }
 #cartImg{
-  width:25px;
-  height: 25px;
+  width:30px;
+  height: 30px;
   cursor: pointer;
 }
 #menuCart {
