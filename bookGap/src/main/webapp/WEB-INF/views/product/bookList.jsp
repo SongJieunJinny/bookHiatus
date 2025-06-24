@@ -29,7 +29,7 @@
 		    	<div class="bookItem">
 			    	<input type="hidden" name="isbn" value="${vo.isbn}">
 			    	<div class="bookImg" >
-					  	<a href="<%= request.getContextPath() %>/product/bookView.do?isbn=${vo.isbn}"><img src="${vo.image}" alt="${vo.title}"  style="height: 260px;"/></a>
+					  	<a href="<%= request.getContextPath() %>/product/bookView.do?isbn=${vo.isbn}"><img src="${vo.image}" alt="${vo.title}"  style="height: 350px;"/></a>
 						</div>
 					<div class="bookTitle">${vo.title}</div>
 					<div class="bookPrice">${vo.discount}원</div>
