@@ -2,17 +2,24 @@ package com.bookGap.vo;
 
 public class BookVO extends ProductApiVO {
 		private int bookNo;
-	    private String bookRdate;
-	    private String bookTrans;
-	    private int bookStock;
-	    private int bookState;
-	    private String bookCategory;
-	    private String isbn;
-	    private String bookImgUrl;
+    private String bookRdate;
+    private String bookTrans;
+    private int bookStock;
+    private int bookState;
+    private String bookCategory;
+    private String isbn;
+    private String bookImgUrl;
 		private String bookIndex;
 		private String publisherBookReview;
+		private String commentCount; 
 		
-		public int getBookNo() {
+		public String getCommentCount() {
+      return commentCount;
+    }
+    public void setCommentCount(String commentCount) {
+      this.commentCount = commentCount;
+    }
+    public int getBookNo() {
 			return bookNo;
 		}
 		public void setBookNo(int bookNo) {

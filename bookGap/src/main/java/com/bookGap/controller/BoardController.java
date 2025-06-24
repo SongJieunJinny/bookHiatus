@@ -365,6 +365,7 @@ public class BoardController {
   @RequestMapping(value="/eventView.do", method = RequestMethod.GET)
   public String eventView(Model model, @RequestParam("boardNo") int boardNo) {
     
+	boardService.updateHit(boardNo); // 조회수 증가
     BoardVO vo = boardService.selectOne(boardNo);
 
     if(vo == null){
