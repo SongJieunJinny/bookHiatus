@@ -3,21 +3,18 @@
 <%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec" %>
 <sec:authorize access="isAnonymous()"> <!-- 로그인 전 -->
 <header>
-	<div id="menu">
-	  <!-- 메뉴1 -->
-
+	<div id="menuDiv">
+	  <!-- 로고 -->
+	  <div id="menuLogo">
+			<img id="menuLogoImg" src="<%=request.getContextPath()%>/resources/img/icon/logo.png" alt="로고">
+		</div>
+		<!-- 메뉴 -->
+		<div id="menu">
 			<div id="menuBook" class="menuItem">BOOK</div>
 			<div id="menuAbout" class="menuItem"><!--0322상화 추가시작--><a href="<%=request.getContextPath()%>/about.do">ABOUT</a><!--0322상화 추가끝--></div>
 			<div id="menuEvent" class="menuItem"><!--0221지은 추가시작--><a href="<%=request.getContextPath()%>/eventList.do">EVENT</a><!--0221지은 추가끝--></div>
 			<div id="menuChoice" class="menuItem"><!--0322상화 추가시작--><a href="<%=request.getContextPath()%>/choice/choiceList.do">CHOICE</a><!--0322상화 추가끝--></div>
 			<div id="menuCommunity" class="menuItem">COMMUNITY</div>
-
-	  <!-- 로고 -->
-	  <div id="menuLogo">
-			<img id="menuLogoImg" src="<%=request.getContextPath()%>/resources/img/icon/logo.png" alt="로고">
-		</div>
-	  <!-- 메뉴2 -->
-
 			<div id="menuSearch" class="menuItem">
 	      <span id="searchSwichBtn">
 	        <span id="searchText">SEARCH</span>
@@ -37,7 +34,7 @@
 	      <a href="<%=request.getContextPath()%>/product/cart.do"><img id="cartImg" src="<%=request.getContextPath()%>/resources/img/icon/cart.png"></a>
 	      <span id="cart-count">0</span>
       </div>
-
+		</div>
 	</div>
 	<!-- BOOK카테고리 메뉴 -->
 	<div id="bookCategory">
@@ -59,21 +56,18 @@
 
 <sec:authorize access="isAuthenticated()"> <!-- 로그인 후 -->
 <header>
-	<div id="menu">
-	  <!-- 메뉴1 -->
-		<div id="menu1">
+	<div id="menuDiv">
+	  <!-- 로고 -->
+	  <div id="menuLogo">
+			<img id="menuLogoImg" src="<%=request.getContextPath()%>/resources/img/icon/logo.png" alt="로고">
+		</div>
+		<!-- 메뉴 -->
+		<div id="menu">
 			<div id="menuBook" class="menuItem">BOOK</div>
 			<div id="menuAbout" class="menuItem"><!--0322상화 추가시작--><a href="<%=request.getContextPath()%>/about.do">ABOUT</a><!--0322상화 추가끝--></div>
 			<div id="menuEvent" class="menuItem"><!--0221지은 추가시작--><a href="<%=request.getContextPath()%>/eventList.do">EVENT</a><!--0221지은 추가끝--></div>
 			<div id="menuChoice" class="menuItem"><!--0322상화 추가시작--><a href="<%=request.getContextPath()%>/choice/choiceList.do">CHOICE</a><!--0322상화 추가끝--></div>
 			<div id="menuCommunity" class="menuItem">COMMUNITY</div>
-		</div>
-	  <!-- 로고 -->
-	  <div id="menuLogo">
-			<img id="menuLogoImg" src="<%=request.getContextPath()%>/resources/img/icon/logo.png" alt="로고">
-		</div>
-	  <!-- 메뉴2 -->
-		<div id="menu2">
 			<div id="menuSearch" class="menuItem">
 	      <span id="searchSwichBtn">
 	        <span id="searchText">SEARCH</span>

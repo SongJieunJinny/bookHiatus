@@ -11,6 +11,10 @@ nav{
   margin-left: 5%;
   margin-right: 5%;
 }
+#menuDiv{
+	display:flex;
+	align-items: flex-end;
+}
 #menu{
   width: 100%;
   height: 30%;	
@@ -18,14 +22,7 @@ nav{
   display:flex;
   justify-content: space-evenly;
   align-items: flex-end;
-}
-#menu1{
-  width: 40%;
-  height: 30%;
-  margin-top: 2.5%;
-  font-size: 30px;
-  display:inline-flex;
-  justify-content: space-around;
+  margin-bottom: 0.3%;
 }
 .menuItem {
   padding-bottom: 5px;
@@ -51,7 +48,7 @@ nav{
   color: white;
   padding: 10px;
   width: 100px;
-  left: 100px;
+  left: 235px;
   top: 55px;
   text-align: center;
   margin-top: 2%;
@@ -76,7 +73,7 @@ nav{
   color: white;
   padding: 10px;
   width: 100px;
-  left: 180px;
+  left: 570px;
   top: 57px;
   text-align: center;
   margin-top: 2%;
@@ -102,14 +99,6 @@ nav{
   height: 100%;
   cursor: pointer;
   text-align: center;
-}
-#menu2{
-  width: 40%;
-  height: 30%;
-  margin-top: 2.5%;
-  font-size: 30px;
-  display:inline-flex;
-  justify-content: space-around;
 }
 #menuSearch{
   display: flex;
@@ -142,6 +131,12 @@ nav{
 #searchImgIcon{
   display: none;
 }
+#menuLogin{
+	width:100px;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0.3%;
+}
 #loginImg{
   width:30px;
   height: 30px;
@@ -167,6 +162,9 @@ nav{
 }
 #menuCart{
   cursor: pointer;
+  width:100px;
+  display: flex;
+  justify-content: center;
 }
 #cartImg{
   width:30px;
@@ -174,10 +172,10 @@ nav{
   margin-top: 2.5%;
   cursor: pointer;
 }
-#menuCart {
+/*#menuCart {
   position: relative; /* 부모 요소를 기준으로 위치 조정 */
   display: inline-block;
-}
+}*/
 /*장바구니 count이미지*/
 #cart-count {
   position: absolute;
