@@ -32,30 +32,38 @@
     }
   #datatablesSimple th:nth-child(1),
   #datatablesSimple td:nth-child(1) {
-    width: 230px;
+    width: 70px;
   }
-  /* 상품번호(판매번호) 너비 줄이기 */
-  #datatablesSimple th:nth-child(11),
-  #datatablesSimple td:nth-child(11) {
+  #datatablesSimple th:nth-child(2),
+  #datatablesSimple td:nth-child(2) {
     width: 80px;
   }
-  /* ISBN 너비 늘리기 */
+   #datatablesSimple th:nth-child(3),
+  #datatablesSimple td:nth-child(3) {
+    width: 430px;
+  }
+   #datatablesSimple th:nth-child(4),
+  #datatablesSimple td:nth-child(4) {
+    width: 120px;
+  }
   #datatablesSimple th:nth-child(5),
   #datatablesSimple td:nth-child(5) {
-    width: 130px;
+    width: 110px;
   }
-  #datatablesSimple th:nth-child(12),
-  #datatablesSimple td:nth-child(12) {
-    width: 111px;
+   #datatablesSimple th:nth-child(6),
+  #datatablesSimple td:nth-child(6) {
+    width: 150px;
   }
-  #datatablesSimple th:nth-child(10),
-  #datatablesSimple td:nth-child(10) {
-    width: 80px;
+  #datatablesSimple th:nth-child(7),
+  #datatablesSimple td:nth-child(7) {
+    width: 90px;
   }
-   #datatablesSimple th:nth-child(9),
-   #datatablesSimple td:nth-child(9) {
-    width: 100px;
+  /* 상품번호(판매번호) 너비 줄이기 */
+  #datatablesSimple th:nth-child(8),
+  #datatablesSimple td:nth-child(8) {
+    width: 110px;
   }
+
 </style>
 </head>
 <body class="sb-nav-fixed">
@@ -132,19 +140,8 @@
                                 </select>
                               </div>
                               <div class="mb-3">
-                                <label class="form-label">재고 수량</label>
-                                <input type="number" id="bookStock" class="form-control" min="1" required>
-                              </div>
-                              <div class="mb-3">
                                 <label class="form-label">도서 발행일</label>
                                 <input type="date" id="pubdate" class="form-control" required>
-                              </div>
-                              <div class="mb-3">
-                                <label class="form-label">상품 상태</label>
-                                <select id="bookState" class="form-select">
-                                  <option value="0">품절</option>
-                                  <option value="1">판매중</option>
-                                </select>
                               </div>
                               <div class="mb-3">
                                 <label class="form-label">도서정보링크</label>
@@ -178,50 +175,39 @@
                           <table id="datatablesSimple">
                               <thead>
                                   <tr>
+                                    <th>상품번호</th>
+                                    <th>카테고리</th>
                                     <th>도서명</th>
                                     <th>저자</th>
-                                    <th>번역가</th>
                                     <th>출판사</th>
                                     <th>ISBN</th>
                                     <th>가격 (₩)</th>
-                                    <th>카테고리</th>
-                                    <th>재고 수량</th>
-                                    <th>도서 발행일</th>
-                                    <th>상품번호</th>
-                                    <th>상품 상태</th>
                                     <th>관리</th>
                                   </tr>
                               </thead>
                               <tbody>
                               <c:forEach items="${getAllBooks}" var="vo">
-                                  <tr>
-                                      <td>${vo.title}</td>
-                                      <td>${vo.author}</td>
-                                      <td>${vo.bookTrans}</td>
-                                      <td>${vo.publisher}</td>
-                                      <td>${vo.isbn}</td>
-                                      <td>${vo.discount}원 </td>
-                                      <td>${vo.bookCategory}</td>
-                                      <td>${vo.bookStock}</td>
-                                      <td>${vo.pubdate}</td>
-                                      <td>${vo.bookNo}</td>
-                                      <td>
-										  <c:choose>
-										    <c:when test="${vo.bookState == 0}">품절</c:when>
-										    <c:when test="${vo.bookState == 1}">판매중</c:when>
-										    <c:otherwise>알 수 없음</c:otherwise>
-										  </c:choose>
-									   </td>
-                                      <td> <button class="btn btn-warning btn-sm editBook">수정</button>
-                								<button class="btn btn-danger btn-sm deleteBook">삭제</button>
-                					  </td>
-                					  <td class="bookDesc" style="display: none;">${vo.description}</td>
-                					  <td class="bookLink" style="display: none;">${vo.link}</td>
-                					  <td class="bookImgUrl" style="display: none;">${vo.bookImgUrl}</td>
-                					  <td class="bookIndex" style="display: none;">${vo.bookIndex}</td>
-                					  <td class="publisherBookReview" style="display: none;">${vo.publisherBookReview}</td>
-                                  </tr>
-                                  </c:forEach>
+								  <tr>
+								    <td class="bookNo">${vo.bookNo}</td>
+								    <td class="bookCategory">${vo.bookCategory}</td>
+								    <td class="title">${vo.title}</td>
+								    <td class="author">${vo.author}</td>
+								    <td class="bookTrans" style="display: none;">${vo.bookTrans}</td>
+								    <td class="publisher">${vo.publisher}</td>
+								    <td class="isbn">${vo.isbn}</td>
+								    <td class="discount">${vo.discount}원</td>
+								    <td class="pubdate" style="display: none;">${vo.pubdate}</td>
+								    <td>
+								      <button class="btn btn-warning btn-sm editBook">수정</button>
+								      <button class="btn btn-danger btn-sm deleteBook">삭제</button>
+								    </td>
+								    <td class="bookDesc" style="display: none;">${vo.description}</td>
+								    <td class="bookLink" style="display: none;">${vo.link}</td>
+								    <td class="bookImgUrl" style="display: none;">${vo.bookImgUrl}</td>
+								    <td class="bookIndex" style="display: none;">${vo.bookIndex}</td>
+								    <td class="publisherBookReview" style="display: none;">${vo.publisherBookReview}</td>
+								  </tr>
+								</c:forEach>
                               </tbody>
                           </table>
                       </div>
@@ -311,8 +297,6 @@
 			    		  bookTrans: $('#bookTrans').val(),
 			    		  isbn: $('#isbn').val(),
 			    		  bookCategory: $('#bookCategory').val(),
-			    		  bookStock: parseInt($('#bookStock').val()),
-			    		  bookState: parseInt($('#bookState').val()),
 			    		  bookImgUrl: $('#bookImgUrl').val(),
 			    		  bookIndex: $('#bookIndex').val(),
 			    		  publisherBookReview: $('#publisherBookReview').val()
@@ -341,35 +325,32 @@
 			    
 
 			    // 수정 버튼 클릭 시 폼에 데이터 채우기
-			    $(document).on('click', '.editBook', function() {
-			      const row = $(this).closest('tr');
-			      $('#title').val(row.find('td:eq(0)').text());
-			      $('#author').val(row.find('td:eq(1)').text());
-			      $('#bookTrans').val(row.find('td:eq(2)').text());
-			      $('#publisher').val(row.find('td:eq(3)').text());
-			      $('#isbn').val(row.find('td:eq(4)').text());
-			      $('#discount').val(row.find('td:eq(5)').text().replace(/[^\d]/g, '').trim());
-			      $('#bookCategory').val(row.find('td:eq(6)').text());
-			      $('#bookStock').val(row.find('td:eq(7)').text());
-			      $('#pubdate').val(row.find('td:eq(8)').text());
-			      $('#bookNo').val(row.find('td:eq(9)').text());
-			      $('#bookState').val(row.find('td:eq(10)').text() === '판매중' ? '1' : '0');
-			      $('#description').val(row.find('.bookDesc').text());
-			      $('#link').val(row.find('.bookLink').text());
-			      $('#bookImgUrl').val(row.find('.bookImgUrl').text());
-			      $('#bookIndex').val(row.find('.bookIndex').text());
-			      $('#publisherBookReview').val(row.find('.publisherBookReview').text());
-			     
-			      
-	
-			      $('#bookFormContainer').show();
-			      $('#toggleFormBtn').hide();
-			      $('#saveBook').hide();
-	
-			      if (!$('#updateBook').length) {
-			        $('<button type="button" class="btn btn-warning" id="updateBook">수정 완료</button>').insertAfter('#saveBook');
-			      }
-			    });
+				$(document).on('click', '.editBook', function () {
+					  const row = $(this).closest('tr');
+					
+					  $('#bookNo').val(row.find('.bookNo').text());
+					  $('#bookCategory').val(row.find('.bookCategory').text());
+					  $('#title').val(row.find('.title').text());
+					  $('#author').val(row.find('.author').text());
+					  $('#bookTrans').val(row.find('.bookTrans').text());
+					  $('#publisher').val(row.find('.publisher').text());
+					  $('#isbn').val(row.find('.isbn').text());
+					  $('#discount').val(row.find('.discount').text().replace(/[^\d]/g, '').trim());
+					  $('#pubdate').val(row.find('.pubdate').text());
+					  $('#description').val(row.find('.bookDesc').text());
+					  $('#link').val(row.find('.bookLink').text());
+					  $('#bookImgUrl').val(row.find('.bookImgUrl').text());
+					  $('#bookIndex').val(row.find('.bookIndex').text());
+					  $('#publisherBookReview').val(row.find('.publisherBookReview').text());
+					
+					  $('#bookFormContainer').show();
+					  $('#toggleFormBtn').hide();
+					  $('#saveBook').hide();
+					
+					  if (!$('#updateBook').length) {
+					    $('<button type="button" class="btn btn-warning" id="updateBook">수정 완료</button>').insertAfter('#saveBook');
+					  }
+				});
 	
 			    // 수정 완료
 			    $(document).on('click', '#updateBook', function() {
@@ -378,8 +359,6 @@
 			        bookTrans: $('#bookTrans').val(),
 			        isbn: $('#isbn').val(),
 			        bookCategory: $('#bookCategory').val(),
-			        bookStock: parseInt($('#bookStock').val()),
-		    		bookState: parseInt($('#bookState').val()),
 		    		bookImgUrl: $('#bookImgUrl').val(),
 		    		bookIndex: $('#bookIndex').val(),
 		    		publisherBookReview: $('#publisherBookReview').val()

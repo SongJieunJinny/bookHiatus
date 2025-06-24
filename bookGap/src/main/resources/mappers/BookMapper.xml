@@ -24,16 +24,14 @@
 </resultMap>
 	 <!-- 도서 등록 -->
     <insert id="insertBook" parameterType="BookVO">
-        INSERT INTO BOOK (BOOK_TRANS, BOOK_STOCK, BOOK_STATE, BOOK_CATEGORY, isbn, BOOK_IMGURL, BOOK_INDEX, PUBLISHER_BOOK_REVIEW)
-        VALUES (#{bookTrans}, #{bookStock}, #{bookState}, #{bookCategory}, #{isbn}, #{bookImgUrl}, #{bookIndex}, #{publisherBookReview})
+        INSERT INTO BOOK (BOOK_TRANS, BOOK_CATEGORY, isbn, BOOK_IMGURL, BOOK_INDEX, PUBLISHER_BOOK_REVIEW)
+        VALUES (#{bookTrans}, #{bookCategory}, #{isbn}, #{bookImgUrl}, #{bookIndex}, #{publisherBookReview})
     </insert>
 
     <!-- 도서 수정 -->
     <update id="updateBook" parameterType="BookVO">
         UPDATE BOOK
         SET BOOK_TRANS = #{bookTrans},
-            BOOK_STOCK = #{bookStock},
-            BOOK_STATE = #{bookState},
             BOOK_CATEGORY = #{bookCategory},
             BOOK_IMGURL = #{bookImgUrl},
             BOOK_INDEX = #{bookIndex}, 
@@ -64,10 +62,8 @@
 		   p.isbn,
 		   p.discount,
 		   b.BOOK_CATEGORY AS bookCategory,
-		   b.BOOK_STOCK AS bookStock,
 		   p.pubdate,
 		   b.BOOK_NO AS bookNo,
-		   b.BOOK_STATE AS bookState,
 		   p.description,
 		   p.link,
 		   b.BOOK_IMGURL AS bookImgUrl,
