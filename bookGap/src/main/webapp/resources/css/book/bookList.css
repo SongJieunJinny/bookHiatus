@@ -1,6 +1,6 @@
 @charset "UTF-8";
 
-/* 📌 상단 영역 (제목 + select 정렬) */
+/*  상단 영역 (제목 + select 정렬) */
 .bookAll {
   width: 100%;
   max-width: 1200px;
@@ -33,10 +33,10 @@
   border-radius: 5px;
 }
 
-/* 📚 도서 목록 */
+/* 도서 목록 */
 .bookItems {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+   display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 40px;
   padding: 40px;
   justify-items: center;
@@ -46,18 +46,18 @@
   box-sizing: border-box;
 }
 
-/* 📘 개별 도서 아이템 */
+/* 개별 도서 아이템 */
 .bookItem {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  height: 400px;
+  height: 500px;          /* 높이 키움 */
   width: 100%;
-  max-width: 180px;
+  max-width: 220px;       /* 폭 키움 */
   background: #f8f8f8;
   border-radius: 10px;
-  padding: 15px;
+  padding: 20px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   position: relative;
@@ -70,7 +70,7 @@
 
 .bookItem img {
   width: 100%;
-  height: 260px;
+  height: 400px;        /* 이미지 높이 확대 */
   object-fit: cover;
   border-radius: 5px;
 }
@@ -94,7 +94,7 @@
   text-align: center;
 }
 
-/* 📄 페이징 */
+/* 페이징 */
 .pagination {
   display: flex;
   justify-content: center;
@@ -139,10 +139,10 @@
   border-color: #ddd;
 }
 
-/* 📱 반응형 레이아웃 */
+/*  반응형 설정 */
 @media (min-width: 1200px) {
   .bookItems {
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(4, 1fr); /*  4개씩 정렬 */
   }
 }
 
