@@ -67,6 +67,7 @@
 		   b.BOOK_STOCK AS bookStock,
 		   p.pubdate,
 		   b.BOOK_NO AS bookNo,
+		   (SELECT COUNT(*) FROM COMMENT c WHERE c.BOOK_NO = b.BOOK_NO AND c.COMMENT_STATE = 1) AS commentCount,
 		   b.BOOK_STATE AS bookState,
 		   p.description,
 		   p.link,
