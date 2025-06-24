@@ -28,7 +28,17 @@ public class SearchVO extends PagingUtil {
 	/* Comment TABLE */
 	private int commentType; //게시글종류(BOOK, QNA)
 	
+	/*COMMENT TABLE*/
+	private int bookNo;
 	
+	public int getBookNo() {
+		return bookNo;
+	}
+
+	public void setBookNo(int bookNo) {
+		this.bookNo = bookNo;
+	}
+
 	public int getBoardNo() {
 		return boardNo;
 	}
