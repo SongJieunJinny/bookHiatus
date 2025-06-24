@@ -13,7 +13,9 @@
 			<div id="menuCommunity" class="menuItem">COMMUNITY</div>
 		</div>
 	  <!-- 로고 -->
-		<img id="menuLogoImg" src="<%=request.getContextPath()%>/resources/img/icon/logo.png" alt="로고">
+	  <div id="menuLogo">
+			<img id="menuLogoImg" src="<%=request.getContextPath()%>/resources/img/icon/logo.png" alt="로고">
+		</div>
 	  <!-- 메뉴2 -->
 		<div id="menu2">
 			<div id="menuSearch" class="menuItem">
@@ -67,7 +69,9 @@
 			<div id="menuCommunity" class="menuItem">COMMUNITY</div>
 		</div>
 	  <!-- 로고 -->
-		<img id="menuLogoImg" src="<%=request.getContextPath()%>/resources/img/icon/logo.png" alt="로고">
+	  <div id="menuLogo">
+			<img id="menuLogoImg" src="<%=request.getContextPath()%>/resources/img/icon/logo.png" alt="로고">
+		</div>
 	  <!-- 메뉴2 -->
 		<div id="menu2">
 			<div id="menuSearch" class="menuItem">

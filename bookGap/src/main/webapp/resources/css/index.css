@@ -92,9 +92,12 @@ nav{
 #communityCategory a:hover{
   background: darkgray;
 }
+#menuLogo{
+	width: 7%;
+}
 #menuLogoImg{
-  width: 6%;
-  height: 7%;
+  width: 100%;
+  height: 100%;
   cursor: pointer;
   text-align: center;
 }
