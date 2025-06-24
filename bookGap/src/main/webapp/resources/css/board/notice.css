@@ -204,7 +204,7 @@ td a{
   padding: 1%;
 }
 #noticeViewTitle{
-  font-size: 20px;
+  font-size: 25px;
   margin-left: 2%;
 }
 #noticeViewWriterRdateDiv{
@@ -213,30 +213,30 @@ td a{
 }
 #noticeViewWriter{
   position: relative;
-  font-size: 18px;
+  font-size: 20px;
   padding-left: 2%;
 }
 #noticeViewWriter::after{
-	content: "";
+  content: "";
   position: absolute;
   bottom: 0;
-  left: -10%;
-  width: 1050%;
+  left: 0%;
+  width: 1540px;
   height: 1px;
   background-color: black;
-
 }
 #noticeViewRdate{
   position: relative;
-  font-size: 18px;
-  margin-left: 50%;
+	font-size: 20px;
+  margin-left: 60%;
 }
 #noticeViewContentDiv{
 	display: flex;
 }
 #noticeViewContent{
 	white-space: pre-line;
-	padding : 2%
+	font-size: 20px;
+	padding : 3%
 }
 #noticeViewBtn{
   display: flex;

@@ -215,7 +215,7 @@
 }
 #eventViewTable{
 	padding: 2% 1% 2% 1%;
-  width: 50%;
+  width: 70%;
   border-collapse: separate; /* 셀 간 간격 유지 */
 	border-spacing: 0; /* 셀 간 간격 설정 */
 	border: 2px solid black; /* 테이블 외곽 테두리 */
@@ -227,7 +227,7 @@
   padding: 1%;
 }
 #titleView{
-  font-size: 20px;
+  font-size: 25px;
   margin-left: 2%;
 }
 #writeRrdateViewDiv{
@@ -236,29 +236,30 @@
 }
 #writerView{
   position: relative;
-  font-size: 18px;
+  font-size: 20px;
   padding-left: 2%;
 }
 #writerView::after{
-	content: "";
+  content: "";
   position: absolute;
   bottom: 0;
-  left: -10%;
-  width: 1050%;
+  left: 0%;
+  width: 1540px;
   height: 1px;
   background-color: black;
 }
 #rdateView{
   position: relative;
-  font-size: 18px;
-  margin-left: 58%;
+	font-size: 20px;
+  margin-left: 60%;
 }
 #contentViewDiv{
 	display: flex;
 }
 #contentView{
-  white-space: pre-line;
-	padding : 2%
+	white-space: pre-line;
+	font-size: 20px;
+	padding : 3%
 }
 #eventViewwriteForm{
 	display: inline-flex;
