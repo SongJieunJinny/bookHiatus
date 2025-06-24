@@ -84,7 +84,7 @@
 
 .bookTitle {
   margin-top: 20px;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: bold;
   text-align: center;
   word-break: break-word;
@@ -92,7 +92,7 @@
 
 .bookPrice {
   margin-top: auto;
-  font-size: 20px;
+  font-size: 18px;
   color: #555;
   text-align: center;
 }
