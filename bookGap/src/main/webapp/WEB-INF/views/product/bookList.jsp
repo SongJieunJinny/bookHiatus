@@ -24,7 +24,7 @@
 				</select>
 			</div>
 		</div>
-	    <div class="bookItems">
+	    <div class="${selectBookList.size() <= 2 ? 'bookItems centered' : 'bookItems'}">
 	    	<c:forEach items="${selectBookList}" var="vo">
 		    	<div class="bookItem">
 			    	<input type="hidden" name="isbn" value="${vo.isbn}">

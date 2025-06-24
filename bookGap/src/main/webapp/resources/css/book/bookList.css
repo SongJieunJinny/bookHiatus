@@ -36,14 +36,22 @@
 /* 도서 목록 */
 .bookItems {
    display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: auto;
+  place-content: center;
   gap: 40px;
   padding: 40px;
   justify-items: center;
   width: 100%;
-  max-width: 1200px;
+  max-width: none;
   margin: 0 auto;
   box-sizing: border-box;
+}
+
+.bookItems.centered {
+  display: flex !important;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 40px;
 }
 
 /* 개별 도서 아이템 */
@@ -54,7 +62,7 @@
   align-items: center;
   height: 500px;          /* 높이 키움 */
   width: 100%;
-  max-width: 220px;       /* 폭 키움 */
+  max-width: 300px;       /* 폭 키움 */
   background: #f8f8f8;
   border-radius: 10px;
   padding: 20px;
