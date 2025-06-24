@@ -2,6 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -31,7 +32,9 @@
 			    	<div class="bookImg" >
 					  	<a href="<%= request.getContextPath() %>/product/bookView.do?isbn=${vo.isbn}"><img src="${vo.image}" alt="${vo.title}"  style="height: 350px;"/></a>
 						</div>
-					<div class="bookTitle">${vo.title}</div>
+					<div class="bookTitle">
+					  <c:out value="${fn:replace(vo.title, '(', '<br>(')}" escapeXml="false"/>
+					</div>
 					<div class="bookPrice">${vo.discount}원</div>
 					</div>
 	    	</c:forEach> 
