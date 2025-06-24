@@ -13,9 +13,7 @@
 			<div id="menuCommunity" class="menuItem">COMMUNITY</div>
 		</div>
 	  <!-- 로고 -->
-		<div id="menuLogo">
-			<div> <a href="<%=request.getContextPath()%>"><img id="menuLogoImg" src="<%=request.getContextPath()%>/resources/img/icon/logo.png" alt="로고"></a></div>
-		</div>
+		<img id="menuLogoImg" src="<%=request.getContextPath()%>/resources/img/icon/logo.png" alt="로고">
 	  <!-- 메뉴2 -->
 		<div id="menu2">
 			<div id="menuSearch" class="menuItem">
@@ -69,9 +67,7 @@
 			<div id="menuCommunity" class="menuItem">COMMUNITY</div>
 		</div>
 	  <!-- 로고 -->
-		<div id="menuLogo">
-			<div> <a href="<%=request.getContextPath()%>"><img id="menuLogoImg" src="<%=request.getContextPath()%>/resources/img/icon/logo.png" alt="로고"></a></div>
-		</div>
+		<img id="menuLogoImg" src="<%=request.getContextPath()%>/resources/img/icon/logo.png" alt="로고">
 	  <!-- 메뉴2 -->
 		<div id="menu2">
 			<div id="menuSearch" class="menuItem">
@@ -295,4 +291,9 @@
       }
     });
   }
+  </script>
+  <script>
+  $('#menuLogoImg').on('click', function() {
+	    window.location.href = '<%=request.getContextPath()%>';
+	});
   </script>
