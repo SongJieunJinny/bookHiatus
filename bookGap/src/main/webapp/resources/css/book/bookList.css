@@ -1,6 +1,12 @@
 @charset "UTF-8";
-
-/*  상단 영역 (제목 + select 정렬) */
+.bookList{
+	width: 100%;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 0 20px;
+  box-sizing: border-box;
+	
+}
 .bookAll {
   width: 100%;
   max-width: 1200px;
@@ -9,7 +15,6 @@
   box-sizing: border-box;
 }
 
-/* 제목: 가운데 정렬 */
 .bookTitleName {
   font-family: Arial, sans-serif;
   font-size: 25px;
@@ -17,7 +22,6 @@
   margin-bottom: 10px;
 }
 
-/* select: 오른쪽 정렬 */
 .bookTitleSelect {
   text-align: right;
   width: 100%;
@@ -33,20 +37,18 @@
   border-radius: 5px;
 }
 
-/* 도서 목록 */
+/* 도서 목록 그리드 기본 */
 .bookItems {
-   display: grid;
-  grid-template-columns: auto;
-  place-content: center;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 40px;
-  padding: 40px;
+  justify-content: center;
   justify-items: center;
-  width: 100%;
-  max-width: none;
-  margin: 0 auto;
+  padding: 40px;
   box-sizing: border-box;
 }
 
+/* 도서 수 2개 이하일 때 중앙정렬을 위한 flex */
 .bookItems.centered {
   display: flex !important;
   justify-content: center;
@@ -54,121 +56,80 @@
   gap: 40px;
 }
 
-/* 개별 도서 아이템 */
 .bookItem {
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
   align-items: center;
-  height: 500px;          /* 높이 키움 */
   width: 100%;
-  max-width: 300px;       /* 폭 키움 */
+  max-width: 300px;
+  height: 500px;
   background: #f8f8f8;
-  border-radius: 10px;
   padding: 20px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  position: relative;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  transition: 0.3s ease;
 }
 
 .bookItem:hover {
   transform: translateY(-5px);
-  box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 6px 10px rgba(0,0,0,0.2);
 }
 
 .bookItem img {
   width: 100%;
-  height: 400px;        /* 이미지 높이 확대 */
+  height: 400px;
   object-fit: cover;
   border-radius: 5px;
 }
 
 .bookTitle {
-  padding-top: 20px;
-  padding-bottom: 20px;
+  margin-top: 20px;
   font-size: 16px;
   font-weight: bold;
   text-align: center;
   word-break: break-word;
-  line-height: 1.4;
-  display: block;
 }
 
 .bookPrice {
   margin-top: auto;
   font-size: 14px;
-  font-weight: bold;
   color: #555;
   text-align: center;
 }
 
-/* 페이징 */
+/* 페이지네이션 */
 .pagination {
   display: flex;
   justify-content: center;
-  align-items: center;
-  margin-top: 10%;
-  margin-bottom: 4%;
+  margin: 60px 0 40px;
   list-style: none;
   padding: 0;
 }
 
-.pagination li {
-  margin: 0 5px;
-}
-
 .pagination a {
+  margin: 0 5px;
   text-decoration: none;
   padding: 8px 15px;
   border: 1px solid #ddd;
   border-radius: 5px;
   color: white;
-  font-size: 16px;
-  transition: 0.3s ease;
   background-color: black;
 }
 
 .pagination a:hover {
   background-color: #ccc;
   color: white;
-  border-color: #ccc;
 }
 
 .pagination .active a {
   background-color: #ccc;
   color: white;
-  border-color: #ccc;
 }
 
-.pagination .disabled a {
-  color: #ccc;
-  cursor: not-allowed;
-  background-color: #f0f0f0;
-  border-color: #ddd;
-}
-
-/*  반응형 설정 */
-@media (min-width: 1200px) {
-  .bookItems {
-    grid-template-columns: repeat(4, 1fr); /*  4개씩 정렬 */
-  }
-}
-
-@media (max-width: 1024px) {
-  .bookItems {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
+/* 반응형 */
 @media (max-width: 768px) {
   .bookItems {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 480px) {
-  .bookItems {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   }
 
   .bookTitleSelect {
