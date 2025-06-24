@@ -24,18 +24,18 @@
 				</select>
 			</div>
 		</div>
-    <div class="bookItems">
-    	<c:forEach items="${selectBookList}" var="vo">
-	    	<div class="bookItem">
-		    	<input type="hidden" name="isbn" value="${vo.isbn}">
-		    	<div class="bookImg" >
-				  	<a href="<%= request.getContextPath() %>/product/bookView.do?isbn=${vo.isbn}"><img src="${vo.image}" alt="${vo.title}"  style="height: 260px;"/></a>
+	    <div class="bookItems">
+	    	<c:forEach items="${selectBookList}" var="vo">
+		    	<div class="bookItem">
+			    	<input type="hidden" name="isbn" value="${vo.isbn}">
+			    	<div class="bookImg" >
+					  	<a href="<%= request.getContextPath() %>/product/bookView.do?isbn=${vo.isbn}"><img src="${vo.image}" alt="${vo.title}"  style="height: 260px;"/></a>
+						</div>
+					<div class="bookTitle">${vo.title}</div>
+					<div class="bookPrice">${vo.discount}원</div>
 					</div>
-				<div class="bookTitle">${vo.title}</div>
-				<div class="bookPrice">${vo.discount}원</div>
-				</div>
-    	</c:forEach> 
-    </div>
+	    	</c:forEach> 
+	    </div>
 	</section>
 	<div class="pagination">
 		<c:if test="${paging.startPage > 1}">
