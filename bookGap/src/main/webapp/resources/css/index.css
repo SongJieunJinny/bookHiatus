@@ -14,8 +14,10 @@ nav{
 #menu{
   width: 100%;
   height: 30%;	
+  font-size: 30px;
   display:flex;
   justify-content: space-evenly;
+  align-items: flex-end;
 }
 #menu1{
   width: 40%;
@@ -23,7 +25,7 @@ nav{
   margin-top: 2.5%;
   font-size: 30px;
   display:inline-flex;
-  justify-content: space-evenly;
+  justify-content: space-around;
 }
 .menuItem {
   padding-bottom: 5px;
@@ -107,7 +109,7 @@ nav{
   margin-top: 2.5%;
   font-size: 30px;
   display:inline-flex;
-  justify-content: space-evenly;
+  justify-content: space-around;
 }
 #menuSearch{
   display: flex;
@@ -143,16 +145,24 @@ nav{
 #loginImg{
   width:30px;
   height: 30px;
+  margin-top: 2.5%;
   cursor: pointer;
 }
 #logoutImg{
   width:30px;
   height: 30px;
+  margin-top: 2.5%;
   cursor: pointer;
+}
+#menuMypage{
+	width:100px;
+  display: flex;
+  justify-content: center;
 }
 #mypageImg{
   width:30px;
   height: 30px;
+  margin-top: 2.5%;
   cursor: pointer;
 }
 #menuCart{
@@ -161,6 +171,7 @@ nav{
 #cartImg{
   width:30px;
   height: 30px;
+  margin-top: 2.5%;
   cursor: pointer;
 }
 #menuCart {
