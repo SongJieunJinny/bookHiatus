@@ -1,47 +1,54 @@
 @charset "UTF-8";
-
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+#wrap {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* 화면 전체 높이 확보 */
+}
 /* === 기본 구조 === */
 section {
+  flex: 1;
   width: 90%;
   margin: 5% auto;
   height: auto;
+ 
 }
 
 /* === 장바구니 상단 정보 === */
 .cartInfoInnerList {
   width: 100%;
-  max-width: 1200px;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
   gap: 20px;
-  margin-left: 5%;
 }
 
 .cartInfoInner {
   display: flex;
   width: 100%;
   align-items: center;
-  margin-bottom: 10px;
+  justify-content: flex-start;
+  align-content: flex-start;
+
 }
 
 .cartInfoInner h3 {
   font-size: 27px;
-  width: 15%;
 }
 
 .cartInfoButton {
-  width: 8%;
   margin-top: 0.5%;
+  padding: 20px;
 }
 
 .cartInfoInner button {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 150%;
-  padding: 5%;
-  height: 5%;
+  padding: 10px 20px;
   border-radius: 10px;
   background-color: white;
   border: solid 1px black;
@@ -58,11 +65,13 @@ section {
 /* === 장바구니 내용 영역 === */
 .cartContainer {
   display: flex;
-  width: 100%;
   justify-content: space-between;
   align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 20px;
 }
 
+/* === 장바구니 항목 === */
 .cartInfoCheck {
   width: 75%;
   display: flex;
@@ -71,15 +80,20 @@ section {
   min-height: 300px;
 }
 
-/* === 장바구니 아이템 === */
 .cartItem {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  width: 93%;
-  min-height: 100px;
-  background: white;
-  padding: 10px;
+  position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    background: white;
+    padding: 10px;
+    border-radius: 10px;
+    word-break: normal;
+    overflow-wrap: anywhere;
+    flex-direction: row;
+    align-content: flex-end;
 }
 
 .cartItemCheckbox[type="checkbox"] {
@@ -91,36 +105,35 @@ section {
   width: 80px;
   height: auto;
   object-fit: contain;
+  margin-right: 15px;
 }
 
 .bookTitle {
-  width: 40%;  /* 넉넉히 확보 */
-  margin-left: 2%;
-  
- 
+  width: 25%;
+  padding:10px;
 }
+
 .bookTitle p {
   font-size: 16px;
   color: black;
-  word-break: break-word;
+  white-space: normal;
+  word-break: keep-all;
   overflow-wrap: break-word;
 }
-/* === 수량 조절 === */
+
+/* === 수량/가격 === */
 .bookQuantity {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  text-align: center;
-  width: 25%;
-  font-size: 20px;
-  margin-left: 2%;
+  width: 20%;
+  font-size: 18px;
+   padding:8px;
 }
 
 .quantity {
   display: flex;
   align-items: center;
-  justify-content: center;
   background: white;
   border-radius: 5px;
   border: solid 1px #D3D3D3;
@@ -129,57 +142,325 @@ section {
   padding: 5px 10px;
 }
 
-.totalPrice {
- font-size: 16px;
-  font-weight: bold;
-  color: #333;
-  visibility: visible !important; 
-}
 .quantity button {
   background: transparent;
   border: none;
-  font-size: 24px;
-  padding: 10px 15px;
+  font-size: 20px;
+  padding: 0 10px;
   cursor: pointer;
 }
 
 .quantity .num {
-  width: 50px;
-  height: 35px;
+  width: 40px;
   text-align: center;
-  font-size: 18px;
+  font-size: 16px;
   border: none;
   background: white;
   outline: none;
 }
 
-.quantity .num:focus {
-  outline: none;
-  border: 1px solid #999;
-  box-shadow: 0 0 3px rgba(0, 0, 0, 0.2); /* 선택적 강조 */
+.totalPrice {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 8px;
 }
+
 /* === 배송 정보 및 삭제 === */
 .deliveryInfo {
-  margin-left: 5%;
   width: 25%;
-  height: auto;
- 
+  margin-top: 10px;
+  font-size: 14px;
+  word-break: break-word;
+   padding:10px;
 }
-.deliveryStatus{ 
+
+.deliveryStatus {
   font-size: 16px;
   color: black;
   word-break: break-word;
-  overflow-wrap: break-word;
 }
 
 .removeBtn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
   background: none;
   border: none;
-  font-size: 18px;
+  font-size: 20px;
   cursor: pointer;
   color: gray;
-  margin-top: -10%;
-  margin-left: 10%;
+  z-index: 2;
+}
+
+/* === 결제 정보 박스 === */
+.paymentsInfoInner {
+  width: 20%;
+  max-width: 300px;
+  padding: 24px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background-color: #fff;
+  position: fixed;
+  right: 3%;
+  top: 35%;
+}
+
+.paymentRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 16px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+#orderBtn {
+  width: 100%;
+  height: 40px;
+  font-size: 18px;
+  border: none;
+  border-radius: 5px;
+  background-color: black;
+  color: white;
+  cursor: pointer;
+}
+
+/* === 유의사항 === */
+.cartInfoNote {
+  width: 70%;
+  background-color: gainsboro;
+  border-radius: 10px;
+  padding: 20px;
+  margin-top: 5%;
+}
+
+.cartInfoNote h2 {
+  font-size: 20px;
+}
+
+.cartInfoNote p {
+  margin: 10px 0;
+}
+
+/* === 모달 === */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
+.modalContent {
+  background-color: white;
+  width: 90%;
+  max-width: 400px;
+  padding: 20px;
+  border-radius: 15px;
+}
+
+.close {
+  float: right;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+/* === 배송지 모달 내부 === */
+#addAddressBtn {
+  background-color: black;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+.addressItem {
+  background: #f9f9f9;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 8px;
+}
+
+.addressItem label {
+  display: flex;
+  gap: 5px;
+  font-weight: bold;
+}
+
+.defaultTag {
+  color: blue;
+  font-size: 12px;
+}
+
+.deleteAddress {
+  background: black;
+  color: white;
+  border: none;
+  padding: 5px;
+  font-size: 14px;
+  border-radius: 5px;
+  float: right;
+}
+
+/* === 배송지 폼 === */
+#addressForm input {
+  width: 100%;
+  padding: 8px;
+  margin: 5px 0;
+}
+
+#addressForm button {
+  background: black;
+  color: white;
+  padding: 8px;
+  width: 100%;
+  margin-top: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* === 비어있을 때 메시지 === */
+.emptyCartMessage {
+  display: none;
+  font-size: 18px;
+  color: gray;
+  margin-top: 5%;
+}
+
+/* === ✅ 반응형 추가 === */
+@media screen and (max-width: 768px) {
+  .cartContainer {
+    flex-direction: column;
+    
+  }
+
+  .cartInfoCheck {
+  width: 75%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-height: 300px;
+}
+
+.cartItem {
+  position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    background: white;
+    padding: 10px;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    word-break: normal;
+    overflow-wrap: anywhere;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.cartItemCheckbox[type="checkbox"] {
+  transform: scale(1.2);
+  margin-right: 10px;
+}
+
+.bookImg {
+  width: 80px;
+  height: auto;
+  object-fit: contain;
+  margin-right: 15px;
+}
+
+.bookTitle {
+  width: 30%;
+  padding:10px;
+}
+
+.bookTitle p {
+  font-size: 16px;
+  color: black;
+  white-space: normal;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+/* === 수량/가격 === */
+.bookQuantity {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 20%;
+  font-size: 18px;
+   padding:8px;
+}
+
+.quantity {
+  display: flex;
+  align-items: center;
+  background: white;
+  border-radius: 5px;
+  border: solid 1px #D3D3D3;
+  width: 100px;
+  height: 30px;
+  padding: 5px 10px;
+}
+
+.quantity button {
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  padding: 0 10px;
+  cursor: pointer;
+}
+
+.quantity .num {
+  width: 40px;
+  text-align: center;
+  font-size: 16px;
+  border: none;
+  background: white;
+  outline: none;
+}
+
+.totalPrice {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+/* === 배송 정보 및 삭제 === */
+.deliveryInfo {
+  width: 25%;
+  margin-top: 10px;
+  font-size: 14px;
+  word-break: break-word;
+   padding:10px;
+}
+
+.deliveryStatus {
+  font-size: 16px;
+  color: black;
+  word-break: break-word;
+}
+
+.removeBtn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: gray;
+  z-index: 2;
 }
 
 /* === 결제 정보 박스 === */
@@ -198,13 +479,9 @@ section {
 .paymentRow {
   display: flex;
   justify-content: space-between;
-  align-items: center;
   font-size: 16px;
-  margin-bottom: 8px;
-}
-
-.paymentRow span {
-  font-weight: bold;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
 }
 
 #orderBtn {
@@ -220,32 +497,29 @@ section {
 
 /* === 유의사항 === */
 .cartInfoNote {
-  width: 60%;
-  height: 30%;
+  width: 70%;
   background-color: gainsboro;
   border-radius: 10px;
-  max-width: 1200px;
-  margin-left: 5%;
+  padding: 20px;
   margin-top: 5%;
 }
 
 .cartInfoNote h2 {
   font-size: 20px;
-  margin-left: 2%;
 }
 
 .cartInfoNote p {
-  margin-left: 4%;
+  margin: 10px 0;
 }
 
-/* === 모달 창 === */
+/* === 모달 === */
 .modal {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0,0,0,0.5);
   display: none;
   justify-content: center;
   align-items: center;
@@ -257,8 +531,6 @@ section {
   max-width: 400px;
   padding: 20px;
   border-radius: 15px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  text-align: center;
 }
 
 .close {
@@ -271,13 +543,11 @@ section {
 #addAddressBtn {
   background-color: black;
   color: white;
-  width: 100%;
   padding: 10px;
   border: none;
-  font-size: 16px;
-  cursor: pointer;
-  margin: 10px 0;
   border-radius: 8px;
+  margin-bottom: 10px;
+  width: 100%;
 }
 
 .addressItem {
@@ -285,13 +555,10 @@ section {
   padding: 10px;
   margin: 10px 0;
   border-radius: 8px;
-  text-align: left;
-  position: relative;
 }
 
 .addressItem label {
   display: flex;
-  align-items: center;
   gap: 5px;
   font-weight: bold;
 }
@@ -305,42 +572,28 @@ section {
   background: black;
   color: white;
   border: none;
-  width: 15%;
-  padding: 1%;
-  font-size: 15px;
-  border-radius: 10px;
-  position: absolute;
-  right: 10px;
-  top: 10px;
-  cursor: pointer;
+  padding: 5px;
+  font-size: 14px;
+  border-radius: 5px;
+  float: right;
 }
 
 /* === 배송지 폼 === */
-#addressForm {
-  background: #fff;
-  padding: 3%;
-  border-radius: 10px;
-  margin-top: 2%;
-  text-align: center;
-}
-
 #addressForm input {
-  width: 90%;
-  padding: 3%;
-  margin: 2%;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  width: 100%;
+  padding: 8px;
+  margin: 5px 0;
 }
 
 #addressForm button {
   background: black;
   color: white;
-  padding: 3%;
+  padding: 8px;
+  width: 100%;
+  margin-top: 10px;
   border: none;
-  margin-top: 2%;
   border-radius: 5px;
   cursor: pointer;
-  width: 100%;
 }
 
 /* === 비어있을 때 메시지 === */
@@ -348,10 +601,7 @@ section {
   display: none;
   font-size: 18px;
   color: gray;
-  text-align: center;
-  padding: 3%;
   margin-top: 5%;
-  margin-bottom: 50%;
-  width: 100%;
-  height: 70%;
+}
+  
 }

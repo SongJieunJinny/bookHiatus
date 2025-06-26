@@ -239,7 +239,6 @@ function renderCartItems() {
 	      this.onerror = null;
 	      this.src = "https://via.placeholder.com/80x100?text=No+Image";
 	    };
-
 	    // 제목
 	    const bookTitleDiv = document.createElement("div");
 	    bookTitleDiv.className = "bookTitle";
@@ -416,7 +415,9 @@ function bindCartEvents() {
 	});
 // 초기 실행
 $(document).ready(function () {
-  initHeaderEvents();
+  if (document.getElementById("loginBtn")) {
+    initHeaderEvents();
+  }
   updateCartCount();
   renderCartItems();
   setTimeout(updateCartMessage, 100);

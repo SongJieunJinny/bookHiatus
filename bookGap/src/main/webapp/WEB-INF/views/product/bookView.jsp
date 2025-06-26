@@ -29,7 +29,7 @@
 					<a href="#"><img src="${bookDetail.image}" alt="${bookDetail.title}"></a>
 				</div>
 				<div class="bookInfo">
-	        <div id="bookTitle">${bookDetail.title}</div>
+	        <div id="bookTitle"><c:out value="${fn:replace(bookDetail.title, '(', '<br>(')}" escapeXml="false"/></div>
 	        <div id="bookDiscount">가격: <fmt:formatNumber value="${bookDetail.discount > 0 ? bookDetail.discount : 0}" type="number"/>원</div>
 	        <div id="bookAuthor">저자: ${bookDetail.author}</div>
 	        <div id="bookPublisher">출판사: ${bookDetail.publisher}</div>
@@ -38,7 +38,7 @@
 					<div>배송비 : 3,000원 (50,000원 이상 구매 시 무료)<br>
 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;제주 및 도서 산간 3,000원 추가 </div>
 					<div id="bookOrderCheck">
-						<div id="bookTitle1">${bookDetail.title}</div>
+						<div id="bookTitle1"><c:out value="${fn:replace(bookDetail.title, '(', '<br>(')}" escapeXml="false"/></div>
 						<div id="bookQuantity">
 							<div class="quantity">
 								<button class="minus">−</button>
