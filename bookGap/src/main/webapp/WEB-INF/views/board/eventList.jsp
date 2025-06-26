@@ -19,7 +19,7 @@
       <div id="eventList">
       	<div id="eventSearchFormDiv">
           <div id="eventSearchForm">
-            <form action="<%=request.getContextPath()%>/eventList.do" method="GET">
+            <form id="eventSearchListForm" action="<%=request.getContextPath()%>/eventList.do" method="GET">
               <input id="eventSearchInput" type="text" name="searchValue" placeholder="제목 검색">
               <input type="hidden" name="searchType" value="board_title">
               <button id="eventSearchButton" type="submit">검색</button>

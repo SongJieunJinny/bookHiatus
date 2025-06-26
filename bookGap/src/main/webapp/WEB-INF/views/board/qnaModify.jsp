@@ -31,11 +31,11 @@
 	            <textarea id="contentMemo" name="boardContent">${vo.boardContent}</textarea>
 	          </div>
 	        </div>
-	        <div id="qnaButtonDiv">
-		        <button id="qnaModifyButton" type="submit">수정하기</button>&nbsp;&nbsp;&nbsp;
-	    	    <button id="resetButton" type="button">취소하기</button>
-    	    </div>
 	      </div>
+      	<div id="qnaButtonDiv">
+	        <button id="qnaModifyButton" type="submit">수정하기</button>&nbsp;&nbsp;&nbsp;
+    	    <button id="resetButton" type="button">취소하기</button>
+  	    </div>
     	</form>
     </div>
   </section>
