@@ -12,24 +12,24 @@
 	<style>
 	#navMenu{
 		width: 100%;
-		height: 70%;
+		height: auto;
 	}
 	#new{
 		margin-top: 3%;
-		margin-bottom: 5%;
+		margin-bottom: 4.8%;
 		text-align: center;
-		font-size: 30px;
+		font-size: 25px;
 	}
 	#bookList{
 		width: 100%;
-		height: 50%;
+		height: auto;
 		display:flex;
 		justify-content: space-evenly;
 		align-items: center;
 	}
 	#leftPointer{
 		width: 20%;
-		height: 20%;
+		height: auto;
 		display: flex;
 		justify-content: flex-end;
 	}

@@ -16,9 +16,7 @@
   <jsp:include page="/WEB-INF/views/include/header.jsp" />
   <section>
   	<div id="navEvent">
-      <div id="eventHead">
-        <div id="event">EVENT</div>
-      </div>
+      <div id="event">EVENT</div>
       <div id="eventMid">
         <div id="eventViewTable">
           <div id="titleViewDiv">
@@ -37,7 +35,7 @@
 				<div id="eventViewBtn">
 					<!-- 어드민 -->
 				  <c:if test="${sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal.userAuthority eq 'ROLE_ADMIN'}">
-				    <form id="eventViewwriteForm" name="deletefrm" action="eventDelete.do" method="post">
+				    <form name="deletefrm" action="eventDelete.do" method="post">
 				      <input type="hidden" name="boardNo" value="${vo.boardNo}">
 				      <button id="modifyView" onclick="return confirmModify();">수정하기</button>&nbsp;&nbsp;&nbsp;
 				      <button id="deleteView" onclick="return confirmDelete();">삭제하기</button>
@@ -48,6 +46,7 @@
 					  <button id="listView">목록으로</button>
 					</a>
 				</div>
+				<br>
 			</div>
 		<script>
 			let boardNo = "";

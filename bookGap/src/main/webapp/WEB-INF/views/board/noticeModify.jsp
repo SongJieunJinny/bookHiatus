@@ -33,9 +33,10 @@
 	          </div>
 	        </div>
 	      </div>
-    		<br>
-    		<input id="modify" type="submit" value="수정하기">&nbsp;&nbsp;&nbsp;
-    		<button id="reset" type="button">취소하기</button>
+    		<div id="noticeWriteButton">
+	    		<input id="modify" type="submit" value="수정하기">&nbsp;&nbsp;&nbsp;
+	    		<button id="reset" type="button">취소하기</button>
+    		</div>
     	</form>
     </div>
   </section>
