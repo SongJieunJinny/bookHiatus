@@ -19,7 +19,7 @@
       <div id="noticeList">
       	<div id="noticeSearchFormDiv">
           <div id="noticeSearchForm">
-            <form action="<%=request.getContextPath()%>/noticeList.do" method="GET">
+            <form id="noticeSearchListForm" action="<%=request.getContextPath()%>/noticeList.do" method="GET">
               <input id="noticeSearchInput" type="text" name="searchValue" placeholder="제목 검색">
               <input type="hidden" name="searchType" value="board_title">
               <button id="noticeSearchButton"  type="submit">검색</button>
@@ -30,10 +30,10 @@
         <table id="noticeTable"> 
           <thead>
             <tr>
-              <td id="line">글번호</td>
-              <td id="line">제목</td>
-              <td id="line">조회</td>
-              <td id="line">등록일</td>
+              <td class="line">글번호</td>
+              <td class="line">제목</td>
+              <td class="line">조회</td>
+              <td class="line">등록일</td>
             </tr>
           </thead>
           <tbody>
