@@ -32,9 +32,10 @@
 	          </div>
 	        </div>
 	      </div>
-	    	<br>
+	    	<div id="noticeWriteButton">
 	    	<button id="write" type="submit">등록하기</button>&nbsp;&nbsp;&nbsp;
 	    	<button id="reset" type="button">취소하기</button>
+	    	</div>
     	</form>
     </div>
   </section>

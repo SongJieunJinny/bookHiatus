@@ -17,24 +17,24 @@
     <div id="eventMain">
       <div id="event">EVENT</div>
       <form action="eventWriteOk.do" method="POST">
-      <div id="eventWrite">
-      <div id="eventWriteTable">
-	      <div id="eventWriteTitleTable">
-	        <div id="title">제목</div>
-	        <input id="userIdEventWriteOkForm" type="hidden" name="userId">
-	        <input id="boardTypeEventWriteOkForm" type="hidden" name="boardType" value="3">
-	        <input id="titleMemo" type="text" name="boardTitle">
-	      </div>
-        <div id="eventWriteContentTable">
-          <div id="content">내용</div>
-          <textarea id="contentMemo" name="boardContent"></textarea>
-        </div>
-      </div>
-      <div id="eventButtonDiv">
-        <button id="eventWriteButton" type="submit">등록하기</button>&nbsp;&nbsp;&nbsp;
-        <button id="resetButton" type="button">취소하기</button>
-    	</div>
-    	</div>
+	      <div id="eventWrite">
+		      <div id="eventWriteTable">
+			      <div id="eventWriteTitleTable">
+			        <div id="title">제목</div>
+			        <input id="userIdEventWriteOkForm" type="hidden" name="userId">
+			        <input id="boardTypeEventWriteOkForm" type="hidden" name="boardType" value="3">
+			        <input id="titleMemo" type="text" name="boardTitle">
+			      </div>
+		        <div id="eventWriteContentTable">
+		          <div id="content">내용</div>
+		          <textarea id="contentMemo" name="boardContent"></textarea>
+		        </div>
+		      </div>
+	    	</div>
+	    	<div id="eventButtonDiv">
+	        <button id="eventWriteButton" type="submit">등록하기</button>&nbsp;&nbsp;&nbsp;
+	        <button id="resetButton" type="button">취소하기</button>
+	    	</div>
     	</form>
     </div>
   </section>

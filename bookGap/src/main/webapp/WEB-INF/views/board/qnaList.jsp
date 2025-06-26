@@ -14,12 +14,12 @@
 <body>
   <jsp:include page="/WEB-INF/views/include/header.jsp" />
   <section>
-  	<div id="QnaeMain">
-      <div id="Qna">QnA</div>
+  	<div id="QnaMain">
+      <div id="qna">QnA</div>
       <div id="QnaList">
         <div id="QnaSearchFormDiv">
           <div id="QnaSearchForm">
-            <form action="<%=request.getContextPath()%>/qnaList.do" method="GET">
+            <form id="QnaSearchListForm" action="<%=request.getContextPath()%>/qnaList.do" method="GET">
               <input id="QnaSearchInput" type="text" name="searchValue" placeholder="제목 검색">
               <input type="hidden" name="searchType" value="board_title">
               <button id="QnaSearchButton"  type="submit">검색</button>
@@ -30,10 +30,10 @@
         <table id="QnaTable">
           <thead>
             <tr>
-              <td id="line">글번호</td>
-              <td id="line">제목</td>
-              <td id="line">글쓴이</td>
-              <td id="line">등록일</td>
+              <td class="line">글번호</td>
+              <td class="line">제목</td>
+              <td class="line">글쓴이</td>
+              <td class="line">등록일</td>
             </tr>
           </thead>
           <tbody>

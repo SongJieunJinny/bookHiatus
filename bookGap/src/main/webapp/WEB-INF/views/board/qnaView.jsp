@@ -16,9 +16,7 @@
   <jsp:include page="/WEB-INF/views/include/header.jsp" />
   <section>
   	<div id="navQna">
-      <div id="qnaHead">
-        <div id="qna">QnA</div>
-      </div>
+      <div id="qna">QnA</div>
       <div id="qnaMid">
         <div id="qnaViewTable">
           <div id="titleViewDiv">
@@ -38,7 +36,7 @@
 					<!-- 글쓴이랑 어드민이랑 -->
 				  <c:if test="${sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal.username eq vo.userId || 
 				               sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal.userAuthority eq 'ROLE_ADMIN'}">
-				    <form id="qnaViewwriteForm" name="deletefrm" action="qnaDelete.do" method="post" style="display: inline-flex;">
+				    <form name="deletefrm" action="qnaDelete.do" method="post">
 				      <input type="hidden" name="boardNo" value="${vo.boardNo}">
 				      <button id="writeView" onclick="return confirmDelete();">삭제하기</button>&nbsp;&nbsp;&nbsp;
 				    </form>
@@ -54,6 +52,7 @@
 					  <button id="listView">목록으로</button>
 					</a>
 				</div>
+				<br>
 			</div>
 	<sec:authentication var="loginUser" property="principal" />
   <script type="text/javascript">
@@ -104,9 +103,11 @@
 										for(qcvo of data.clist){
 											html +=`<div id="qnaBox\${qcvo.qCommentNo}" class="qnaBox">
 																<div class="qnaIdBox">
-																	<div class="qnaId">\${qcvo.userId}</div>
-																	<div style="color: gray; font-size: 15px; margin-top: 0.2%; margin-left: 1%; margin-right: 1%;">|</div>
-																	<div class="qnaRdate">\${qcvo.formattedQCommentRdate}</div>
+																	<div class="qnaBoxEct">
+																		<div class="qnaId">\${qcvo.userId}</div>
+																		<div style="color: gray; font-size: 15px; margin-top: 0.2%; margin-left: 1%; margin-right: 1%;">|</div>
+																		<div class="qnaRdate">\${qcvo.formattedQCommentRdate}</div>
+																	</div>
 																</div>
 																<div id="commentContentContainer\${qcvo.qCommentNo}" class="qnaContainer">
 																	<div class="qnaContentArea">\${qcvo.qCommentContent}</div>`;
@@ -267,11 +268,7 @@
 				    <div id="qnaComments">
 				      <div id="commentLayout">
 				        <div id="qnaCommentTitle">
-				        	QnA<a href="qnaView.do?boardNo=${qanVo.boardNo}&boardType=2">${qanVo.boardTitle}
-	              		<c:if test="${qanVo.qCommentCount > 0}">
-											<span style="color:#FF5722;">(${qanVo.qCommentCount })</span>
-										</c:if>
-									</a>
+				        	QnA
 				        </div>
 				      </div>
 				      <div id="reviewView">
@@ -323,7 +320,7 @@
     }
   }
 	</script>
-  <script>
+	<script>
 	$(document).ready(function() {		
 		$('#modifyView').click(function() {
 			  window.location.href = '<%=request.getContextPath()%>/qnaModify.do';
