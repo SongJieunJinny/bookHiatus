@@ -24,15 +24,16 @@
   flex-direction: column;
 }
 #mypageDiv{
-  width: 480px;
-  height: 200px;
+  width: 80%;
+  height: 100%;
   border: 1px solid lightgrey;
   border-radius: 30px;
   background-color: lightgrey;
   display: flex;
   align-items: center;
   flex-direction: column;
-  justify-content: center;
+  padding-top: 3%;
+  padding-bottom: 3%;
 }
 #mypageContainer{
   font-size: 20px;
@@ -45,17 +46,19 @@
 }
 #mypageId{
   border: 1px solid black;
-  border-radius: 5px;
+  border-radius: 10px;
   background-color: white;
-  width: 220px;
+  width: 40%;
   height: 100%;
+  padding: 1%;
 }
 #mypagePw{
   border: 1px solid black;
-  border-radius: 5px;
+  border-radius: 10px;
   background-color: white;
-  width: 220px;
+  width: 40%;
   height: 100%;
+  padding: 1%;
 }
 #mypageEnd{
   width: 60%;
@@ -70,12 +73,12 @@
   width: 18%;
   padding: 0.7%;
   border: 1px solid black;
-  border-radius: 5px;
+  border-radius: 10px;
   background-color: black;
   color: white;
   text-align: center;
   cursor: pointer;
-  font-size: 17px;
+  font-size: 20px;
 }
 
 /* mypageInfo part */
@@ -140,6 +143,7 @@
   align-items: center;
   justify-content: center;
   width: 7%;
+  font-size: 20px;
 }
 #userName{
   margin: 1%;

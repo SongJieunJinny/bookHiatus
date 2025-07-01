@@ -91,6 +91,7 @@ nav{
 }
 #menuLogo{
 	width: 6%;
+
 }
 #menuLogoImg{
   width: 100%;
@@ -134,7 +135,7 @@ nav{
   justify-content: center;
 }
 #menuLogin{
-	width:100px;
+	width:50px;
   display: flex;
   justify-content: center;
   margin-bottom: 0.3%;
@@ -152,7 +153,7 @@ nav{
   cursor: pointer;
 }
 #menuMypage{
-	width:100px;
+	width:50px;
   display: flex;
   justify-content: center;
 }
@@ -164,7 +165,7 @@ nav{
 }
 #menuCart{
   cursor: pointer;
-  width:100px;
+  width:50px;
   display: flex;
   justify-content: center;
 }
@@ -504,4 +505,68 @@ nav{
 #footerMenu4{
   margin-bottom: 0.5%;
   font-size: small;
+}
+/*------------------------------------------------------------------------------------------------------------------------*/
+/* 반응형 */
+@media (min-width: 1200px) { /* 기본 스타일: 데스크톱 (1200px 이상) */
+  #menu{
+    font-size: 25px;
+    justify-content: space-evenly;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1199px) { /* 태블릿 (768px ~ 1199px) */
+  #menu{
+    font-size: 20px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  #bookCategory, #communityCategory{
+    width: 25%;
+    left: auto;
+    right: 5%;
+  }
+  #searchInput{
+    width: 180px;
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 767px){ /* 모바일 (아이폰 포함, 최대 767px) */
+  header, nav {
+    margin-left: 2%;
+    margin-right: 2%;
+  }
+  #menu{
+    flex-direction: column;
+    align-items: center;
+    font-size: 18px;
+  }
+  .menuItem{
+    padding: 10px 0;
+    font-size: 18px;
+  }
+  #menuLogo{
+    width: 50%;
+    text-align: center;
+  }
+  #searchInput{
+    width: 100%;
+    font-size: 16px;
+  }
+  #bookCategory, #communityCategory{
+    width: 80%;
+    left: 10%;
+    font-size: 16px;
+  }
+  #menuLogin, #menuLogout, #menuMypage, #menuCart{
+    width: 60px;
+  }
+  #cart-count{
+    top: -10px;
+    right: -10px;
+    font-size: 10px;
+    padding: 2px 5px;
+  }
 }

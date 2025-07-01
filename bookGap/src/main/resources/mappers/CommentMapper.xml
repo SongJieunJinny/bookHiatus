@@ -20,7 +20,7 @@
 	
 	<select id="selectTotal" parameterType="com.bookGap.vo.SearchVO" resultType="int">
 		SELECT COUNT(*) as total
-		  FROM COMMENT e  
+		  FROM COMMENT c  
      INNER JOIN USER u ON c.USER_ID = u.USER_ID  
        AND c.COMMENT_STATE != 2  
 		   AND BOOK_NO = #{bookNo} 
@@ -30,11 +30,15 @@
     INSERT INTO COMMENT (COMMENT_CONTENT,  
                          USER_ID,  
                          BOOK_NO,  
-                         COMMENT_RDATE)  
+                         COMMENT_RDATE,
+                         COMMENT_RATING,
+    										 COMMENT_STATE)  
     VALUES (#{commentContent},  
             #{userId},  
             #{bookNo},  
-            NOW());
+            NOW(),
+            #{commentRating},
+    				#{commentState});
 	</insert>
 	
 	<select id="selectOne" parameterType="int" resultType="com.bookGap.vo.CommentVO">

@@ -276,10 +276,10 @@
 				          <h2>&nbsp;QnA</h2>
 				          <div id="qnaCommentContentBox">
 				            <textarea id="qnaCommentContent" name="qCommentContent"></textarea>
+				          </div>
 				            <div id="qnaCommentButtonBox">
 				              <button id="qnaCommentButton" onclick="commentInsert(${vo.boardNo},${vo.boardType});">등록</button>
 				            </div>
-				          </div>
 									<!-- 댓글 목록 출력 시작 -->
 									<div class="comment-list">
 									</div>

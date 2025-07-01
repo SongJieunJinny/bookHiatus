@@ -53,7 +53,7 @@ td a{
   margin-top: 1%;
   margin-left: 75%;
   text-align: center;
-  padding: 0.3%;
+  padding: 0.4%;
 }
 #noticeSearchFormDiv{
   width: 100%;
@@ -162,8 +162,8 @@ td a{
   font-size: 18px;
   border-radius: 8px;
   cursor: pointer;
-  padding: 0.1%;
-  margin-left: 66%;
+  padding: 0.2%;
+  margin-left: 67%;
 }
 #reset{
   width: 6%;
@@ -173,7 +173,7 @@ td a{
   font-size: 18px;
   border-radius: 8px;
   cursor: pointer;
-  padding: 0.1%;
+  padding: 0.2%;
   margin-bottom: 2%;
 }
 
@@ -186,7 +186,7 @@ td a{
   font-size: 18px;
   border-radius: 8px;
   cursor: pointer;
-  padding: 0.1%;
+  padding: 0.2%;
   margin-left: 67%;
 }
 
@@ -255,42 +255,51 @@ td a{
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100%;
-  margin-left: 52%;
+  width: 50%;
+  margin-left: 50%;
   margin-top: 1.5%;
 }
 #noticeViewwriteForm{
 	display: inline-flex;
 }
 #noticeViewwrite{
-  width: 6%;
-  border: 4px solid black;
+	width: 12%;
+  border: 1px solid black;
   background-color: black;
   color: white;
   font-size: 18px;
   border-radius: 8px;
   cursor: pointer;
-  padding: 0.2%;
+  display: flex;
+  padding: 1%;
+  align-items: stretch;
+  justify-content: center;
 }
 #noticeViewmodify{
-  width: 6%;
-  border: 4px solid black;
+	width: 12%;
+  border: 1px solid black;
   background-color: black;
   color: white;
   font-size: 18px;
   border-radius: 8px;
   cursor: pointer;
-  padding: 0.2%;
+  display: flex;
+  padding: 1%;
+  align-items: stretch;
+  justify-content: center;
 }
 #noticeViewlist{
-  width: 6%;
-  border: 4px solid black;
+	width: 12%;
+  border: 1px solid black;
   background-color: black;
   color: white;
   font-size: 18px;
   border-radius: 8px;
   cursor: pointer;
-  padding: 0.2%;
+  display: flex;
+  padding: 1%;
+  align-items: stretch;
+  justify-content: center;
 }
 /* paging 영역 */
 .pagination {
