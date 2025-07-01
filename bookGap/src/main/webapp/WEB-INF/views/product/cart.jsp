@@ -14,86 +14,88 @@
 <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/resources/css/book/cart.css?v=2"/>
 </head>
 <body>
-<jsp:include page="/WEB-INF/views/include/header.jsp" />
-<section>
-		<div class="cartInfoInnerList">
-			<div class="cartInfoInner">
-				<h3 id="cartCountTitle">장바구니 ()</h3>
-				<div class="cartInfoButton"><button type="button" id="cartInfoBtn"><img src="<%= request.getContextPath() %>/resources/img/icon/address.png"> 기본배송지</button></div>
-			</div>
-			<div><p class="emptyCartMessage">장바구니가 비어 있습니다.</p></div>
-			<div class="cartContainer">
-				<div class="cartInfoCheck">
-					<label><input type="checkbox" name="cartItems" value="selectall" onclick='selectAll(this)'> <b>전체 선택</b></label>
+<div id="wrap">
+	<jsp:include page="/WEB-INF/views/include/header.jsp" />
+	<section>
+			<div class="cartInfoInnerList">
+				<div class="cartInfoInner">
+					<h3 id="cartCountTitle">장바구니 ()</h3>
+					<div class="cartInfoButton"><button type="button" id="cartInfoBtn"><img src="<%= request.getContextPath() %>/resources/img/icon/address.png"> 기본배송지</button></div>
 				</div>
-				<div class="paymentsInfoInner">
-					<div class="paymentRow"><span>상품금액 :</span> <span id="totalProductPrice">0원</span></div>
-					<div class="paymentRow"><span>배송비 :</span> <span id="shippingFee">0원</span></div>
-					<div class="paymentRow"><h3>총 결제 금액 :</h3> <h3 id="finalPrice">0원</h3></div>
-					<button id="orderBtn">주문하기(0)</button>
+				<div><p class="emptyCartMessage">장바구니가 비어 있습니다.</p></div>
+				<div class="cartContainer">
+					<div class="cartInfoCheck">
+						<label><input type="checkbox" name="cartItems" value="selectall" onclick='selectAll(this)'> <b>전체 선택</b></label>
+					</div>
+					<div class="paymentsInfoInner">
+						<div class="paymentRow"><span>상품금액 :</span> <span id="totalProductPrice">0원</span></div>
+						<div class="paymentRow"><span>배송비 :</span> <span id="shippingFee">0원</span></div>
+						<div class="paymentRowFinal"><span>총 결제 금액 :</span> <h4 id="finalPrice">0원</h4></div>
+						<button id="orderBtn">주문하기(0)</button>
+					</div>
 				</div>
 			</div>
-		</div>
-		<div class="cartInfoNote">
-			<br>
-			<h2>장바구니 유의사항</h2>
-			<p>상품별 배송일정이 서로 다를시 가장 늦은 일정의 상품 기준으로 모두 함께 배송됩니다.</p>
-			<p>배송지 수정시 예상일이 변경 될 수 있으며, 주문서에서 배송일정을 꼭 확인하시기 바랍니다.</p>
-			<br>
-		</div>
-	</section>
-	<template id="deliveryInfoTemplate">
-	  <div class="deliveryInfo">
-	    <p class="deliveryStatus">배송지 등록 필요</p>
+			<div class="cartInfoNote">
+				<br>
+				<h2>장바구니 유의사항</h2>
+				<p>상품별 배송일정이 서로 다를시 가장 늦은 일정의 상품 기준으로 모두 함께 배송됩니다.</p>
+				<p>배송지 수정시 예상일이 변경 될 수 있으며, 주문서에서 배송일정을 꼭 확인하시기 바랍니다.</p>
+				<br>
+			</div>
+		</section>
+		<template id="deliveryInfoTemplate">
+		  <div class="deliveryInfo">
+		    <p class="deliveryStatus">배송지 등록 필요</p>
+		  </div>
+		</template>
+		<div id="firstModal" class="modal">
+	    <div class="modalContent">
+	      <span class="close" id="closeFirstModal">&times;</span>
+	      <h2>ADDRESS</h2>
+	      <button id="addAddressBtn">+ 배송지 추가</button>
+	      <div id="addressList">
+	        <!-- 기본 배송지 -->
+	        <div class="addressItem">
+	          <label>
+	            <input type="radio" name="address" checked>
+	            <span>자취방 <span class="defaultTag">[기본배송지]</span></span>
+	          </label>
+	          <p>유저이 / 010-0000-0002</p>
+	          <p>[50248] 전북특별자치도 전주시 덕진구 3길 8 상상주택 805호</p>
+	          <button class="deleteAddress">삭제</button>
+	        </div>
+	        <!-- 추가 배송지 -->
+	        <div class="addressItem">
+	          <label>
+	            <input type="radio" name="address">
+	            <span>학교</span>
+	          </label>
+	          <p>유저이 / 010-0000-0002</p>
+	          <p>[50248] 전북특별자치도 전주시 백제대로585 이전학교 503호</p>
+	          <button class="deleteAddress">삭제</button>
+	        </div>
+	      </div>
+	    </div>
 	  </div>
-	</template>
-	<div id="firstModal" class="modal">
-    <div class="modalContent">
-      <span class="close" id="closeFirstModal">&times;</span>
-      <h2>ADDRESS</h2>
-      <button id="addAddressBtn">+ 배송지 추가</button>
-      <div id="addressList">
-        <!-- 기본 배송지 -->
-        <div class="addressItem">
-          <label>
-            <input type="radio" name="address" checked>
-            <span>자취방 <span class="defaultTag">[기본배송지]</span></span>
-          </label>
-          <p>유저이 / 010-0000-0002</p>
-          <p>[50248] 전북특별자치도 전주시 덕진구 3길 8 상상주택 805호</p>
-          <button class="deleteAddress">삭제</button>
-        </div>
-        <!-- 추가 배송지 -->
-        <div class="addressItem">
-          <label>
-            <input type="radio" name="address">
-            <span>학교</span>
-          </label>
-          <p>유저이 / 010-0000-0002</p>
-          <p>[50248] 전북특별자치도 전주시 백제대로585 이전학교 503호</p>
-          <button class="deleteAddress">삭제</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div id="secondModal" class="modal">
-    <div class="modalContent">
-      <span class="close" id="closeSecondModal">&times;</span>
-      <!-- 배송지 입력 폼 -->
-      <form>
-        <div id="addressForm" style="display: none;">
-          <input type="text" id="addressName" placeholder="배송지 이름">
-          <input type="text" id="recipient" placeholder="받는 사람">
-          <input type="text" id="phone" placeholder="연락처">
-          <input type="text" id="zipcode" placeholder="우편번호">
-          <input type="text" id="address" placeholder="주소">
-          <input type="text" id="addressDetail" placeholder="상세 주소">
-          <button id="searchAddress">주소 검색</button>
-          <button id="saveAddress">저장</button>
-        </div>
-      </form>  
-    </div>
-  </div>
+	  <div id="secondModal" class="modal">
+	    <div class="modalContent">
+	      <span class="close" id="closeSecondModal">&times;</span>
+	      <!-- 배송지 입력 폼 -->
+	      <form>
+	        <div id="addressForm" style="display: none;">
+	          <input type="text" id="addressName" placeholder="배송지 이름">
+	          <input type="text" id="recipient" placeholder="받는 사람">
+	          <input type="text" id="phone" placeholder="연락처">
+	          <input type="text" id="zipcode" placeholder="우편번호">
+	          <input type="text" id="address" placeholder="주소">
+	          <input type="text" id="addressDetail" placeholder="상세 주소">
+	          <button id="searchAddress">주소 검색</button>
+	          <button id="saveAddress">저장</button>
+	        </div>
+	      </form>  
+	    </div>
+	  </div>
+</div>
 <jsp:include page="/WEB-INF/views/include/footer.jsp" />
 <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script> 
 <script>
