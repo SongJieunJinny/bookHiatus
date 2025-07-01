@@ -2,6 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -18,7 +19,7 @@
 	<section class="bookList">
 		<div class="bookAll">
 			
-			<div class="bookTitleName">${empty category ? '모든 책' : category}</div>
+			<div class="bookTitleName">${empty category ? '추천 책' : category}</div>
 			
 			<div class="bookTitleSelect">
 				<select>
@@ -34,7 +35,7 @@
 				       <div class="bookImg" >
 						  <a href="./bookView.do"><img src="${vo.image}" alt="${vo.title}"  style="height: 260px;"/></a>
 						</div>
-						<div class="bookTitle">${vo.title}</div>
+						<div class="bookTitle"> <c:out value="${fn:replace(vo.title, '(', '<br>(')}" escapeXml="false"/></div>
 						<div class="bookPrice">${vo.discount}원</div>
 					</div>
 		        </c:forEach>

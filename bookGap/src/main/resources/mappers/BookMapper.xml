@@ -160,4 +160,15 @@
 		INNER JOIN BOOK b ON p.isbn = b.isbn
 		WHERE p.isbn = #{isbn}
 	</select>
+	<select id="adminInventoryManagementSelectAll"   resultType="BookVO" >
+		SELECT
+			   p.title,
+			   p.isbn,
+			   b.BOOK_STOCK AS bookStock,
+			   b.BOOK_NO AS bookNo,
+			   b.BOOK_STATE AS bookState,
+			FROM BOOK b
+			INNER JOIN PRODUCT_API p ON b.isbn = p.isbn
+			ORDER BY  p.isbn DESC
+	</select>
 </mapper>

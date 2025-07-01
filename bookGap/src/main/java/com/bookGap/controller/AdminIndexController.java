@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.bookGap.service.AdminBookService;
 import com.bookGap.service.AdminUserInfoService;
+import com.bookGap.service.BookService;
 import com.bookGap.service.ProductApiService;
 import com.bookGap.vo.BookVO;
 import com.bookGap.vo.UserInfoVO;
@@ -23,7 +24,8 @@ public class AdminIndexController {
     private AdminBookService adminBookService;
 	@Autowired
 	private AdminUserInfoService adminUserInfoService;
-	
+	@Autowired
+	public BookService bookService;
 	
 	@RequestMapping(value = "admin/adminIndex.do", method = RequestMethod.GET)
 	public String adminIndex() {
@@ -83,4 +85,12 @@ public class AdminIndexController {
 	
 		return "admin/err500";
 	}
+	
+	@RequestMapping(value = "admin/adminInventoryManagement.do", method = RequestMethod.GET)
+	public String adminInventoryManagement(Model model) {
+		 List<BookVO> getInventoryManagementSelectAll = bookService.adminInventoryManagementSelectAll();
+		model.addAttribute("getInventoryManagementSelectAll",getInventoryManagementSelectAll);
+		return "admin/adminInventoryManagement";
+	}
+	
 } 

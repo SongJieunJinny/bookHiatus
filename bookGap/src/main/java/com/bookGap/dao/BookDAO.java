@@ -48,4 +48,8 @@ public class BookDAO {
 	public BookVO selectBookDetailByIsbn(String isbn) {
 	    return sqlSession.selectOne(namespace + "selectBookDetailByIsbn", isbn);
 	}
+	public List<BookVO> adminInventoryManagementSelectAll() {
+	    return sqlSession.selectList(namespace + "adminInventoryManagementSelectAll");
+	}
+	
 }
