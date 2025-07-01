@@ -59,6 +59,10 @@ public class CommentController {
     map.put("clist", clist);
     map.put("cpaging", paging);
     
+    System.out.println("bookNo = " + bookNo); 
+    System.out.println("searchVO.bookNo = " + searchVO.getBookNo());
+    System.out.println("댓글 개수 = " + total);
+
     return map;
 
 	}
@@ -68,15 +72,22 @@ public class CommentController {
 	@ResponseBody
 	@RequestMapping(value="/write.do",method=RequestMethod.POST)
 	public String write(CommentVO vo,HttpServletRequest request,Principal principal){
+	  
+	  if (principal == null) {
+      return "Fail"; // 로그인 안 된 상태
+	  }
 		
     String loginUserId = principal.getName(); 
-    boolean isAdmin = request.isUserInRole("ROLE_ADMIN"); // 관리자 여부 확인
+    vo.setUserId(loginUserId);  // 댓글쓴이
     
-    vo.setUserId(loginUserId);
-    
-    if(request.getParameter("commentContent") != null && !request.getParameter("commentContent").isEmpty()){
-        vo.setCommentContent(request.getParameter("commentContent"));
+    String content = request.getParameter("commentContent");
+    if (content == null || content.trim().isEmpty()) {
+        return "Fail";
     }
+    vo.setCommentContent(content);  // 내용
+    vo.setCommentState("1");  // 기본값: 활성화
+    vo.setCommentRating( Integer.parseInt(request.getParameter("commentRating")) ); // 별점
+
   
     int result = commentService.insert(vo);
     
@@ -120,5 +131,5 @@ public class CommentController {
       return "Fail";
     }
 	}
-
+	
 }
