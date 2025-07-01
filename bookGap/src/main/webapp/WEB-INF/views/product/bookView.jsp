@@ -90,21 +90,26 @@
 						<div id="publisherBookReviewText" class="collapsible-text"><c:out value="${bookDetail.publisherBookReview}" escapeXml="false" /></div>
 						<button class="toggle-btn" data-target="publisherBookReviewText"></button>
 					</div>
-				</c:if>
+				</c:if>				
 			</div>
 		</div>
+		<sec:authentication var="loginUser" property="principal" />
+		
 <script type="text/javascript">
-let bookNo = "";
-let userId = '<sec:authentication property="name" />';
-let userRole = '<sec:authentication property="authorities" htmlEscape="false" />';
+let bookNo = "${bookDetail.bookNo}";
+
+let userId = '${loginUser.username}';
+let userRole = '${loginUser.authorities}';
 
 console.log("✅ userId:", userId);
 console.log("✅ userRole:", userRole);
 
+
 $(document).ready(function() {
-	bookNo = ${vo.bookNo};
+	bookNo = "${bookDetail.bookNo}";
 	
-	console.log(bookNo);
+	console.log("📦 bookNo =", bookNo); // undefined, "" 등이면 원인!
+
   loadComment(bookNo);
      
   // 메뉴 버튼 이벤트 초기화
@@ -128,9 +133,6 @@ $(document).ready(function() {
 
 //두번째 변수 생략시 1로 들어감
 function loadComment(bookNo,page = 1) {
-	const bookWriter = '${vo.userRole}'; 
-	console.log("📥 loadComment 호출됨: bookNo =", bookNo, "page =", page); 
-	
   $.ajax({
     url: "<%= request.getContextPath()%>/comment/loadComment.do",
     type: "get",
@@ -142,11 +144,11 @@ function loadComment(bookNo,page = 1) {
 									<div>
 										<div class="reviewIdBox">
 											<div class="reviewId">\${cvo.userId}</div>
-											<div style="color: gray; font-size: 15px; margin-top: 0.2%; margin-left: 1%; margin-right: 1%;">|</div>
+											<div class="reviewIdRdate">|</div>
 											<div class="reviewRdate">\${cvo.formattedCommentRdate}</div>
 											<div class="reviewLike">
 												<span>🤍</span>
-												<input type="checkbox" onclick="toggleLike(\${cvo.commentNo)">
+												<input type="checkbox" onclick="toggleLike(\${cvo.commentNo})">
 											</div>
 										</div>
 										<div>
@@ -204,14 +206,44 @@ function loadComment(bookNo,page = 1) {
 					 }
 	});
 }
-
+</script>
+		<sec:authorize access="isAuthenticated()">
+			<div id="bookComments">
+				<div id="commentLayout">
+					<div id="commentTitle">
+						전체리뷰
+							<c:if test="${bookDetail.commentCount > 0}">
+								<span style="color:#FF5722;">(${bookDetail.commentCount})</span>
+							</c:if>
+					</div>
+				</div>
+				<div id="review">
+					<div id="bookComment">
+						<h2>리뷰작성</h2>
+						<form onsubmit="event.preventDefault(); commentInsert(${bookDetail.bookNo}); return false;">
+							<div class="bookCommentBox">
+								<span class="star">★★★★★<span>★★★★★</span>
+									<input type="range" oninput="drawStar(this)" value="0" step="1" min="0" max="5" name="rating" class="reviewStar">
+								</span>
+								<textarea class="reviewComment" placeholder="&nbsp;리뷰를 입력해주세요" name="content"></textarea>
+								<button class="bookCommentButton" type="submit">등록</button>
+							</div>
+						</form>
+<script>
 function commentInsert(bookNo){
+	let userId = '${pageContext.request.userPrincipal.name}';
+	  if (!userId || userId === 'null') {
+		    alert("로그인 후 댓글을 작성할 수 있습니다.");
+		    return;
+		  }
 
   $.ajax({
     url : "<%= request.getContextPath()%>/comment/write.do",
     type : "post",
     data : { bookNo : bookNo,
-    				 commentContent : $(".reviewComment").val() },
+    				 userId : userId,
+			    	 commentContent : $(".reviewComment").val(), 
+			    	 commentRating: $('.reviewStar').val() },  
     success : function (result){
 					      if(result === "Success"){
 					        alert("댓글이 등록되었습니다.");
@@ -305,28 +337,6 @@ function commentDel(commentNo){
 	});
 }
 </script>
-		<sec:authorize access="isAuthenticated()">
-			<div id="bookComments">
-				<div id="commentLayout">
-					<div id="commentTitle">
-						전체리뷰
-							<c:if test="${bookDetail.commentCount > 0}">
-								<span style="color:#FF5722;">(${bookDetail.commentCount})</span>
-							</c:if>
-					</div>
-				</div>
-				<div id="review">
-					<div id="bookComment">
-						<h2>리뷰작성</h2>
-						<form onsubmit="event.preventDefault(); commentInsert(${bookDetail.bookNo}); return false;">
-							<div class="bookCommentBox">
-								<span class="star">★★★★★<span>★★★★★</span>
-									<input type="range" oninput="drawStar(this)" value="0" step="1" min="0" max="5" name="rating" class="reviewStar">
-								</span>
-								<textarea class="reviewComment" placeholder="&nbsp;리뷰를 입력해주세요" name="content"></textarea>
-								<button class="bookCommentButton" type="submit">등록</button>
-							</div>
-						</form>
 						<!-- 댓글 목록 출력 시작 -->
 						<div class="comment-list"></div>
 					</div>
