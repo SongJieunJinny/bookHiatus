@@ -12,9 +12,12 @@ public interface BookService {
 	 List<ProductApiVO> getBooksByCategory(String category);
 	 List<ProductApiVO> getBooksPaging(SearchVO searchVO);
 	 List<ProductApiVO> getBooksByCategoryPaging(SearchVO searchVO);
+	 List<BookVO> adminInventoryManagementSelectAll();
 	 BookVO getBookDetailByIsbn(String isbn);
+	
 
 	 int getTotalBookCount(SearchVO searchVO);
 	 int getTotalByCategory(SearchVO searchVO);
+	
 
 }
