@@ -55,7 +55,9 @@
         </table>
       </div>
       <sec:authorize access="hasAuthority('ROLE_ADMIN')">
-      	<button id="write">등록하기</button>&nbsp;&nbsp;&nbsp;
+	      <div id="eventListWriteButton">
+	      	<button id="write">등록하기</button>
+	      </div>
       </sec:authorize>
       
       <!-- 페이징 영역 -->

@@ -1,7 +1,7 @@
 @charset "UTF-8";
 section {
 	width: 100%;
-	margin: 4% auto;
+	margin: 3% auto;
 	height: auto;
 }
 /* eventList */
@@ -11,7 +11,6 @@ section {
   margin-right: 5%;
 }
 #event{
-  margin-bottom: 1.5%;
   font-size: 28px;
   text-align: center;
 }
@@ -41,18 +40,21 @@ section {
   padding-bottom: 1%;
   border-bottom:2px solid black;
 }
+#eventListWriteButton{
+  width: 85%;
+	display: flex;
+  justify-content: flex-end;
+  margin: 1% 0% 1% 0%;
+}
 #write{
-  width: 6%;
   border: 1px solid black;
   background-color: black;
   color: white;
   font-size: 18px;
   border-radius: 8px;
   cursor: pointer;
-  margin-top: 1%;
-  margin-left: 75%;
   text-align: center;
-  padding: 0.4%;
+  padding: 0.4% 0.7% 0.4% 0.7%;
 }
 #eventSearchFormDiv{
   width: 100%;
@@ -64,13 +66,12 @@ section {
 	align-items: center;
 }
 #eventSearchListForm{
-	width: 30%;
-	margin-bottom: 2%;
-	text-align: center;	
+	width: 40%;
+	text-align: center;
 }
 #eventSearchInput{
-  width: 35%;
-  padding: 2%;
+  width: 28%;
+  padding: 0.8%;
   background-color: white;
   color: black;
   text-align: center;
@@ -78,7 +79,7 @@ section {
   border: none;
   border-bottom: 1px solid black;
   outline: none;
-  font-size: 16px;
+  font-size: 17px;
 }
 #eventSearchButton{
   width: 10%;
@@ -89,40 +90,39 @@ section {
   text-align: center;
   border-radius: 8px;
   cursor: pointer;
-  font-size: 18px;
+  font-size: 17px;
 }
 /* eventWrite, eventModify */
 #eventWrite{
 	width: 100%;
   display:flex;
-	justify-content: space-evenly;
+	flex-direction: column;
 	align-items: center;
 }
 #eventWriteTable{
   width: 70%;
   border-collapse: separate;
   border-spacing: 30px 30px;
+  margin: 2% 0% 2% 0%;
 }
 #eventWriteTitleTable{
 	display: flex;
 	justify-content: center;
   width: 100%;
   align-items: center;
-  margin-bottom: 2%;
+  margin: 0% 0% 3% 0%;
 }
-#title{
-  font-size: 20px;
-  padding: 1%;
-  display: flex;
-  justify-content: flex-end;
+#title, #content{
+  font-size: 23px;
+  margin-bottom: 0.3%;
 }
 #titleMemo{
   border: 1px solid black;
-  border-radius: 24px;
-  width: 75%;
+  border-radius: 15px;
+  width: 70%;
   height: 10px;
-  padding: 1.5% 1.5% 1.5% 2%;
-  font-size: 16px;
+  padding: 1.8%;
+  font-size: 18px;
   margin-left: 1%;
 }
 #eventWriteContentTable{
@@ -131,59 +131,49 @@ section {
   justify-content: center;
   width: 100%;
 }
-#content{
-  font-size: 20px;
-  padding: 1%;
-  display: flex;
-  justify-content: flex-end;
-}
 #contentMemo{
 	border: 1px solid black;
-  border-radius: 24px;
-  overflow: hidden;
+  border-radius: 15px;
+  width: 70%;
+  height: 280px;
+  font-size: 18px;
+  padding: 1.8%;
   margin-left: 1%;
-  width: 74.5%;
-  height: 250px;
-  font-size: 16px;
-  padding: 2%;
-  line-height: 1.5;
   resize: none;
+  overflow: hidden;
+  line-height: 1.5;
 }
 #eventButtonDiv{
-	padding-top: 1.9%;
+	display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  width: 75%;
 }
 #eventWriteButton{
-  width: 6%;
-  border: 4px solid black;
+	width: 10%;
+  border: 1px solid black;
   background-color: black;
   color: white;
   font-size: 18px;
   border-radius: 8px;
   cursor: pointer;
-  padding: 0.2%;
-  margin-left: 66%;
+  display: flex;
+  padding: 0.5%;
+  align-items: stretch;
+  justify-content: center;
 }
-#eventModifyButton{
-  width: 6%;
-  border: 4px solid black;
+#eventModifyButton, #resetButton{
+	width: 10%;
+  border: 1px solid black;
   background-color: black;
   color: white;
   font-size: 18px;
   border-radius: 8px;
   cursor: pointer;
-  padding: 0.2%;
-  margin-left: 66%;
-}
-#resetButton{
-  width: 6%;
-  border: 4px solid black;
-  background-color: black;
-  color: white;
-  font-size: 18px;
-  border-radius: 8px;
-  cursor: pointer;
-  padding: 0.2%;
-  margin-bottom: 2%;
+  display: flex;
+  padding: 0.5%;
+  align-items: stretch;
+  justify-content: center;
 }
 /* eventView*/
 #navEvent{
@@ -204,6 +194,7 @@ section {
 	border-spacing: 0; /* 셀 간 간격 설정 */
 	border: 2px solid black; /* 테이블 외곽 테두리 */
   border-radius: 20px;
+  margin-top: 1%;
   overflow: hidden;
 }
 #titleViewDiv{
@@ -215,22 +206,22 @@ section {
   margin-left: 2%;
 }
 #writeRrdateViewDiv{
+	position: relative;
 	width: 100%;
   margin: 2%;
 }
-#writerView{
-  position: relative;
-  font-size: 20px;
-  padding-left: 2%;
-}
-#writerView::after{
+#writeRrdateViewDiv:after{
   content: "";
   position: absolute;
   bottom: 0;
   left: 0%;
-  width: 1270px;
+  width: 96%;
   height: 1px;
   background-color: black;
+}
+#writerView{
+  font-size: 20px;
+  padding-left: 2%;
 }
 #rdateView{
   position: relative;
@@ -246,50 +237,27 @@ section {
 	padding : 3%
 }
 #eventViewBtn{
+	display: flex;
+  justify-content: flex-end;
+  align-items: stretch;
+  width: 70%;
+  gap: 1.5%;
+}
+#modifyView, #deleteView, #listView{
+	width: 100px;
+  border: 1px solid black;
+  background-color: black;
+  color: white;
+  font-size: 18px;
+  border-radius: 8px;
+  cursor: pointer;
   display: flex;
+  padding: 6%;
   justify-content: center;
-  align-items: center;
-  width: 50%;
-  margin-left: 50%;
-  margin-top: 1.5%;
-}
-#modifyView{
-  width: 110px;
-  border: 1px solid black;
-  background-color: black;
-  color: white;
-  font-size: 20px;
-  border-radius: 8px;
-  cursor: pointer;
-  padding: 6px;
-}
-#deleteView{
-  width: 110px;
-  border: 1px solid black;
-  background-color: black;
-  color: white;
-  font-size: 20px;
-  border-radius: 8px;
-  cursor: pointer;
-  padding: 6px;
-}
-#listView{
-  width: 110px;
-  border: 1px solid black;
-  background-color: black;
-  color: white;
-  font-size: 20px;
-  border-radius: 8px;
-  cursor: pointer;
-  padding: 6px;
-  margin-left: 15%;
 }
 #eventEnd{
   width: 100%;
-  height: 30%;
-  margin-top: 1%;
   display: flex;
-  justify-content: center;
 }
 #eventComments{
   width: 100%;
@@ -300,116 +268,102 @@ section {
   width: 100%;
   border-bottom: solid 2px;
   border-color: #D3D3D3;
-  margin-bottom: 4%;
+  margin-bottom: 2%;
 }
 #eventCommentTitle{
-  width: 4%;
+  width: 6%;
   border-bottom: solid 5px;
   border-color: black;
   font-size: 25px;
   font-family: Arial, sans-serif;    
 }
 #reviewView{
-  width: 80%;
+  width: 90%;
   height: auto;
   border-radius: 20px;
-  border:  1px solid black;
-  margin-left: 10%;
-  margin-right: 10%;
+  border: 1px solid black;
+  margin: 0% 5% 0% 5%;
 }
 #eventComment h2{
-  margin-left: 2.5%;
+  margin-left: 3%;
 }
 #eventCommentContentBox{
 	width: 90%;
-  margin-left: 3.1%;
+  margin: 0% 5% 0% 5%;
 }
 #eventCommentContent{
   width: 100%;
   height: 100px;
   resize: none;
-  font-size: 15px;
   border-radius: 10px;
   padding: 2%;
 }
 textarea.eventCommentContent{
-  width: 90%;
-  height: 100px;
+  width: 100%;
   resize: none;
-  font-size: 15px;
-  margin-left: 2.7%;
-  margin-bottom: 1%;
+  font-size: 18px;
   border-radius: 10px;
-  padding: 2%;	
+  padding: 2%;
+  margin: 2% 0% 0% 0%;		
 }
 .comment-list{
-  margin-top: 3%;
   display: flex;
   flex-direction: column;
   align-items: center;	
 }
 #eventCommentButtonBox{
-  text-align: right;
-  margin-right: 3.2%;
+	display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  width: 95%;
+  margin: 1% 0% 0% 0%;
 }
 #eventCommentButton{
-  width: 80px;
+	width: 6%;
   border: 1px solid black;
   background-color: black;
   color: white;
+  padding: 0.3%;	
   font-size: 18px;
   border-radius: 8px;
   cursor: pointer;
-  padding: 4px;
-  margin-top: 0.5%;
 }
 .eventBox{
   width: 90%;
-  height: 180px;
   border-radius: 10px;
   border: solid 1px black;
   padding: 15px 10px 10px 10px;
-  margin-bottom: 2%;
+  margin: 2% 0% 0% 0%;
 }
 .eventIdBox{
-  margin-right: 1%;
-  margin-left: 1%;
-  margin-top: 0.5%;
-  font-size: 20px;
   color: gray;
   display: flex;
+  font-size: 20px;
+  align-items: center;
+  margin: 0% 0% 0% 2%;
 }
 .eventId{
-  margin-right: 1%;
-  font-size: 17px;
-  color: gray;
+	margin-top: 0.5%;	
 }
 .eventRdate{
-  margin-right: 1%;
-  font-size: 17px;
-  color: gray;
+	margin-top: 0.5%;	
 }
 .eventContainer{
   margin-top: 8px;
-  resize: none;
-  width: 98%;
+  width: 100%;
   height: 130px;
-  border: none;
-  margin-bottom: 2%;
 }
 .eventContentArea{
-  resize: none;
-  width: 100%;
-  height: 60px;
+	resize: none;
+  width: 95%;
+  height: 100px;
   font-size: 15px;
   border: none;
-  margin-bottom: 2%;
-  margin-left: 1%;
+  margin: 1% 5% 0% 2%;
 }
 .eventOptions{
   position: relative;
-  margin-left: 97%;
-  margin-top: 3%;
+  margin-left: 95%;
   cursor: pointer;
   font-size: 18px;
 }
@@ -428,7 +382,6 @@ textarea.eventCommentContent{
   border: 1px solid black;
   color: white;
   border-radius: 8px;
-  padding: 5px;
   z-index: 999;
   min-width: 60px;
 }
@@ -490,6 +443,14 @@ textarea.eventCommentContent{
   background-color: black;
   color: white;
 }
+#eventCommentBtnBox{
+	display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100%;
+  margin: 1% 0% 0% 0%;	
+  gap: 2%;
+}
 .save-btn{
 	width: 90px;
 	height: 35px;
@@ -500,7 +461,6 @@ textarea.eventCommentContent{
 	text-align: center;
 	cursor: pointer;
 	font-size: 18px;
-	margin: 1%;
 }
 .cancel-btn{
 	width: 90px;
@@ -512,15 +472,13 @@ textarea.eventCommentContent{
 	text-align: center;
 	cursor: pointer;
 	font-size: 18px;
-	margin: 1%;
 }
 /* paging 영역 */
 .pagination {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 3%;
-  margin-top: 0%;
+  margin: 1% 0% 1% 0%;
 }
 .pagination a {
   text-decoration: none;
@@ -538,4 +496,116 @@ textarea.eventCommentContent{
 }
 .pagination a:hover {
   background: #E2E2E2;
+}
+/*---------------------------------------------------반응형 스타일---------------------------------------------------------------------*/
+/* 모바일 (320px ~ 480px) */
+@media (max-width: 480px){
+  #event{
+    font-size: 24px;
+  }
+  #titleMemo, #contentMemo{
+    font-size: 14px;
+    padding: 8px;
+  }
+  #eventSearchButton{
+  	font-size: 10px;
+	}
+  #eventComments{
+    margin-top: 20px;
+  }
+  .eventIdBox{
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .eventId, .eventRdate{
+    font-size: 14px;
+  }
+  .eventContentArea{
+    font-size: 14px;
+  }
+  #eventCommentButton{
+    font-size: 9px;
+    padding: 2px;
+  }
+  .pagination{
+    font-size: 14px;
+  }
+  .paging-link{
+    font-size: 14px;
+  }
+}
+/* 태블릿 (768px ~ 1024px) */
+@media (max-width: 1024px){
+  #event{
+    font-size: 26px;
+  }
+  #eventSearchButton{
+  	font-size: 12px;
+	}
+  #titleMemo, #contentMemo{
+    font-size: 16px;
+    padding: 10px;
+  }
+  .eventIdBox{
+    flex-direction: row;
+    align-items: center;
+  }
+  .eventId, .eventRdate{
+    font-size: 16px;
+  }
+  .eventContentArea{
+    font-size: 16px;
+  }
+  #eventCommentButton{
+    font-size: 11px;
+    padding: 2px;
+  }
+  .pagination{
+    font-size: 16px;
+  }
+  .paging-link{
+    font-size: 16px;
+  }
+}
+/* 노트북 (1280px) */
+@media (max-width: 1280px){
+  #event{
+    font-size: 28px;
+  }
+  #eventSearchButton{
+  	font-size: 14px;
+	}
+  #titleMemo, #contentMemo{
+    font-size: 18px;
+    padding: 12px;
+  }
+  #eventWriteButton, #eventModifyButton, #resetButton{
+    width: 11%;
+  }
+  #eventCommentButton{
+    font-size: 13px;
+    padding: 2px;
+  }
+  .pagination{
+    font-size: 18px;
+  }
+  .paging-link{
+    font-size: 18px;
+  }
+}
+/* PC 화면 (1920px × 1080px) */
+@media (min-width: 1920px){
+  #event{
+    font-size: 36px;
+  }
+  #titleMemo, #contentMemo{
+    font-size: 20px;
+    padding: 15px;
+  }
+  .pagination{
+    font-size: 20px;
+  }
+  .paging-link{
+    font-size: 20px;
+  } 
 }

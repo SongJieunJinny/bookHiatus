@@ -51,7 +51,9 @@
         </table>
       </div>
       <sec:authorize access="hasAuthority('ROLE_ADMIN')">
-      	<button id="writeButton">등록하기</button>&nbsp;&nbsp;&nbsp;
+      	<div id="noticeListWriteButton">
+      		<button id="writeButton">등록하기</button>
+      	</div>
       </sec:authorize>
 			<!-- 페이징 영역 -->
 			<div class="pagination">

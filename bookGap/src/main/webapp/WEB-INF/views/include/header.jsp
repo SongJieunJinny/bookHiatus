@@ -10,16 +10,34 @@
 		</div>
 		<!-- 메뉴 -->
 		<div id="menu">
-			<div id="menuBook" class="menuItem">BOOK</div>
+			<div id="menuBook" class="menuItem">BOOK
+				<!-- BOOK카테고리 메뉴 -->
+				<div id="bookCategory">
+				  <a href="${pageContext.request.contextPath}/product/bookList.do">모든 책</a>
+				  <c:forEach var="category" items="${bookCategories}">
+				    <a href="${pageContext.request.contextPath}/product/bookList.do?category=${category}">
+				      ${category}
+				    </a>
+			  	</c:forEach>
+				</div>
+			</div>
+			
 			<div id="menuAbout" class="menuItem"><!--0322상화 추가시작--><a href="<%=request.getContextPath()%>/about.do">ABOUT</a><!--0322상화 추가끝--></div>
 			<div id="menuEvent" class="menuItem"><!--0221지은 추가시작--><a href="<%=request.getContextPath()%>/eventList.do">EVENT</a><!--0221지은 추가끝--></div>
 			<div id="menuChoice" class="menuItem"><!--0322상화 추가시작--><a href="<%=request.getContextPath()%>/choice/choiceList.do">CHOICE</a><!--0322상화 추가끝--></div>
-			<div id="menuCommunity" class="menuItem">COMMUNITY</div>
+			<div id="menuCommunity" class="menuItem">COMMUNITY
+				<!-- COMMUNITY카테고리 메뉴 -->
+				<div id="communityCategory">
+					<a href="<%= request.getContextPath() %>/noticeList.do">공지사항</a>
+					<a href="<%= request.getContextPath() %>/qnaList.do?boardType=2">Q&A</a>
+				</div>
+			</div>
+			
 			<div id="menuSearch" class="menuItem">
-	      <span id="searchSwichBtn">
+	      <span id="searchSwitchBtn">
 	        <span id="searchText">SEARCH</span>
 	      </span>
-	      <input type="text" id="searchInput" placeholder="검색어 입력...">
+	      <input type="text" id="searchInput" placeholder="검색어 입력">
 	      <span id="searchImgIcon">
 	        <img id="searchImg" src="<%=request.getContextPath()%>/resources/img/icon/search.png">
 	      </span>
@@ -36,20 +54,6 @@
       </div>
 		</div>
 	</div>
-	<!-- BOOK카테고리 메뉴 -->
-	<div id="bookCategory">
-	  <a href="${pageContext.request.contextPath}/product/bookList.do">모든 책</a>
-	  <c:forEach var="category" items="${bookCategories}">
-	    <a href="${pageContext.request.contextPath}/product/bookList.do?category=${category}">
-	      ${category}
-	    </a>
-  	</c:forEach>
-	</div>
-	<!-- COMMUNITY카테고리 메뉴 -->
-	<div id="communityCategory">
-		<a href="<%= request.getContextPath() %>/noticeList.do">공지사항</a>
-		<a href="<%= request.getContextPath() %>/qnaList.do?boardType=2">Q&A</a>
-	</div>
 	<div id="menuHr"><hr></div>
 </header>
 </sec:authorize>
@@ -63,13 +67,31 @@
 		</div>
 		<!-- 메뉴 -->
 		<div id="menu">
-			<div id="menuBook" class="menuItem">BOOK</div>
+			<div id="menuBook" class="menuItem">BOOK
+				<!-- BOOK카테고리 메뉴 -->
+				<div id="bookCategory">
+				   <a href="${pageContext.request.contextPath}/product/bookList.do">모든 책</a>
+				  <c:forEach var="category" items="${bookCategories}">
+				    <a href="${pageContext.request.contextPath}/product/bookList.do?category=${category}">
+				      ${category}
+				    </a>
+			  	</c:forEach>
+				</div>
+			</div>
+			
 			<div id="menuAbout" class="menuItem"><!--0322상화 추가시작--><a href="<%=request.getContextPath()%>/about.do">ABOUT</a><!--0322상화 추가끝--></div>
 			<div id="menuEvent" class="menuItem"><!--0221지은 추가시작--><a href="<%=request.getContextPath()%>/eventList.do">EVENT</a><!--0221지은 추가끝--></div>
 			<div id="menuChoice" class="menuItem"><!--0322상화 추가시작--><a href="<%=request.getContextPath()%>/choice/choiceList.do">CHOICE</a><!--0322상화 추가끝--></div>
-			<div id="menuCommunity" class="menuItem">COMMUNITY</div>
+			<div id="menuCommunity" class="menuItem">COMMUNITY
+				<!-- COMMUNITY카테고리 메뉴 -->
+				<div id="communityCategory">
+					<a href="<%= request.getContextPath() %>/noticeList.do">공지사항</a>
+					<a href="<%= request.getContextPath() %>/qnaList.do?boardType=2">Q&A</a>
+				</div>
+			</div>
+			
 			<div id="menuSearch" class="menuItem">
-	      <span id="searchSwichBtn">
+	      <span id="searchSwitchBtn">
 	        <span id="searchText">SEARCH</span>
 	      </span>
 	      <input type="text" id="searchInput" placeholder="검색어 입력...">
@@ -99,26 +121,11 @@
 			   </a>
 			 </div>
 			</sec:authorize>
-			
 			<div id="menuCart" class="menuItem">
 	      <a href="<%=request.getContextPath()%>/product/cart.do"><img id="cartImg" src="<%=request.getContextPath()%>/resources/img/icon/cart.png"></a>
 	      <span id="cart-count">0</span>
       </div>
 		</div>
-	</div>
-	<!-- BOOK카테고리 메뉴 -->
-	<div id="bookCategory">
-	   <a href="${pageContext.request.contextPath}/product/bookList.do">모든 책</a>
-	  <c:forEach var="category" items="${bookCategories}">
-	    <a href="${pageContext.request.contextPath}/product/bookList.do?category=${category}">
-	      ${category}
-	    </a>
-  	</c:forEach>
-	</div>
-	<!-- COMMUNITY카테고리 메뉴 -->
-	<div id="communityCategory">
-		<a href="<%= request.getContextPath() %>/noticeList.do">공지사항</a>
-		<a href="<%= request.getContextPath() %>/qnaList.do?boardType=2">Q&A</a>
 	</div>
 	<div id="menuHr"><hr></div>
 </header>
@@ -163,7 +170,7 @@
 		          <input id="guestId" type="text" name="GUEST_ID" placeholder="주문번호"><br>
 		          <input id="guestPw" type="password" name="GUEST_PW" placeholder="비밀번호">
 		        </div>
-		        <button id="guestBtn" type="submit">확인</button>
+		        <button id="guestBtn" type="submit">CHECK</button>
 		      </div>
 		    </div>
 		    <div id="guestInfoDiv">
@@ -184,7 +191,7 @@
 	  const searchInput = document.getElementById("searchInput");
 	  const searchText = document.getElementById("searchText");
 	  const searchImgIcon = document.getElementById("searchImgIcon");
-	  const searchSwichBtn = document.getElementById("searchSwichBtn"); // 오타 수정
+	  const searchSwitchBtn = document.getElementById("searchSwitchBtn"); // 오타 수정
 
     // BOOK 버튼 클릭 시 카테고리 메뉴 토글
     menuBook.addEventListener("click", function(event){
@@ -205,7 +212,7 @@
     });
 
     // 검색 버튼 클릭 시 아이콘과 인풋 표시
-    searchSwichBtn.addEventListener("click", function(event){ // 변수명 수정
+    searchSwitchBtn.addEventListener("click", function(event){ // 변수명 수정
       event.stopPropagation();
       if(searchInput.style.display === "none" || searchInput.style.display === ""){
         searchText.style.display = "none"; // "SEARCH" 숨김
@@ -213,6 +220,11 @@
         searchInput.style.display = "inline-block"; // 검색 입력창 표시
         searchInput.focus();
       }
+    });
+    
+    document.getElementById('searchSwitchBtn').addEventListener('click', function () {
+    	const input = document.getElementById('searchInput');
+    	input.style.display = input.style.display === 'block' ? 'none' : 'block';
     });
     	
     // 화면 클릭 시 메뉴와 검색창 닫기
