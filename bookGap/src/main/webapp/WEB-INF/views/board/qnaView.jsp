@@ -45,7 +45,7 @@
 				  <c:if test="${sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal.username eq vo.userId}">
 				    <a href="qnaModify.do?boardNo=${vo.boardNo}" style="text-decoration: none;">
 				      <button id="modifyView">수정하기</button>
-				    </a>&nbsp;&nbsp;&nbsp;
+				    </a>
 				  </c:if>
 					<!-- 모두가 -->
 				  <a href="<%= request.getContextPath() %>/qnaList.do?boardType=2">    
@@ -103,11 +103,9 @@
 										for(qcvo of data.clist){
 											html +=`<div id="qnaBox\${qcvo.qCommentNo}" class="qnaBox">
 																<div class="qnaIdBox">
-																	<div class="qnaBoxEct">
-																		<div class="qnaId">\${qcvo.userId}</div>
-																		<div style="color: gray; font-size: 15px; margin-top: 0.2%; margin-left: 1%; margin-right: 1%;">|</div>
-																		<div class="qnaRdate">\${qcvo.formattedQCommentRdate}</div>
-																	</div>
+																	<div class="qnaId">\${qcvo.userId}</div>
+																	<div style="color: gray; font-size: 15px; margin-top: 0.2%; margin-left: 1%; margin-right: 1%;">|</div>
+																	<div class="qnaRdate">\${qcvo.formattedQCommentRdate}</div>
 																</div>
 																<div id="commentContentContainer\${qcvo.qCommentNo}" class="qnaContainer">
 																	<div class="qnaContentArea">\${qcvo.qCommentContent}</div>`;

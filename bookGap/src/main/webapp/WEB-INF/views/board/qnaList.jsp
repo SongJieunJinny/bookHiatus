@@ -54,7 +54,9 @@
           </tbody>
         </table>
       </div>
-      <button id="writeButton">등록하기</button>&nbsp;&nbsp;&nbsp;
+      <div id="qnaListWriteButton">
+      	<button id="writeButton">등록하기</button>
+      </div>
       <!-- 페이징 영역 -->
 			<div class="pagination">
 			  <c:if test="${paging.startPage > 1}">

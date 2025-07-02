@@ -37,12 +37,14 @@
 				  <c:if test="${sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal.userAuthority eq 'ROLE_ADMIN'}">
 				    <form name="deletefrm" action="eventDelete.do" method="post">
 				      <input type="hidden" name="boardNo" value="${vo.boardNo}">
-				      <button id="modifyView" onclick="return confirmModify();">수정하기</button>&nbsp;&nbsp;&nbsp;
 				      <button id="deleteView" onclick="return confirmDelete();">삭제하기</button>
 				    </form>
+				    <a href="eventModify.do?boardNo=${vo.boardNo}" style="text-decoration: none;">
+				    	<button id="modifyView">수정하기</button>
+				    </a>
 				  </c:if>
 					<!-- 모두가 -->
-				  <a href="<%= request.getContextPath() %>/eventList.do?boardType=3">    
+				  <a href="<%= request.getContextPath() %>/eventList.do?boardType=3"  style="text-decoration: none;">    
 					  <button id="listView">목록으로</button>
 					</a>
 				</div>
@@ -177,7 +179,7 @@
 				const currentText = $("#commentContent" + eCommentNo).text().trim();
 				const inputElement = $(`<div id="eventCommentContentBox">
 																		<textarea id="eventCommentContent-\${eCommentNo}" class="eventCommentContent" name="eCommentContent">\${currentText}</textarea>
-																		<div id="eventCommentButtonBox">
+																		<div id="eventCommentBtnBox">
 																			<button class="save-btn">수정완료</button>
 																			<button class="cancel-btn">취소</button>
 																		</div>
