@@ -52,4 +52,8 @@ public class BookDAO {
 	    return sqlSession.selectList(namespace + "adminInventoryManagementSelectAll");
 	}
 	
+	public int getBookNoByIsbn(String isbn){
+    return sqlSession.selectOne(namespace + "getBookNoByIsbn", isbn);
+	}
+	
 }

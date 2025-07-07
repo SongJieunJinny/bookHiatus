@@ -9,11 +9,12 @@
 	         COMMENT_RDATE   AS commentRdate,  
 	         DATE_FORMAT(COMMENT_RDATE, '%Y.%m.%d') AS formattedCommentRdate,  
 	         u.USER_ID       AS userId,  
-	         BOOK_NO         AS bookNo
+	         BOOK_NO         AS bookNo,
+	         isbn
 	    FROM COMMENT c  
 	   INNER JOIN USER u ON c.USER_ID = u.USER_ID  
 	   WHERE c.COMMENT_STATE != 2
-	     AND BOOK_NO = #{bookNo}  
+	     AND c.isbn = #{isbn}  
 	   ORDER BY COMMENT_NO DESC  
 	   LIMIT #{start}, #{perPage}
 	</select>
@@ -23,19 +24,21 @@
 		  FROM COMMENT c  
      INNER JOIN USER u ON c.USER_ID = u.USER_ID  
        AND c.COMMENT_STATE != 2  
-		   AND BOOK_NO = #{bookNo} 
+		   AND isbn = #{isbn} 
 	</select>
 	
 	<insert id="insert" parameterType="com.bookGap.vo.CommentVO">
     INSERT INTO COMMENT (COMMENT_CONTENT,  
                          USER_ID,  
-                         BOOK_NO,  
+                         BOOK_NO,
+                         isbn,  
                          COMMENT_RDATE,
                          COMMENT_RATING,
     										 COMMENT_STATE)  
     VALUES (#{commentContent},  
             #{userId},  
-            #{bookNo},  
+            #{bookNo},
+            #{isbn},  
             NOW(),
             #{commentRating},
     				#{commentState});
@@ -48,7 +51,8 @@
 	         COMMENT_RDATE   AS commentRdate,  
 	         DATE_FORMAT(COMMENT_RDATE, '%Y.%m.%d') AS formattedCommentRdate,   
            u.USER_ID       AS userId,  
-           BOOK_NO         AS bookNo  
+           BOOK_NO         AS bookNo,
+           isbn  
       FROM COMMENT c    
       JOIN USER u ON c.USER_ID = u.USER_ID 
      WHERE c.COMMENT_NO = #{commentNo}
@@ -56,7 +60,8 @@
 	
 	<update id="update" parameterType="com.bookGap.vo.CommentVO">
     UPDATE COMMENT
-			 SET COMMENT_CONTENT = #{commentContent} 
+			 SET COMMENT_CONTENT = #{commentContent},
+					 COMMENT_RATING  = #{commentRating}
      WHERE COMMENT_NO = #{commentNo}
   </update>
 	
@@ -66,7 +71,22 @@
 		 WHERE COMMENT_NO = #{commentNo}
 	</update>
 	
-	<select id="getBookWriterId" parameterType="int" resultType="String">
-  	SELECT USER_ID FROM BOOK WHERE BOOK_NO = #{bookNo}
+	<select id="getBookWriterId" parameterType="String" resultType="String">
+  	SELECT USER_ID FROM BOOK WHERE isbn = #{isbn}
 	</select>
+	
+	<select id="selectIsbn" parameterType="String" resultType="com.bookGap.vo.CommentVO">
+  	SELECT USER_ID         AS userId,
+	         COMMENT_CONTENT AS commentContent,
+	         isbn
+     	FROM COMMENT 
+     WHERE COMMENT_STATE = 1
+       AND isbn = #{isbn}
+	</select>
+	
+	<update id="adminDeleteComment" parameterType="int">
+    UPDATE COMMENT
+       SET COMMENT_STATE = 2
+     WHERE COMMENT_NO = #{commentNo}
+	</update>
 </mapper>
