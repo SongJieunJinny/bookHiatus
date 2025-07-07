@@ -14,22 +14,23 @@
 <script src="<%=request.getContextPath()%>/resources/js/jquery-3.7.1.js"></script>
 <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
 <style>
-  #datatablesSimple {
-    width: 100%;
-    table-layout: fixed;  /* 컬럼 크기 고정 */
-    border-collapse: collapse; /* 테두리 정렬 */
-  }
+#datatablesSimple {
+ width: 100%;
+ table-layout: auto;  /* 기존 fixed → auto로 변경 */
+ border-collapse: collapse;
+}
 
-  #datatablesSimple th, #datatablesSimple td {
-    text-align: left;
-    padding: 10px;
-    border: 1px solid #ddd;
-    white-space: nowrap;
-    overflow: hidden;
-  }
-    .adminIndexStyle {
-    	color: black;
-    }
+ #datatablesSimple th, #datatablesSimple td {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.card-body {
+  overflow-x: auto;
+}
+.adminIndexStyle {
+	color: black;
+}
   #datatablesSimple th:nth-child(1),
   #datatablesSimple td:nth-child(1) {
     width: 70px;
@@ -63,7 +64,24 @@
   #datatablesSimple td:nth-child(8) {
     width: 110px;
   }
-
+  /* 숨길 열 선택 (예: 5번역가, 9발행일, 11~15 기타 상세) */
+  #datatablesSimple td:nth-child(5),
+  #datatablesSimple th:nth-child(5),
+  #datatablesSimple td:nth-child(10),
+  #datatablesSimple th:nth-child(10),
+  #datatablesSimple td:nth-child(11),
+  #datatablesSimple th:nth-child(11),
+  #datatablesSimple td:nth-child(12),
+  #datatablesSimple th:nth-child(12),
+  #datatablesSimple td:nth-child(13),
+  #datatablesSimple th:nth-child(13),
+  #datatablesSimple td:nth-child(14),
+  #datatablesSimple th:nth-child(14),
+  #datatablesSimple td:nth-child(15),
+  #datatablesSimple th:nth-child(15)
+  {
+    display: none;
+  }
 </style>
 </head>
 <body class="sb-nav-fixed">
@@ -176,36 +194,58 @@
                               <thead>
                                   <tr>
                                     <th>상품번호</th>
-                                    <th>카테고리</th>
-                                    <th>도서명</th>
-                                    <th>저자</th>
-                                    <th>출판사</th>
-                                    <th>ISBN</th>
-                                    <th>가격 (₩)</th>
-                                    <th>관리</th>
+								    <th>카테고리</th>
+								    <th>도서명</th>
+								    <th>저자</th>
+								    <th>출판사</th>
+								    <th>ISBN</th>
+								    <th>가격 (₩)</th>
+								    <th>관리</th>
+								    <th style="display:none;">번역가</th>
+								    <th style="display:none;">발행일</th>
+								    <th style="display:none;">책소개</th>
+								    <th style="display:none;">링크</th>
+								    <th style="display:none;">이미지URL</th>
+								    <th style="display:none;">목차</th>
+								    <th style="display:none;">서평</th>
                                   </tr>
                               </thead>
                               <tbody>
-                              <c:forEach items="${getAllBooks}" var="vo">
-								  <tr>
-								    <td class="bookNo">${vo.bookNo}</td>
-								    <td class="bookCategory">${vo.bookCategory}</td>
-								    <td class="title">${vo.title}</td>
-								    <td class="author">${vo.author}</td>
-								    <td class="bookTrans" style="display: none;">${vo.bookTrans}</td>
-								    <td class="publisher">${vo.publisher}</td>
-								    <td class="isbn">${vo.isbn}</td>
-								    <td class="discount">${vo.discount}원</td>
-								    <td class="pubdate" style="display: none;">${vo.pubdate}</td>
+								<c:forEach items="${getAllBooks}" var="vo">
+								  <tr
+								    data-book-no="${vo.bookNo}"
+								    data-book-category="${vo.bookCategory}"
+								    data-title="${vo.title}"
+								    data-author="${vo.author}"
+								    data-book-trans="${vo.bookTrans}"
+								    data-publisher="${vo.publisher}"
+								    data-isbn="${vo.isbn}"
+								    data-discount="${vo.discount}"
+								    data-pubdate="${vo.pubdate}"
+								    data-description="${vo.description}"
+								    data-link="${vo.link}"
+								    data-book-img-url="${vo.bookImgUrl}"
+								    data-book-index="${vo.bookIndex}"
+								    data-publisher-book-review="${vo.publisherBookReview}"
+								  >
+								    <td>${vo.bookNo}</td>
+								    <td>${vo.bookCategory}</td>
+								    <td>${vo.title}</td>
+								    <td>${vo.author}</td>
+								    <td>${vo.publisher}</td>
+								    <td>${vo.isbn}</td>
+								    <td>${vo.discount}원</td>
 								    <td>
 								      <button class="btn btn-warning btn-sm editBook">수정</button>
 								      <button class="btn btn-danger btn-sm deleteBook">삭제</button>
 								    </td>
-								    <td class="bookDesc" style="display: none;">${vo.description}</td>
-								    <td class="bookLink" style="display: none;">${vo.link}</td>
-								    <td class="bookImgUrl" style="display: none;">${vo.bookImgUrl}</td>
-								    <td class="bookIndex" style="display: none;">${vo.bookIndex}</td>
-								    <td class="publisherBookReview" style="display: none;">${vo.publisherBookReview}</td>
+								    <td style="display:none;">${vo.bookTrans}</td>
+								    <td style="display:none;">${vo.pubdate}</td>
+								    <td style="display:none;">${vo.description}</td>
+								    <td style="display:none;">${vo.link}</td>
+								    <td style="display:none;">${vo.bookImgUrl}</td>
+								    <td style="display:none;">${vo.bookIndex}</td>
+								    <td style="display:none;">${vo.publisherBookReview}</td>
 								  </tr>
 								</c:forEach>
                               </tbody>
@@ -286,13 +326,6 @@
 				
 			    // 등록
 			    $('#saveBook').click(function() {
-			    	 	const stockVal = $('#bookStock').val();
-					   
-					    if (!stockVal || isNaN(stockVal)) {
-					      alert('재고 수량이 올바르지 않습니다.');
-					      return;
-					    }
-					   
 			      const formData = {
 			    		  bookTrans: $('#bookTrans').val(),
 			    		  isbn: $('#isbn').val(),
@@ -326,32 +359,35 @@
 
 			    // 수정 버튼 클릭 시 폼에 데이터 채우기
 				$(document).on('click', '.editBook', function () {
-					  const row = $(this).closest('tr');
-					
-					  $('#bookNo').val(row.find('.bookNo').text());
-					  $('#bookCategory').val(row.find('.bookCategory').text());
-					  $('#title').val(row.find('.title').text());
-					  $('#author').val(row.find('.author').text());
-					  $('#bookTrans').val(row.find('.bookTrans').text());
-					  $('#publisher').val(row.find('.publisher').text());
-					  $('#isbn').val(row.find('.isbn').text());
-					  $('#discount').val(row.find('.discount').text().replace(/[^\d]/g, '').trim());
-					  $('#pubdate').val(row.find('.pubdate').text());
-					  $('#description').val(row.find('.bookDesc').text());
-					  $('#link').val(row.find('.bookLink').text());
-					  $('#bookImgUrl').val(row.find('.bookImgUrl').text());
-					  $('#bookIndex').val(row.find('.bookIndex').text());
-					  $('#publisherBookReview').val(row.find('.publisherBookReview').text());
-					
-					  $('#bookFormContainer').show();
-					  $('#toggleFormBtn').hide();
-					  $('#saveBook').hide();
-					
-					  if (!$('#updateBook').length) {
-					    $('<button type="button" class="btn btn-warning" id="updateBook">수정 완료</button>').insertAfter('#saveBook');
-					  }
+				  const row = $(this).closest('tr');
+				  
+				  // 각 td에서 직접 데이터 추출
+				  const tds = row.find('td');
+				  $('#bookNo').val(tds.eq(0).text().trim());
+				  $('#bookCategory').val(tds.eq(1).text().trim());
+				  $('#title').val(tds.eq(2).text().trim());
+				  $('#author').val(tds.eq(3).text().trim());
+				  $('#publisher').val(tds.eq(4).text().trim());
+				  $('#isbn').val(tds.eq(5).text().trim());
+				  $('#discount').val(tds.eq(6).text().replace('원', '').trim());
+				  
+				  $('#bookTrans').val(row.find('td').eq(8).text().trim());
+				  $('#pubdate').val(row.find('td').eq(9).text().trim());
+				  $('#description').val(row.find('td').eq(10).text().trim());
+				  $('#link').val(row.find('td').eq(11).text().trim());
+				  $('#bookImgUrl').val(row.find('td').eq(12).text().trim());
+				  $('#bookIndex').val(row.find('td').eq(13).text().trim());
+				  $('#publisherBookReview').val(row.find('td').eq(14).text().trim());
+				
+				  // 폼 표시
+				  $('#bookFormContainer').show();
+				  $('#toggleFormBtn').hide();
+				  $('#saveBook').hide();
+				
+				  if (!$('#updateBook').length) {
+				    $('<button type="button" class="btn btn-warning" id="updateBook">수정 완료</button>').insertAfter('#saveBook');
+				  }
 				});
-	
 			    // 수정 완료
 			    $(document).on('click', '#updateBook', function() {
 			      const formData = {
@@ -409,16 +445,16 @@
 			  });
 		</script>
 		<script>
-			document.addEventListener("DOMContentLoaded", function() {
-			    const table = new simpleDatatables.DataTable("#datatablesSimple", {
-			      labels: {
-			        perPage: "",  // 이 부분이 'entries per page' 문구를 담당
-			        placeholder: "검색어 입력...",
-			        noRows: "데이터가 없습니다.",
-			        info: ""
-			      }
-			    });
-			  });
+			document.addEventListener("DOMContentLoaded", function () {
+				  const table = new simpleDatatables.DataTable("#datatablesSimple", {
+				    labels: {
+				      perPage: "",
+				      placeholder: "검색어 입력...",
+				      noRows: "데이터가 없습니다.",
+				      info: ""
+				    }
+				  });
+				});
 		</script>
 		<script src="<%=request.getContextPath()%>/resources/js/scripts.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
