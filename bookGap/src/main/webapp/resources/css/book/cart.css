@@ -1,14 +1,17 @@
 @charset "UTF-8";
 html, body {
-  height: 100%;
+  height: auto;
+  min-height: 100%;
   margin: 0;
   padding: 0;
+  overflow-x: hidden;
 }
 
 #wrap {
   display: flex;
   flex-direction: column;
-  min-height: 100vh; /* 핵심 */
+  min-height: 100vh;
+  
 }
 /* === 기본 구조 === */
 section {
@@ -138,7 +141,7 @@ section {
   background: white;
   border-radius: 5px;
   border: solid 1px #D3D3D3;
-  width: 100px;
+  width: 120px;
   height: 30px;
   padding: 5px 10px;
 }
@@ -335,11 +338,16 @@ section {
   margin-top: 5%;
 }
 footer {
-  width: 100vw;            /* 전체 화면 너비 */
+     /* 전체 화면 너비 */
   max-width: 100%;
   box-sizing: border-box;
+  margin-top: auto;
+  width: 100%;
+  
+ 
   
 }
+
 
 @media screen and (max-width: 820px) {
   .cartContainer {
@@ -418,7 +426,7 @@ footer {
   background: white;
   border-radius: 5px;
   border: solid 1px #D3D3D3;
-  width: 100px;
+  width: 120px;
   height: 30px;
   padding: 5px 10px;
 }
@@ -477,14 +485,14 @@ footer {
 
 /* === 결제 정보 박스 === */
 .paymentsInfoInner {
-  width: 22%;
+  width: 20%;
   max-width: 300px;
   padding: 24px;
   border: 1px solid #ccc;
   border-radius: 10px;
   background-color: #fff;
   position: fixed;
-  right: 7%;
+  right: 3%;
   top: 35%;
 }
 
@@ -624,6 +632,7 @@ footer {
 @media screen and (max-width: 768px) {
   .cartContainer {
     flex-direction: column;
+     width: 90%;
     
   }
 
@@ -666,9 +675,9 @@ footer {
 }
 
 .bookTitle {
-  margin-left: 110px;
-  margin-top: -40%;
-  width: 70%;
+  margin-left: 10px;
+  margin-top: -10%;
+  width: 50%;
   padding: 10px;
 }
 
@@ -685,10 +694,10 @@ footer {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 70%;
+  width: 50%;
   font-size: 18px;
    padding:8px;
-  margin-left: 50px;
+  margin-left: 100px;
   margin-top: -10%;
 }
 
@@ -698,7 +707,7 @@ footer {
   background: white;
   border-radius: 5px;
   border: solid 1px #D3D3D3;
-  width: 100px;
+  width: 125px;
   height: 30px;
   padding: 5px 10px;
 }
@@ -729,8 +738,8 @@ footer {
 
 /* === 배송 정보 및 삭제 === */
 .deliveryInfo {
-  width: 70%;
-  margin-left: 110px;
+  width: 50%;
+  margin-left: 27%;
   font-size: 14px;
   word-break: break-word;
    padding:10px;
@@ -757,15 +766,12 @@ footer {
 
 /* === 결제 정보 박스 === */
 .paymentsInfoInner {
-  width: 22%;
-  max-width: 300px;
-  padding: 24px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  background-color: #fff;
-  position: fixed;
-  right: 7%;
-  top: 35%;
+  width: 100%;
+    position: relative;
+    right: 0;
+    top: auto;
+    bottom: auto;
+    margin-top: 20px;
 }
 
 .paymentRow {
@@ -794,6 +800,7 @@ footer {
   border-radius: 10px;
   padding: 20px;
   margin-top: 5%;
+  margin-left: 5%;
 }
 
 .cartInfoNote h2 {
@@ -895,6 +902,7 @@ footer {
   color: gray;
   margin-top: 5%;
 }
+
   
 }
 @media screen and (max-width: 360px) {
@@ -945,7 +953,7 @@ footer {
 }
 
 .bookTitle {
-  margin-left: 25%;
+  margin-left:30%;
   margin-top: -30%;
   width: 70%;
   padding: 10px;
@@ -977,7 +985,7 @@ footer {
   background: white;
   border-radius: 5px;
   border: solid 1px #D3D3D3;
-  width: 60px;
+  width: 80px;
   height: 20px;
   padding: 5px 10px;
   
@@ -1038,16 +1046,12 @@ footer {
 
 /* === 결제 정보 박스 === */
 .paymentsInfoInner {
-  width: 22%;
-  max-width: 300px;
-  padding: 24px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  background-color: #fff;
-  position: fixed;
-  right: 7%;
-  top: 35%;
-   font-size: 15px;
+   width: 100%;
+    position: relative;
+    right: 0;
+    top: auto;
+    bottom: auto;
+    margin-top: 20px;
 }
 
 .paymentRow {
@@ -1183,5 +1187,4 @@ paymentRowFinal span{
   color: gray;
   margin-top: 5%;
 }
-  
 }

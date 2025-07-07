@@ -29,8 +29,6 @@ public class AdminBookController {
     		@RequestParam("bookTrans") String bookTrans,
     		@RequestParam("isbn") String isbn,
     	    @RequestParam("bookCategory") String bookCategory,
-    	    @RequestParam("bookStock") int bookStock,
-    	    @RequestParam("bookState") int bookState,
     	    @RequestParam("bookImgUrl") String bookImgUrl, 
     	    @RequestParam("bookIndex") String bookIndex,
     	    @RequestParam("publisherBookReview") String publisherBookReview ) {
@@ -45,8 +43,6 @@ public class AdminBookController {
         bookVO.setBookTrans(bookTrans);
         bookVO.setIsbn(isbn);
         bookVO.setBookCategory(bookCategory);
-        bookVO.setBookStock(bookStock);
-        bookVO.setBookState(bookState);
         bookVO.setBookImgUrl(bookImgUrl);
         bookVO.setBookIndex(bookIndex);
         bookVO.setPublisherBookReview(publisherBookReview);
