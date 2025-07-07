@@ -59,5 +59,10 @@ public class BookServiceImpl implements  BookService{
 	 public  List<BookVO> adminInventoryManagementSelectAll() {
 	     return bookDAO.adminInventoryManagementSelectAll();
 	 }
+
+  @Override
+  public int getBookNoByIsbn(String isbn) {
+    return bookDAO.getBookNoByIsbn(isbn);
+  }
 	
 }

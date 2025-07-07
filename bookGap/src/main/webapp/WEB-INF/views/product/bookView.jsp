@@ -92,25 +92,22 @@
 					</div>
 				</c:if>				
 			</div>
-		</div>
-		<sec:authentication var="loginUser" property="principal" />
-		
+		</div>		
 <script type="text/javascript">
-let bookNo = "${bookDetail.bookNo}";
+let isbn = "${bookDetail.isbn}";
 
-let userId = '${loginUser.username}';
-let userRole = '${loginUser.authorities}';
+let userId = '<sec:authentication property="name" />';
+let userRole = '<sec:authentication property="authorities" htmlEscape="false" />';
 
-console.log("✅ userId:", userId);
-console.log("✅ userRole:", userRole);
-
+console.log("👤 userRole =", userRole); // "ROLE_USER, ROLE_ADMIN" 등
+console.log("📌 userId =", userId);     // "hong123"
 
 $(document).ready(function() {
-	bookNo = "${bookDetail.bookNo}";
+	isbn = "${bookDetail.isbn}";
 	
-	console.log("📦 bookNo =", bookNo); // undefined, "" 등이면 원인!
+	console.log("📦 isbn =", isbn); // undefined, "" 등이면 원인!
 
-  loadComment(bookNo);
+  loadComment(isbn);
      
   // 메뉴 버튼 이벤트 초기화
   $(document).on('click', '.optionsToggle', function(event) {
@@ -132,46 +129,44 @@ $(document).ready(function() {
 });
 
 //두번째 변수 생략시 1로 들어감
-function loadComment(bookNo,page = 1) {
+function loadComment(isbn,page = 1) {
   $.ajax({
     url: "<%= request.getContextPath()%>/comment/loadComment.do",
     type: "get",
-    data: { bookNo: bookNo , cnowpage:page },
+    data: { isbn: isbn , cnowpage:page },
     success : function(data) { 
 				    	  let html = "";
-			for(cvo of data.clist){
+				    	  let roles = userRole.split(',').map(s => s.trim());
+			for(let cvo of data.clist){
+				console.log("🔎 cvo.userId =", cvo.userId); // 서버 응답값
 				html +=`<div id="reviewBox\${cvo.commentNo}" class="reviewBox">
-									<div>
-										<div class="reviewIdBox">
-											<div class="reviewId">\${cvo.userId}</div>
-											<div class="reviewIdRdate">|</div>
-											<div class="reviewRdate">\${cvo.formattedCommentRdate}</div>
-											<div class="reviewLike">
-												<span>🤍</span>
-												<input type="checkbox" onclick="toggleLike(\${cvo.commentNo})">
-											</div>
-										</div>
-										<div>
-											<span class="star1">★★★★★
-												<span> ★★★★★</span>
-												<input type="range" class="reviewStar" value="3" step="1" min="0" max="5" disabled>
-											</span>
-										</div>
-										<div class="reviewContent">
-											<div class="reviewContent\${cvo.commentNo}">\${cvo.commentContent}</div>`;
-					if(userRole.includes("ROLE_ADMIN") || (cvo.userId && cvo.userId.trim() === userId.trim())){
-							html +=`<div class="reviewOptions">
-												<span class="optionsToggle" onclick="toggleOptions(\${cvo.commentNo})" data-box="\${cvo.commentNo}">⋯</span>
-												<div class="optionsMenu" id="optionsMenu\${cvo.commentNo}">
-													<button onclick="editReview(\${cvo.commentNo})">수정</button>
-													<button onclick="deleteReview(\${cvo.commentNo})">삭제</button>
-													<button onclick="reportReview(\${cvo.commentNo})">신고</button>
-												</div>
-											</div>
+									<div class="reviewIdBox">
+										<div class="reviewId">\${cvo.userId}</div>
+										<div class="reviewIdRdate">|</div>
+										<div class="reviewRdate">\${cvo.formattedCommentRdate}</div>
+										<div class="reviewLike">
+											<span>🤍</span>
+											<input type="checkbox" onclick="toggleLike(\${cvo.commentNo})">
 										</div>
 									</div>
-								</div>`;
-					}
+									<div class="starBox">
+										<span class="star1">★★★★★
+											<span> ★★★★★</span>
+											<input type="range" class="reviewStar" value="\${cvo.commentRating}" step="1" min="0" max="5" disabled>
+										</span>
+									</div>
+									<div class="reviewContent\${cvo.commentNo}">\${cvo.commentContent}</div>`;
+								if (roles.includes("ROLE_ADMIN") || (cvo.userId && cvo.userId.trim() === userId.trim())) {
+					html +=`<div class="reviewOptions">
+							      <span class="optionsToggle" onclick="toggleOptions(\${cvo.commentNo})" data-review-box="\${cvo.commentNo}">⋯</span>
+							      <div class="optionsMenu" id="optionsMenu\${cvo.commentNo}">
+							        <button onclick="editReview(\${cvo.commentNo})">수정</button>
+							        <button onclick="deleteReview(\${cvo.commentNo})">삭제</button>
+							        <button onclick="reportReview(\${cvo.commentNo})">신고</button>
+							      </div>
+							    </div>`;
+									}
+				html +=`</div>`;
 			}
 			if(data.cpaging){
 				paging = data.cpaging;
@@ -197,7 +192,7 @@ function loadComment(bookNo,page = 1) {
 					      $(".paging-link").click(function(e) {
 						        e.preventDefault();
 						        let page = $(this).data("page");
-						        loadComment(bookNo, page);
+						        loadComment(isbn, page);
 					      });
 							},
 		error: function(xhr, status, error) {
@@ -220,35 +215,39 @@ function loadComment(bookNo,page = 1) {
 				<div id="review">
 					<div id="bookComment">
 						<h2>리뷰작성</h2>
-						<form onsubmit="event.preventDefault(); commentInsert(${bookDetail.bookNo}); return false;">
+						<form onsubmit="event.preventDefault(); commentInsert(${bookDetail.bookNo}, ${bookDetail.isbn}); return false;">
 							<div class="bookCommentBox">
 								<span class="star">★★★★★<span>★★★★★</span>
-									<input type="range" oninput="drawStar(this)" value="0" step="1" min="0" max="5" name="rating" class="reviewStar">
+									<input type="range" oninput="drawStar(this)" value="\${cvo.commentRating}" step="1" min="0" max="5" name="rating" class="reviewStar">
 								</span>
 								<textarea class="reviewComment" placeholder="&nbsp;리뷰를 입력해주세요" name="content"></textarea>
 								<button class="bookCommentButton" type="submit">등록</button>
 							</div>
 						</form>
-<script>
-function commentInsert(bookNo){
+						<!-- 댓글 목록 출력 시작 -->
+						<div class="comment-list"></div>
+<script type="text/javascript">
+function commentInsert(isbn){
 	let userId = '${pageContext.request.userPrincipal.name}';
-	  if (!userId || userId === 'null') {
-		    alert("로그인 후 댓글을 작성할 수 있습니다.");
-		    return;
-		  }
+	
+	if (!userId || userId === 'null') {
+		alert("로그인 후 댓글을 작성할 수 있습니다.");
+		return;
+	}
 
   $.ajax({
     url : "<%= request.getContextPath()%>/comment/write.do",
-    type : "post",
-    data : { bookNo : bookNo,
+    type : "POST",
+    data : { bookNo: bookNo,
+        		 isbn: isbn,
     				 userId : userId,
 			    	 commentContent : $(".reviewComment").val(), 
 			    	 commentRating: $('.reviewStar').val() },  
     success : function (result){
-					      if(result === "Success"){
-					        alert("댓글이 등록되었습니다.");
-					        $(".reviewContent").val(""); 
-					        loadComment(bookNo);
+				        if(result === "Success"){
+				            alert("댓글이 등록되었습니다.");
+				            $(".reviewComment").val("");
+				            loadComment(isbn);
 					      }else{
 					        alert("등록에 실패했습니다.");
 					      }
@@ -263,9 +262,11 @@ function commentUpdate(commentNo){
 	
 	const commentElement = $("#reviewBox" + commentNo);
 	const currentText = $(".reviewContent" + commentNo).text().trim();
+	const currentRating = commentElement.find(".reviewStar").val();
+
 	const inputElement = $(`<div class="bookCommentBox">
 														<span class="star">★★★★★<span>★★★★★</span>
-															<input type="range" oninput="drawStar(this)" value="0" step="1" min="0" max="5" name="rating" class="reviewStar">
+															<input type="range" oninput="drawStar(this)" value="${currentRating}" step="1" min="0" max="5" name="rating" class="reviewStar">
 														</span>
 														<textarea class="reviewComment-\${commentNo}" placeholder="&nbsp;리뷰를 입력해주세요" name="content">\${currentText}</textarea>
 														<div class="editButtons">
@@ -284,47 +285,50 @@ function commentUpdate(commentNo){
 	inputElement.find(".saveReview").on("click", function (e) {
 		e.preventDefault();
     	
-		const newText = inputElement.find(`.reviewComment-\${commentNo}`).val(); 
+		const newText = inputElement.find(`.reviewComment-${commentNo}`).val().trim();
+		const newRating = inputElement.find(".reviewStar").val();
 
-    if(newText && newText !== currentText) {
-    	saveComment(commentNo, newText, inputElement, commentElement); 
-    }else{
-    	alert("댓글 내용이 비어있거나 변경되지 않았습니다.");
-    }
+	    if((newText !== currentText) || (newRating !== currentRating)) {
+	      saveComment(commentNo, newText, inputElement, commentElement, newRating, '${bookDetail.isbn}');
+	    }else{
+	      alert("댓글 내용이나 별점이 변경되지 않았습니다.");
+	    }
+
 	});
 }
 
-function saveComment(commentNo, newText, inputElement,commentElement){
-	
-	const originalElement = commentElement.text(inputElement.val().trim());
-	
+function saveComment(commentNo, newText, inputElement, commentElement, currentRating, isbn) {
+	const originalElement = commentElement.html(inputElement.val().trim());
+
 	$.ajax({
-		url : "<%= request.getContextPath()%>/comment/modify.do",
-		type : "post",
-		data : { commentNo : commentNo,
-						 commentContent : newText,
-						 userId : userId },
-		success : function(result){
-								if(result === "Success"){
-									const updatedElement = $(".reviewContent" + commentNo).text(newText);
-	            		inputElement.replaceWith(updatedElement);
-	            		loadComment(bookNo);
-								}else{
-									inputElement.replaceWith(originalElement);
-									alert("댓글 수정에 실패하였습니다.");
-								}
-							},
-		error: function () {
-						alert("서버 오류로 인해 수정에 실패했습니다.");
-      			inputElement.replaceWith(originalElement);
-    			 }
+		url: "<%= request.getContextPath()%>/comment/modify.do",
+		type: "POST",
+		data: {
+			commentNo: commentNo,
+			commentContent: newText,
+			commentRating: currentRating,
+			isbn: isbn  // 👍 인자로 받은 값 사용
+		},
+		success: function(result) {
+			if (result === "Success") {
+				alert("댓글이 수정되었습니다.");
+				loadComment(isbn);
+			} else {
+				alert("수정에 실패했습니다.");
+				inputElement.replaceWith(commentElement);
+			}
+		},
+		error: function() {
+			alert("서버 오류로 인해 수정에 실패했습니다.");
+			inputElement.replaceWith(commentElement);
+		}
 	});
 }
 
 function commentDel(commentNo){
 	$.ajax({
 		url : "<%= request.getContextPath()%>/comment/delete.do",
-		type : "post",
+		type : "POST",
 		data : {commentNo : commentNo},
 		success : function(result){
 								if(result === "Success"){
@@ -337,8 +341,6 @@ function commentDel(commentNo){
 	});
 }
 </script>
-						<!-- 댓글 목록 출력 시작 -->
-						<div class="comment-list"></div>
 					</div>
 				</div>
 			</div>
@@ -533,20 +535,27 @@ function validateReviewForm(form) {
   return true;
 }
 
-function drawStar(target) {
-  $(target).parent().find("span").css("width", `${target.value * 20}%`);
-}
-
-function drawStarInit() {
-  $(".reviewStar").each(function () {
-    const value = $(this).val();
-    $(this).parent().find("span").css("width", `${value * 20}%`);
-  });
-}
-
 document.addEventListener("DOMContentLoaded", function () {
   drawStarInit();
 });
+
+function drawStar(el) {
+	  const value = el.value;
+	  const filledSpan = el.parentElement.querySelector('span');
+		  filledSpan.style.width = `${value * 20}%`; // 각 별 하나당 20%
+		  filledSpan.style.color = 'yellow';
+	  
+	  const stars = document.querySelectorAll('.reviewStar');
+	  	stars.forEach(star => {
+	    	star.addEventListener('mouseenter', () => {
+	      	const value = star.value;
+	      	const filled = star.parentElement.querySelector('span');
+	      	filled.style.width = `${value * 20}%`;
+	      	filled.style.color = 'yellow';
+	    	});
+	  	});
+	}
+
 
 function toggleLike(target) {
   $(target).parent().toggleClass("active");

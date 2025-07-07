@@ -41,7 +41,11 @@ public class CommentDAO {
 		return sqlSession.update(name_space+"update", vo);
 	}
 	
-	public String getBookWriterId(int bookNo){
-		return sqlSession.selectOne(name_space+"getBookWriterId", bookNo);
+	public String getBookWriterId(String isbn){
+		return sqlSession.selectOne(name_space+"getBookWriterId", isbn);
 	}
+	
+  public CommentVO selectIsbn(String isbn) {
+    return sqlSession.selectOne(name_space+"selectIsbn", isbn);
+  }
 }

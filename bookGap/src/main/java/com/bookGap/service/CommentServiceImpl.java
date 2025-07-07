@@ -46,8 +46,13 @@ public class CommentServiceImpl implements CommentService {
 	}
 
 	@Override
-	public String getBookWriterId(int bookNo) {
-		return commentDAO.getBookWriterId(bookNo);
+	public String getBookWriterId(String isbn) {
+		return commentDAO.getBookWriterId(isbn);
 	}
+	
+  @Override
+  public CommentVO selectIsbn(String isbn) {
+    return commentDAO.selectIsbn(isbn);
+  }
 
 }

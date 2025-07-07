@@ -13,6 +13,7 @@ public class CommentVO extends UserInfoVO {
 	private int commentRating; //별점
 	private String userId; //아이디
 	private int bookNo; //상품번호
+	private String isbn;
 	
 	public int getDisplayNo() {
 		return displayNo;
@@ -68,5 +69,11 @@ public class CommentVO extends UserInfoVO {
 	public void setBookNo(int bookNo) {
 		this.bookNo = bookNo;
 	}
+  public String getIsbn() {
+    return isbn;
+  }
+  public void setIsbn(String isbn) {
+    this.isbn = isbn;
+  }
 
 }

@@ -19,6 +19,9 @@ public interface CommentService {
 	
 	public int update(CommentVO vo);
 	
-	public String getBookWriterId(int bookNo);
+	public String getBookWriterId(String isbn);
+
+	
+	public CommentVO selectIsbn(String isbn);
 
 }

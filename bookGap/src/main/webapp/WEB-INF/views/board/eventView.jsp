@@ -266,12 +266,11 @@
 			          <div id="eventCommentContentBox">
 			            <textarea id="eventCommentContent" name="eCommentContent"></textarea>
 			          </div>
-			          	<div id="eventCommentButtonBox">
-			              <button id="eventCommentButton" onclick="commentInsert(${vo.boardNo},${vo.boardType});">등록</button>
-			            </div>
+		          	<div id="eventCommentButtonBox">
+		              <button id="eventCommentButton" onclick="commentInsert(${vo.boardNo},${vo.boardType});">등록</button>
+		            </div>
 								<!-- 댓글 목록 출력 시작 -->
-								<div class="comment-list">
-								</div>
+								<div class="comment-list"></div>
 		          	<!-- 댓글 목록 출력 끝 -->
 			        </div>
 			      </div>
