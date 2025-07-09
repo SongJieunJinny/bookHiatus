@@ -42,5 +42,10 @@ public class AdminBookServiceImpl  implements AdminBookService {
 	    public List<BookVO> getAllBooks() {
 	        return adminBookDAO.selectAllBooks();
 	    }
+	    
+	    @Override
+	    public int updateInventory(BookVO bookVO) {
+	        return adminBookDAO.updateInventory(bookVO);  // DAO의 updateInventory 호출
+	    }
 
 }

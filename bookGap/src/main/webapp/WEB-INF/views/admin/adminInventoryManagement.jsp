@@ -14,149 +14,23 @@
 <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
 <script src="<%=request.getContextPath()%>/resources/js/jquery-3.7.1.js"></script>
 <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
- <style>
-      .userInfoModal{
-	        border: 1px solid black;
-	        display: none;
-	        position: fixed;
-	        z-index: 1;
-	        left: 0;
-	        top: 0;
-	        width: 100%;
-	        height: 100%;
-	        overflow: auto;
-	        background-color: rgba(0,0,0,0.4);
-      }
-      .userInfoModalContent {
-	        background-color: #fefefe;
-	        margin: 8% auto;
-	        border: 1px solid #888;
-	        width: 80%;
-			height: 100%;
-	        max-width: 400px;
-			max-height: 520px;
-	        border-radius: 20px;
-	        text-align: center;
-	        padding-bottom: 2%;
-      }
-      .userInfoModalHead{
-        	width: 100%;
-      }
-      .userInfoModalHeadTitle{
-	       	 width: 100%;
-	         text-align: center;
-	       	 font-size: 24px;
-	       	 font-weight: bold;
-      }
-      .userInfoModalSection{
-	        width: 100%;
-	        display: flex;
-	        flex-direction: column;
-      }
-      .userInfoModalItemContainer{
-		   width: 100%;
-	       display: flex;
-	       justify-content: flex-start;
-	       margin: 3% 0% 0% 18%;
-	       align-items: center;
-      }
-      .userInfoModalItemInput{
-        	margin-left: 3%;
-      }
-      .userInfoModalItemCheckbox{
-       	 	margin: 2% 1% 1% 3%;
-      }
-      .userInfoModalFooter{
-	       width: 100%;
-	       display: flex;
-	       flex-direction: column;
-      }
-      .userInfoModalItemInputContainer{
-        	margin-top: 5%;
-      }
-      .userInfoModalItemInputLine{
-	        border: 1px solid black;
-	        border-radius: 10px;
-	        width: 70%;
-	        margin-left: 15%;
-      }
-      .userInfoModalItemInputNote{
-        	border-bottom: 1px solid black; 
-			margin-bottom: 1px;
-      }
-		.userInfoModalItemInputText{
-			width: 95%;
-			border: none;
-  			outline: none;
-			resize: none;
-			padding-left: 1%;
-    		font-size: 10px;
-    		margin-left: 2%;
-		}
-		.userInfoModalItemText{
-			padding: 4px 8px;
-			display: inline-block;
-			border: 1px solid transparent;
-			cursor: pointer;
-			margin-left: 1%;
-		}
-		.userInfoModalItemText:hover {
-			border: 1px solid #ccc;
-			background-color: #f9f9f9;
-		}
-		.userInfoModalItemInput{
-			padding: 4px 8px;
-    		font-size: 1em;
-		}
-		.userInfoModalItemButtonContainer{
-			display: flex;
-			align-items: center;
-			justify-content: center;
-		}
-		.userInfoModalItemButton{
-			width: 15%;
-			padding: 1%;
-			margin: 3%;
-			background-color: black;
-			border-radius: 10px;
-			margin: 3%;
-			color: white;
-			font-size: 18px;
-		}
-		.userInfoModalItemCloseButton{
-			width: 15%;
-			padding: 1%;
-			margin: 3%;
-			background-color: black;
-			border-radius: 10px;
-			margin: 3%;
-			color: white;
-			font-size: 18px;
-		}
-		.datatable-selector {
-			    padding: 8px;
-    			width: 170%;
-    			margin-left: -10px;
-    			margin-bottom:10px;
-    			margin-right: 20px;
-			}
-			#datatablesSimple th:nth-child(4),
-			#datatablesSimple td:nth-child(4) {
-			  width: 200px; /* 원하는 너비로 조절 */
-			}
-			#datatablesSimple th:nth-child(5),
-			#datatablesSimple td:nth-child(5) {
-			  width: 150px; /* 원하는 너비로 조절 */
-			}
-			#datatablesSimple th:nth-child(6),
-			#datatablesSimple td:nth-child(6) {
-			  width: 150px; /* 원하는 너비로 조절 */
-			}
-			#datatablesSimple th:nth-child(7),
-			#datatablesSimple td:nth-child(7) {
-			  width: 250px; /* 원하는 너비로 조절 */
-			}
-    </style>
+<style>
+.datatable-selector {
+	padding: 8px;
+	width: 170%;
+	margin-left: -10px;
+	margin-bottom:10px;
+	margin-right: 20px;
+}
+#datatablesSimple th:nth-child(1),
+#datatablesSimple td:nth-child(1) {
+	width: 120px; /* 원하는 너비로 조절 */
+}
+#datatablesSimple th:nth-child(5),
+#datatablesSimple td:nth-child(5) {
+	width: 120px; /* 원하는 너비로 조절 */
+}
+</style>
 </head>
 <body class="sb-nav-fixed">
 	<!--header삽입-->
@@ -202,98 +76,23 @@
 								</thead>
 								<tbody>
 								<c:forEach items="${getInventoryManagementSelectAll}" var="vo">
-									<tr>
-										<td>${vo.bookNo} </td>
-										<td>${vo.title}</td>
-										<td>${vo.isbn}</td>
-										<td>${vo.bookStock}</td>
-										 <td>
-										  <c:choose>
-										    <c:when test="${vo.bookState == 0}">품절</c:when>
-										    <c:when test="${vo.bookState == 1}">판매중</c:when>
-										    <c:otherwise>알 수 없음</c:otherwise>
-										  </c:choose>
-									   </td>
+									<tr data-book-no="${vo.bookNo}">
+									    <td>${vo.bookNo}</td>
+									    <td>${vo.title}</td>
+									    <td>${vo.isbn}</td>
+									    <td>
+									        <input type="number" class="form-control form-control-sm stockInput" value="${vo.bookStock}" min="0">
+									    </td>
+									    <td>
+									        <select class="form-select form-select-sm stateSelect">
+									            <option value="1" ${vo.bookState == 1 ? 'selected' : ''}>판매중</option>
+									            <option value="0" ${vo.bookState == 0 ? 'selected' : ''}>품절</option>
+									        </select>
+									    </td>
 									</tr>
 								</c:forEach>
 								</tbody>
 							</table>
-				             <!--회원정보 모달창-->
-				             <div class="userInfoModal" id="userInfoModal">
-				               <div class="userInfoModalContent">
-				                 <br><br>
-				                 <div class="userInfoModalHead">
-				                   <div class="userInfoModalHeadTitle">User Info</div>
-				                 </div>
-				                 <div class="userInfoModalSection">
-				                   <!--모달 ID Container -->
-				                   <div class="userInfoModalItemContainer">
-				                     <div class="userInfoModalItem">ID : </div>
-													<!-- 표시용 텍스트 -->
-										<span class="userInfoModalItemText" data-field="id"> user01 </span>
-													<!-- 실제 input (초기에 숨겨짐) -->
-				                     <input id="userInfoModalIdInput" class="userInfoModalItemInput" data-field="id" type="text" style="display:none;">
-				                   </div>
-				                   <!--모달 Name Container -->
-				                   <div class="userInfoModalItemContainer">
-				                     <div class="userInfoModalItem">NAME : </div>
-				                     <!-- 표시용 텍스트 -->
-										<span class="userInfoModalItemText" data-field="name"> 유저일 </span>
-													<!-- 실제 input (초기에 숨겨짐) -->
-				                     <input id="userInfoModalNameInput" class="userInfoModalItemInput" data-field="name" type="text" style="display:none;">
-				                   </div>
-				                   <!--모달 Phone Container -->
-				                   <div class="userInfoModalItemContainer">
-				                     <div class="userInfoModalItem">PHONE : </div>
-				                     <!-- 표시용 텍스트 -->
-										<span class="userInfoModalItemText" data-field="phone"> 010-0000-0001 </span>
-													<!-- 실제 input (초기에 숨겨짐) -->
-				                     <input id="userInfoModalPhoneInput" class="userInfoModalItemInput" data-field="phone" type="text" style="display:none;">
-				                   </div>
-				                   <!--모달 Email Container -->
-				                   <div class="userInfoModalItemContainer">
-				                     <div class="userInfoModalItem">E-MAIL : </div>
-				                     <!-- 표시용 텍스트 -->
-										<span class="userInfoModalItemText" data-field="email"> user01@user.com </span>
-													<!-- 실제 input (초기에 숨겨짐) -->
-				                     <input id="userInfoModalEmailInput" class="userInfoModalItemInput" data-field="email" type="text" style="display:none;">
-				                   </div>
-				                   <!--모달 State Container -->
-				                   <div class="userInfoModalItemContainer">
-				                     <div class="userInfoModalItem">ENABLED : </div>
-				                     <label style="width: 20%; padding-left: 2%;">
-										<input id="userInfoModalStateInput1" class="userInfoModalItemCheckbox" type="radio" name="state" > 활성화 
-									</label>&nbsp;
-				                     <label style="width: 25%;">
-										<input id="userInfoModalStateInput2" class="userInfoModalItemCheckbox" type="radio" name="state"> 비활성화 
-									</label>
-				                   </div>
-				                   <!--모달 Joindate Container -->
-				                   <div class="userInfoModalItemContainer">
-									  <div class="userInfoModalItem">JOIN DATE : </div>
-									  <!-- 표시용 텍스트 -->
-									 	 <span class="userInfoModalItemText" data-field="joindate"></span>
-									  <!-- 실제 input (초기에 숨겨짐) -->
-									  <input id="userInfoModalDateInput" class="userInfoModalItemInput" data-field="joindate" type="date" style="display:none;">
-									</div>
-				                 <div class="userInfoModalFooter">
-                   <!--모달 Note Container -->
-			                      <div class="userInfoModalItemInputContainer">
-			                        <div class="userInfoModalItemInputLine">
-			                          <div class="userInfoModalItemInputNote">
-			                          NOTE
-			                          	</div>
-										<textarea id="userInfoModalNoteInput" class="userInfoModalItemInputText"></textarea>
-			                      	</div>
-			                      </div>
-				                      <div class="userInfoModalItemButtonContainer">
-				                        <button class="userInfoModalItemButton" id="userInfoModalItemButton" onclick="applyChange()">적용</button><br>
-				                        <button class="userInfoModalItemCloseButton" onclick="closeModal()">닫기</button>
-                   						</div>
-                 					</div>
-             					</div>
-             				</div>
-						</div>
 					</div>
 				</div>
 			</main>
@@ -305,121 +104,59 @@
 <script src="<%=request.getContextPath()%>/resources/js/scripts.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
 <script src="<%=request.getContextPath()%>/resources/js/datatables-simple-demo.js"></script>
- <script>
-      let selectedRow = null;
+<script>
+	$(document).ready(function() {
+	
+		 // 재고 수량 변경 시
+	    $(document).on('change', '.stockInput', function () {
+	        const row = $(this).closest('tr');
+	        const bookNo = row.find('td:eq(0)').text();
+	        const stock = $(this).val();
+	        const state = row.find('.stateSelect').val(); // 현재 상품상태 가져오기
 
-      $(document).ready(function () {
-        // 테이블 행 클릭 시 모달 열기
-        $('#datatablesSimple tbody').on('click', 'tr', function () {
-          selectedRow = this; // 현재 클릭한 행 저장
-          openModal(); // 모달 열기
-        });
-      
-				// 모달 닫기 버튼
-				$('.userInfoModalItemCloseButton').click(() => {
-					$('#userInfoModal').hide();
-				});
+	        if (!bookNo) {
+	            alert('상품 번호가 올바르게 전달되지 않았습니다.');
+	            return;
+	        }
 
-				// 텍스트 클릭 → input 전환
-				document.querySelectorAll('.userInfoModalItemText').forEach(span => {
-					span.addEventListener('click', () => {
-						const field = span.dataset.field;
-						const input = document.querySelector(`.userInfoModalItemInput[data-field="${field}"]`);
-
-						input.value = span.innerText.trim();
-						span.style.display = 'none';
-						input.style.display = 'inline-block';
-						input.focus();
-					});
-				});
-
-				// input에서 포커스 아웃 → 텍스트로 복귀
-				document.querySelectorAll('.userInfoModalItemInput').forEach(input => {
-					input.addEventListener('blur', () => {
-						const field = input.dataset.field;
-						const span = document.querySelector(`.userInfoModalItemText[data-field="${field}"]`);
-
-						span.innerText = input.value.trim();
-						input.style.display = 'none';
-						span.style.display = 'inline-block';
-					});
-				});
-
-				// 모달 외부 클릭 시 닫기
-				document.getElementById('userInfoModal').addEventListener('click', function (e) {
-					const modalContent = document.querySelector('.userInfoModalContent');
-					if (!modalContent.contains(e.target)) {
-						closeModal();
-					}
-				});
-			});
-
-			// 모달 열기
-			function openModal() {
-		        if (!selectedRow) return;
-		
-		        const cells = selectedRow.querySelectorAll('td');
-		
-		        document.querySelector('.userInfoModalItemText[data-field="id"]').innerText = cells[0].innerText;
-		        document.querySelector('.userInfoModalItemText[data-field="name"]').innerText = cells[1].innerText;
-		        document.querySelector('.userInfoModalItemText[data-field="phone"]').innerText = cells[2].innerText;
-		        document.querySelector('.userInfoModalItemText[data-field="email"]').innerText = cells[3].innerText;
-
-		        if (cells[4].innerText.trim() === '활성화') {
-		          document.getElementById('userInfoModalStateInput1').checked = true;
-		        } else {
-		          document.getElementById('userInfoModalStateInput2').checked = true;
-		        }
-		        document.querySelector('.userInfoModalItemText[data-field="joindate"]').innerText = cells[5].innerText;
-		        document.getElementById('userInfoModalNoteInput').value = cells[6].innerText;
-
-		        document.querySelectorAll('.userInfoModalItemInput').forEach(input => input.style.display = 'none');
-		        document.querySelectorAll('.userInfoModalItemText').forEach(span => span.style.display = 'inline-block');
-
-		        document.getElementById('userInfoModal').style.display = 'flex';
-		      }
-		
-		      function applyChange() {
-		        if (!selectedRow) return;
-		
-		        const id = document.querySelector('.userInfoModalItemInput[data-field="id"]').value.trim();
-		        const name = document.querySelector('.userInfoModalItemInput[data-field="name"]').value.trim();
-		        const phone = document.querySelector('.userInfoModalItemInput[data-field="phone"]').value.trim();
-		        const email = document.querySelector('.userInfoModalItemInput[data-field="email"]').value.trim();
-		        const enabled = document.querySelector('#userInfoModalStateInput1').checked ? '활성화' : '비활성화';
-		        const joinDate = document.querySelector('.userInfoModalItemText[data-field="joindate"]');
-		        const note = document.querySelector('#userInfoModalNoteInput').value.trim();
-		
-		        const cells = selectedRow.querySelectorAll('td');
-		        cells[0].innerText = id;
-		        cells[1].innerText = name;
-		        cells[2].innerText = phone;
-		        cells[3].innerText = email;
-		        cells[4].innerText = enabled;
-		        cells[5].innerText = joinDate;
-		        cells[6].innerText = note;
-		
-		        closeModal(); // 모달 닫기
-      		}
-
-			// 모달 닫기
-			function closeModal() {
-				document.getElementById('userInfoModal').style.display = 'none';
-			}
- </script>
- <script>
- window.addEventListener('DOMContentLoaded', () => {
-	  const label = document.querySelector('.datatable-dropdown label');
-	  if (label) {
-	    const childNodes = Array.from(label.childNodes);
-	    childNodes.forEach(node => {
-	      if (node.nodeType === Node.TEXT_NODE) {
-	        node.textContent = ''; // 텍스트만 제거
-	      }
+	        updateInventory(bookNo, stock, state);
 	    });
-	  }
+
+	    // 상품 상태 변경 시
+	    $(document).on('change', '.stateSelect', function () {
+	        const row = $(this).closest('tr');
+	        const bookNo = row.find('td:eq(0)').text();
+	        const state = $(this).val();
+	        const stock = row.find('.stockInput').val(); // 현재 재고 수량 가져오기
+
+	        if (!bookNo) {
+	            alert('상품 번호가 올바르게 전달되지 않았습니다.');
+	            return;
+	        }
+
+	        updateInventory(bookNo, stock, state);
+	    });
+
+	    // Ajax 저장 함수
+	    function updateInventory(bookNo, stock, state) {
+	        $.ajax({
+	            url: '${pageContext.request.contextPath}/admin/books/updateInventory',
+	            type: 'POST',
+	            data: {
+	                bookNo: bookNo,
+	                bookStock: stock,
+	                bookState: state
+	            },
+	            success: function () {
+	                console.log('재고 정보 저장 성공하셨습니다.');
+	            },
+	            error: function () {
+	                alert('재고 정보 저장에 실패하셨습니다.');
+	            }
+	        });
+	    }
 	});
- </script>
+</script>
  <script>
 	document.addEventListener("DOMContentLoaded", function() {
 	    const table = new simpleDatatables.DataTable("#datatablesSimple", {
