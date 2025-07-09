@@ -21,7 +21,6 @@ public interface CommentService {
 	
 	public String getBookWriterId(String isbn);
 
-	
 	public CommentVO selectIsbn(String isbn);
 
 }

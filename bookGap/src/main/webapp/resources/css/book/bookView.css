@@ -289,181 +289,255 @@ section{
   padding: 0.3%;
   cursor: pointer;
 }
+.commentBoxHeader{
+	width: 100%;
+	display: flex;
+	justify-content: flex-end;
+	gap: 3%;
+}
 .reviewBox{
-	width: 90%;
-	height: 250px;
-	border-radius: 10px;
-	border: solid 1px black;
-	padding: 10px 10px 10px 10px;
-	margin-top: 10px;
-	margin-bottom: 5%;
-	margin-left: 5%;
-	position: relative;
+  width: 90%;
+  border-radius: 10px;
+  border: solid 1px black;
+  padding: 15px 10px 10px 10px;
+  margin: 2% 5% 0% 5%;
 }
 .reviewId{
-	margin-right: 2%;
-	margin-left: 2%;
-	margin-top: 1%;
-	font-size: 20px;
-	color: gray;
+  color: gray;
+  display: flex;
+  align-items: baseline;
+  font-size: 20px;
+  align-items: center;
+  margin: 0.5% 0% 0% 2%;
 }
 .reviewIdRdate{
 	color: gray; 
 	font-size: 20px;
-	margin-top: 1%; 
+	margin: 0.5% 1% 0% 1%; 
 }
 .reviewIdBox{
 	display: flex;
 }
 .reviewRdate{
-	margin-left: 2%;
-	margin-right: 1%;
-	margin-top: 1%;
+	margin: 0.5% 1% 0% 0% ;
 	font-size: 20px;
 	color: gray;
 }
+.reviewLikeStar{
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  gap: 3%;
+}
 .reviewContent{
-	margin-top: 5px;
 	resize: none;
-	width: 80%;
-	height: 130px;
-	margin-left: 5%;
-	border: none;
-	margin-bottom: 1%;
-	font-size: 18px;
-}
-/* -----하트------ */
-.reviewLike{
-	font-size: 23px;
-	cursor: pointer;
-	display: flex;
-	align-items: center;
-	position: relative;
-	margin-top: 0.5%;
-}
-.reviewLike span {
-	color: gray; /* 기본 색상 */
-	transition: color 0.3s ease;
-}
-.reviewLike.active span {
-	color: red; /* 클릭 시 빨간색 변경 */
-}
-.reviewLike input{
-	position: absolute;
-	width: 100%;
-	height: 100%;
-	left: 0;
-	opacity: 0;
-	cursor: pointer;
-}
-/* -----별점------ */
-.starBox{
-	position: absolute;	
-	right: 15%;
-  top: 5%;
-}
-.star {
-	position: relative;
-	font-size: 2rem;
-	color: #ddd;
-	padding-left: 80%;
-	-webkit-text-stroke: 1px black;
-}
-.star1 {
-	position: relative;
-	font-size: 2rem;
-	color: #ddd;
-	padding-left: 83%;
-	-webkit-text-stroke: 1px black;
-}
-.star input {
-	width: 100%;
-	height: 100%;
-	position: absolute;
-	left: 0;
-	opacity: 0; 
-	cursor: pointer;
-	pointer-events: auto;
-}
-.star1 input {
-	width: 100%;
-	height: 100%;
-	position: absolute;
-	left: 1px;
-	opacity: 0; 
-	cursor: pointer;
-}	
-.star span {
-	width: 0;
-	position: absolute; 
-	left: 0;
-	color: yellow;
-	overflow: hidden;
-}
-.star1 span {
-	width: 0;
-	position: absolute;
-	left: 0;
-	color: yellow;
-	overflow: hidden;
-	pointer-events: auto;
-}
-.star span:hover {
-  color: gold;        /* hover 시 약간 더 진한 색으로 반응 */
+  width: 95%;
+  height: 100px;
+  font-size: 16px;
+  border: none;
+  margin: 1% 5% 0% 2%;
 }
 
+/* 하트 컨테이너 */
+.reviewLike {
+  font-size: 23px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  position: relative;
+  margin-top: 0.2%;
+}
+.reviewLike label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+}
+.reviewLike span {
+  color: gray;
+  transition: color 0.3s ease;
+  z-index: 1;
+  pointer-events: none;
+}
+.reviewLike:hover span {
+  color: red;
+}
+.reviewLike.active span {
+  color: red;
+}
+.reviewLike input {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  left: 0;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 2;
+}
+
+/* -----별점------ */
+.starBox{
+	position: relative;
+  width: 150px;
+  margin-top: 0.1%;
+}
+.starLabel {
+  display: block;
+  position: relative;
+}
+/* 별점 슬라이더 전체 스타일 */
+.reviewStar {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  width: 100%;
+  height: 30px; /* 클릭 가능한 영역 확보 */
+  position: relative;
+  z-index: 2;
+  cursor: pointer;
+}
+/* WebKit 브라우저용 슬라이더 손잡이 (보이지 않지만 클릭 가능) */
+.reviewStar::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  width: 24px;
+  height: 30px;
+  border: none;
+  opacity: 0; /* 시각적으로 숨김 */
+  cursor: pointer;
+}
+/* Firefox용 손잡이 설정 */
+.reviewStar::-moz-range-thumb {
+  appearance: none;
+  background: transparent;
+  width: 24px;
+  height: 30px;
+  border: none;
+  opacity: 0;
+  cursor: pointer;
+}
+.starsOverlay {
+  --rating: 0;
+}
+.starsOverlay::before {
+  content: "★★★★★";
+  font-size: 24px;
+  color: #ccc; /* 빈 별색 */
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+.starsOverlay::after {
+  content: "★★★★★";
+  font-size: 24px;
+  color: gold; /* 채워지는 별색 */
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(var(--rating, 0) * 20%);
+  white-space: nowrap;
+  overflow: hidden;
+  pointer-events: none;
+  transition: width 0.2s ease-in-out;
+}
+.reviewStar:disabled + .starsOverlay::after {
+  color: gold;
+}
+.reviewStar:disabled + .starsOverlay::before {
+  color: #ccc;
+}
 /* -----수정삭제 모달창------ */
 .reviewOptions {
-	position: relative;  /* 부모 요소를 상대 위치로 설정 */
-	display: flex;
-	align-items: center;
-	gap: 10px; /* 간격 조정 */
-	margin-left: 93%;				
+  position: relative;
+  margin-left: 95%;
+  cursor: pointer;
+  font-size: 18px;				
 }
 .optionsToggle {
-	position: absolute;
-	top: -10px; /* 위쪽 정렬 */
-	right: 30px; /* 오른쪽 정렬 */
-	cursor: pointer;
-	font-size: 25px;
-	margin-bottom: 10%;
-	padding-top: 100%;
+  font-size: 25px;
+  padding-bottom: 5px;
+  padding-right: 5px;
+  margin-left: 5%;
 }
 .optionsMenu {
-	display: none;
-	position: absolute;
-	top: 15px;
-	right: -30px;
-	border: 1px solid #ccc;
-	z-index: 10;
-	border-radius: 8px;
+  display: none;
+  position: absolute;
+  top: 25px;
+  right: 0px; /* 왼쪽 말고 오른쪽 기준으로 위치 잡기 */
+  background-color: black;
+  border: 1px solid black;
+  color: white;
+  border-radius: 8px;
+  z-index: 999;
+  min-width: 60px;
 }
 .optionsMenu button {
-	display: block;
-	width: 80px;
-	padding: 10px;
+  display: block;
+  width: 80px;
+  padding: 10px;
+  border: none;
+  background-color: black;
+  border-radius: 8px;
+  color: white;
+  text-align: center;
+  cursor: pointer;
+  font-size: 16px;
+}
+.optionsMenu button:hover {
+  background-color: black;
+  color: white;
+}
+
+.bookCommentBox{
+	width: 90%;
+  margin: 0% 5% 0% 5%;
+}
+#reviewComment{
+  width: 100%;
+  height: 100px;
+  resize: none;
+  border-radius: 10px;
+  padding: 2%;
+}
+.editButtons{
+	display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100%;
+  margin: 1% 0% 0% 0%;	
+  gap: 2%;
+}
+.saveReview{
+	width: 90px;
+	height: 35px;
 	border: none;
 	background-color: black;
+	border-radius: 8px;
 	color: white;
 	text-align: center;
 	cursor: pointer;
+	font-size: 18px;
 }
-.optionsMenu button:hover {
-	background-color: #ccc;
-}
-.editButtons{
-	display: none;  
-	position: absolute;  
-	top: -10px;
-	left: -180px;
-	gap: 10px;
-}
-.editButtons button{
+.cancelEdit{
+	width: 90px;
+	height: 35px;
+	border: none;
 	background-color: black;
+	border-radius: 8px;
 	color: white;
-	width: 80px;
-	height: 30px;
-	border-radius: 5px;
+	text-align: center;
+	cursor: pointer;
+	font-size: 18px;
+}
+textarea.reviewComment{
+  width: 100%;
+  resize: none;
+  font-size: 18px;
+  border-radius: 10px;
+  padding: 2%;
+  margin: 1% 0% 0% 0%;		
 }
 /* 페이징 버튼 스타일 */
 .pagination {
