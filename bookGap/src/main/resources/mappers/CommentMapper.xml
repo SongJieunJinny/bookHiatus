@@ -89,4 +89,5 @@
        SET COMMENT_STATE = 2
      WHERE COMMENT_NO = #{commentNo}
 	</update>
+
 </mapper>
