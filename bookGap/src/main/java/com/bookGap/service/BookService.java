@@ -20,5 +20,7 @@ public interface BookService {
 	 int getTotalByCategory(SearchVO searchVO);
 	
 	 public int getBookNoByIsbn(String isbn);
+	 
+	 List<BookVO> getNewBooks();
 
 }
