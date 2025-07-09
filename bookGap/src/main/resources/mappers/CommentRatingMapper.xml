@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+			"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bookGap.mapper.commentRatingMapper"> 
+	<!-- 별점 저장 -->
+  <insert id="insertRating" parameterType="com.bookGap.vo.CommentRatingVO">
+    INSERT INTO COMMENT_RATING (COMMENT_NO,
+    														USER_ID,
+    														RATING, ISBN)
+    										VALUES (#{commentNo},
+    														#{userId},
+    														#{rating},
+    														#{isbn})
+  </insert>
+
+  <!-- 별점 수정 -->
+  <update id="updateRating" parameterType="com.bookGap.vo.CommentRatingVO">
+    UPDATE COMMENT_RATING
+    			 SET RATING = #{rating}
+     WHERE COMMENT_NO = #{commentNo} 
+       AND USER_ID = #{userId} 
+       AND ISBN = #{isbn}
+  </update>
+
+  <!-- 댓글 별점 조회 -->
+  <select id="getRatingByCommentNo" resultType="com.bookGap.vo.CommentRatingVO">
+    SELECT * FROM COMMENT_RATING 
+    	 WHERE COMMENT_NO = #{commentNo} 
+    	   AND ISBN = #{isbn}
+  </select>
+
+  <!-- 사용자가 해당 댓글에 평가한 별점이 있는지 확인 -->
+  <select id="checkRatingExist" resultType="int">
+    SELECT COUNT(*) FROM COMMENT_RATING 
+    WHERE COMMENT_NO = #{commentNo} 
+    	AND USER_ID = #{userId} 
+    	AND ISBN = #{isbn}
+  </select>
+</mapper>

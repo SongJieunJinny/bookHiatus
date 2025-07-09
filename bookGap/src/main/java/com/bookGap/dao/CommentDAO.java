@@ -48,4 +48,5 @@ public class CommentDAO {
   public CommentVO selectIsbn(String isbn) {
     return sqlSession.selectOne(name_space+"selectIsbn", isbn);
   }
+
 }
