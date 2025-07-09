@@ -12,5 +12,7 @@ public interface AdminBookService {
 	    
 	    boolean isIsbnExists(String isbn);
 	    List<BookVO> getAllBooks();
+	    
+	    int updateInventory(BookVO bookVO);
 
 }
