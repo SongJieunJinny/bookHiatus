@@ -599,7 +599,7 @@ function editReview(commentNo) {
       alert("리뷰 내용을 입력해주세요.");
       return;
     }
-
+  
     $.ajax({
       url: "<%= request.getContextPath()%>/comment/modify.do",
       type: "POST",
