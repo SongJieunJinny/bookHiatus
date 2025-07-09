@@ -159,14 +159,28 @@
 			   p.isbn,
 			   b.BOOK_STOCK AS bookStock,
 			   b.BOOK_NO AS bookNo,
-			   b.BOOK_STATE AS bookState,
+			   b.BOOK_STATE AS bookState
 			FROM BOOK b
 			INNER JOIN PRODUCT_API p ON b.isbn = p.isbn
-			ORDER BY  p.isbn DESC
+			ORDER BY  b.BOOK_RDATE DESC
 	</select>
 	
 	<select id="getBookNoByIsbn" parameterType="String" resultType="int">
 	  SELECT BOOK_NO FROM BOOK WHERE isbn = #{isbn}
 	</select>
+	
+	<update id="updateInventory" parameterType="BookVO">
+	  UPDATE book
+	  <set>
+	    <if test="bookStock != null">
+	      book_stock = #{bookStock}
+	      <if test="bookState != null">,</if>
+	    </if>
+	    <if test="bookState != null">
+	      book_state = #{bookState}
+	    </if>
+	  </set>
+	  WHERE book_no = #{bookNo}
+	</update>
 	
 </mapper>
