@@ -125,9 +125,11 @@
 				          <c:if test="${row + offset < fn:length(newBooks)}">
 				            <c:set var="book" value="${newBooks[row + offset]}" />
 				            <div class="newBook" style="width: 30%; text-align: center;">
-				              <img src="${book.image}" style="width: 80%; height: 90%;" />
-				              <div class="bookName">${book.title}</div>
-				              <div class="bookPrice">${book.discount}원</div>
+				              	 <a href="<c:url value='/product/bookView.do?isbn=${book.isbn}' />">
+							    	<img src="${book.image}" style="width: 80%; height: 90%;" />
+							     </a>
+							    <div class="bookName">${book.title}</div>
+							    <div class="bookPrice">${book.discount}원</div>
 				            </div>
 				          </c:if>
 				        </c:forEach>
