@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+			"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bookGap.mapper.commentLoveMapper"> 
+
+	<!-- 좋아요 여부 확인 -->
+  <select id="isLovedByUser" parameterType="com.bookGap.vo.CommentLoveVO" resultType="boolean">
+    SELECT COUNT(*) > 0
+    	FROM LOVE
+     WHERE COMMENT_NO = #{commentNo}
+       AND USER_ID = #{userId}
+  </select>
+
+  <!-- 좋아요 추가 -->
+  <insert id="insertLove" parameterType="com.bookGap.vo.CommentLoveVO">
+    INSERT INTO LOVE (COMMENT_NO,
+    									USER_ID,
+    									isbn)
+    				VALUES (#{commentNo}, 
+    								#{userId},
+    								#{isbn})
+  </insert>
+
+  <!-- 좋아요 삭제 -->
+  <delete id="deleteLove" parameterType="com.bookGap.vo.CommentLoveVO">
+    DELETE FROM LOVE
+     WHERE COMMENT_NO = #{commentNo}
+       AND USER_ID = #{userId}
+  </delete>
+	
+</mapper>

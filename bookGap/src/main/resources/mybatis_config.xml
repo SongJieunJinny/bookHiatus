@@ -14,6 +14,8 @@
 		<typeAlias type="com.bookGap.vo.QCommentVO" alias="QCommentVO"/>
 		<typeAlias type="com.bookGap.vo.ECommentVO" alias="ECommentVO"/>
 		<typeAlias type="com.bookGap.vo.CommentVO" alias="CommentVO"/>
+		<typeAlias type="com.bookGap.vo.CommentRatingVO" alias="CommentRatingVO"/>
+		<typeAlias type="com.bookGap.vo.CommentLoveVO" alias="CommentLoveVO"/>
 	</typeAliases>
 
 </configuration>

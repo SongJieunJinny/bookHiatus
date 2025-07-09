@@ -10,7 +10,6 @@ import org.apache.commons.collections4.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,20 +18,19 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.bookGap.service.BookService;
 import com.bookGap.service.CommentService;
 import com.bookGap.util.PagingUtil;
-import com.bookGap.vo.BookVO;
 import com.bookGap.vo.CommentVO;
 import com.bookGap.vo.SearchVO;
 
 @RequestMapping(value="/comment")
 @Controller
 public class CommentController {
-	
+  
 	@Autowired
 	public CommentService commentService;
 	
 	@Autowired
-  public BookService  bookService;
-	
+  public BookService bookService;
+
 	@ResponseBody
 	@RequestMapping(value="/loadComment.do",method=RequestMethod.GET, produces = "application/json; charset=utf-8")
 	public Map<String,Object> loadComment(@RequestParam("isbn") String isbn, Model model, Principal principal, HttpServletRequest request,
@@ -59,12 +57,8 @@ public class CommentController {
     for (CommentVO cvo : clist) {
       cvo.setDisplayNo(displayNo--);
     
-      System.out.println("loginUserId: " + loginUserId);
-      System.out.println("commentUserId: " + cvo.getUserId());
-    
-    //권한에 따라 댓글 출력 제어 (옵션 처리 가능)
+      //권한에 따라 댓글 출력 제어 (옵션 처리 가능)
       boolean canView = loginUserId != null && (loginUserId.equals(cvo.getUserId()) || isAdmin);
-      // 예: cvo.setVisible(canView);
     }
     
     Map<String, Object> map = new HashedMap<>();
@@ -83,30 +77,25 @@ public class CommentController {
 	@ResponseBody
 	@RequestMapping(value="/write.do", method=RequestMethod.POST)
 	public String write(CommentVO vo, HttpServletRequest request, Principal principal) {
-	    if (principal == null) return "Fail";
+	  if (principal == null) return "Fail";
 
-	    vo.setUserId(principal.getName());
+    vo.setUserId(principal.getName());
+    vo.setCommentContent(request.getParameter("commentContent"));
 
-	    String content = request.getParameter("commentContent");
-	    String ratingStr = request.getParameter("commentRating");
+    String ratingStr = request.getParameter("commentRating");
+    vo.setCommentRating(ratingStr != null ? Integer.parseInt(ratingStr) : 0);
 
-	    if (content == null || content.trim().isEmpty()) return "Fail";
+    vo.setIsbn(request.getParameter("isbn"));
+    vo.setCommentState("1");
 
-	    vo.setCommentContent(content);
-	    vo.setCommentState("1");
-	    vo.setCommentRating(ratingStr != null ? Integer.parseInt(ratingStr) : 0);
-	    vo.setIsbn(request.getParameter("isbn"));
-	    
-	    int bookNo = bookService.getBookNoByIsbn(vo.getIsbn());
-	    if (bookNo <= 0) return "Fail";
+    int bookNo = bookService.getBookNoByIsbn(vo.getIsbn());
+    if (bookNo <= 0) return "Fail";
+    vo.setBookNo(bookNo);
 
-	    vo.setBookNo(bookNo); // 댓글 등록용 외래 키 세팅
+    return commentService.insert(vo) > 0 ? "Success" : "Fail";
 
-	    int result = commentService.insert(vo);
-	    return result > 0 ? "Success" : "Fail";
 	}
 
-	
 	/* modify POST */
 	
 	@ResponseBody
@@ -115,49 +104,38 @@ public class CommentController {
     if (principal == null) return "Fail";
 
     vo.setUserId(principal.getName());
+    vo.setCommentContent(request.getParameter("commentContent"));
 
-    String content = request.getParameter("commentContent");
     String ratingStr = request.getParameter("commentRating");
-    String isbn = request.getParameter("isbn");
+    vo.setCommentRating(ratingStr != null && !ratingStr.trim().isEmpty() ? Integer.parseInt(ratingStr) : 1);
 
-    if (content == null || content.trim().isEmpty()) return "Fail";
+    vo.setIsbn(request.getParameter("isbn"));
 
-    vo.setCommentContent(content);
-    vo.setCommentRating(ratingStr != null ? Integer.parseInt(ratingStr) : 0);
-    vo.setIsbn(isbn);
-
-    int bookNo = bookService.getBookNoByIsbn(isbn);
+    int bookNo = bookService.getBookNoByIsbn(vo.getIsbn());
     if (bookNo <= 0) return "Fail";
-
     vo.setBookNo(bookNo);
 
-    int result = commentService.update(vo);
-    return result > 0 ? "Success" : "Fail";
-}
+    return commentService.update(vo) > 0 ? "Success" : "Fail";
+	}
 	
 	/* delete POST */
 	
 	@ResponseBody
 	@RequestMapping(value="/delete.do",method=RequestMethod.POST)
-	public String delete(CommentVO vo, HttpServletRequest request, int commentNo, Principal principal){
-	  
-	  if (principal == null) return "Fail"; // 로그인 안 된 상태
+  public String delete(@RequestParam("commentNo") int commentNo,
+                       Principal principal, HttpServletRequest request) {
 
+    if (principal == null) return "Fail";
     String loginUserId = principal.getName();
     boolean isAdmin = request.isUserInRole("ROLE_ADMIN");
     
-    // 삭제 권한 확인용 댓글 조회
     CommentVO cvo = commentService.selectOne(commentNo);
-    if (cvo == null) return "Fail"; // 댓글이 존재하지 않음
-
-    // 글쓴이 본인 또는 관리자만 삭제 가능
+    if (cvo == null) return "Fail";
+    
     boolean canDelete = loginUserId.equals(cvo.getUserId()) || isAdmin;
-    if (!canDelete) return "Fail"; // 권한 없음
+    if (!canDelete) return "Fail";
+    
+    return commentService.changeState(commentNo) > 0 ? "Success" : "Fail";
+  }
 
-
-  	int result = commentService.changeState(commentNo);
-  	
-  	return result > 0 ? "Success" : "Fail";
-	}
-	
 }

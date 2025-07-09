@@ -164,6 +164,7 @@
 			INNER JOIN PRODUCT_API p ON b.isbn = p.isbn
 			ORDER BY  p.isbn DESC
 	</select>
+	
 	<select id="getBookNoByIsbn" parameterType="String" resultType="int">
 	  SELECT BOOK_NO FROM BOOK WHERE isbn = #{isbn}
 	</select>
