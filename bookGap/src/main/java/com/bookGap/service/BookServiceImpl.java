@@ -64,5 +64,10 @@ public class BookServiceImpl implements  BookService{
   public int getBookNoByIsbn(String isbn) {
     return bookDAO.getBookNoByIsbn(isbn);
   }
+  
+  @Override
+  public List<BookVO> getNewBooks() {
+    return bookDAO.getNewBooks();
+  }
 	
 }

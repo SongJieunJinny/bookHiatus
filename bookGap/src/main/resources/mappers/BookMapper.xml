@@ -182,4 +182,12 @@
 	  WHERE book_no = #{bookNo}
 	</update>
 	
+	<select id="getNewBooks"  resultType="BookVO" >
+		SELECT p.isbn, p.title, p.image, p.discount
+		FROM BOOK b
+		INNER JOIN PRODUCT_API p ON b.isbn = p.isbn
+		ORDER BY b.BOOK_RDATE DESC
+		LIMIT 9
+	</select>
+	
 </mapper>
