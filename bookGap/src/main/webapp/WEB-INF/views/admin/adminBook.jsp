@@ -65,8 +65,8 @@
     width: 110px;
   }
   /* 숨길 열 선택 (예: 5번역가, 9발행일, 11~15 기타 상세) */
-  #datatablesSimple td:nth-child(5),
-  #datatablesSimple th:nth-child(5),
+  #datatablesSimple td:nth-child(9),
+  #datatablesSimple th:nth-child(9),
   #datatablesSimple td:nth-child(10),
   #datatablesSimple th:nth-child(10),
   #datatablesSimple td:nth-child(11),
@@ -202,12 +202,12 @@
 								    <th>가격 (₩)</th>
 								    <th>관리</th>
 								    <th style="display:none;">번역가</th>
-								    <th style="display:none;">발행일</th>
-								    <th style="display:none;">책소개</th>
-								    <th style="display:none;">링크</th>
-								    <th style="display:none;">이미지URL</th>
-								    <th style="display:none;">목차</th>
-								    <th style="display:none;">서평</th>
+								    <th style="display:none;" >발행일</th>
+								    <th style="display:none;" >책소개</th>
+								    <th style="display:none;" >링크</th>
+								    <th style="display:none;" >이미지URL</th>
+								    <th style="display:none;" >목차</th>
+								    <th style="display:none;" >서평</th>
                                   </tr>
                               </thead>
                               <tbody>
@@ -239,12 +239,12 @@
 								      <button class="btn btn-warning btn-sm editBook">수정</button>
 								      <button class="btn btn-danger btn-sm deleteBook">삭제</button>
 								    </td>
-								    <td style="display:none;">${vo.bookTrans}</td>
-								    <td style="display:none;">${vo.pubdate}</td>
-								    <td style="display:none;">${vo.description}</td>
-								    <td style="display:none;">${vo.link}</td>
-								    <td style="display:none;">${vo.bookImgUrl}</td>
-								    <td style="display:none;">${vo.bookIndex}</td>
+								    <td style="display:none;" >${vo.bookTrans}</td>
+								    <td style="display:none;" >${vo.pubdate}</td>
+								    <td style="display:none;" >${vo.description}</td>
+								    <td style="display:none;" >${vo.link}</td>
+								    <td style="display:none;" >${vo.bookImgUrl}</td>
+								    <td style="display:none;" >${vo.bookIndex}</td>
 								    <td style="display:none;">${vo.publisherBookReview}</td>
 								  </tr>
 								</c:forEach>
