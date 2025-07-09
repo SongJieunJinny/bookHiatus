@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.bookGap.service.BookService;
+import com.bookGap.vo.BookVO;
 
 /**
  * Handles requests for the application home page.
@@ -27,7 +28,10 @@ public class HomeController {
 	 * Simply selects the home view to render by returning its name.
 	 */
 	@RequestMapping(value = "/", method = RequestMethod.GET)
-	public String home() {
+	public String home(Model model) {
+		
+		 List<BookVO> newBooks = bookService.getNewBooks();
+		 model.addAttribute("newBooks", newBooks);
 		
 
 		return "home";

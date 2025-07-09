@@ -56,4 +56,7 @@ public class BookDAO {
     return sqlSession.selectOne(namespace + "getBookNoByIsbn", isbn);
 	}
 	
+	public List<BookVO> getNewBooks(){
+		return sqlSession.selectList(namespace + "getNewBooks");
+	}
 }

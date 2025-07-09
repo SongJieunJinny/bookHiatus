@@ -2,6 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -9,100 +10,103 @@
 	<title>index</title>
 	<script src="<%=request.getContextPath()%>/resources/js/jquery-3.7.1.js"></script>
 	<link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/resources/css/index.css"/>
-	<style>
-	#navMenu{
-		width: 100%;
-		height: auto;
-	}
-	#new{
-		margin-top: 3%;
-		margin-bottom: 4.8%;
-		text-align: center;
-		font-size: 25px;
-	}
-	#bookList{
-		width: 100%;
-		height: auto;
-		display:flex;
-		justify-content: space-evenly;
-		align-items: center;
-	}
-	#leftPointer{
-		width: 20%;
-		height: auto;
-		display: flex;
-		justify-content: flex-end;
-	}
-	#leftPointerImg{
-		width: 20%;
-		height: 20%;
-		cursor: pointer;
-	}
-	#rightPointer{
-		width: 20%;
-		height: 20%;
-		display: flex;
-		justify-content: flex-start;
-	}
-	#rightPointerImg{
-		width: 20%;
-		height: 20%;
-		cursor: pointer;
-	}
-	#newBookList{
-		width: 100%;
-		margin-left: 5%;
-		margin-right: 5%;
-		display:flex;
-		justify-content: space-evenly;
-		align-items: center;
-	}
-	#newBook1{
-		width: 50%;
-		height: 30%;
-		margin-left: 5%;
-		margin-right: 5%;
-	}
-	#newBookImg1{
-		width: 100%;
-		height: 100%;
-	}
-	#newBookAlt1{
-		text-align: center;
-		margin-top: 2%;
-		margin-bottom: 7%;
-	}
-	#newBook2{
-		width: 50%;
-		height: 30%;
-		margin-left: 5%;
-		margin-right: 5%;
-	}
-	#newBookImg2{
-		width: 100%;
-		height: 100%;
-	}
-	#newBookAlt2{
-		text-align: center;
-		margin-top: 2%;
-		margin-bottom: 7%;
-	}
-	#newBook3{
-		width: 50%;
-		height: 30%;
-		margin-left: 5%;
-		margin-right: 5%;
-	}
-	#newBookImg3{
-		width: 100%;
-		height: 100%;
-	}
-	#newBookAlt3{
-		text-align: center;
-		margin-top: 2%;
-		margin-bottom: 7%;
-	}
-	</style>
+<style>
+	#navMenu {
+  width: 100%;
+  height: auto;
+}
+
+#new {
+  margin-top: 3%;
+  margin-bottom: 4.8%;
+  text-align: center;
+  font-size: 25px;
+}
+
+/* 전체 슬라이드 컨테이너 */
+#bookList {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  padding: 0 40px;
+  box-sizing: border-box;
+}
+
+/* 화살표 영역 */
+#leftPointer, #rightPointer {
+  width: 40px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+#leftPointerImg, #rightPointerImg {
+  width: 28px;
+  height: 28px;
+}
+
+/* 슬라이드 하나 */
+.bookSlide {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 슬라이드 내부 도서 리스트 (3권씩) */
+.bookRow {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: flex-start;
+  gap: 40px;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+/* 개별 도서 */
+.newBook {
+  width: 30%;
+  text-align: center;
+  padding: 10px;
+}
+
+/* 도서 이미지 */
+.newBook img {
+  width: 100%;
+  aspect-ratio: 3 / 4.3;  /* 책 세로 비율 */
+  object-fit: contain;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* 제목, 가격 */
+.bookName {
+  margin-top: 8px;
+  font-size: 18px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.bookPrice {
+  margin-top: 8px;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 가격 강조 */
+.bookPrice {
+  font-weight: bold;
+  color: #333;
+}
+
+</style>
 </head>
 <body>
 	<jsp:include page="/WEB-INF/views/include/header.jsp" />
@@ -111,112 +115,83 @@
 			<div id="new">NEW</div>
 			<div id="bookList">
 				<div id="leftPointer"><img id="leftPointerImg" src="<%=request.getContextPath()%>/resources/img/icon/left.png"></div>
-				<div id="newBookList">
-					<div id="newBook1">
-						<div id="bookBack">
-						<img id="newBookImg1" src="<%=request.getContextPath()%>/resources/img/문화이론.jpg">
-						</div>
-						<div id="newBookAlt1">
-							<div id="bookName1">문화이론</div>
-							<div id="bookPrice1">29,800</div>
-						</div>
-					</div>
-					<div id="newBook2">
-						<div id="bookBack">
-						<img id="newBookImg2" src="<%=request.getContextPath()%>/resources/img/고흐로읽는심리수업.jpg">
-						</div>
-						<div id="newBookAlt2">
-							<div id="bookName2">고흐로 읽는 심리수업</div>
-							<div id="bookPrice2">23,000</div>
-						</div>
-					</div>
-					<div id="newBook3">
-						<div id="bookBack">
-						<img id="newBookImg3" src="<%=request.getContextPath()%>/resources/img/필사는도끼다.jpg">
-						</div>
-						<div id="newBookAlt3">
-							<div id="bookName3">필사는 도끼다</div>
-							<div id="bookPrice3">22,000</div>
-						</div>
-					</div>
+				
+				<!-- 슬라이드 목록 -->
+				<div id="newBookSlidesWrapper">
+				  <c:forEach var="row" begin="0" end="${fn:length(newBooks) - 1}" step="3">
+				    <div class="bookSlide" style="display: none;">
+				      <div class="bookRow" style="display: flex; justify-content: space-evenly;">
+				        <c:forEach var="offset" begin="0" end="2">
+				          <c:if test="${row + offset < fn:length(newBooks)}">
+				            <c:set var="book" value="${newBooks[row + offset]}" />
+				            <div class="newBook" style="width: 30%; text-align: center;">
+				              <img src="${book.image}" style="width: 80%; height: 90%;" />
+				              <div class="bookName">${book.title}</div>
+				              <div class="bookPrice">${book.discount}원</div>
+				            </div>
+				          </c:if>
+				        </c:forEach>
+				      </div>
+				    </div>
+				  </c:forEach>
 				</div>
+				
 				<div id="rightPointer"><img id="rightPointerImg" src="<%=request.getContextPath()%>/resources/img/icon/right.png"></div>
 			</div>
 		</div>
 		<br><br>
 	</nav>
 	<jsp:include page="/WEB-INF/views/include/footer.jsp" />
-	<script>
-		$(document).ready(function () {
-      // 서버 include 방식이므로 header는 이미 DOM에 있음
-      initHeaderEvents(); // 여전히 실행 필요함
-      updateCartCount(); // 장바구니 카운트도 실행
-    });
-
-		// 장바구니 개수 업데이트 함수
-		function updateCartCount() {
-			let cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
-			let cartCount = cartItems.length;
-			let cartCountElement = document.getElementById("cart-count");
-
-			if (cartCountElement) {
-				cartCountElement.textContent = cartCount;
-				cartCountElement.style.visibility = cartCount > 0 ? "visible" : "hidden";
-			}
-		}
-	</script>
-	<script>
-		const contextPath = "<%= request.getContextPath() %>";
-		const books = [
-    	[
-        { imgSrc: contextPath + "/resources/img/문화이론.jpg", name: "문화이론", price: "29,800" },
-        { imgSrc: contextPath + "/resources/img/고흐로읽는심리수업.jpg", name: "고흐로 읽는 심리수업", price: "23,000" },
-        { imgSrc: contextPath + "/resources/img/필사는도끼다.jpg", name: "필사는 도끼다", price: "22,000" }
-    	],
-			[
-				{imgSrc: contextPath + "/resources/img/군주론인생공부.jpg", name: "군주론 인생공부", price: "18,500"},
-				{imgSrc: contextPath + "/resources/img/더인간적인건축.jpg", name: "더 인간적인 건축", price: "30,000"},
-				{imgSrc: contextPath + "/resources/img/마흔에읽는쇼펜하우어.jpg", name: "마흔에 읽는 쇼펜하우어", price: "17,000"}
-			],
-			[
-				{imgSrc: contextPath + "/resources/img/초역논어.jpg", name: "초역논어", price: "17,800"},
-				{imgSrc: contextPath + "/resources/img/사피엔스.jpg", name: "사피엔스", price: "26,800"},
-				{imgSrc: contextPath + "/resources/img/초역부처의말.jpg", name: "초역부처의 말", price: "17,800"}
-			]
-		];
 	
-		let currentIndex = 0;
+<script>
+let currentSlide = 0;
+let slides = [];
 
-		document.getElementById("rightPointerImg").onclick = () => changeBooks(1);
-		document.getElementById("leftPointerImg").onclick = () => changeBooks(-1);
+function showSlide(index) {
+  slides.forEach((slide, i) => {
+    slide.style.display = i === index ? 'block' : 'none';
+  });
+}
 
-		function changeBooks(direction) {
-			currentIndex = (currentIndex + direction + books.length) % books.length;
+document.addEventListener("DOMContentLoaded", function () {
+  slides = Array.from(document.querySelectorAll(".bookSlide"));
+  showSlide(currentSlide);
 
-			document.getElementById("newBookImg1").src = books[currentIndex][0].imgSrc;
-			document.getElementById("bookName1").innerText = books[currentIndex][0].name;
-			document.getElementById("bookPrice1").innerText = books[currentIndex][0].price;
+  document.getElementById("rightPointerImg").addEventListener("click", () => {
+    currentSlide = (currentSlide + 1) % slides.length;
+    showSlide(currentSlide);
+  });
 
-			document.getElementById("newBookImg2").src = books[currentIndex][1].imgSrc;
-			document.getElementById("bookName2").innerText = books[currentIndex][1].name;
-			document.getElementById("bookPrice2").innerText = books[currentIndex][1].price;
+  document.getElementById("leftPointerImg").addEventListener("click", () => {
+    currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+    showSlide(currentSlide);
+  });
 
-			document.getElementById("newBookImg3").src = books[currentIndex][2].imgSrc;
-			document.getElementById("bookName3").innerText = books[currentIndex][2].name;
-			document.getElementById("bookPrice3").innerText = books[currentIndex][2].price;
+  // 장바구니 수량 갱신
+  updateCartCount();
+  if (typeof initHeaderEvents === "function") {
+    initHeaderEvents();
+  }
 
-			const newBookList = document.getElementById("newBookList");
-			newBookList.style.transition = 'transform 0.5s ease';
-			newBookList.style.transform = 'translateX(-100%)';
+  // ▶ 제목에서 괄호 시작 후 삭제
+  document.querySelectorAll(".bookName").forEach(el => {
+    const text = el.textContent;
+    const index = text.indexOf("(");
+    if (index !== -1) {
+      el.textContent = text.substring(0, index).trim();
+    }
+  });
+});
 
-			setTimeout(() => {
-				newBookList.style.transition = 'none';
-				newBookList.style.transform = 'translateX(0)';
-				setTimeout(() => {
-					newBookList.style.transition = 'transform 0.5s ease';
-				}, 0);
-			}, 500);
-		}
-	</script>	
+function updateCartCount() {
+  let cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
+  let cartCount = cartItems.length;
+  let cartCountElement = document.getElementById("cart-count");
+  if (cartCountElement) {
+    cartCountElement.textContent = cartCount;
+    cartCountElement.style.visibility = cartCount > 0 ? "visible" : "hidden";
+  }
+}
+</script>
 </body>
 </html>
