@@ -45,13 +45,13 @@
 			<div id="menuLogin" class="menuItem">
 			  <img id="loginImg" src="<%=request.getContextPath()%>/resources/img/icon/login.png">
 			</div>
-      <div id="menuMypage" class="menuItem">
-        <a href="./mypage.html"><img id="mypageImg" src="<%=request.getContextPath()%>/resources/img/icon/edit.png"></a>
-      </div>
+			<div id="menuMypage" class="menuItem">
+			  <a href="./mypage.html"><img id="mypageImg" src="<%=request.getContextPath()%>/resources/img/icon/edit.png"></a>
+			</div>
 			<div id="menuCart" class="menuItem">
-	      <a href="<%=request.getContextPath()%>/product/cart.do"><img id="cartImg" src="<%=request.getContextPath()%>/resources/img/icon/cart.png"></a>
-	      <span id="cart-count">0</span>
-      </div>
+		      <a href="<%=request.getContextPath()%>/product/cart.do"><img id="cartImg" src="<%=request.getContextPath()%>/resources/img/icon/cart.png"></a>
+		      <span id="cart-count">0</span>
+			</div>
 		</div>
 	</div>
 	<div id="menuHr"><hr></div>
@@ -115,16 +115,16 @@
 			
 			<sec:authorize access="!hasRole('ROLE_ADMIN')">
 			 <!-- 일반 사용자일 경우: 마이페이지 아이콘 -->
-			 <div id="menuMypage" class="menuItem">
+			<div id="menuMypage" class="menuItem">
 			   <a href="<%=request.getContextPath()%>/mypage.do">
 			     <img id="mypageImg" src="<%=request.getContextPath()%>/resources/img/icon/edit.png" alt="마이페이지">
 			   </a>
 			 </div>
 			</sec:authorize>
 			<div id="menuCart" class="menuItem">
-	      <a href="<%=request.getContextPath()%>/product/cart.do"><img id="cartImg" src="<%=request.getContextPath()%>/resources/img/icon/cart.png"></a>
-	      <span id="cart-count">0</span>
-      </div>
+		      <a href="<%=request.getContextPath()%>/product/cart.do"><img id="cartImg" src="<%=request.getContextPath()%>/resources/img/icon/cart.png"></a>
+		      <span id="cart-count">0</span>
+			</div>
 		</div>
 	</div>
 	<div id="menuHr"><hr></div>
@@ -183,7 +183,7 @@
 </div>
   <script src="<%=request.getContextPath()%>/resources/js/jquery-3.7.1.js"></script>
   <script>
-  function initHeaderEvents(){
+  function initHeaderEvents() {
 	  const menuBook = document.getElementById("menuBook");
 	  const menuCommunity = document.getElementById("menuCommunity");
 	  const bookCategory = document.getElementById("bookCategory");
@@ -191,116 +191,135 @@
 	  const searchInput = document.getElementById("searchInput");
 	  const searchText = document.getElementById("searchText");
 	  const searchImgIcon = document.getElementById("searchImgIcon");
-	  const searchSwitchBtn = document.getElementById("searchSwitchBtn"); // 오타 수정
+	  const searchSwitchBtn = document.getElementById("searchSwitchBtn");
+	  const menuSearch = document.getElementById("menuSearch");
 
-    // BOOK 버튼 클릭 시 카테고리 메뉴 토글
-    menuBook.addEventListener("click", function(event){
-      event.stopPropagation();
-      bookCategory.style.display = bookCategory.style.display === "block" ? "none" : "block";
-      menuBook.classList.toggle("active");
-      communityCategory.style.display = "none"; // 다른 메뉴 닫기
-      menuCommunity.classList.remove("active");
-    });
+	  // BOOK 메뉴 클릭 이벤트
+	  if (menuBook && bookCategory && menuCommunity && communityCategory) {
+	    menuBook.addEventListener("click", function (event) {
+	      event.stopPropagation();
+	      bookCategory.style.display = bookCategory.style.display === "block" ? "none" : "block";
+	      menuBook.classList.toggle("active");
+	      communityCategory.style.display = "none";
+	      menuCommunity.classList.remove("active");
+	    });
 
-    // COMMUNITY 버튼 클릭 시 커뮤니티 메뉴 토글
-    menuCommunity.addEventListener("click", function(event){
-      event.stopPropagation();
-      communityCategory.style.display = communityCategory.style.display === "block" ? "none" : "block";
-      menuCommunity.classList.toggle("active");
-      bookCategory.style.display = "none"; // 다른 메뉴 닫기
-      menuBook.classList.remove("active");
-    });
+	    menuCommunity.addEventListener("click", function (event) {
+	      event.stopPropagation();
+	      communityCategory.style.display = communityCategory.style.display === "block" ? "none" : "block";
+	      menuCommunity.classList.toggle("active");
+	      bookCategory.style.display = "none";
+	      menuBook.classList.remove("active");
+	    });
+	  }
 
-    // 검색 버튼 클릭 시 아이콘과 인풋 표시
-    searchSwitchBtn.addEventListener("click", function(event){ // 변수명 수정
-      event.stopPropagation();
-      if(searchInput.style.display === "none" || searchInput.style.display === ""){
-        searchText.style.display = "none"; // "SEARCH" 숨김
-        searchImgIcon.style.display = "inline"; // 검색 아이콘 표시
-        searchInput.style.display = "inline-block"; // 검색 입력창 표시
-        searchInput.focus();
-      }
-    });
-    
-    document.getElementById('searchSwitchBtn').addEventListener('click', function () {
-    	const input = document.getElementById('searchInput');
-    	input.style.display = input.style.display === 'block' ? 'none' : 'block';
-    });
-    	
-    // 화면 클릭 시 메뉴와 검색창 닫기
-    document.addEventListener("click", function(event){
-      if (!bookCategory.contains(event.target) && !menuBook.contains(event.target)){
-        bookCategory.style.display = "none";
-        menuBook.classList.remove("active");
-      }
-      if (!communityCategory.contains(event.target) && !menuCommunity.contains(event.target)){
-        communityCategory.style.display = "none";
-        menuCommunity.classList.remove("active");
-      }
-      if (!searchInput.contains(event.target) && !menuSearch.contains(event.target)){
-        searchText.style.display = "inline"; // "SEARCH" 다시 표시
-        searchImgIcon.style.display = "none"; // 검색 아이콘 숨김
-        searchInput.style.display = "none"; // 검색 입력창 숨김
-      }
-    });
+	  // 검색 버튼 클릭 이벤트
+	  if (searchSwitchBtn && searchInput && searchText && searchImgIcon) {
+	    searchSwitchBtn.addEventListener("click", function (event) {
+	      event.stopPropagation();
+	      if (searchInput.style.display === "none" || searchInput.style.display === "") {
+	        searchText.style.display = "none";
+	        searchImgIcon.style.display = "inline";
+	        searchInput.style.display = "inline-block";
+	        searchInput.focus();
+	      } else {
+	        searchText.style.display = "inline";
+	        searchImgIcon.style.display = "none";
+	        searchInput.style.display = "none";
+	      }
+	    });
+	  }
 
-    //모달열기
-    document.getElementById("menuLogin").onclick = function (){
-	    console.log("로그인 버튼 클릭됨!");
-	    document.getElementById("loginModal").classList.add("show");
-    };
-    
-    //모달 닫기 (배경 클릭 or X버튼)
-    window.addEventListener("click", function (event){
-      if (event.target.id === "loginModal" || event.target.id === "closeLoginModal"){
-        document.getElementById("loginModal").classList.remove("show");
-      }
-    });
-   
-    //모달내 LOGIN&GUEST선택창
-    document.getElementById("login").addEventListener("click", function (){
-   	  document.getElementById("loginMain").style.display = "block";
-   	  document.getElementById("guestMain").style.display = "none";
-   	  this.classList.add("active");
-   	  document.getElementById("guest").classList.remove("active");
-   	});
+	  // 화면 클릭 시 메뉴와 검색창 닫기
+	  document.addEventListener("click", function (event) {
+	    if (bookCategory && menuBook &&
+	        !bookCategory.contains(event.target) && !menuBook.contains(event.target)) {
+	      bookCategory.style.display = "none";
+	      menuBook.classList.remove("active");
+	    }
+	    if (communityCategory && menuCommunity &&
+	        !communityCategory.contains(event.target) && !menuCommunity.contains(event.target)) {
+	      communityCategory.style.display = "none";
+	      menuCommunity.classList.remove("active");
+	    }
+	    if (searchInput && menuSearch &&
+	        !searchInput.contains(event.target) && !menuSearch.contains(event.target)) {
+	      searchText.style.display = "inline";
+	      searchImgIcon.style.display = "none";
+	      searchInput.style.display = "none";
+	    }
+	  });
 
-    document.getElementById("guest").addEventListener("click", function (){
-   	  document.getElementById("loginMain").style.display = "none";
-   	  document.getElementById("guestMain").style.display = "block";
-   	  this.classList.add("active");
-   	  document.getElementById("login").classList.remove("active");
-    });
-   
-    //모달 내 로그인 버튼 클릭 시 입력 확인
-    document.getElementById("loginBtn").addEventListener("click", function (event){
-      var loginId = document.getElementById("loginId").value;
-      var loginPw = document.getElementById("loginPw").value;
+	  // 로그인 모달 열기
+	  const menuLogin = document.getElementById("menuLogin");
+	  const loginModal = document.getElementById("loginModal");
+	  if (menuLogin && loginModal) {
+	    menuLogin.onclick = function () {
+	      loginModal.classList.add("show");
+	    };
+	  }
 
-      if(!loginId || !loginPw){
-        alert("아이디와 비밀번호를 입력해주세요.");
-        return;
-      }
+	  // 모달 닫기
+	  const closeLoginModal = document.getElementById("closeLoginModal");
+	  if (loginModal && closeLoginModal) {
+	    window.addEventListener("click", function (event) {
+	      if (event.target.id === "loginModal" || event.target.id === "closeLoginModal") {
+	        loginModal.classList.remove("show");
+	      }
+	    });
+	  }
 
-      var idPattern = /^[a-z0-9_.+-]+$/;
-      if(!idPattern.test(loginId)){
-        alert("아이디는 소문자 영어, 특수문자(_ . + -), 숫자만 사용할 수 있습니다");
-        return;
-      }
+	  // 모달 탭 전환
+	  const loginTab = document.getElementById("login");
+	  const guestTab = document.getElementById("guest");
+	  const loginMain = document.getElementById("loginMain");
+	  const guestMain = document.getElementById("guestMain");
 
-      if(loginPw.length < 6){
-        alert("비밀번호는 6자 이상이어야 합니다.");
-        return;
-      }
+	  if (loginTab && guestTab && loginMain && guestMain) {
+	    loginTab.addEventListener("click", function () {
+	      loginMain.style.display = "block";
+	      guestMain.style.display = "none";
+	      loginTab.classList.add("active");
+	      guestTab.classList.remove("active");
+	    });
 
-      // 로그인 성공 예시
-      if(loginPw !== loginPw){
-        alert("로그인에 실패하셨습니다.");
-      }else{
-        // 비밀번호가 올바른 경우 로그인 성공 처리
-      }
-    });
-  }
+	    guestTab.addEventListener("click", function () {
+	      loginMain.style.display = "none";
+	      guestMain.style.display = "block";
+	      guestTab.classList.add("active");
+	      loginTab.classList.remove("active");
+	    });
+	  }
+
+	  // 로그인 입력값 검증
+	  const loginBtn = document.getElementById("loginBtn");
+	  if (loginBtn) {
+	    loginBtn.addEventListener("click", function (event) {
+	      const loginId = document.getElementById("loginId")?.value;
+	      const loginPw = document.getElementById("loginPw")?.value;
+
+	      if (!loginId || !loginPw) {
+	        alert("아이디와 비밀번호를 입력해주세요.");
+	        event.preventDefault();
+	        return;
+	      }
+
+	      const idPattern = /^[a-z0-9_.+-]+$/;
+	      if (!idPattern.test(loginId)) {
+	        alert("아이디는 소문자 영어, 특수문자(_ . + -), 숫자만 사용할 수 있습니다");
+	        event.preventDefault();
+	        return;
+	      }
+
+	      if (loginPw.length < 6) {
+	        alert("비밀번호는 6자 이상이어야 합니다.");
+	        event.preventDefault();
+	        return;
+	      }
+	    });
+	  }
+	}
+
   </script>
   <script>
   $('#menuLogoImg').on('click', function() {
