@@ -170,21 +170,20 @@ nav{
   margin-bottom: -0.3%;
 }
 #loginImg, #logoutImg, #mypageImg, #cartImg{
-  width:25px;
-  height: 25px;
+  width:28px;
+  height: 28px;
   cursor: pointer;
 }
 /*장바구니 count이미지*/
 #cart-count {
   position: absolute;
-  top: -1px;
-  right: -10px;
+  top: -2px;
   background-color: black;
   color: white;
-  font-size: 12px;
+  font-size: 10px;
   font-weight: bold;
   border-radius: 50%;
-  width: 20px;
+  width: 18px;
   height: 20px;
   text-align: center;
   line-height: 20px;
