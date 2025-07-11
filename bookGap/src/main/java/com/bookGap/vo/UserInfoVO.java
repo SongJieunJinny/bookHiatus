@@ -13,7 +13,22 @@ public class UserInfoVO {
 	private int complainNo; //신고번호
 	private String beforePw; //비밀번호 암호화 전
 	private String note;
+	private String kakaoId;        // 카카오 고유 ID
+	private String oauthProvider; // 로그인 제공자
 	
+	
+	public String getKakaoId() {
+		return kakaoId;
+	}
+	public void setKakaoId(String kakaoId) {
+		this.kakaoId = kakaoId;
+	}
+	public String getOauthProvider() {
+		return oauthProvider;
+	}
+	public void setOauthProvider(String oauthProvider) {
+		this.oauthProvider = oauthProvider;
+	}
 	public String getNote() {
 		return note;
 	}

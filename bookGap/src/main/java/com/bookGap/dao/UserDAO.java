@@ -23,5 +23,16 @@ public class UserDAO {
 	public  List<UserInfoVO> selectAllUser() {
 		return sqlSession.selectList(name_space + "selectAllUser");
 	}
+	
+	public UserInfoVO findByKakaoId(String kakaoId) {
+		return sqlSession.selectOne(name_space + "findByKakaoId", kakaoId);
+	}
+	public void insertKakaoUser(UserInfoVO user) {
+		sqlSession.insert(name_space + "insertKakaoUser", user);
+	}
+	 
+	public UserInfoVO findById(String userId) {
+		return sqlSession.selectOne(name_space + "findById", userId);
+	}
 
 }

@@ -14,6 +14,12 @@
 <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/resources/css/book/cart.css?v=2"/>
 </head>
 <body>
+<sec:authorize access="isAuthenticated()">
+  <script>const isLoggedIn = true;</script>
+</sec:authorize>
+<sec:authorize access="isAnonymous()">
+  <script>const isLoggedIn = false;</script>
+</sec:authorize>
 <div id="wrap">
 	<jsp:include page="/WEB-INF/views/include/header.jsp" />
 	<section>
@@ -25,7 +31,7 @@
 				<div><p class="emptyCartMessage">장바구니가 비어 있습니다.</p></div>
 				<div class="cartContainer">
 					<div class="cartInfoCheck">
-						<label><input type="checkbox" name="cartItems" value="selectall" onclick='selectAll(this)'> <b>전체 선택</b></label>
+						<label><input type="checkbox" name="cartItems" value="selectall" > <b>전체 선택</b></label>
 					</div>
 					<div class="paymentsInfoInner">
 						<div class="paymentRow"><span>상품금액 :</span> <span id="totalProductPrice">0원</span></div>
@@ -401,29 +407,46 @@ function bindCartEvents() {
 	  }
 	}
 
-	$(document).ready(function () {
+$(document).ready(function () {
+	  // 로그인 모달 관련 이벤트 초기화
+	  if (typeof initHeaderEvents === "function") {
+	    initHeaderEvents();
+	  }
+
+	  // 로그인 버튼이 존재할 경우에도 이벤트 초기화 (중복 방지용)
+	  if (document.getElementById("loginBtn")) {
+	    initHeaderEvents();
+	  }
+
+	  // 장바구니 렌더링
 	  updateCartCount();
 	  renderCartItems();
 
-	  // 주문 버튼 클릭 시
+	  // 장바구니 비어있는 경우 메시지 표시
+	  setTimeout(updateCartMessage, 100);
+
+	  // 주문 버튼 클릭
 	  $("#orderBtn").on("click", function () {
 	    const selectedCount = $(".cartItemCheckbox:checked").length;
 	    if (selectedCount < 1) {
 	      alert("주문할 상품을 선택해주세요.");
+	      return;
+	    }
+
+	    if (typeof isLoggedIn !== "undefined" && isLoggedIn) {
+	      // 로그인 상태 → 주문 페이지 이동
+	      window.location.href = contextPath + "/order.do";
 	    } else {
-	      window.location.href = "./login.do";
+	      // 비로그인 상태 → 모달 열기
+	      const menuLogin = document.getElementById("menuLogin");
+	      if (menuLogin) {
+	        menuLogin.click();
+	      } else {
+	        alert("로그인 모달을 열 수 없습니다.");
+	      }
 	    }
 	  });
 	});
-// 초기 실행
-$(document).ready(function () {
-  if (document.getElementById("loginBtn")) {
-    initHeaderEvents();
-  }
-  updateCartCount();
-  renderCartItems();
-  setTimeout(updateCartMessage, 100);
-});
 </script>
 <script>		
 			
@@ -435,7 +458,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const secondModal = document.getElementById("secondModal");
       const addAddressBtn = document.getElementById("addAddressBtn");
       const saveAddress = document.getElementById("saveAddress");
-			const closeSecondModalBtn = document.getElementById("closeSecondModal");
+	  const closeSecondModalBtn = document.getElementById("closeSecondModal");
 
       // 페이지 로드 시 모달을 숨김
       firstModal.style.display = "none";

@@ -10,6 +10,9 @@
     <result property="userJoinDate" column="USER_JOIN_DATE"/>
     <result property="note" column="NOTE"/>
     <result property="userEnabled" column="USER_ENABLED"/>
+    <result property="kakaoId" column="KAKAO_ID"/>
+	<result property="oauthProvider" column="OAUTH_PROVIDER"/>
+	<result property="userAuthority" column="USER_AUTHORITY"/>
 </resultMap>
 	<select id="selectOneById" parameterType="String" resultType="java.util.Map">
 		SELECT USER_ID,
@@ -61,4 +64,19 @@
 		 ORDER BY USER_JOIN_DATE DESC
 	</select>
 	
+	<select id="findByKakaoId" parameterType="string" resultMap="userInfoResultMap">
+	  SELECT * FROM USER WHERE KAKAO_ID = #{kakaoId}
+	</select>
+	
+	<insert id="insertKakaoUser" parameterType="userInfoVO">
+	    INSERT INTO USER (
+	        USER_ID, USER_NAME, KAKAO_ID, OAUTH_PROVIDER, USER_ENABLED, USER_AUTHORITY, USER_STATE, USER_JOIN_DATE
+	    ) VALUES (
+	        #{userId}, #{userName}, #{kakaoId}, #{oauthProvider}, #{userEnabled}, #{userAuthority}, #{userState}, now()
+	    )
+	</insert>
+	
+	<select id="findById" parameterType="string" resultMap="userInfoResultMap">
+	  SELECT * FROM USER WHERE USER_ID = #{userId}
+	</select>
 </mapper>
