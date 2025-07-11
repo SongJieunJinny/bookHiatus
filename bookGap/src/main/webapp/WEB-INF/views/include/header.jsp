@@ -45,9 +45,6 @@
 			<div id="menuLogin" class="menuItem">
 			  <img id="loginImg" src="<%=request.getContextPath()%>/resources/img/icon/login.png">
 			</div>
-			<div id="menuMypage" class="menuItem">
-			  <a href="./mypage.html"><img id="mypageImg" src="<%=request.getContextPath()%>/resources/img/icon/edit.png"></a>
-			</div>
 			<div id="menuCart" class="menuItem">
 		      <a href="<%=request.getContextPath()%>/product/cart.do"><img id="cartImg" src="<%=request.getContextPath()%>/resources/img/icon/cart.png"></a>
 		      <span id="cart-count">0</span>
@@ -181,7 +178,7 @@
  		</div>
  	</div>
 </div>
-  <script src="<%=request.getContextPath()%>/resources/js/jquery-3.7.1.js"></script>
+<script src="${pageContext.request.contextPath}/resources/js/jquery-3.7.1.js"></script>
   <script>
   function initHeaderEvents() {
 	  const menuBook = document.getElementById("menuBook");
@@ -326,3 +323,46 @@
 	    window.location.href = '<%=request.getContextPath()%>';
 	});
   </script>
+  <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+<script>
+Kakao.init('56c7bb3d435c0c4f0d2b67bfa7d4407e');
+console.log(Kakao.isInitialized());
+
+document.getElementById("kakaoLogin").addEventListener("click", function () {
+  Kakao.Auth.login({
+    scope: 'profile_nickname',
+    success: function (authObj) {
+      Kakao.API.request({
+        url: '/v2/user/me',
+        success: function (res) {
+          const kakaoId = res.id;
+          const nickname = res.kakao_account.profile.nickname;
+
+          fetch('${pageContext.request.contextPath}/kakaoLoginCallback.do', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ kakaoId, nickname })
+          })
+          .then(res => res.json())
+          .then(result => {
+            if (result.status === 'success') {
+              alert("로그인에  성공하셨습니다.");
+              window.location.href = "<%=request.getContextPath()%>/";
+            } else {
+              alert("로그인에  실패하셨습니다.");
+            }
+          });
+        },
+        fail: function (error) {
+          alert("사용자 정보 요청 실패");
+        }
+      });
+    },
+    fail: function (err) {
+      alert("카카오 로그인 실패");
+    }
+  });
+});
+</script>
