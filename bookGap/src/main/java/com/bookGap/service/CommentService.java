@@ -1,26 +1,19 @@
 package com.bookGap.service;
 
-import java.util.List;
+import java.util.Map;
 
 import com.bookGap.vo.CommentVO;
-import com.bookGap.vo.SearchVO;
 
 public interface CommentService {
 	
-	public List<CommentVO> clist(SearchVO searchVO);
-	
-	public int selectTotal(SearchVO searchVO);
-	
-	public int insert(CommentVO vo);
-	
-	public CommentVO selectOne(int commentNo);
-	
-	public int changeState(int commentNo);
-	
-	public int update(CommentVO vo);
-	
-	public String getBookWriterId(String isbn);
-
-	public CommentVO selectIsbn(String isbn);
+  Map<String, Object> getCommentList(String isbn, String loginUserId, int cnowpage);
+  
+  void writeComment(CommentVO commentVO, int rating, boolean liked);
+  
+  void modifyComment(CommentVO commentVO, int rating, boolean liked);
+  
+  void deleteComment(int commentNo, String loginUserId, boolean isAdmin) throws IllegalAccessException;
+  
+  CommentVO selectOne(int commentNo);
 
 }

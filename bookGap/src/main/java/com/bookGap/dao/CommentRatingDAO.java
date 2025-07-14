@@ -1,7 +1,6 @@
 package com.bookGap.dao;
 
 import java.util.HashMap;
-import java.util.List;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,32 +16,24 @@ public class CommentRatingDAO {
   
   private final String name_space = "com.bookGap.mapper.commentRatingMapper.";
   
-  //댓글 별점 저장
   public int insertRating(CommentRatingVO vo) {
-    return sqlSession.insert(name_space+"insertRating", vo);
+    return sqlSession.insert(name_space + "insertRating", vo);
   }
-  
-  //댓글 별점 수정
+
   public int updateRating(CommentRatingVO vo) {
-    return sqlSession.update(name_space+"updateRating", vo);
+    return sqlSession.update(name_space + "updateRating", vo);
   }
 
-  // 댓글 별점 조회
-  public List<CommentRatingVO> getRatingByCommentNo(int commentNo, String isbn) {
-    return sqlSession.selectList(name_space+"getRatingByCommentNo", 
-      new HashMap<String, Object>() {{
-        put("commentNo", commentNo);
-        put("isbn", isbn);
-        }});
+  public int upsertRating(CommentRatingVO vo) {
+    return sqlSession.insert(name_space + "upsertRating", vo);
   }
 
-  // 사용자가 해당 댓글에 별점을 남겼는지 확인
-  public int checkRatingExist(int commentNo, String userId, String isbn) {
-    return sqlSession.selectOne(name_space+"checkRatingExist", 
-      new HashMap<String, Object>() {{
-        put("commentNo", commentNo);
-        put("userId", userId);
-        put("isbn", isbn);
-        }});
+  public CommentRatingVO selectUserRating(int commentNo, String isbn, String userId) {
+    HashMap<String, Object> param = new HashMap<>();
+    param.put("commentNo", commentNo);
+    param.put("isbn", isbn);
+    param.put("userId", userId);
+    return sqlSession.selectOne(name_space + "selectUserRating", param);
   }
+
 }

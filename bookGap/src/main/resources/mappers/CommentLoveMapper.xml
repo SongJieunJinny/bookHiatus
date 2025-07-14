@@ -13,12 +13,12 @@
 
   <!-- 좋아요 추가 -->
   <insert id="insertLove" parameterType="com.bookGap.vo.CommentLoveVO">
-    INSERT INTO LOVE (COMMENT_NO,
-    									USER_ID,
-    									isbn)
-    				VALUES (#{commentNo}, 
-    								#{userId},
-    								#{isbn})
+    INSERT IGNORE INTO LOVE (COMMENT_NO,
+    												 USER_ID,
+    												 isbn)
+    							VALUES (#{commentNo}, 
+    											#{userId},
+    											#{isbn})
   </insert>
 
   <!-- 좋아요 삭제 -->

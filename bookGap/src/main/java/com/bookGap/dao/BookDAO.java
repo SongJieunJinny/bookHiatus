@@ -53,8 +53,9 @@ public class BookDAO {
 	}
 	
 	public int getBookNoByIsbn(String isbn){
-    return sqlSession.selectOne(namespace + "getBookNoByIsbn", isbn);
-	}
+    Integer bookNo = sqlSession.selectOne(namespace + "getBookNoByIsbn", isbn);
+    return bookNo != null ? bookNo.intValue() : 0;
+}
 	
 	public List<BookVO> getNewBooks(){
 		return sqlSession.selectList(namespace + "getNewBooks");

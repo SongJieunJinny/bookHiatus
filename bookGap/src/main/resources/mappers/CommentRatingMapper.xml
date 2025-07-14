@@ -6,7 +6,8 @@
   <insert id="insertRating" parameterType="com.bookGap.vo.CommentRatingVO">
     INSERT INTO COMMENT_RATING (COMMENT_NO,
     														USER_ID,
-    														RATING, ISBN)
+    														RATING,
+    														isbn)
     										VALUES (#{commentNo},
     														#{userId},
     														#{rating},
@@ -19,21 +20,31 @@
     			 SET RATING = #{rating}
      WHERE COMMENT_NO = #{commentNo} 
        AND USER_ID = #{userId} 
-       AND ISBN = #{isbn}
   </update>
+  
+  <!-- 별점 없으면 새로업데이트 -->
+  <insert id="upsertRating" parameterType="com.bookGap.vo.CommentRatingVO">
+    INSERT INTO COMMENT_RATING (COMMENT_NO,
+    														USER_ID,
+    														RATING,
+    														isbn)
+    									VALUES (#{commentNo},
+    													#{userId},
+    													#{rating},
+    													#{isbn})
+    ON DUPLICATE KEY UPDATE RATING = VALUES(RATING)
+  </insert>
 
-  <!-- 댓글 별점 조회 -->
-  <select id="getRatingByCommentNo" resultType="com.bookGap.vo.CommentRatingVO">
-    SELECT * FROM COMMENT_RATING 
-    	 WHERE COMMENT_NO = #{commentNo} 
-    	   AND ISBN = #{isbn}
-  </select>
-
-  <!-- 사용자가 해당 댓글에 평가한 별점이 있는지 확인 -->
-  <select id="checkRatingExist" resultType="int">
-    SELECT COUNT(*) FROM COMMENT_RATING 
-    WHERE COMMENT_NO = #{commentNo} 
-    	AND USER_ID = #{userId} 
-    	AND ISBN = #{isbn}
-  </select>
+	<!--  별정정보조회  -->
+  <select id="selectUserRating" parameterType="map" resultType="com.bookGap.vo.CommentRatingVO">
+	  SELECT RATING_NO   AS ratingNo,
+	         COMMENT_NO  AS commentNo,
+	         USER_ID     AS userId,
+	         RATING      AS rating,
+	         isbn        AS isbn
+	    FROM COMMENT_RATING
+	   WHERE COMMENT_NO = #{commentNo}
+	     AND isbn = #{isbn}
+	     AND USER_ID = #{userId}
+	</select>
 </mapper>

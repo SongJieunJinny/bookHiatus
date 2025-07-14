@@ -233,19 +233,17 @@ section{
   text-align: center;
   width: auto;
 }
-#commentLayout{
-	width: 100%;
-	border-bottom: solid 2px;
-	border-color: #D3D3D3;
-	margin-bottom: 2%;
-	margin-top:2%;
+#commentLayout {
+  display: flex; /* [개선 4] 제목 밑줄을 내용에 맞추기 위해 flex 사용 */
+  border-bottom: 2px solid #D3D3D3;
+  margin: 2% 0;
 }
-#commentTitle{
-	width: 7%;
-	border-bottom: solid 5px;
-	border-color: black;
-	font-size: 23px;
-	font-family: Arial, sans-serif;   
+#commentTitle {
+  display: inline-block;
+  padding-bottom: 10px;
+  border-bottom: 5px solid black;
+  font-size: 1.3em;
+  white-space: nowrap; /* "전체 리뷰"가 줄바꿈 되지 않도록 */
 }
 #review{
 	width: 90%;
@@ -273,20 +271,19 @@ section{
 	padding-top: 1.5%;
 	padding-left: 1%;
 }
-.bookCommentButton{
-  text-align: center;
+.form-actions {
+  display: flex;
+  justify-content: flex-end; /* 버튼을 오른쪽 끝으로 보냄 */
+  padding: 10px 0;
+}
+.bookCommentButton {
   background-color: black;
-  border: 1px solid black;
   color: white;
-  width: 6%;
-  height: 30%;
-  font-size: 18px;
+  border: none;
+  width: 100px; /* 고정 너비 */
+  padding: 10px 0;
+  font-size: 1em;
   border-radius: 5px;
-  margin-right: 3%;
-  margin-top: 2%;
-  margin-bottom: 2%;
-  margin-left: 88%;
-  padding: 0.3%;
   cursor: pointer;
 }
 .commentBoxHeader{
@@ -329,15 +326,16 @@ section{
   justify-content: flex-end;
   gap: 3%;
 }
-.reviewContent{
-	resize: none;
-  width: 95%;
-  height: 100px;
-  font-size: 16px;
-  border: none;
-  margin: 1% 5% 0% 2%;
+.reviewContent {
+  flex-grow: 1; 
+  width: auto; /* 자동 너비 */
+  margin: 1% 0 0 2%;
 }
-
+.comment-list .contentContainer {
+  display: flex; 
+  justify-content: space-between;
+  align-items: flex-start;
+}
 /* 하트 컨테이너 */
 .reviewLike {
   font-size: 23px;
@@ -345,7 +343,6 @@ section{
   display: flex;
   align-items: center;
   position: relative;
-  margin-top: 0.2%;
 }
 .reviewLike label {
   display: inline-flex;
@@ -353,28 +350,31 @@ section{
   gap: 6px;
   position: relative;
 }
-.reviewLike span {
-  color: gray;
-  transition: color 0.3s ease;
-  z-index: 1;
-  pointer-events: none;
-}
-.reviewLike:hover span {
-  color: red;
-}
-.reviewLike.active span {
-  color: red;
-}
 .reviewLike input {
   position: absolute;
   width: 24px;
   height: 24px;
   left: 0;
-  opacity: 0;
-  cursor: pointer;
-  z-index: 2;
+  display: none;
 }
-
+.reviewLike input[type=checkbox] {
+  cursor: pointer;
+}
+.heartSymbol {  /* 하트 기호 스타일 */
+  color: #ccc;
+  font-size: 20px;
+  transition: color 0.3s ease-in-out, transform 0.2s ease-in-out;
+  z-index: 1;
+  pointer-events: none;
+}
+.reviewLike.active .heartSymbol {
+  color: red;
+  transform: scale(1.2);
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+.reviewLike:hover .heartSymbol {  /* 호버 시 미리 보기 효과 */
+  color: red;
+}
 /* -----별점------ */
 .starBox{
 	position: relative;
@@ -411,14 +411,20 @@ section{
 .reviewStar::-moz-range-thumb {
   appearance: none;
   background: transparent;
-  width: 24px;
-  height: 30px;
+  height: 100%;
+  width: 100%;
   border: none;
   opacity: 0;
   cursor: pointer;
 }
 .starsOverlay {
-  --rating: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: transparent;
+  pointer-events: none;
 }
 .starsOverlay::before {
   content: "★★★★★";
@@ -428,6 +434,7 @@ section{
   top: 0;
   left: 0;
   pointer-events: none;
+  z-index: 1;
 }
 .starsOverlay::after {
   content: "★★★★★";
@@ -436,11 +443,12 @@ section{
   position: absolute;
   top: 0;
   left: 0;
-  width: calc(var(--rating, 0) * 20%);
   white-space: nowrap;
   overflow: hidden;
-  pointer-events: none;
-  transition: width 0.2s ease-in-out;
+  z-index: 2;
+}
+.starLabel .starsOverlay::after {
+  width: calc(var(--rating, 0) * 20%);
 }
 .reviewStar:disabled + .starsOverlay::after {
   color: gold;
@@ -450,10 +458,10 @@ section{
 }
 /* -----수정삭제 모달창------ */
 .reviewOptions {
+  margin-left: 0;
   position: relative;
-  margin-left: 95%;
+  padding: 10px;
   cursor: pointer;
-  font-size: 18px;				
 }
 .optionsToggle {
   font-size: 25px;
@@ -489,47 +497,9 @@ section{
   background-color: black;
   color: white;
 }
-
 .bookCommentBox{
 	width: 90%;
   margin: 0% 5% 0% 5%;
-}
-#reviewComment{
-  width: 100%;
-  height: 100px;
-  resize: none;
-  border-radius: 10px;
-  padding: 2%;
-}
-.editButtons{
-	display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  width: 100%;
-  margin: 1% 0% 0% 0%;	
-  gap: 2%;
-}
-.saveReview{
-	width: 90px;
-	height: 35px;
-	border: none;
-	background-color: black;
-	border-radius: 8px;
-	color: white;
-	text-align: center;
-	cursor: pointer;
-	font-size: 18px;
-}
-.cancelEdit{
-	width: 90px;
-	height: 35px;
-	border: none;
-	background-color: black;
-	border-radius: 8px;
-	color: white;
-	text-align: center;
-	cursor: pointer;
-	font-size: 18px;
 }
 textarea.reviewComment{
   width: 100%;
@@ -538,6 +508,49 @@ textarea.reviewComment{
   border-radius: 10px;
   padding: 2%;
   margin: 1% 0% 0% 0%;		
+}
+.reviewEditBox{
+	width: 90%;
+  margin: 1% 5% 0% 5%;
+  display: flex;
+  gap: 5px;
+  flex-direction: column;
+}
+.reviewIdEditBox{
+	width: 100%;
+	display: flex;
+	justify-content: flex-end;
+	gap: 3%;
+}
+.editTextareaWrap{
+	width: 100%;
+  height: 100px;
+  resize: none;
+  border-radius: 10px;
+}
+textarea.reviewCommentEdit{
+  width: 100%;
+  height: 150px;
+  resize: none;
+  font-size: 18px;
+  border-radius: 10px;
+	padding: 2%;
+}
+.editButtonGroup{
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}
+.saveEditBtn, .cancelEditBtn {
+  width: 90px;
+  height: 40px;
+  border: none;
+  background-color: black;
+  color: white;
+  border-radius: 8px;
+  font-size: 1em;
+  cursor: pointer;
 }
 /* 페이징 버튼 스타일 */
 .pagination {
@@ -577,4 +590,23 @@ textarea.reviewComment{
   cursor: not-allowed;
   background-color: #f0f0f0;
   border-color: #ddd;
+}
+@media (max-width: 768px) {
+  section {
+    width: 95%; /* 모바일에서는 거의 꽉 차게 */
+    margin: 5% auto;
+  }
+  .bookPart {
+    flex-direction: column; /* 가로 정렬을 세로 정렬로 변경 */
+    gap: 20px;
+  }
+  .bookItem, .bookInfo {
+    width: 100%; /* 너비를 100%로 만들어 세로로 쌓이게 함 */
+  }
+  #bookTitle {
+    font-size: 1.8em;
+  }
+  .bookCommentButton {
+    width: 80px;
+  }
 }

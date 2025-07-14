@@ -1,122 +1,81 @@
 package com.bookGap.controller;
 
 import java.security.Principal;
-import java.util.List;
 import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.collections4.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.bookGap.service.BookService;
 import com.bookGap.service.CommentService;
-import com.bookGap.util.PagingUtil;
 import com.bookGap.vo.CommentVO;
-import com.bookGap.vo.SearchVO;
+
 
 @RequestMapping(value="/comment")
 @Controller
 public class CommentController {
   
-	@Autowired
-	public CommentService commentService;
-	
-	@Autowired
-  public BookService bookService;
+	@Autowired public CommentService commentService;
 
+  /* load GET */
 	@ResponseBody
 	@RequestMapping(value="/loadComment.do",method=RequestMethod.GET, produces = "application/json; charset=utf-8")
-	public Map<String,Object> loadComment(@RequestParam("isbn") String isbn, Model model, Principal principal, HttpServletRequest request,
+	public Map<String,Object> loadComment(@RequestParam("isbn") String isbn, Principal principal,
 	                                      @RequestParam(value="cnowpage",required = false, defaultValue="1")int cnowpage){
-    
-    String loginUserId = (principal != null) ? principal.getName() : null;
-    boolean isAdmin = request.isUserInRole("ROLE_ADMIN");
-    
-    SearchVO searchVO = new SearchVO();
-    searchVO.setIsbn(isbn);
-    
-    // 총 댓글 수 조회
-    int total = commentService.selectTotal(searchVO);
-    
-    // 페이징 처리
-    PagingUtil paging = new PagingUtil(cnowpage, total, 5);
-    searchVO.setStart(paging.getStart());
-    searchVO.setPerPage(paging.getPerPage());
-    
-    // 댓글 리스트 조회
-    List<CommentVO> clist = commentService.clist(searchVO);
-    
-    int displayNo = total - (cnowpage - 1) * paging.getPerPage();
-    for (CommentVO cvo : clist) {
-      cvo.setDisplayNo(displayNo--);
-    
-      //권한에 따라 댓글 출력 제어 (옵션 처리 가능)
-      boolean canView = loginUserId != null && (loginUserId.equals(cvo.getUserId()) || isAdmin);
-    }
-    
-    Map<String, Object> map = new HashedMap<>();
-    map.put("clist", clist);
-    map.put("cpaging", paging);
- 
-    System.out.println("searchVO.isbn = " + searchVO.getIsbn());
-    System.out.println("댓글 개수 = " + total);
 
-    return map;
-
+    String loginUserId = (principal != null) ? principal.getName() : null;  // 현재 로그인한 사용자 ID를 서비스에 전달
+    
+    // 🔻 서비스 메소드 단 한 번 호출로 모든 로직 처리! 🔻
+    return commentService.getCommentList(isbn, loginUserId, cnowpage);
 	}
 	
 	/* write POST */
 	
 	@ResponseBody
 	@RequestMapping(value="/write.do", method=RequestMethod.POST)
-	public String write(CommentVO vo, HttpServletRequest request, Principal principal) {
-	  if (principal == null) return "Fail";
+	public String write (CommentVO vo, Principal principal,
+                  	   @RequestParam("commentRating") int rating,
+                       @RequestParam("commentLiked") boolean liked) {
 
-    vo.setUserId(principal.getName());
-    vo.setCommentContent(request.getParameter("commentContent"));
+	  if(principal == null){ return "Fail_Login"; }  // 로그인되지 않은 사용자의 요청 거부
 
-    String ratingStr = request.getParameter("commentRating");
-    vo.setCommentRating(ratingStr != null ? Integer.parseInt(ratingStr) : 0);
-
-    vo.setIsbn(request.getParameter("isbn"));
-    vo.setCommentState("1");
-
-    int bookNo = bookService.getBookNoByIsbn(vo.getIsbn());
-    if (bookNo <= 0) return "Fail";
-    vo.setBookNo(bookNo);
-
-    return commentService.insert(vo) > 0 ? "Success" : "Fail";
-
-	}
+    try{
+      vo.setUserId(principal.getName()); // 로그인된 사용자 ID를 VO에 설정
+      commentService.writeComment(vo, rating, liked);
+      
+      return "Success";
+    }catch(Exception e){
+      e.printStackTrace(); // 서버 로그에 에러 기록
+      return "Fail_Server"; // 서버 오류 발생 시
+    }
+  }
 
 	/* modify POST */
 	
 	@ResponseBody
 	@RequestMapping(value="/modify.do", method=RequestMethod.POST)
-	public String modify(CommentVO vo, HttpServletRequest request, Principal principal) {
-    if (principal == null) return "Fail";
+	public String modify(CommentVO vo, Principal principal,
+	                     @RequestParam("commentNo") int commentNo,
+                  	   @RequestParam("commentRating") int rating,
+                       @RequestParam("commentLiked") boolean liked) {
 
-    vo.setUserId(principal.getName());
-    vo.setCommentContent(request.getParameter("commentContent"));
+	  if(principal == null){ return "Fail_Login"; }
 
-    String ratingStr = request.getParameter("commentRating");
-    vo.setCommentRating(ratingStr != null && !ratingStr.trim().isEmpty() ? Integer.parseInt(ratingStr) : 1);
-
-    vo.setIsbn(request.getParameter("isbn"));
-
-    int bookNo = bookService.getBookNoByIsbn(vo.getIsbn());
-    if (bookNo <= 0) return "Fail";
-    vo.setBookNo(bookNo);
-
-    return commentService.update(vo) > 0 ? "Success" : "Fail";
-	}
+    try{
+      vo.setUserId(principal.getName()); // 보안을 위해 현재 로그인 사용자로 재설정
+      vo.setCommentNo(commentNo);
+      commentService.modifyComment(vo, rating, liked);
+      
+      return "Success";
+    }catch (Exception e){
+      e.printStackTrace();
+      return "Fail_Server";
+    }
+  }
 	
 	/* delete POST */
 	
@@ -125,17 +84,20 @@ public class CommentController {
   public String delete(@RequestParam("commentNo") int commentNo,
                        Principal principal, HttpServletRequest request) {
 
-    if (principal == null) return "Fail";
-    String loginUserId = principal.getName();
-    boolean isAdmin = request.isUserInRole("ROLE_ADMIN");
-    
-    CommentVO cvo = commentService.selectOne(commentNo);
-    if (cvo == null) return "Fail";
-    
-    boolean canDelete = loginUserId.equals(cvo.getUserId()) || isAdmin;
-    if (!canDelete) return "Fail";
-    
-    return commentService.changeState(commentNo) > 0 ? "Success" : "Fail";
+	  if (principal == null) { return "Fail_Login"; }
+	  
+	  try{
+      String loginUserId = principal.getName();
+      boolean isAdmin = request.isUserInRole("ROLE_ADMIN");
+      commentService.deleteComment(commentNo, loginUserId, isAdmin);
+      
+      return "Success";
+    }catch(IllegalAccessException e){
+      return "Fail_Permission"; 
+    }catch(Exception e){
+      e.printStackTrace();
+      return "Fail_Server";
+    }
   }
 
 }

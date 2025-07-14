@@ -2,67 +2,57 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
 			"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.bookGap.mapper.commentMapper"> 
-	<select id="clist" parameterType="com.bookGap.vo.SearchVO" resultType="com.bookGap.vo.CommentVO">
-	  SELECT COMMENT_NO      AS commentNo,  
-	         COMMENT_CONTENT AS commentContent,  
-	         COMMENT_STATE   AS commentState,  
-	         COMMENT_RDATE   AS commentRdate,  
-	         DATE_FORMAT(COMMENT_RDATE, '%Y.%m.%d') AS formattedCommentRdate,  
-	         u.USER_ID       AS userId,  
-	         BOOK_NO         AS bookNo,
-	         isbn
-	    FROM COMMENT c  
-	   INNER JOIN USER u ON c.USER_ID = u.USER_ID  
-	   WHERE c.COMMENT_STATE != 2
-	     AND c.isbn = #{isbn}  
-	   ORDER BY COMMENT_NO DESC  
+
+	<!-- =================== 댓글 조회 (N+1 문제 해결) =================== -->
+	<select id="getCommentListWithDetails" parameterType="map" resultType="com.bookGap.vo.CommentVO">
+	  SELECT c.COMMENT_NO                             AS commentNo,
+		       c.USER_ID                                AS userId,
+		       c.COMMENT_CONTENT                        AS commentContent,
+		       DATE_FORMAT(c.COMMENT_RDATE, '%Y.%m.%d') AS formattedCommentRdate,
+		       cr.RATING                                AS commentRating,
+		       (SELECT COUNT(*) > 0 FROM love l WHERE l.COMMENT_NO = c.COMMENT_NO AND l.USER_ID = #{loginUserId}) AS lovedByLoginUser
+	    FROM comment c
+ LEFT JOIN comment_rating cr ON c.COMMENT_NO = cr.COMMENT_NO AND cr.USER_ID = #{loginUserId}
+	   WHERE c.isbn = #{isbn} AND c.COMMENT_STATE = '1'
+  ORDER BY c.COMMENT_NO DESC
 	   LIMIT #{start}, #{perPage}
 	</select>
 	
-	<select id="selectTotal" parameterType="com.bookGap.vo.SearchVO" resultType="int">
-		SELECT COUNT(*) as total
-		  FROM COMMENT c  
-     INNER JOIN USER u ON c.USER_ID = u.USER_ID  
-       AND c.COMMENT_STATE != 2  
-		   AND isbn = #{isbn} 
+	<select id="selectTotal" parameterType="String" resultType="int">
+		SELECT COUNT(*)
+		  FROM COMMENT  
+     WHERE isbn = #{isbn} 
+       AND COMMENT_STATE = '1'
 	</select>
 	
-	<insert id="insert" parameterType="com.bookGap.vo.CommentVO">
-    INSERT INTO COMMENT (COMMENT_CONTENT,  
-                         USER_ID,  
-                         BOOK_NO,
-                         isbn,  
-                         COMMENT_RDATE,
-                         COMMENT_RATING,
-    										 COMMENT_STATE)  
-    VALUES (#{commentContent},  
-            #{userId},  
-            #{bookNo},
-            #{isbn},  
-            NOW(),
-            #{commentRating},
-    				#{commentState});
+	<!-- 🔻 useGeneratedKeys는 필수! 🔻 -->
+	<insert id="insert" parameterType="com.bookGap.vo.CommentVO" useGeneratedKeys="true" keyProperty="commentNo">
+	  INSERT INTO COMMENT (USER_ID,
+	  										 isbn,
+	  										 BOOK_NO,
+	  										 COMMENT_CONTENT,
+	  										 COMMENT_RDATE,
+	  										 COMMENT_STATE)
+	  						VALUES (#{userId},
+	  									  #{isbn},
+	  									  #{bookNo},
+	  									  #{commentContent},
+	  									  NOW(),
+	  									  '1')
 	</insert>
 	
 	<select id="selectOne" parameterType="int" resultType="com.bookGap.vo.CommentVO">
-	  SELECT COMMENT_NO      AS commentNo,  
-	         COMMENT_CONTENT AS commentContent,  
-	         COMMENT_STATE   AS commentState,  
-	         COMMENT_RDATE   AS commentRdate,  
-	         DATE_FORMAT(COMMENT_RDATE, '%Y.%m.%d') AS formattedCommentRdate,   
-           u.USER_ID       AS userId,  
-           BOOK_NO         AS bookNo,
-           isbn  
-      FROM COMMENT c    
-      JOIN USER u ON c.USER_ID = u.USER_ID 
-     WHERE c.COMMENT_NO = #{commentNo}
+	  SELECT COMMENT_NO    AS commentNo,  
+           USER_ID       AS userId
+      FROM COMMENT  
+     WHERE COMMENT_NO = #{commentNo}
 	</select>
 	
 	<update id="update" parameterType="com.bookGap.vo.CommentVO">
     UPDATE COMMENT
-			 SET COMMENT_CONTENT = #{commentContent},
-					 COMMENT_RATING  = #{commentRating}
+			 SET COMMENT_CONTENT = #{commentContent}
      WHERE COMMENT_NO = #{commentNo}
+       AND USER_ID = #{userId}
   </update>
 	
 	<update id="changeState" parameterType="int">
@@ -70,6 +60,18 @@
 		   SET COMMENT_STATE = '2'
 		 WHERE COMMENT_NO = #{commentNo}
 	</update>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	<select id="getBookWriterId" parameterType="String" resultType="String">
   	SELECT USER_ID FROM BOOK WHERE isbn = #{isbn}

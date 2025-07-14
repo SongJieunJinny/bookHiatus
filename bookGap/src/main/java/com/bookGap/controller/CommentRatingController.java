@@ -1,7 +1,6 @@
 package com.bookGap.controller;
 
 import java.security.Principal;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,9 +22,9 @@ public class CommentRatingController {
   /* Rating 저장 POST */
   @ResponseBody
   @RequestMapping(value = "/saveRating.do", method = RequestMethod.POST)
-    public String saveRating(CommentRatingVO vo, Principal principal) {
-      vo.setUserId(principal.getName());
-      return commentRatingService.saveRating(vo);
+  public String saveRating(CommentRatingVO vo, Principal principal) {
+    vo.setUserId(principal.getName());
+    return commentRatingService.upsertRating(vo); // INSERT or UPDATE 자동 처리
   }
 
   /* Rating 수정 POST */
@@ -38,10 +37,12 @@ public class CommentRatingController {
 
   /* Rating 조회 POST */
   @ResponseBody
-  @RequestMapping(value = "/getRatings.do", method = RequestMethod.GET)
-    public List<CommentRatingVO> getRatings(@RequestParam("commentNo") int commentNo, 
-                                            @RequestParam("isbn") String isbn) {
-      return commentRatingService.getRatingsByCommentNo(commentNo, isbn);
+  @RequestMapping(value = "/getUserRating.do", method = RequestMethod.GET)
+  public CommentRatingVO getUserRating(@RequestParam("commentNo") int commentNo,
+                                       @RequestParam("isbn") String isbn,
+                                       Principal principal) {
+    String userId = principal.getName();
+    return commentRatingService.getUserRating(commentNo, isbn, userId);
   }
 
 }
