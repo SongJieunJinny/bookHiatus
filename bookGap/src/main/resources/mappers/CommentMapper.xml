@@ -5,17 +5,19 @@
 
 	<!-- =================== 댓글 조회 (N+1 문제 해결) =================== -->
 	<select id="getCommentListWithDetails" parameterType="map" resultType="com.bookGap.vo.CommentVO">
-	  SELECT c.COMMENT_NO                             AS commentNo,
-		       c.USER_ID                                AS userId,
-		       c.COMMENT_CONTENT                        AS commentContent,
-		       DATE_FORMAT(c.COMMENT_RDATE, '%Y.%m.%d') AS formattedCommentRdate,
-		       cr.RATING                                AS commentRating,
-		       (SELECT COUNT(*) > 0 FROM love l WHERE l.COMMENT_NO = c.COMMENT_NO AND l.USER_ID = #{loginUserId}) AS lovedByLoginUser
-	    FROM comment c
- LEFT JOIN comment_rating cr ON c.COMMENT_NO = cr.COMMENT_NO AND cr.USER_ID = #{loginUserId}
-	   WHERE c.isbn = #{isbn} AND c.COMMENT_STATE = '1'
-  ORDER BY c.COMMENT_NO DESC
-	   LIMIT #{start}, #{perPage}
+	  SELECT C.COMMENT_NO                             AS commentNo,
+	         C.USER_ID                                AS userId,
+	         C.COMMENT_CONTENT                        AS commentContent,
+	         DATE_FORMAT(C.COMMENT_RDATE, '%Y.%m.%d') AS formattedCommentRdate,
+	         COALESCE(LC.likeCount, 0)                AS likeCount,
+	         EXISTS (SELECT 1 FROM LOVE l WHERE l.COMMENT_NO = C.COMMENT_NO AND l.USER_ID = #{loginUserId}) AS lovedByLoginUser,
+	         COALESCE(CR.RATING, 0)                   AS commentRating
+      FROM COMMENT C
+ LEFT JOIN (SELECT COMMENT_NO, COUNT(*) AS likeCount FROM LOVE GROUP BY COMMENT_NO) LC ON C.COMMENT_NO = LC.COMMENT_NO
+ LEFT JOIN comment_rating CR ON C.COMMENT_NO = CR.COMMENT_NO
+     WHERE C.isbn = #{isbn} AND C.COMMENT_STATE = '1'
+  ORDER BY C.COMMENT_NO DESC
+     LIMIT #{start}, #{perPage}
 	</select>
 	
 	<select id="selectTotal" parameterType="String" resultType="int">

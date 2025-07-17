@@ -17,9 +17,15 @@ public class CommentVO extends UserInfoVO {
 	// 🔻 JOIN 쿼리 결과를 담을 필드 2개 추가 🔻
 	private boolean lovedByLoginUser;  // 로그인 유저의 좋아요 여부를 담을 필드
 	private int commentRating;  // 로그인 유저가 매긴 별점을 담을 필드
+	private int likeCount;
 
-	
-	
+
+  public int getLikeCount() {
+    return likeCount;
+  }
+  public void setLikeCount(int likeCount) {
+    this.likeCount = likeCount;
+  }
 	public boolean isLovedByLoginUser() {
 	  return lovedByLoginUser; 
 	}

@@ -1,0 +1,597 @@
+@charset "UTF-8";
+/* --------------orderDetails-------------- */
+#navOrderDetails{
+  width: 100%;
+  height: 70%;
+}
+#orderDetailsHead{
+  width: 100%;
+  height: 20%;
+}
+#orderDetailsDiv{
+  margin-top: 3%;
+  margin-bottom: 2%;
+  margin-left: 3.5%;
+  text-align: center;
+  font-size: 25px;
+  display: flex;
+  justify-items: center;
+  justify-content: center;
+}
+#orderDetailsDiv a:link {
+  color : black;
+  text-decoration: none;
+}
+#orderDetailsDiv a:visited {
+  color : black;
+  text-decoration: none;
+}
+#orderDetailsDiv a:hover {
+  color : black;
+  border: 1px;
+  text-decoration: underline;
+  font-weight:bold;
+}
+#orderDetailsDiv a:active  {
+  color : black;
+  border: 1px;
+  text-decoration: underline;
+  font-weight:bold;
+}
+#orderDetailsMid{
+  width: 60%;
+  height: 40%;
+  display: flex;
+  margin-left: 20%;
+  align-items: center;
+  flex-direction: column;
+}
+.orderDetailsDivLine{
+  width: 100.15%;
+  border-bottom: solid 7px;
+  border-color: black;
+  font-size: 20px;
+  font-family: Arial, sans-serif;   
+}
+.orderDetailsDiv{
+  width: 100%;
+  height: auto;
+  margin-bottom: 2%;
+  border: 1px solid black;
+  display: flex;
+  justify-content: space-evenly;
+  padding-top: 1%;
+  padding-bottom: 1%;
+}
+.orderWeekButton{
+  border: 1px solid black;
+  background-color: white;
+  color: black;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 2%;
+  width: 100%;
+}
+.orderDateInfo{
+  display: flex;
+  justify-content: space-evenly;
+  font-size: 18px;
+  margin: 1%;
+}
+.orderDate{
+  border: 1px solid black;
+  background-color: white;
+  font-size: 15px;
+  text-align: center;
+  width: 100%;
+  padding-right: 1%;
+}
+.orderDateSign{
+  color: black;
+  font-size: larger;
+}
+.orderDateButton{
+  border: 1px solid black;
+  border-radius: 10px;
+  background-color: black;
+  color: white;
+  cursor: pointer;
+  width: 120%;
+  font-size: 18px;
+}
+.orderMsg{
+  font-size: 18px;
+}
+#orderDetailsEnd{
+  width: 60%;
+  height: 30%;
+  margin-left: 20%;
+  margin-right: 20%;
+  margin-bottom: 2%;
+  margin-top: 1%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+.orderPayComplDiv{
+  width: 100%;
+  height: auto;
+  border: 1px solid black;
+  margin-bottom: 5%;
+  display: flex;
+  align-items: center; /* 세로 중앙 정렬 */
+  padding: 1%;
+  font-size: 17px;
+}
+.orderPayComplImg{
+  width: 10%;
+  height: 10%;
+  margin-left: 3%;
+  margin: 0% 2% 0% 2%; /*위쪽 오른쪽 아래쪽 왼쪽*/
+  padding: 0%;
+}
+.orderPayCompl{
+  width: 100%;
+  display: flex;
+}
+.orderPayComplInfoDiv1{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  margin: 2%;
+}
+.orderPayComplInfo{
+  margin: 0.5%;
+}
+.orderPayDate{
+  margin: 0.5%;
+}
+.orderPayComplInfoDiv2{
+  font-size: 20px;
+  color: gray;
+  display: flex;
+  width: 30%;
+  align-items: center;
+}
+.orderPayComplInfo2{
+  width: 100%;
+  margin-bottom: 25%;
+}
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  list-style: none;
+  padding: 0;
+  margin-bottom: 3%;
+}
+.pagination li {
+  margin: 0 5px;
+}
+.pagination a {
+  text-decoration: none;
+  padding: 8px 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  color: #333;
+  font-size: 16px;
+  transition: 0.3s ease;
+  background-color: #f8f8f8;
+}
+.pagination a:hover {
+  background-color: black;
+  color: white;
+  border-color: black;
+}
+.pagination .active a {
+  background-color: black;
+  color: white;
+  border-color: black;
+}
+.pagination .disabled a {
+  color: #ccc;
+  cursor: not-allowed;
+  background-color: #f0f0f0;
+  border-color: #ddd;
+}
+
+/* --------------orderMain-------------- */
+#guestOrder{
+  width: 100%;
+  height: 100%;
+  margin-bottom: 4%;
+  display: flex;
+  flex-wrap: wrap;
+}
+#guestOrderHead{
+  width: 100%;
+  height: 10%;
+  display: flex;
+  justify-content: center;
+}
+#order{
+  width: 80%;
+  margin-top: 3%;
+  margin-bottom: 3%;
+  text-align: center;
+  font-size: 25px;
+}
+#orderNav{
+  height: 100%;
+  width: 40%;
+  margin-left: 7%;
+  margin-right: 0%;
+}
+.guestInfoTable{
+  width: 100%;
+}
+#deliveryInfoTable{
+  width: 100%;
+}
+.deliveryInfoAddressNickname{
+  width: 100%;
+}
+#addressImg{
+  width: 15px;
+  height: 15px;
+  margin: 2%;
+}
+#deliveryInfoAddressBtn{
+  border: 1px solid black;
+  border-radius: 5px;
+  background-color: black;
+  color: white;
+  font-size: 17px;
+  width: 18%;
+  height: 8%;
+  margin-right: 2%;
+  padding-bottom: 1%;
+  cursor: pointer;
+}
+.orderTableCategory{
+  font-size: 20px;
+  margin-bottom: 3%;
+  margin-left: 30%;
+}
+.guestInfoTableContainer{
+  display: flex;
+  margin: 2%;
+  width: 70%;
+  align-items: flex-start;
+}
+#deliveryInfo{
+font-size: 13px;
+}
+.deliveryInfoAddressContainer{
+  display: flex;
+  flex-direction: column;
+}
+.deliveryInfoAddressName{
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  width: 50%;
+}
+.deliveryInfoAddress1{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 2.5%;
+}
+.deliveryInfoAddress2{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 3%;
+}
+.deliveryInfoAddress3{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 3%;
+}
+.guestInfoCategory{
+  font-size: 17px;
+  padding-top: 1.5%;
+  margin: 1%;
+}
+.deliveryInfoTableInput{
+  width: 80%;
+  border: 1px solid black;
+  border-radius: 5px;
+  margin: 1%;
+  text-align: center;
+  align-items: center;
+  padding: 2.5%;
+  font-size: 15px;
+}
+.guestInfoTablePostInput{
+  width: 44%;
+  border: 1px solid black;
+  border-radius: 5px;
+  margin: 1%;
+  text-align: center;
+  align-items: center;
+  padding: 2%;
+  font-size: 15px;
+}
+.guestInfoTablePostButton{
+  width: 13%;
+  border: 1px solid black;
+  border-radius: 5px;
+  margin: 1%;
+  text-align: center;
+  align-items: center;
+  padding: 1.5%;
+  font-size: 15px;
+  cursor: pointer;
+}
+.guestInfoTableAddress1{
+  width: 60%;
+  border: 1px solid black;
+  border-radius: 5px;
+  margin: 1%;
+  text-align: center;
+  align-items: center;
+  padding: 1.5%;
+  font-size: 15px;
+}
+.guestInfoTableAddress2{
+  width: 60%;
+  border: 1px solid black;
+  border-radius: 5px;
+  margin: 1%;
+  text-align: center;
+  align-items: center;
+  padding: 1.5%;
+  font-size: 15px;
+}
+#orderSection{
+  width: 30%;
+  height: 100%;
+  margin-left: -5%;
+}
+.orderTable{
+  width: 100%;
+  height: 50%;
+  text-align: center;
+}
+#payMathodTable{
+  width: 100%;
+  height: 50%;
+  text-align: center;
+  margin-bottom: 15%;
+}
+.sectionTitle{
+  text-align: center;
+  font-size: 20px;
+  margin-bottom: 4%;
+  margin-right: 25%;
+}
+.layout{
+  width: 70%;
+  height: 100%;
+  border: 1px solid black;
+  border-radius: 20px;
+  margin-bottom: 5%;
+  padding: 3%
+}
+.orderDetail{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.orderDetailDiv{
+  display: flex;
+  justify-content: center;
+}
+.orderImg{
+  width: 25%;
+  height: 25%;
+  margin: 4%;
+}
+.orderDetails{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-size: 17px;
+}
+.orderTotalPrice{
+  font-size: 17px;
+  color: blue;
+  margin-top: 5%;
+  margin-bottom: 8%;
+  text-align: center;
+}
+.payContainer{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: center;
+  gap: 20px;
+}
+.payIcon{
+  width: 150px;
+  height: 80px;
+  border: 1px solid black;
+  border-radius: 20px;
+  margin: 1%;
+  display: flex;
+  justify-content: center;
+  cursor: pointer;
+}
+.kakao{
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+  justify-content: center;
+  align-items: center;
+}
+.toss{
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+  justify-content: center;
+  align-items: center;
+}
+.kakaoimg{
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+}
+.tossimg{
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+}
+#orderAside{
+  width: 25%;
+  height: 100%;
+  margin-right: 2%;
+}
+#paymentTable{
+  width: 100%;
+  height: 50%;
+}
+.asideLine{
+  width: 100%;
+  border-bottom: solid 2px;
+  border-color: black;
+}
+.asideDiv{
+  padding: 3%;
+  font-size: 17px;
+}
+.asideTextPrice{
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+.asideText1{
+  padding: 3%;
+}
+.asideText2{
+  text-align: center;
+  padding: 3%;
+}
+.finalPrice{
+  text-align: center;
+  color: blue;
+  padding: 1%;
+}
+.orderPayBtnDiv{
+  margin-left: 13%;
+  margin-top: 10%;
+}
+.payBtn{
+  border: 1px solid black;
+  border-radius: 10px;
+  background-color: black;
+  color: white;
+  width: 60%;
+  height: 40%;
+  font-size: 25px;
+  padding: 2%;
+  cursor: pointer;
+}
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: none;  /* 처음에는 숨김 */
+  justify-content: center;
+  align-items: center;
+}
+.modalContent {
+  background-color: white;
+  width: 90%;
+  max-width: 400px;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+/* 닫기 버튼 */
+.close {
+  float: right;
+  font-size: 24px;
+  cursor: pointer;
+}
+/* 배송지 추가 버튼 */
+#addAddressBtn {
+  background-color: black;
+  color: white;
+  width: 100%;
+  padding: 10px;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  margin: 10px 0;
+  border-radius: 8px;
+}
+/* 배송지 리스트 스타일 */
+.addressItem {
+  background: #f9f9f9;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 8px;
+  text-align: left;
+  position: relative;
+}
+/* 라디오 버튼 정렬 */
+.addressItem label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: bold;
+}
+/* 기본 배송지 태그 */
+.defaultTag {
+  color: blue;
+  font-size: 12px;
+}
+/* 삭제 버튼 */
+.deleteAddress {
+  background: black;
+  color: white;
+  border: none;
+  width: 15%;
+  padding: 1%;
+  font-size: 15px;
+  border-radius: 10px;
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  cursor: pointer;
+}
+#addressForm {
+  background: #fff;
+  padding: 3%;
+  border-radius: 10px;
+  margin-top: 2%;
+  text-align: center;
+}
+#addressForm input {
+  width: 90%;
+  padding: 3%;
+  margin: 2%;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+#addressForm button {
+  background: black;
+  color: white;
+  padding: 3%;
+  border: none;
+  margin-top: 2%;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+}
