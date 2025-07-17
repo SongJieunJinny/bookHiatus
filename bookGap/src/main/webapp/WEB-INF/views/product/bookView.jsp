@@ -183,25 +183,31 @@ function loadComment(isbn, page = 1) {
     	const commentList = $(".comment-list");
         commentList.empty();
         let html = "";
-        let roles = userRole.split(',').map(s => s.trim());
+        const cleanedUserRole = userRole.replace(/[\[\]]/g, '');
+        let roles = cleanedUserRole.split(',').map(s => s.trim());
+        console.log("Cleaned roles Array:", roles);
         
         if (data.commentList && data.commentList.length > 0) {
           for (let cvo of data.commentList) {
+        	  const isLiked = cvo.likeCount > 0;
+        	  const isCheckedByMe = cvo.lovedByLoginUser;
+        	  const canInteract = roles.includes("ROLE_ADMIN") || (cvo.userId && cvo.userId.trim() === userId.trim());
+        	  
             html += `<div id="reviewBox\${cvo.commentNo}" class="reviewBox">
                        <div class="reviewIdBox">
                          <div class="reviewId">\${cvo.userId}</div>
                          <div class="reviewIdRdate">|</div>
                          <div class="reviewRdate">\${cvo.formattedCommentRdate}</div>
                          <div class="reviewLikeStar">
-                           <div class="reviewLike \${cvo.lovedByLoginUser ? 'active' : ''}">
+                           <div class="reviewLike \${isLiked ? 'active' : ''}">
                              <label>
-                               <input type="checkbox" class="reviewLikeInput" data-commentno="\${cvo.commentNo}" \${cvo.lovedByLoginUser ? 'checked' : ''} />
+                               <input type="checkbox" class="reviewLikeInput" data-commentno="\${cvo.commentNo}" \${isCheckedByMe ? 'checked' : ''} \${!canInteract ? 'disabled' : ''} />
                                <span class="heartSymbol">♥</span>
                              </label>
                            </div>
                            <div class="starBox">
                              <label class="starLabel">
-                               <input type="range" class="reviewStar" min="0" max="5" step="1" value="\${cvo.commentRating || 0}" disabled oninput="drawStar(this)" />
+                               <input type="range" class="reviewStar" min="0" max="5" step="1" value="\${cvo.commentRating || 0}" disabled />
                                <div class="starsOverlay"></div>
                              </label>
                            </div>
@@ -209,14 +215,15 @@ function loadComment(isbn, page = 1) {
                        </div>
                        <div id="contentContainer\${cvo.commentNo}" class="contentContainer">
                          <div class="reviewContent">\${cvo.commentContent}</div>`;
-            if (roles.includes("ROLE_ADMIN") || (cvo.userId && cvo.userId.trim() === userId.trim())) {
-              html += `<div class="reviewOptions" data-review-box="\${cvo.commentNo}">⋯
-                         <div id="optionsMenu\${cvo.commentNo}" class="optionsMenu">
-                           <button class="editReviewButton" data-commentno="\${cvo.commentNo}">수정</button>
-                           <button class="deleteReviewButton" data-commentno="\${cvo.commentNo}">삭제</button>
-                         </div>
-                       </div>`;
-            }
+			         if (canInteract) {
+			         html += `<div class="reviewOptions" data-review-box="\${cvo.commentNo}">⋯
+			                    <div id="optionsMenu\${cvo.commentNo}" class="optionsMenu">
+			                      <button class="editReviewButton" data-commentno="\${cvo.commentNo}">수정</button>
+			                      <button class="reportReviewButton" data-commentno="\${cvo.commentNo}">신고</button>
+			                      <button class="deleteReviewButton" data-commentno="\${cvo.commentNo}">삭제</button>
+			                    </div>
+			                  </div>`;
+			     }
             html += `</div></div>`;
           }
         } else {
@@ -487,13 +494,12 @@ function toggleLove(commentNo, isbn, userId, checkbox){
 </sec:authorize>
 <sec:authorize access="!isAuthenticated()">
   <div id="bookComments" style="text-align: center; padding: 40px; border-top: 1px solid #eee;">
-    <p>리뷰를 작성하시려면 <a href="<%= request.getContextPath() %>/login.do" style="color: #FF5722; text-decoration: underline;">로그인</a>이 필요합니다.</p>
+    <p>리뷰를 작성하시려면 <a href="#" id="openLoginModal" style="color: #FF5722; text-decoration: underline;">로그인</a>이 필요합니다.</p>
     <div class="comment-list"></div> <!-- 비로그인 사용자도 댓글 목록은 볼 수 있도록 -->
   </div>
 </sec:authorize>
 </section>
 <jsp:include page="/WEB-INF/views/include/footer.jsp" />
-
 <script>
 // 장바구니 개수 업데이트 함수
 $(document).ready(function() {
@@ -600,14 +606,24 @@ document.addEventListener("click", function (event) {
 	  }
   }
 });
-document.addEventListener("click", function (event) {
-	if (event.target.closest("#bookOrderBtn")) {
-		event.preventDefault();
 
-		const goToCart = confirm("로그인 페이지로 이동하시겠습니까?");
-		if (goToCart) {
-			window.location.href = "<%= request.getContextPath() %>/login.do";
-		}	
+//'바로구매' 버튼 클릭 이벤트
+document.addEventListener("click", function(event){
+	if(event.target.closest("#bookOrderBtn")){
+		event.preventDefault(); // 기본 동작 방지
+		
+		if(userId && userId !== 'anonymousUser'){
+	    const quantity = document.querySelector('.num').value; // 수량
+	    const isbn = "${bookDetail.isbn}"; // ISBN
+	    const contextPath = "<%= request.getContextPath() %>";
+	
+	    window.location.href = `${contextPath}/order/orderMain.do?isbn=${isbn}&quantity=${quantity}`;
+
+		}else{
+			if(confirm("로그인이 필요한 서비스입니다. 로그인 페이지로 이동하시겠습니까?")){
+				window.location.href = "<%= request.getContextPath() %>/login.do";
+			}
+		}
 	}
 });
 </script>
@@ -650,25 +666,53 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	function setToggleButton(button, isExpanded, contextPath) {
 	  button.innerHTML = "";
-
-    const label = document.createElement("span");
-    label.textContent = isExpanded ? "접기" : "펼쳐보기";
-    label.style.display = "inline-block";
-    label.style.textAlign = "center";
-    button.appendChild(label);
-
-    const iconImg = document.createElement("img");
-    iconImg.src = contextPath + "/resources/img/icon/" + (isExpanded ? "collapse" : "expand") + ".png";
-    iconImg.width = 18;
-    iconImg.height = 10;
-    iconImg.style.verticalAlign = "middle";
-    button.appendChild(iconImg);
-	  }
-	});
+	
+	  const label = document.createElement("span");
+	  label.textContent = isExpanded ? "접기" : "펼쳐보기";
+	  label.style.display = "inline-block";
+	  label.style.textAlign = "center";
+	  button.appendChild(label);
+	
+	  const iconImg = document.createElement("img");
+	  iconImg.src = contextPath + "/resources/img/icon/" + (isExpanded ? "collapse" : "expand") + ".png";
+	  iconImg.width = 18;
+	  iconImg.height = 10;
+	  iconImg.style.verticalAlign = "middle";
+	  button.appendChild(iconImg);
+  }
+});
 </script>
-<!-- Comment -->
-<script type="text/javascript">
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const openLoginModalLink = document.getElementById('openLoginModal');
+  const loginModal = document.getElementById('loginModal');
+  const closeButton = document.getElementById('closeLoginModal');
 
+  if(openLoginModalLink){
+    openLoginModalLink.addEventListener('click', function(event) {
+      event.preventDefault();
+      if(loginModal){
+    	  loginModal.classList.add('show');
+      }
+    });
+  }
+  
+  if(closeButton){
+    closeButton.addEventListener('click', function(){
+    	if(loginModal){
+        loginModal.classList.remove('show');
+      }
+    });
+  }
+  
+  if(loginModal){
+	  window.addEventListener('click', function(event) {
+	    if(event.target == loginModal){
+	      loginModal.classList.remove('show');
+	    }
+	  });
+  }
+});
 </script>
 </body>
 </html>

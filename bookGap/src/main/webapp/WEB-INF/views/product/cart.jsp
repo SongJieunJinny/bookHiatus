@@ -435,7 +435,11 @@ $(document).ready(function () {
 
 	    if (typeof isLoggedIn !== "undefined" && isLoggedIn) {
 	      // 로그인 상태 → 주문 페이지 이동
-	      window.location.href = contextPath + "/order.do";
+		    const quantity = document.querySelector('.num').value; // 수량
+		    const isbn = "${bookDetail.isbn}"; // ISBN
+		    const contextPath = "<%= request.getContextPath() %>";
+		
+		    window.location.href = `${contextPath}/order/orderMain.do?isbn=${isbn}&quantity=${quantity}`;
 	    } else {
 	      // 비로그인 상태 → 모달 열기
 	      const menuLogin = document.getElementById("menuLogin");

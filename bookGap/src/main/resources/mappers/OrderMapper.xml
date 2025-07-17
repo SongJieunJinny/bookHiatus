@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+			"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bookGap.mapper.orderMapper">
+	<select id="findBookByIsbn" parameterType="string" resultType="com.bookGap.vo.BookVO">
+		SELECT title,     -- 상품명
+			     image,     -- 대표 이미지
+			     discount,  -- 할인가 (실제 판매 가격)
+				   BOOK_NO                AS bookNo,
+				   BOOK_RDATE             AS bookRdate,
+				   BOOK_TRANS             AS bookTrans,
+				   BOOK_STOCK             AS bookStock,
+				   BOOK_STATE             AS bookState,
+				   BOOK_CATEGORY          AS bookCategory,
+				   isbn,
+				   BOOK_IMGURL            AS bookImgUrl,
+				   BOOK_INDEX             AS bookIndex,
+				   PUBLISHER_BOOK_REVIEW  AS publisherBookReview,
+				   COMMENT_COUNT          AS commentCount
+			FROM BOOK
+		 WHERE isbn = #{isbn}
+	</select>
+	
+	<select id="findDefaultAddressByUserId" parameterType="string" resultType="com.bookGap.vo.UserAddressVO">
+		SELECT ua.USER_ADDRESS_ID   AS userAddressId,
+				   ua.ADDRESS_NAME      AS addressName,
+				   ua.POST_CODE         AS postCode,
+				   ua.ROAD_ADDRESS      AS roadAddress,
+				   ua.DETAIL_ADDRESS    AS detailAddress,
+				   ua.IS_DEFAULT        AS isDefault,
+				   ua.USER_ID           AS userId,
+				   u.USER_NAME          AS userName,
+				   u.PHONE              AS phone
+			FROM USER_ADDRESS ua
+			JOIN USER u 
+				ON ua.USER_ID = u.USER_ID
+		 WHERE ua.USER_ID = #{userId}
+			 AND ua.IS_DEFAULT = 1
+	</select>
+</mapper>

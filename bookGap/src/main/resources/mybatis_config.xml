@@ -16,6 +16,14 @@
 		<typeAlias type="com.bookGap.vo.CommentVO" alias="CommentVO"/>
 		<typeAlias type="com.bookGap.vo.CommentRatingVO" alias="CommentRatingVO"/>
 		<typeAlias type="com.bookGap.vo.CommentLoveVO" alias="CommentLoveVO"/>
+		<typeAlias type="com.bookGap.vo.UserAddressVO" alias="UserAddressVO"/>
+		<typeAlias type="com.bookGap.vo.TossRequestVO" alias="TossRequestVO"/>
+		<typeAlias type="com.bookGap.vo.TossCancelVO" alias="TossCancelVO"/>
+		<typeAlias type="com.bookGap.vo.KakaoPayRequestVO" alias="KakaoPayRequestVO"/>
+		<typeAlias type="com.bookGap.vo.KakaoPayCancelVO" alias="KakaoPayCancelVO"/>
+		<typeAlias type="com.bookGap.vo.PaymentVO" alias="PaymentVO"/>
+		<typeAlias type="com.bookGap.vo.OrderVO" alias="OrderVO"/>
+		<typeAlias type="com.bookGap.vo.OrderDetailVO" alias="OrderDetailVO"/>
 	</typeAliases>
 
 </configuration>
