@@ -197,14 +197,7 @@
 }
 
 /* --------------orderMain-------------- */
-#guestOrder{
-  width: 100%;
-  height: 100%;
-  margin-bottom: 4%;
-  display: flex;
-  flex-wrap: wrap;
-}
-#guestOrderHead{
+#orderMainHead{
   width: 100%;
   height: 10%;
   display: flex;
@@ -217,27 +210,63 @@
   text-align: center;
   font-size: 25px;
 }
-#orderNav{
+#orderMain{
+  width: 100%;
+  height: 100%;
+  margin-bottom: 4%;
+  display: flex;
+  flex-wrap: wrap;
+}
+#orderMainNav{
   height: 100%;
   width: 40%;
   margin-left: 7%;
   margin-right: 0%;
 }
-.guestInfoTable{
+.orderMainCategory{
+  font-size: 20px;
+  margin-bottom: 3%;
+  margin-left: 30%;
+}
+#deliveryInfoDiv{
   width: 100%;
 }
-#deliveryInfoTable{
-  width: 100%;
+.deliveryContainer{
+  display: flex;
+  margin: 2%;
+  width: 70%;
+  align-items: flex-start;
 }
-.deliveryInfoAddressNickname{
-  width: 100%;
+.orderMaindelivery{
+  font-size: 17px;
+  padding-top: 1.5%;
+  margin: 1%;
+}
+.deliveryAddress{
+  display: flex;
+  flex-direction: column;
+}
+.deliveryAddress1{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 2.5%;
+}
+.deliveryAddressName{
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  width: 50%;
 }
 #addressImg{
   width: 15px;
   height: 15px;
   margin: 2%;
 }
-#deliveryInfoAddressBtn{
+.deliveryInfoAddressNickname{
+  width: 100%;
+}
+#deliveryAddressBtn{
   border: 1px solid black;
   border-radius: 5px;
   background-color: black;
@@ -249,54 +278,30 @@
   padding-bottom: 1%;
   cursor: pointer;
 }
-.orderTableCategory{
-  font-size: 20px;
-  margin-bottom: 3%;
-  margin-left: 30%;
+.deliveryAddress2{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 3%;
 }
-.guestInfoTableContainer{
+.deliveryAddress3{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 3%;
+}
+.requestContainer{
   display: flex;
   margin: 2%;
   width: 70%;
   align-items: flex-start;
 }
-#deliveryInfo{
-font-size: 13px;
-}
-.deliveryInfoAddressContainer{
-  display: flex;
-  flex-direction: column;
-}
-.deliveryInfoAddressName{
-  display: flex;
-  align-items: center;
-  font-size: 16px;
-  width: 50%;
-}
-.deliveryInfoAddress1{
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 2.5%;
-}
-.deliveryInfoAddress2{
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 3%;
-}
-.deliveryInfoAddress3{
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 3%;
-}
-.guestInfoCategory{
+.orderMainrequest{
   font-size: 17px;
   padding-top: 1.5%;
   margin: 1%;
 }
-.deliveryInfoTableInput{
+.orderMainrequestInput{
   width: 80%;
   border: 1px solid black;
   border-radius: 5px;
@@ -306,70 +311,32 @@ font-size: 13px;
   padding: 2.5%;
   font-size: 15px;
 }
-.guestInfoTablePostInput{
-  width: 44%;
-  border: 1px solid black;
-  border-radius: 5px;
-  margin: 1%;
-  text-align: center;
-  align-items: center;
-  padding: 2%;
-  font-size: 15px;
+.deliveryInfoContainer{
+  display: flex;
+  margin: 2%;
+  width: 70%;
+  align-items: flex-start;
 }
-.guestInfoTablePostButton{
-  width: 13%;
-  border: 1px solid black;
-  border-radius: 5px;
-  margin: 1%;
-  text-align: center;
-  align-items: center;
-  padding: 1.5%;
-  font-size: 15px;
-  cursor: pointer;
+#deliveryInfo{
+font-size: 13px;
 }
-.guestInfoTableAddress1{
-  width: 60%;
-  border: 1px solid black;
-  border-radius: 5px;
-  margin: 1%;
-  text-align: center;
-  align-items: center;
-  padding: 1.5%;
-  font-size: 15px;
-}
-.guestInfoTableAddress2{
-  width: 60%;
-  border: 1px solid black;
-  border-radius: 5px;
-  margin: 1%;
-  text-align: center;
-  align-items: center;
-  padding: 1.5%;
-  font-size: 15px;
-}
-#orderSection{
+#orderMainSection{
   width: 30%;
   height: 100%;
   margin-left: -5%;
 }
-.orderTable{
+#orderDetailSection{
   width: 100%;
   height: 50%;
   text-align: center;
 }
-#payMathodTable{
-  width: 100%;
-  height: 50%;
-  text-align: center;
-  margin-bottom: 15%;
-}
-.sectionTitle{
+.orderMainTableTitle{
   text-align: center;
   font-size: 20px;
   margin-bottom: 4%;
   margin-right: 25%;
 }
-.layout{
+.orderMainTableLayout{
   width: 70%;
   height: 100%;
   border: 1px solid black;
@@ -382,6 +349,108 @@ font-size: 13px;
   height: 100%;
   display: flex;
   flex-direction: column;
+}
+.orderTotalPrice{
+  font-size: 17px;
+  color: blue;
+  margin-top: 5%;
+  margin-bottom: 8%;
+  text-align: center;
+}
+#orderMainAside{
+  width: 25%;
+  height: 100%;
+  margin-right: 2%;
+}
+#paymentMathodAside{
+  width: 100%;
+  height: 50%;
+  text-align: center;
+  margin-bottom: 15%;
+}
+.paymentMathodContainer{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: center;
+  gap: 20px;
+}
+.paymentMathodIcon{
+  width: 150px;
+  height: 80px;
+  border: 1px solid black;
+  border-radius: 20px;
+  margin: 1%;
+  display: flex;
+  justify-content: center;
+  cursor: pointer;
+}
+.paymentMathodKakao{
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+  justify-content: center;
+  align-items: center;
+}
+.paymentMathodKakaoimg{
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+}
+.paymentMathodToss{
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+  justify-content: center;
+  align-items: center;
+}
+.paymentMathodTossimg{
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+}
+.paymentContainer{
+  padding: 3%;
+  font-size: 17px;
+}
+.paymentPriceDelivery{
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+.paymentPrice{
+  padding: 3%;
+}
+.paymentLine{
+  width: 100%;
+  border-bottom: solid 2px;
+  border-color: black;
+}
+.LastPaymentPrice{
+  text-align: center;
+  padding: 3%;
+}
+.finalPaymentPrice{
+  text-align: center;
+  color: blue;
+  padding: 1%;
+}
+.orderMainPayBtnDiv{
+  margin-left: 13%;
+  margin-top: 10%;
+}
+.orderMainPayBtn{
+  border: 1px solid black;
+  border-radius: 10px;
+  background-color: black;
+  color: white;
+  width: 60%;
+  height: 40%;
+  font-size: 25px;
+  padding: 2%;
+  cursor: pointer;
 }
 .orderDetailDiv{
   display: flex;
@@ -397,106 +466,6 @@ font-size: 13px;
   flex-direction: column;
   justify-content: center;
   font-size: 17px;
-}
-.orderTotalPrice{
-  font-size: 17px;
-  color: blue;
-  margin-top: 5%;
-  margin-bottom: 8%;
-  text-align: center;
-}
-.payContainer{
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-  justify-content: center;
-  gap: 20px;
-}
-.payIcon{
-  width: 150px;
-  height: 80px;
-  border: 1px solid black;
-  border-radius: 20px;
-  margin: 1%;
-  display: flex;
-  justify-content: center;
-  cursor: pointer;
-}
-.kakao{
-  width: 100%;
-  height: 100%;
-  border-radius: 20px;
-  justify-content: center;
-  align-items: center;
-}
-.toss{
-  width: 100%;
-  height: 100%;
-  border-radius: 20px;
-  justify-content: center;
-  align-items: center;
-}
-.kakaoimg{
-  width: 100%;
-  height: 100%;
-  border-radius: 20px;
-}
-.tossimg{
-  width: 100%;
-  height: 100%;
-  border-radius: 20px;
-}
-#orderAside{
-  width: 25%;
-  height: 100%;
-  margin-right: 2%;
-}
-#paymentTable{
-  width: 100%;
-  height: 50%;
-}
-.asideLine{
-  width: 100%;
-  border-bottom: solid 2px;
-  border-color: black;
-}
-.asideDiv{
-  padding: 3%;
-  font-size: 17px;
-}
-.asideTextPrice{
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-}
-.asideText1{
-  padding: 3%;
-}
-.asideText2{
-  text-align: center;
-  padding: 3%;
-}
-.finalPrice{
-  text-align: center;
-  color: blue;
-  padding: 1%;
-}
-.orderPayBtnDiv{
-  margin-left: 13%;
-  margin-top: 10%;
-}
-.payBtn{
-  border: 1px solid black;
-  border-radius: 10px;
-  background-color: black;
-  color: white;
-  width: 60%;
-  height: 40%;
-  font-size: 25px;
-  padding: 2%;
-  cursor: pointer;
 }
 .modal {
   position: fixed;
