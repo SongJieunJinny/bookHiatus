@@ -97,8 +97,8 @@
 	      </span>
 	    </div>
 			<div id="menuLogout" class="menuItem">
-			  <a href="<%= request.getContextPath() %>/logout.do">
-			  	<img id="loginImg" src="<%=request.getContextPath()%>/resources/img/icon/logout.png">
+			  <a href="#" id="kakaoLogoutBtn">
+			    <img id="loginImg" src="<%=request.getContextPath()%>/resources/img/icon/logout.png">
 			  </a>
 			</div>
 			<sec:authorize access="hasRole('ROLE_ADMIN')">
@@ -326,9 +326,15 @@
   <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
 <script>
 Kakao.init('56c7bb3d435c0c4f0d2b67bfa7d4407e');
-console.log(Kakao.isInitialized());
 
+
+// 카카오 로그인 버튼 클릭 이벤트
 document.getElementById("kakaoLogin").addEventListener("click", function () {
+  // 자동 로그인 방지: 남아있는 토큰 초기화
+  if (Kakao.Auth.getAccessToken()) {
+    Kakao.Auth.setAccessToken(null);
+  }
+
   Kakao.Auth.login({
     scope: 'profile_nickname',
     success: function (authObj) {
@@ -340,18 +346,16 @@ document.getElementById("kakaoLogin").addEventListener("click", function () {
 
           fetch('${pageContext.request.contextPath}/kakaoLoginCallback.do', {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ kakaoId, nickname })
           })
           .then(res => res.json())
           .then(result => {
             if (result.status === 'success') {
-              alert("로그인에  성공하셨습니다.");
+              alert("로그인에 성공하셨습니다.");
               window.location.href = "<%=request.getContextPath()%>/";
             } else {
-              alert("로그인에  실패하셨습니다.");
+              alert("로그인에 실패하셨습니다.");
             }
           });
         },
@@ -364,5 +368,44 @@ document.getElementById("kakaoLogin").addEventListener("click", function () {
       alert("카카오 로그인 실패");
     }
   });
+});
+
+// 카카오 로그아웃 함수
+function kakaoLogout() {
+  const accessToken = Kakao.Auth.getAccessToken();
+  if (accessToken) {
+    // 서버로 토큰 전달해 카카오 서버 로그아웃 요청
+    fetch('${pageContext.request.contextPath}/kakaoServerLogout.do', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ accessToken })
+    })
+    .then(res => res.json())
+    .then(result => {
+      console.log(result.message || result);
+      // SDK 토큰 제거
+      Kakao.Auth.setAccessToken(null);
+      // Spring Security 로그아웃도 실행
+      window.location.href = '${pageContext.request.contextPath}/logout.do';
+    })
+    .catch(err => {
+      console.error("카카오 서버 로그아웃 실패:", err);
+      // 실패해도 Spring Security 로그아웃은 진행
+      window.location.href = '${pageContext.request.contextPath}/logout.do';
+    });
+  } else {
+    // 토큰이 없으면 바로 Spring Security 로그아웃
+    window.location.href = '${pageContext.request.contextPath}/logout.do';
+  }
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  const logoutBtn = document.getElementById("kakaoLogoutBtn");
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", function (e) {
+      e.preventDefault();  // a 태그 기본 이동 막기
+      kakaoLogout();
+    });
+  }
 });
 </script>
