@@ -33,6 +33,10 @@ public class UserAuthenticationService implements UserDetailsService {
 		String password = (String) user.get("USER_PW");
 		System.out.println("조회된 USER_PW: " + password);
 		
+		if (password == null && "kakao".equals(user.get("OAUTH_PROVIDER"))) {
+	        password = ""; // Spring Security가 NullPointerException 안 나게 기본값 세팅
+	    }
+		
 		int enabled_map = (Integer)user.get("USER_ENABLED");
 		boolean enabled = (enabled_map == 1);
 		

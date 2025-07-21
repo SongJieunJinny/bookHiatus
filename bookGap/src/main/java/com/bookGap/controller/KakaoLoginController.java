@@ -5,6 +5,10 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
+import org.springframework.http.*;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
+import java.util.*;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,4 +81,40 @@ public class KakaoLoginController {
 	    result.put("status", "success");
 	    return ResponseEntity.ok(result);
 	}
+	
+	
+	@PostMapping("/kakaoServerLogout.do")
+	@ResponseBody  // JSON 응답으로 내려주기 위해 사용
+	public Map<String, Object> kakaoServerLogout(@RequestBody Map<String, String> payload) {
+	    String accessToken = payload.get("accessToken");
+	    String url = "https://kapi.kakao.com/v1/user/logout";
+	
+	    Map<String, Object> result = new HashMap<>();
+	
+	    if (accessToken == null || accessToken.isEmpty()) {
+	        result.put("status", "fail");
+	        result.put("message", "No AccessToken provided");
+	        return result;
+	    }
+	
+	    HttpHeaders headers = new HttpHeaders();
+	    headers.set("Authorization", "Bearer " + accessToken);
+	    HttpEntity<String> entity = new HttpEntity<>(headers);
+	
+	    RestTemplate restTemplate = new RestTemplate();
+	
+	    try {
+	        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
+	        result.put("status", "success");
+	        result.put("message", "카카오 서버 로그아웃 완료: " + response.getBody());
+	    } catch (Exception e) {
+	        result.put("status", "fail");
+	        result.put("message", "카카오 서버 로그아웃 실패: " + e.getMessage());
+	    }
+	
+	    return result;  
+	}
+
+	
+	
 }
