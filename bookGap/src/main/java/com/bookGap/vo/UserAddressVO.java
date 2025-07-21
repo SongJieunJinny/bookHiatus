@@ -8,10 +8,8 @@ public class UserAddressVO {
   private String detailAddress;
   private int isDefault;
   private String userId;
-  
-  /** 추가: JSP에서 수월하게 조회하기 위한 필드 (USER 테이블과 JOIN 시 사용) */
   private String userName; // 받는 사람 이름
-  private String phone;    // 받는 사람 연락처
+  private String userPhone;    // 받는 사람 연락처
   
   public int getUserAddressId() {
     return userAddressId;
@@ -62,10 +60,10 @@ public class UserAddressVO {
     this.userName = userName;
   }
   public String getPhone() {
-    return phone;
+    return userPhone;
   }
   public void setPhone(String phone) {
-    this.phone = phone;
+    this.userPhone = userPhone;
   }
   
 }
