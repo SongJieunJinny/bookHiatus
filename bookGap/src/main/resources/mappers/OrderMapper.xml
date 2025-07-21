@@ -57,4 +57,31 @@
 		 WHERE ua.USER_ID = #{userId}
 	ORDER BY ua.IS_DEFAULT DESC, ua.USER_ADDRESS_ID ASC
 	</select>
+	
+	<insert id="addAddress" parameterType="com.bookGap.vo.UserAddressVO">
+    INSERT INTO USER_ADDRESS (
+        USER_ID, 
+        ADDRESS_NAME, 
+        USER_NAME,
+        USER_PHONE,
+        POST_CODE, 
+        ROAD_ADDRESS, 
+        DETAIL_ADDRESS,
+        IS_DEFAULT
+    ) VALUES (
+        #{userId}, 
+        #{addressName}, 
+        #{userName},
+        #{userPhone},
+        #{postCode}, 
+        #{roadAddress}, 
+        #{detailAddress},
+        0
+    )
+	</insert>
+	
+	<delete id="deleteAddress" parameterType="int">
+	   DELETE FROM USER_ADDRESS 
+	   WHERE USER_ADDRESS_ID = #{userAddressId}
+  </delete>
 </mapper>

@@ -10,7 +10,7 @@
 <title>orderMain</title>
 <script src="<%=request.getContextPath()%>/resources/js/jquery-3.7.1.js"></script>
 <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/resources/css/index.css"/>
-<link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/resources/css/book/order"/>
+<link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/resources/css/book/order.css"/>
 </head>
 <body>
   <jsp:include page="/WEB-INF/views/include/header.jsp" />
@@ -151,7 +151,7 @@
 	                   data-address-id="${addr.userAddressId}"
 	                   data-address-name="${addr.addressName}"
 	                   data-user-name="${addr.userName}"
-	                   data-phone="${addr.userPhone}"
+	                   data-user-phone="${addr.userPhone}"
 	                   data-post-code="${addr.postCode}"
 	                   data-road-address="${addr.roadAddress}"
 	                   data-detail-address="${addr.detailAddress}">
@@ -197,18 +197,17 @@ $(document).ready(function () {
   updateCartCount();
   calculateTotal(); // 페이지 로딩 시 JSP가 렌더링한 가격으로 최초 계산
   
-  // --- 이벤트 핸들러 ---
-  
   // '변경' 버튼 -> 주소 목록 모달 열기
   $("#deliveryAddressBtn").on("click", () => $("#firstModal").css("display", "flex"));
 
   // '+ 배송지 추가' 버튼 -> 주소 입력 모달 열기
   $("#addAddressBtn").on("click", () => {
     $("#secondModal").css("display", "flex");
+    $("#addressForm")[0].reset(); // 폼 초기화
     $("#addressForm").show();
   });
 
-  // '주소 검색' 버튼 -> 카카오 주소 API
+  //'주소 검색' 버튼 -> 카카오 주소 API
   $("#searchAddress").on("click", function(e) {
     e.preventDefault();
     new daum.Postcode({
@@ -221,63 +220,106 @@ $(document).ready(function () {
   });
 
   // '저장' 버튼 -> 새 주소 추가
-  $("#saveAddress").on("click", function (event) {
+  $("#saveAddress").on("click", function(event){
     event.preventDefault();
 
 		// 서버로 보낼 데이터를 객체로 만듭니다.
-		let newAddressData = {
-		  addressName: $("#addressName").val(),
-		  recipient: $("#recipient").val(),
-		  userPhone: $("#userPhone").val(), // [수정] id와 key를 userPhone으로 변경
-		  postCode: $("#zipcode").val(),
-		  roadAddress: $("#address").val(),
-		  detailAddress: $("#addressDetail").val()
-		  // userId는 서버 세션에서 처리하는 것이 안전합니다.
-		};
+		let newAddressData = { addressName: $("#addressName").val(),
+										       userName: $("#recipient").val(), // 서버 VO의 필드명과 일치
+										       userPhone: $("#userPhone").val(),
+										       postCode: $("#zipcode").val(),
+										       roadAddress: $("#address").val(),
+										       detailAddress: $("#addressDetail").val() };
+		
+		if(!newAddressData.addressName || !newAddressData.userName || !newAddressData.postCode){
+		  alert("배송지 이름, 받는 사람, 주소는 필수입니다.");
+		  return;
+		}
 
-		// TODO: 여기에 newAddressData 객체를 서버로 보내는 AJAX 로직을 구현합니다.
-		console.log("서버로 전송할 새 주소 데이터:", newAddressData);
-		alert("AJAX를 통해 주소 저장 로직 구현이 필요합니다.");
+		$.ajax({
+	    type: "POST",
+	    url: "<%=request.getContextPath()%>/order/addAddress.do",
+	    contentType: "application/json; charset=utf-8", // 보내는 데이터 타입
+	    data: JSON.stringify(newAddressData), // 데이터를 JSON 문자열로 변환
+	    success: function (response) {
+	    	 if (response === "SUCCESS") {
+	         alert("새 배송지가 추가되었습니다.");  // 성공 시, 페이지를 새로고침하여 목록을 갱신합니다.
+	         location.reload(); 
+	    	 }else{
+	         alert("주소 추가에 실패했습니다. 오류: " + response);
+	       }
+			},
+	    error: function (xhr) {
+		           alert("서버 통신 오류가 발생했습니다.");
+		         }
+		});
 	});
 
   // 라디오 버튼 변경 시 배송지 정보 업데이트
   $(document).on("change", "input[name='address']", updateDeliveryInfo);
 
   // 주소 '삭제' 버튼 클릭
-  $(document).on("click", ".deleteAddress", function () {
-    const addressId = $(this).data("address-id");
-    if (confirm("이 배송지를 정말 삭제하시겠습니까?")) {
-        // TODO: 여기에 AJAX를 사용하여 서버에 주소 삭제를 요청하는 로직을 구현해야 합니다.
-        // 성공 시, 화면에서 해당 .addressItem을 제거합니다.
-        alert("AJAX를 통해 " + addressId + "번 주소 삭제 로직 구현이 필요합니다.");
-    }
-  });
+  $(document).on("click", ".deleteAddress", function(){
+	  const addressId = $(this).data("address-id");
+	  const addressItem = $(this).closest(".addressItem"); // 삭제할 DOM 요소
+	
+	  if (confirm("이 배송지를 정말 삭제하시겠습니까?")) {
+	    $.ajax({
+	      type: "POST",
+	      url: "<%=request.getContextPath()%>/order/deleteAddress.do",
+	      data: { userAddressId: addressId }, // 폼 데이터 형식으로 전송
+	      success: function(response){
+				           if(response === "SUCCESS"){
+				             alert("배송지가 삭제되었습니다.");
+				             addressItem.fadeOut(function() { $(this).remove(); }); // 부드럽게 제거
+				           }else{
+				             alert("삭제에 실패했습니다: " + response);
+				           }
+				         },
+	      error: function(){
+	               alert("서버 통신 중 오류가 발생했습니다.");
+	             }
+	    });
+	  }
+	});
 
   // '결제하기' 버튼 클릭
-  $(".orderMainPayBtn").on("click", function () {
+  $(".orderMainPayBtn").on("click", function(){
     let selectedAddress = $("input[name='address']:checked");
 
-    if (selectedAddress.length === 0) {
+    if(selectedAddress.length === 0){
       alert("배송지를 선택해주세요.");
       return;
     }
 
-    // JSP에 심어둔 hidden input에서 주문 정보를 가져옵니다.
-    let orderData = {
-      userAddressId: selectedAddress.data("address-id"),
-      orderPrice: parseInt($('.finalPaymentPrice').text().replace(/[^0-9]/g, '')),
-      items: [
-        {
-          isbn: $("#orderIsbn").val(),
-          quantity: $("#orderQuantity").val()
-        }
-      ]
-    };
+    // 실제 결제 API 연동 전에 서버에 주문 정보를 먼저 저장합니다.
+    let orderData = { userAddressId: selectedAddress.data("address-id"),
+								      orderPrice: parseInt($('.finalPaymentPrice').text().replace(/[^0-9]/g, '')),
+								      deliveryFee: parseInt($('.deliveryFee').text().replace(/[^0-9]/g, '')),
+								      items: [ { isbn: $("#orderIsbn").val(), quantity: $("#orderQuantity").val() } ] };
 
-    // TODO: 이 orderData 객체를 서버로 보내 결제 프로세스를 시작하는 AJAX 호출
     console.log("결제 요청 데이터:", orderData);
-    alert("결제가 진행됩니다.");
-  });
+    alert("이제 이 데이터를 가지고 실제 결제 API 연동을 진행하거나, 서버에 주문 정보를 저장합니다.");
+
+    // 예시: 서버에 주문 정보 저장 AJAX
+    $.ajax({
+      type: "POST",
+      url: "<%=request.getContextPath()%>/order/processOrder.do",
+      contentType: "application/json",
+      data: JSON.stringify(orderData),
+      success: function(response){
+				         if(response.status === 'SUCCESS'){
+				           alert("주문이 성공적으로 완료되었습니다. 주문번호: " + response.orderId); // 결제 완료 페이지로 이동
+				           window.location.href = "<%=request.getContextPath()%>/order/orderComplete.do?orderId=" + response.orderId;  
+				         }else{
+				           alert("주문 처리 중 오류가 발생했습니다: " + response.message);
+				         }
+               },
+      error: function(){
+			         alert("주문 요청에 실패했습니다. 네트워크를 확인해주세요.");
+			       }
+    });
+	});
 
   // --- 모달 관리 ---
   $(".close").on("click", function() { $(this).closest(".modal").hide(); });
@@ -287,47 +329,45 @@ $(document).ready(function () {
 
 	// --- 전역 함수 ---
 
-	// 장바구니 수량 업데이트
-	function updateCartCount() {
-	  let cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
-	  let cartCountElement = $("#cart-count"); // jQuery 셀렉터 사용
-	  if (cartCountElement.length) {
-	    cartCountElement.text(cartItems.length).css("visibility", cartItems.length > 0 ? "visible" : "hidden");
-	  }
-	}
+// 장바구니 수량 업데이트
+function updateCartCount() {
+  let cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
+  let cartCountElement = $("#cart-count"); // jQuery 셀렉터 사용
+  if (cartCountElement.length) {
+    cartCountElement.text(cartItems.length).css("visibility", cartItems.length > 0 ? "visible" : "hidden");
+  }
+}
 
-	// 총 금액 계산 및 표시 함수
-	function calculateTotal() {
-	  let totalPrice = 0;
-	  $('.orderPrice').each(function () {
-	    totalPrice += parseInt($(this).text().replace(/[^0-9]/g, ''), 10);
-	  });
+// 총 금액 계산 및 표시 함수
+function calculateTotal() {
+  let totalPrice = 0;
+  $('.orderPrice').each(function () {
+    totalPrice += parseInt($(this).text().replace(/[^0-9]/g, ''), 10);
+  });
 
-	  const deliveryFee = totalPrice >= 50000 ? 0 : 3000;
-	  $('.orderTotalPrice').text(`총 합계: ${totalPrice.toLocaleString()}원`);
-	  $('.Price').text(`${totalPrice.toLocaleString()}원`);
-	  $('.deliveryFee').text(`${deliveryFee.toLocaleString()}원`);
-	  $('.finalPaymentPrice').text(`${(totalPrice + deliveryFee).toLocaleString()}원`);
-	}
+  const deliveryFee = totalPrice >= 50000 ? 0 : 3000;
+  $('.orderTotalPrice').text(`총 합계: ${totalPrice.toLocaleString()}원`);
+  $('.Price').text(`${totalPrice.toLocaleString()}원`);
+  $('.deliveryFee').text(`${deliveryFee.toLocaleString()}원`);
+  $('.finalPaymentPrice').text(`${(totalPrice + deliveryFee).toLocaleString()}원`);
+}
 
-	// 배송지 정보 업데이트 함수
-	function updateDeliveryInfo() {
-	  let selected = $("input[name='address']:checked");
-	  if (selected.length > 0) {
-	    const data = selected.data(); // data-* 속성을 객체로 가져옴
-	    
-	    // [수정] JSP에서 data-phone으로 지정했으므로, JS에서는 data.phone으로 접근해야 합니다.
-	    const phone = data.phone; 
-	    
-	    $(".deliveryInfoAddressNickname").text(data.addressName);
-	    $(".deliveryAddress2").text(`${data.userName} / ${phone}`); // 수정된 phone 변수 사용
-	    $(".deliveryAddress3").text(`[${data.postCode}] ${data.roadAddress} ${data.detailAddress}`);
-	  } else {
-	    $(".deliveryInfoAddressNickname").text("배송지를 선택해주세요");
-	    $(".deliveryAddress2").text("");
-	    $(".deliveryAddress3").text("");
-	  }
-	}
+// 배송지 정보 업데이트 함수
+function updateDeliveryInfo() {
+  let selected = $("input[name='address']:checked");
+  if (selected.length > 0) {
+    const data = selected.data(); // data-* 속성을 객체로 가져옴
+    const phone = data.userPhone;
+    
+    $(".deliveryInfoAddressNickname").text(data.addressName);
+    $(".deliveryAddress2").text(`${data.userName} / ${phone}`); // 수정된 phone 변수 사용
+    $(".deliveryAddress3").text(`[${data.postCode}] ${data.roadAddress} ${data.detailAddress}`);
+  } else {
+    $(".deliveryInfoAddressNickname").text("배송지를 선택해주세요");
+    $(".deliveryAddress2").text("");
+    $(".deliveryAddress3").text("");
+  }
+}
 </script>
 </body>
 </html>

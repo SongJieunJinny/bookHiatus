@@ -7,12 +7,16 @@ import org.springframework.security.web.bind.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.bookGap.service.OrderService;
 import com.bookGap.vo.BookVO;
+import com.bookGap.vo.CommentVO;
 import com.bookGap.vo.UserAddressVO;
 import com.bookGap.vo.UserVO;
 
@@ -54,4 +58,27 @@ public class OrderController {
     return "order/orderMain";
   }
 
+	@PostMapping("/addAddress.do")
+	@ResponseBody // 페이지 이동 없이 데이터만 반환
+	public String addAddress(@RequestBody UserAddressVO addressVO, @AuthenticationPrincipal UserVO user) {
+    try{
+      addressVO.setUserId(user.getUsername()); // 현재 로그인한 사용자 ID 설정
+      orderService.addAddress(addressVO); // 서비스에 주소 추가 로직 호출
+      return "SUCCESS";
+    }catch(Exception e){
+      return "FAIL: " + e.getMessage();
+    }
+	}
+	
+	@PostMapping("/deleteAddress.do")
+	@ResponseBody
+	public String deleteAddress(@RequestParam("userAddressId") int userAddressId, @AuthenticationPrincipal UserVO user) {
+    try{
+      orderService.deleteAddress(userAddressId);
+      return "SUCCESS";
+    }catch(Exception e){
+      return "FAIL: " + e.getMessage();
+    }
+	}
+	
 }
