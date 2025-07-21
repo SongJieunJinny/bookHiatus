@@ -80,6 +80,8 @@ public class BookController {
 	
 	@RequestMapping(value = "/product/bookView.do", method = RequestMethod.GET)
 	public String bookDetail(@RequestParam("isbn") String isbn, Model model) {
+	  isbn = isbn.trim();
+	  
 		BookVO bookDetail = bookService.getBookDetailByIsbn(isbn);
 	    List<String> categories = bookService.getDistinctCategories();
 	    
