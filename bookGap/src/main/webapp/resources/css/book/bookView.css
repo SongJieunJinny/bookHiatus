@@ -28,23 +28,22 @@ section{
 	transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 #bookTitle{
-	font-size: 40px;
+	font-size: clamp(28px, 3vw, 40px); /* 반응형 폰트 크기 */
 	margin-bottom: 10%;
 }
 #bookDiscount{
-	font-size: 25px;
+	font-size: clamp(20px, 2.2vw, 25px); /* 반응형 폰트 크기 */
 	color: darkgray;
 	margin-bottom: 5%;
 }
 .bookInfo{
 	font-family: Arial, sans-serif;
-	width: 50%;
+	width: 55%;
 }
 .bookItem img {
 	width: 100%;
 	border-radius: 5px; 
 }
-
 #bookOrderCheck {
   background-color: #D3D3D3;
   margin-top: 10%;
@@ -56,20 +55,18 @@ section{
   padding: 20px;
   gap: 15px;
 }
-
 #bookTitle1 {
-  font-size: 25px;
+  font-size: clamp(18px, 2vw, 25px); /* 반응형 폰트 크기 */
   text-align: center;
   padding-top: 5px;
   width: 100%;
 }
-
 #bookQuantity {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 10px;
-  flex-wrap: wrap;
+  flex-wrap: wrap; /* 창이 좁아지면 자동으로 줄바꿈 */
   font-size: 20px;
   background-color: #D3D3D3;
   padding: 10px;
@@ -79,7 +76,6 @@ section{
   box-sizing: border-box;
   margin-left:20px;
 }
-
 .quantity {
   display: flex;
   align-items: center;
@@ -87,7 +83,6 @@ section{
   border-radius: 10px;
   padding: 5px;
 }
-
 .quantity button {
   background: transparent;
   border: none;
@@ -95,7 +90,6 @@ section{
   padding: 10px 15px;
   cursor: pointer;
 }
-
 .quantity .num {
   width: 40px;
   text-align: center;
@@ -104,14 +98,11 @@ section{
   background: white;
   outline: none;
 }
-
 #totalPrice {
   font-size: 20px;
   white-space: nowrap;
   margin-left: auto;
-  margin-right: auto;
 }
-
 #bookCheckBtn {
   display: flex;
   justify-content: center;
@@ -121,41 +112,25 @@ section{
   margin-top: 25px;
   margin-left: 25px;
 }
-
 #bookChartBtn,
 #bookOrderBtn {
-  flex: 1 1 40%;
+  flex: 1 1 180px;
   max-width: 180px;
   height: 50px;
   font-size: 20px;
   border-radius: 15px;
   min-width: 140px;
 }
-
 #bookChartBtn {
   background-color: white;
   border: solid 1px black;
 }
-
 #bookOrderBtn {
   background-color: black;
   color: white;
   border: none;
 }
-
-#bookAuthor {
-	margin-bottom: 2%;
-	font-size: 17px;
-}
-#bookPublisher {
-	margin-bottom: 2%;
-	font-size: 17px;
-}
-#bookPubdate {
-	margin-bottom: 2%;
-	font-size: 17px;
-}
-#bookIsbn {
+#bookAuthor, #bookPublisher, #bookPubdate, #bookIsbn {
 	margin-bottom: 2%;
 	font-size: 17px;
 }
@@ -595,22 +570,91 @@ textarea.reviewCommentEdit{
   background-color: #f0f0f0;
   border-color: #ddd;
 }
-@media (max-width: 768px) {
+
+/* ============================================= */
+/*       ✨  반응형 스타일 (미디어 쿼리) */
+/* ============================================= */
+
+/* --- 노트북 (1200px 이하) --- */
+@media (max-width: 1200px) {
   section {
-    width: 95%; /* 모바일에서는 거의 꽉 차게 */
-    margin: 5% auto;
+    width: 80%;
+    margin-left: 10%;
+    margin-right: 10%;
+  }
+}
+
+/* --- 태블릿 (992px 이하) --- */
+@media (max-width: 992px) {
+  section {
+    width: 90%;
+    margin-left: 5%;
+    margin-right: 5%;
+    margin-top: 3%;
   }
   .bookPart {
-    flex-direction: column; /* 가로 정렬을 세로 정렬로 변경 */
-    gap: 20px;
+    /* [핵심] 가로 정렬에서 세로 정렬로 변경 */
+    flex-direction: column;
+    gap: 40px; /* 세로 간격 조정 */
   }
   .bookItem, .bookInfo {
-    width: 100%; /* 너비를 100%로 만들어 세로로 쌓이게 함 */
+    /* [핵심] 세로로 쌓이면서 너비를 100%로 채움 */
+    width: 100%;
+    max-width: 500px; /* 태블릿에서 이미지가 너무 커지는 것을 방지 */
+    margin: 0 auto; /* 가운데 정렬 */
+  }
+  .bookInfo {
+    text-align: center; /* 정보 영역도 가운데 정렬 */
   }
   #bookTitle {
-    font-size: 1.8em;
+    margin-bottom: 5%;
   }
-  .bookCommentButton {
-    width: 80px;
+  #bookOrderCheck, #bookCheckBtn {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+/* --- 모바일 (600px 이하) --- */
+@media (max-width: 600px) {
+  section {
+    width: 95%;
+    margin-left: 2.5%;
+    margin-right: 2.5%;
+  }
+  .bookPart {
+    gap: 25px; /* 모바일에서 세로 간격 더 줄임 */
+  }
+  #bookTitle {
+    font-size: 24px; /* 모바일용 제목 크기 고정 */
+  }
+  #bookDiscount {
+    font-size: 18px;
+  }
+  #bookQuantity {
+    /* [핵심] 수량 조절과 가격이 깨지지 않도록 세로로 배치 */
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+  }
+  #totalPrice {
+    margin-left: 0; /* 가운데 정렬되도록 margin 초기화 */
+  }
+  #bookCheckBtn {
+    gap: 10px; /* 버튼 사이 간격 줄임 */
+    margin-left: 0;
+  }
+  #bookChartBtn,#bookOrderBtn {
+    font-size: 16px;
+    height: 45px;
+  }
+  /* 리뷰 섹션 여백 조정 */
+  #review, .reviewBox, .bookCommentBox {
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+  }
+  .reviewId, .reviewRdate, .reviewContent {
+    font-size: 16px; /* 모바일에서 리뷰 폰트 조정 */
   }
 }
