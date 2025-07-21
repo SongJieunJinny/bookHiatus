@@ -343,11 +343,12 @@ document.getElementById("kakaoLogin").addEventListener("click", function () {
         success: function (res) {
           const kakaoId = res.id;
           const nickname = res.kakao_account.profile.nickname;
+          const accessToken = authObj.access_token;
 
           fetch('${pageContext.request.contextPath}/kakaoLoginCallback.do', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ kakaoId, nickname })
+            body: JSON.stringify({ kakaoId, nickname, accessToken})
           })
           .then(res => res.json())
           .then(result => {
@@ -370,42 +371,29 @@ document.getElementById("kakaoLogin").addEventListener("click", function () {
   });
 });
 
-// 카카오 로그아웃 함수
 function kakaoLogout() {
-  const accessToken = Kakao.Auth.getAccessToken();
-  if (accessToken) {
-    // 서버로 토큰 전달해 카카오 서버 로그아웃 요청
-    fetch('${pageContext.request.contextPath}/kakaoServerLogout.do', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ accessToken })
-    })
-    .then(res => res.json())
-    .then(result => {
-      console.log(result.message || result);
-      // SDK 토큰 제거
-      Kakao.Auth.setAccessToken(null);
-      // Spring Security 로그아웃도 실행
-      window.location.href = '${pageContext.request.contextPath}/logout.do';
-    })
-    .catch(err => {
-      console.error("카카오 서버 로그아웃 실패:", err);
-      // 실패해도 Spring Security 로그아웃은 진행
-      window.location.href = '${pageContext.request.contextPath}/logout.do';
-    });
-  } else {
-    // 토큰이 없으면 바로 Spring Security 로그아웃
-    window.location.href = '${pageContext.request.contextPath}/logout.do';
-  }
-}
+	  fetch('${pageContext.request.contextPath}/kakaoServerLogout.do', {
+	    method: 'POST',
+	    headers: { 'Content-Type': 'application/json' }
+	  })
+	  .then(res => res.json())
+	  .then(result => {
+	    console.log(result.message || result);
+	    window.location.href = '${pageContext.request.contextPath}' + result.redirect;
+	  })
+	  .catch(err => {
+	    console.error("카카오 서버 로그아웃 실패:", err);
+	    window.location.href = '${pageContext.request.contextPath}/logout.do';
+	  });
+	}
 
-document.addEventListener("DOMContentLoaded", function () {
-  const logoutBtn = document.getElementById("kakaoLogoutBtn");
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", function (e) {
-      e.preventDefault();  // a 태그 기본 이동 막기
-      kakaoLogout();
-    });
-  }
-});
+	document.addEventListener("DOMContentLoaded", function () {
+	  const logoutBtn = document.getElementById("kakaoLogoutBtn");
+	  if (logoutBtn) {
+	    logoutBtn.addEventListener("click", function (e) {
+	      e.preventDefault();
+	      kakaoLogout();
+	    });
+	  }
+	});
 </script>
