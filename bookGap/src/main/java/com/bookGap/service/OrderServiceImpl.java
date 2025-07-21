@@ -1,5 +1,7 @@
 package com.bookGap.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,4 +25,8 @@ public class OrderServiceImpl implements OrderService {
     return orderDAO.findDefaultAddressByUserId(userId);
   }
 
+  @Override
+  public List<UserAddressVO> getAddressListByUserId(String userId) {
+    return orderDAO.findAddressListByUserId(userId);
+  }
 }

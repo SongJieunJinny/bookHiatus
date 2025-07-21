@@ -1,5 +1,7 @@
 package com.bookGap.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.web.bind.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -28,7 +30,7 @@ public class OrderController {
 	}
 	
 	@GetMapping("/orderMain.do")
-  public String orderMain(@RequestParam(value = "isbn", required = false) String isbn, @AuthenticationPrincipal UserVO user,
+  public String orderMain(@RequestParam(value = "isbn") String isbn, @AuthenticationPrincipal UserVO user,
                           @RequestParam(value = "quantity", defaultValue = "1") int quantity, Model model) {
 
 	  if (isbn == null || isbn.isEmpty()) {
@@ -38,12 +40,16 @@ public class OrderController {
     
     String userId = user.getUsername();
     
-    BookVO book = orderService.getBookByIsbn(isbn);
-    UserAddressVO address = orderService.getDefaultAddress(userId);
+    BookVO book = orderService.getBookByIsbn(isbn);  // 1. 주문할 단일 상품 정보
+    
+    UserAddressVO defaultAddress = orderService.getDefaultAddress(userId);  // 2. 화면 상단에 표시될 기본 배송지 정보
+
+    List<UserAddressVO> addressList = orderService.getAddressListByUserId(userId);  // 3. (추가) 배송지 변경 모달에 필요한 전체 주소 목록
     
     model.addAttribute("book", book);
     model.addAttribute("quantity", quantity);
-    model.addAttribute("defaultAddress", address);
+    model.addAttribute("defaultAddress", defaultAddress);
+    model.addAttribute("addressList", addressList);
     
     return "order/orderMain";
   }

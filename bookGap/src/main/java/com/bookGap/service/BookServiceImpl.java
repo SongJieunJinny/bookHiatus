@@ -11,15 +11,15 @@ import com.bookGap.vo.ProductApiVO;
 import com.bookGap.vo.SearchVO;
 
 @Service
-public class BookServiceImpl implements  BookService{
+public class BookServiceImpl implements BookService{
 	
 	@Autowired
     private BookDAO bookDAO;
 	
 	 @Override
-	    public List<ProductApiVO> getBooksWithProductInfo() {
-	        return bookDAO.selectBooksWithProductInfo();
-	    }
+	 public List<ProductApiVO> getBooksWithProductInfo() {
+	    return bookDAO.selectBooksWithProductInfo();
+	 }
 	 
 	 @Override
 	 public List<String> getDistinctCategories() {
