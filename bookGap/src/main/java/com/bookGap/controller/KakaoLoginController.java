@@ -38,6 +38,7 @@ public class KakaoLoginController {
 	    String kakaoId = payload.get("kakaoId");
 	    String nickname = payload.get("nickname");
 	    String userId = "kakao_" + kakaoId;
+	    String accessToken = payload.get("accessToken");
 
 	    // 1차 조회: 카카오 ID 기준
 	    UserInfoVO user = userService.findByKakaoId(kakaoId);
@@ -76,6 +77,8 @@ public class KakaoLoginController {
 	        List.of(new SimpleGrantedAuthority(authority))
 	    );
 	    SecurityContextHolder.getContext().setAuthentication(auth);
+	    
+	    session.setAttribute("KAKAO_ACCESS_TOKEN", accessToken);
 
 	    Map<String, Object> result = new HashMap<>();
 	    result.put("status", "success");
@@ -84,25 +87,24 @@ public class KakaoLoginController {
 	
 	
 	@PostMapping("/kakaoServerLogout.do")
-	@ResponseBody  // JSON 응답으로 내려주기 위해 사용
-	public Map<String, Object> kakaoServerLogout(@RequestBody Map<String, String> payload) {
-	    String accessToken = payload.get("accessToken");
+	@ResponseBody
+	public Map<String, Object> kakaoServerLogout(HttpSession session) {
+	    String accessToken = (String) session.getAttribute("KAKAO_ACCESS_TOKEN");
 	    String url = "https://kapi.kakao.com/v1/user/logout";
-	
+
 	    Map<String, Object> result = new HashMap<>();
-	
+
 	    if (accessToken == null || accessToken.isEmpty()) {
 	        result.put("status", "fail");
-	        result.put("message", "No AccessToken provided");
+	        result.put("message", "AccessToken 없음");
 	        return result;
 	    }
-	
+
 	    HttpHeaders headers = new HttpHeaders();
 	    headers.set("Authorization", "Bearer " + accessToken);
 	    HttpEntity<String> entity = new HttpEntity<>(headers);
-	
+
 	    RestTemplate restTemplate = new RestTemplate();
-	
 	    try {
 	        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
 	        result.put("status", "success");
@@ -111,8 +113,11 @@ public class KakaoLoginController {
 	        result.put("status", "fail");
 	        result.put("message", "카카오 서버 로그아웃 실패: " + e.getMessage());
 	    }
-	
-	    return result;  
+
+	    // 토큰 제거 후 Spring Security 로그아웃
+	    session.removeAttribute("KAKAO_ACCESS_TOKEN");
+	    result.put("redirect", "/logout.do");  // 클라이언트에서 Spring Security 로그아웃으로 리다이렉트
+	    return result;
 	}
 
 	
