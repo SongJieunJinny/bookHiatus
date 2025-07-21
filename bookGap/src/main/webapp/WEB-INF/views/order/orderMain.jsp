@@ -20,7 +20,7 @@
     </div>
     <div id="orderMain">
       <div id="orderMainNav">
-        <div class="orderMainCategory">DELIVERY INFO</div>
+        <div class="orderMainTableTitle">DELIVERY INFO</div>
         <div id="deliveryInfoDiv">
           <div class="deliveryContainer">
             <div class="orderMainDelivery">DELIVERY</div>
@@ -66,35 +66,45 @@
           </div>
         </div>
       </div>
-      <div id="orderMainSection">
-        <div id="orderDetailSection">
-          <div class="orderMainTableTitle">ORDER DETAILS</div>
-          <div class="orderMainTableLayout">
-            <div class="orderDetail">
-							<!-- 컨트롤러에서 받은 단일 'book' 객체 정보를 직접 출력 -->
-              <div class="orderDetailDiv">
-                <input type="hidden" id="orderIsbn" value="${book.isbn}">
-                <input type="hidden" id="orderQuantity" value="${quantity}">
-                <img class="orderImg" src="${book.image}" alt="${book.title}">
-                <div class="orderDetails">
-                  <div class="orderDetailsTitle">${book.title}</div>
-                  <div class="orderDetailsContainer">
-                    <span class="orderCount">${quantity}개</span>
-                    <span class="orderSlash">/</span>
-                    <!-- 수량을 곱한 가격을 표시 -->
-                    <span class="orderPrice"><fmt:formatNumber value="${book.discount * quantity}" pattern="#,###" />원</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="orderTotalPrice">총 합계: 0원</div>
-          </div>
-        </div>
-      </div>
+			<div id="orderMainSection">
+			  <div id="orderDetailSection">
+			    <div class="orderMainTableTitle">ORDER DETAILS</div>
+			    <div class="orderDetailLayout">
+			      <c:choose>
+			        <c:when test="${book != null}">
+			          <div class="orderDetail">
+			            <div class="orderDetailDiv">
+			              <input type="hidden" id="orderIsbn" value="${book.isbn}">
+			              <input type="hidden" id="orderQuantity" value="${quantity}">
+			              <img class="orderImg" src="${book.image}" alt="${book.title}">
+			              <div class="orderDetails">
+			                <div class="orderDetailsTitle">${book.title}</div>
+			                <div class="orderDetailsContainer">
+			                  <span class="orderCount">${quantity}개</span>
+			                  <span class="orderSlash">/</span>
+			                  <span class="orderPrice">
+			                    <fmt:formatNumber value="${book.discount * quantity}" pattern="#,###" />원
+			                  </span>
+			                </div>
+			              </div>
+			            </div>
+			          </div>
+			        </c:when>
+			        <c:otherwise>
+			          <div style="padding: 20px; text-align: center; color: #666;">
+			            선택된 상품이 없습니다.<br>
+			            <a href="${pageContext.request.contextPath}/" style="color: #007bff;">메인으로 돌아가기</a>
+			          </div>
+			        </c:otherwise>
+			      </c:choose>
+			      <div class="orderTotalPrice">총 합계: 0원</div>
+			    </div>
+			  </div>
+			</div>
       <div id="orderMainAside">
         <div id="paymentMathodAside">
           <div class="orderMainTableTitle">PAYMENT METHOD</div>
-          <div class="orderMainTableLayout">
+          <div class="paymentMathodLayout">
             <div class="paymentMathodContainer">
               <div class="paymentMathodIcon">
                 <div class="paymentMathodKakao"><img class="paymentMathodKakaoimg" src="<%=request.getContextPath()%>/resources/img/kakaopay.jpg"></div>
@@ -107,7 +117,7 @@
         </div>
         <div id="paymentAside">
           <div class="orderMainTableTitle">PAYMENT</div>
-          <div class="orderMainTableLayout">
+          <div class="paymentTableLayout">
             <div class="paymentLayout">
               <div class="paymentContainer">
                 <div class="paymentPriceDelivery">
@@ -177,9 +187,9 @@
         <input type="text" id="addressName" placeholder="배송지 이름 (예: 집, 회사)">
         <input type="text" id="recipient" placeholder="받는 사람">
         <input type="text" id="userPhone" placeholder="연락처 ('-' 없이 입력)">
-        <div style="display: flex; gap: 10px;">
+        <div style="display: flex; gap: 10px; width: 90%; margin-left: 10px;">
 	        <input type="text" id="zipcode" placeholder="우편번호" readonly>
-	        <button id="searchAddress" style="width: 30%; padding: 10px; margin: 8px 0;">주소 검색</button>
+	        <button id="searchAddress" style="width: 35%; padding: 10px; margin: 6px 0;">주소 검색</button>
         </div>
         <input type="text" id="address" placeholder="주소" readonly>
         <input type="text" id="addressDetail" placeholder="상세 주소">
@@ -346,10 +356,10 @@ function calculateTotal() {
   });
 
   const deliveryFee = totalPrice >= 50000 ? 0 : 3000;
-  $('.orderTotalPrice').text(`총 합계: ${totalPrice.toLocaleString()}원`);
-  $('.Price').text(`${totalPrice.toLocaleString()}원`);
-  $('.deliveryFee').text(`${deliveryFee.toLocaleString()}원`);
-  $('.finalPaymentPrice').text(`${(totalPrice + deliveryFee).toLocaleString()}원`);
+  $('.orderTotalPrice').text(`총 합계: ${'$'}{totalPrice.toLocaleString()}원`);
+  $('.Price').text(`${'$'}{totalPrice.toLocaleString()}원`);
+  $('.deliveryFee').text(`${'$'}{deliveryFee.toLocaleString()}원`);
+  $('.finalPaymentPrice').text(`${'$'}{(totalPrice + deliveryFee).toLocaleString()}원`);
 }
 
 // 배송지 정보 업데이트 함수
@@ -360,8 +370,8 @@ function updateDeliveryInfo() {
     const phone = data.userPhone;
     
     $(".deliveryInfoAddressNickname").text(data.addressName);
-    $(".deliveryAddress2").text(`${data.userName} / ${phone}`); // 수정된 phone 변수 사용
-    $(".deliveryAddress3").text(`[${data.postCode}] ${data.roadAddress} ${data.detailAddress}`);
+    $(".deliveryAddress2").text(`${'$'}{data.userName} / ${'$'}{phone}`); // 수정된 phone 변수 사용
+    $(".deliveryAddress3").text(`[${'$'}{data.postCode}] ${'$'}{data.roadAddress} ${'$'}{data.detailAddress}`);
   } else {
     $(".deliveryInfoAddressNickname").text("배송지를 선택해주세요");
     $(".deliveryAddress2").text("");
