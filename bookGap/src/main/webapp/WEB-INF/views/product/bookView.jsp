@@ -610,14 +610,13 @@ document.addEventListener("click", function (event) {
 //'바로구매' 버튼 클릭 이벤트
 document.addEventListener("click", function(event){
 	if(event.target.closest("#bookOrderBtn")){
-		event.preventDefault(); // 기본 동작 방지
+		event.preventDefault(); 
 		
 		if(userId && userId !== 'anonymousUser'){
-	    const quantity = document.querySelector('.num').value; // 수량
-	    const isbn = "${bookDetail.isbn}"; // ISBN
-	    const contextPath = "<%= request.getContextPath() %>";
-	
-	    window.location.href = `${contextPath}/order/orderMain.do?isbn=${isbn}&quantity=${quantity}`;
+	    const quantity = document.querySelector('.num').value; 
+	    const isbn = "${bookDetail.isbn}";
+		
+	    window.location.href = `/controller/order/orderMain.do?isbn=${isbn}&quantity=${quantity}`;
 
 		}else{
 			if(confirm("로그인이 필요한 서비스입니다. 로그인 페이지로 이동하시겠습니까?")){

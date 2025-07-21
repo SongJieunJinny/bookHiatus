@@ -2,6 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
 			"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.bookGap.mapper.orderMapper">
+  <!-- 상품 정보 조회 --> 
 	<select id="findBookByIsbn" parameterType="string" resultType="com.bookGap.vo.BookVO">
 		SELECT title,     -- 상품명
 			     image,     -- 대표 이미지
@@ -21,6 +22,7 @@
 		 WHERE isbn = #{isbn}
 	</select>
 	
+	<!-- 사용자의 기본 배송지 정보 조회 --> 
 	<select id="findDefaultAddressByUserId" parameterType="string" resultType="com.bookGap.vo.UserAddressVO">
 		SELECT ua.USER_ADDRESS_ID   AS userAddressId,
 				   ua.ADDRESS_NAME      AS addressName,
@@ -30,11 +32,29 @@
 				   ua.IS_DEFAULT        AS isDefault,
 				   ua.USER_ID           AS userId,
 				   u.USER_NAME          AS userName,
-				   u.PHONE              AS phone
+				   u.USER_PHONE         AS userPhone
 			FROM USER_ADDRESS ua
 			JOIN USER u 
 				ON ua.USER_ID = u.USER_ID
 		 WHERE ua.USER_ID = #{userId}
 			 AND ua.IS_DEFAULT = 1
+	</select>
+	
+	<!-- 사용자의 모든 주소 목록을 조회하는 쿼리 -->
+	<select id="findAddressListByUserId" parameterType="string" resultType="com.bookGap.vo.UserAddressVO">
+		SELECT ua.USER_ADDRESS_ID   AS userAddressId,
+				   ua.ADDRESS_NAME      AS addressName,
+				   ua.POST_CODE         AS postCode,
+				   ua.ROAD_ADDRESS      AS roadAddress,
+				   ua.DETAIL_ADDRESS    AS detailAddress,
+				   ua.IS_DEFAULT        AS isDefault,
+				   ua.USER_ID           AS userId,
+				   u.USER_NAME          AS userName,
+				   u.USER_PHONE         AS userPhone
+		  FROM USER_ADDRESS ua
+		  JOIN USER u 
+				ON ua.USER_ID = u.USER_ID
+		 WHERE ua.USER_ID = #{userId}
+	ORDER BY ua.IS_DEFAULT DESC, ua.USER_ADDRESS_ID ASC
 	</select>
 </mapper>
