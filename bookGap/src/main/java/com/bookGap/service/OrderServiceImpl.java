@@ -29,4 +29,15 @@ public class OrderServiceImpl implements OrderService {
   public List<UserAddressVO> getAddressListByUserId(String userId) {
     return orderDAO.findAddressListByUserId(userId);
   }
+
+  @Override
+  public void addAddress(UserAddressVO address) {
+    orderDAO.addAddress(address);
+  }
+  
+  @Override
+  public void deleteAddress(int userAddressId) {
+    orderDAO.deleteAddress(userAddressId);
+  }
+
 }

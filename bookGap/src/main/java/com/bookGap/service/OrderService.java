@@ -11,5 +11,10 @@ public interface OrderService {
   public UserAddressVO getDefaultAddress(String userId);
   
   public List<UserAddressVO> getAddressListByUserId(String userId);
+  
+  public void addAddress(UserAddressVO address);
+  
+  public void deleteAddress(int userAddressId);
+
 
 }
