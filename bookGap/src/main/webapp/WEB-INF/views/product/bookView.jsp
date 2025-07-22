@@ -565,65 +565,67 @@ document.addEventListener("DOMContentLoaded", function() {
 	updateTotalPrice();
 });
 
-//책 상세페이지에서 장바구니 버튼 클릭 시 실행
-document.addEventListener("click", function (event) {
-  if (event.target.closest("#bookChartBtn")) {
-  	event.preventDefault();
+$(document).ready(function() {
 
-	  let quantity = parseInt(document.querySelector(".num").value) || 1;
-	
-	  let cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
-	  if (!Array.isArray(cartItems)) {
-	    cartItems = Object.values(cartItems).filter(item => typeof item === 'object');
-	  }
+    // --- 장바구니 버튼 클릭 이벤트 ---
+    $("#bookChartBtn").on("click", function(event) {
+        event.preventDefault();
 
-	  let newItem = {
-	    id: "${bookDetail.isbn}",
-	    title: "${bookDetail.title}",
-	    price: Number("${bookPrice}"),
-	    image: "${bookDetail.image}",
-	    quantity: quantity
-	  };
-	
-	  console.log("현재 장바구니 (before push):", cartItems);
-	  console.log("추가하려는 아이템:", newItem);
-	
-	  let existingItem = cartItems.find(item => item.id === newItem.id);
-	  if (existingItem) {
-	    existingItem.quantity += quantity;
-	  } else {
-	    cartItems.push(newItem);
-	  }
-	
-	  localStorage.setItem("cartItems", JSON.stringify(cartItems));
-	  console.log("저장된 로컬스토리지:", localStorage.getItem("cartItems"));
-	
-	  updateCartCount(); // 장바구니 개수 갱신
-	
-	  const goToCart = confirm("장바구니 페이지로 이동하시겠습니까?");
-	  if (goToCart) {
-	    window.location.href = "<%= request.getContextPath() %>/product/cart.do";
-	  }
-  }
-});
+        let quantity = parseInt($(".num").val()) || 1;
+        let cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
+        if (!Array.isArray(cartItems)) {
+            cartItems = Object.values(cartItems).filter(item => typeof item === 'object');
+        }
 
-//'바로구매' 버튼 클릭 이벤트
-document.addEventListener("click", function(event){
-	if(event.target.closest("#bookOrderBtn")){
-		event.preventDefault(); 
-		
-		if(userId && userId !== 'anonymousUser'){
-	    const quantity = document.querySelector('.num').value; 
-	    const isbn = "${bookDetail.isbn}";
-		
-	    window.location.href = `/controller/order/orderMain.do?isbn=${isbn}&quantity=${quantity}`;
+        const newItem = {
+            id: "${bookDetail.isbn}",
+            title: "${bookDetail.title}",
+            price: Number("${bookPrice}"),
+            image: "${bookDetail.image}",
+            quantity: quantity
+        };
 
-		}else{
-			if(confirm("로그인이 필요한 서비스입니다. 로그인 페이지로 이동하시겠습니까?")){
-				window.location.href = "<%= request.getContextPath() %>/login.do";
-			}
-		}
-	}
+        let existingItem = cartItems.find(item => item.id === newItem.id);
+        if (existingItem) {
+            existingItem.quantity += quantity;
+        } else {
+            cartItems.push(newItem);
+        }
+
+        localStorage.setItem("cartItems", JSON.stringify(cartItems));
+        updateCartCount();
+
+        if (confirm("장바구니 페이지로 이동하시겠습니까?")) {
+            window.location.href = "<%= request.getContextPath() %>/product/cart.do";
+        }
+    });
+
+    // --- '바로구매' 버튼 클릭 이벤트 ---
+    $("#bookOrderBtn").on("click", function(event) {
+        event.preventDefault();
+
+        // 1. 로그인 상태 확인
+        if (!userId || userId === 'anonymousUser') {
+            if (confirm("로그인이 필요한 서비스입니다. 로그인 페이지로 이동하시겠습니까?")) {
+                window.location.href = "<%= request.getContextPath() %>/login.do";
+            }
+            return;
+        }
+
+        // 2. 수량과 ISBN 값 가져오기
+        const quantity = $(".num").val();
+        const isbn = "${bookDetail.isbn}"; // 이제 이 시점에서는 JSP 값이 확실히 존재합니다.
+
+        // 3. ISBN 유효성 검사
+        if (!isbn || isbn.trim() === '') {
+            alert("오류: 상품 정보를 가져올 수 없습니다. 페이지를 새로고침 해주세요.");
+            return;
+        }
+
+        // 4. 주문 페이지로 이동
+        window.location.href = `/controller/order/orderMain.do?isbn=${isbn}&quantity=${quantity}`;
+    });
+
 });
 </script>
 <script>

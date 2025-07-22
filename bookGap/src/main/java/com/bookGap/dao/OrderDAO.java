@@ -29,4 +29,12 @@ public class OrderDAO {
     return sqlSession.selectList(name_space + "findAddressListByUserId", userId);
   }
 
+  public void addAddress(UserAddressVO address) {
+    sqlSession.insert(name_space + "addAddress", address);
+  }
+
+  public void deleteAddress(int userAddressId) {
+    sqlSession.delete(name_space + "deleteAddress", userAddressId);
+  }
+
 }
