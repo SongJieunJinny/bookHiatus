@@ -327,73 +327,79 @@
 <script>
 Kakao.init('56c7bb3d435c0c4f0d2b67bfa7d4407e');
 
-
-// 카카오 로그인 버튼 클릭 이벤트
 document.getElementById("kakaoLogin").addEventListener("click", function () {
-  // 자동 로그인 방지: 남아있는 토큰 초기화
-  if (Kakao.Auth.getAccessToken()) {
-    Kakao.Auth.setAccessToken(null);
-  }
+	  Kakao.Auth.setAccessToken(null); 
 
-  Kakao.Auth.login({
-    scope: 'profile_nickname',
-    success: function (authObj) {
-      Kakao.API.request({
-        url: '/v2/user/me',
-        success: function (res) {
-          const kakaoId = res.id;
-          const nickname = res.kakao_account.profile.nickname;
-          const accessToken = authObj.access_token;
+	  Kakao.Auth.login({
+	    scope: 'profile_nickname',
+	    throughTalk: false,
+	    persistAccessToken: false,
+	    success: function (authObj) {
 
-          fetch('${pageContext.request.contextPath}/kakaoLoginCallback.do', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ kakaoId, nickname, accessToken})
-          })
-          .then(res => res.json())
-          .then(result => {
-            if (result.status === 'success') {
-              alert("로그인에 성공하셨습니다.");
-              window.location.href = "<%=request.getContextPath()%>/";
-            } else {
-              alert("로그인에 실패하셨습니다.");
-            }
-          });
-        },
-        fail: function (error) {
-          alert("사용자 정보 요청 실패");
-        }
-      });
-    },
-    fail: function (err) {
-      alert("카카오 로그인 실패");
-    }
-  });
-});
+	      Kakao.API.request({
+	        url: '/v2/user/me',
+	        success: function (res) {
 
-function kakaoLogout() {
-	  fetch('${pageContext.request.contextPath}/kakaoServerLogout.do', {
-	    method: 'POST',
-	    headers: { 'Content-Type': 'application/json' }
-	  })
-	  .then(res => res.json())
-	  .then(result => {
-	    console.log(result.message || result);
-	    window.location.href = '${pageContext.request.contextPath}' + result.redirect;
-	  })
-	  .catch(err => {
-	    console.error("카카오 서버 로그아웃 실패:", err);
-	    window.location.href = '${pageContext.request.contextPath}/logout.do';
+	          const kakaoId = res.id;
+	          const nickname = res.kakao_account.profile.nickname;
+	          const accessToken = authObj.access_token;
+
+	          fetch('${pageContext.request.contextPath}/kakaoLoginCallback.do', {
+	            method: 'POST',
+	            headers: { 'Content-Type': 'application/json' },
+	            body: JSON.stringify({ kakaoId, nickname, accessToken })
+	          })
+	          .then(res => res.json())
+	          .then(result => {
+	            console.log("로그인  서버 응답:", result);
+	            if (result.status === 'success') {
+	              alert("로그인에 성공하셨습니다.");
+	              window.location.href = "<%=request.getContextPath()%>/";
+	            } else {
+	              alert("로그인에 실패하셨습니다.");
+	            }
+	          });
+	        },
+	        fail: function (error) {
+	          console.error("로그인 사용자 정보 요청 실패:", error);
+	          alert("사용자 정보 요청에  실패하셨습니다.");
+	        }
+	      });
+	    },
+	    fail: function (err) {
+	      console.error("로그인 카카오 로그인 실패:", err);
+	      alert("카카오 로그인에  실패하셨습니다.");
+	    }
 	  });
-	}
-
-	document.addEventListener("DOMContentLoaded", function () {
-	  const logoutBtn = document.getElementById("kakaoLogoutBtn");
-	  if (logoutBtn) {
-	    logoutBtn.addEventListener("click", function (e) {
-	      e.preventDefault();
-	      kakaoLogout();
-	    });
-	  }
 	});
+function kakaoLogout() {
+  fetch('<%=request.getContextPath()%>/kakaoServerLogout.do', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' }
+  })
+  .then(() => {
+    Kakao.Auth.setAccessToken(null); // SDK 토큰 제거
+
+    const clientId = '56c7bb3d435c0c4f0d2b67bfa7d4407e';
+    const redirectUri = window.location.origin + '<%=request.getContextPath()%>/';
+
+    window.location.href =
+      'https://kauth.kakao.com/oauth/logout?client_id=' + clientId +
+      '&logout_redirect_uri=' + encodeURIComponent(redirectUri);
+  })
+  .catch(err => {
+    console.error("[LOGOUT] 에러:", err);
+    window.location.href = '<%=request.getContextPath()%>/';
+  });
+}
+	
+document.addEventListener("DOMContentLoaded", function () {
+  const logoutBtn = document.getElementById("kakaoLogoutBtn");
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", function (e) {
+      e.preventDefault();
+      kakaoLogout(); 
+    });
+  }
+});
 </script>
