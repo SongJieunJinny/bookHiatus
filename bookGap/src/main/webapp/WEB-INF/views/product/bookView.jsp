@@ -53,7 +53,7 @@
 							<button  id="bookChartBtn">장바구니</button>
 						</div>
 						<div>
-							<button id="bookOrderBtn">바로구매</button>
+							<button id="bookOrderBtn" type="button" data-isbn="${bookDetail.isbn}">바로구매</button>
 						</div>
 					</div>
 				</div>
@@ -567,75 +567,49 @@ document.addEventListener("DOMContentLoaded", function() {
 
 $(document).ready(function() {
 
-    // --- 장바구니 버튼 클릭 이벤트 ---
-    $("#bookChartBtn").on("click", function(event) {
-        event.preventDefault();
+  // --- 장바구니 버튼 클릭 이벤트 ---
+  $("#bookChartBtn").on("click", function(event) {
+    event.preventDefault();
 
-        let quantity = parseInt($(".num").val()) || 1;
-        let cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
-        if (!Array.isArray(cartItems)) {
-            cartItems = Object.values(cartItems).filter(item => typeof item === 'object');
-        }
+    let quantity = parseInt($(".num").val()) || 1;
+    let cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
+    if (!Array.isArray(cartItems)) {
+        cartItems = Object.values(cartItems).filter(item => typeof item === 'object');
+    }
 
-        const newItem = {
-            id: "${bookDetail.isbn}",
-            title: "${bookDetail.title}",
-            price: Number("${bookPrice}"),
-            image: "${bookDetail.image}",
-            quantity: quantity
-        };
+    const newItem = { id: "${bookDetail.isbn}",
+							        title: "${bookDetail.title}",
+							        price: Number("${bookPrice}"),
+							        image: "${bookDetail.image}",
+							        quantity: quantity };
 
-        let existingItem = cartItems.find(item => item.id === newItem.id);
-        if (existingItem) {
-            existingItem.quantity += quantity;
-        } else {
-            cartItems.push(newItem);
-        }
+    let existingItem = cartItems.find(item => item.id === newItem.id);
+    if(existingItem){
+      existingItem.quantity += quantity;
+    }else{
+      cartItems.push(newItem);
+    }
 
-        localStorage.setItem("cartItems", JSON.stringify(cartItems));
-        updateCartCount();
+    localStorage.setItem("cartItems", JSON.stringify(cartItems));
+    updateCartCount();
 
-        if (confirm("장바구니 페이지로 이동하시겠습니까?")) {
-            window.location.href = "<%= request.getContextPath() %>/product/cart.do";
-        }
-    });
-
-    // --- '바로구매' 버튼 클릭 이벤트 ---
-    $("#bookOrderBtn").on("click", function(event) {
-        event.preventDefault();
-
-        // 1. 로그인 상태 확인
-        if (!userId || userId === 'anonymousUser') {
-            if (confirm("로그인이 필요한 서비스입니다. 로그인 페이지로 이동하시겠습니까?")) {
-                window.location.href = "<%= request.getContextPath() %>/login.do";
-            }
-            return;
-        }
-
-        // 2. 수량과 ISBN 값 가져오기
-        const quantity = $(".num").val();
-        const isbn = "${bookDetail.isbn}"; // 이제 이 시점에서는 JSP 값이 확실히 존재합니다.
-
-        // 3. ISBN 유효성 검사
-        if (!isbn || isbn.trim() === '') {
-            alert("오류: 상품 정보를 가져올 수 없습니다. 페이지를 새로고침 해주세요.");
-            return;
-        }
-
-        // 4. 주문 페이지로 이동
-        window.location.href = `/controller/order/orderMain.do?isbn=${isbn}&quantity=${quantity}`;
-    });
+    if (confirm("장바구니 페이지로 이동하시겠습니까?")) {
+      window.location.href = "<%= request.getContextPath() %>/product/cart.do";
+    }
+  });
 
 });
 </script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
+  const openLoginModalLink = document.getElementById('openLoginModal');
+  const loginModal = document.getElementById('loginModal');
+  const closeButton = document.getElementById('closeLoginModal');
   const contextPath = '<%= request.getContextPath() %>';
 
   document.querySelectorAll(".toggle-btn").forEach(function (btn) {
     const targetId = btn.getAttribute("data-target");
     const target = document.getElementById(targetId);
-
     if (!target) return;
     if (target.scrollHeight <= 160) {
       btn.style.display = "none";
@@ -654,12 +628,10 @@ document.addEventListener("DOMContentLoaded", function () {
   	    const onTransitionEnd = () => {
   	      target.removeEventListener("transitionend", onTransitionEnd);
 
-  	      // 한 프레임 쉬고 실행 (레이아웃 안정화)
   	      requestAnimationFrame(() => {
   	        btn.scrollIntoView({ behavior: "smooth", block: "center" });
   	      });
   	    };
-
   	    target.addEventListener("transitionend", onTransitionEnd);
   	  }
   	});
@@ -667,7 +639,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	function setToggleButton(button, isExpanded, contextPath) {
 	  button.innerHTML = "";
-	
 	  const label = document.createElement("span");
 	  label.textContent = isExpanded ? "접기" : "펼쳐보기";
 	  label.style.display = "inline-block";
@@ -681,14 +652,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	  iconImg.style.verticalAlign = "middle";
 	  button.appendChild(iconImg);
   }
-});
-</script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  const openLoginModalLink = document.getElementById('openLoginModal');
-  const loginModal = document.getElementById('loginModal');
-  const closeButton = document.getElementById('closeLoginModal');
-
+	
   if(openLoginModalLink){
     openLoginModalLink.addEventListener('click', function(event) {
       event.preventDefault();
@@ -713,6 +677,35 @@ document.addEventListener('DOMContentLoaded', function() {
 	    }
 	  });
   }
+});
+
+$(document).ready(function() {
+	$("#bookOrderBtn").on("click", function(event) {
+	  event.preventDefault(); // 페이지 이동을 잠시 막습니다.
+	  
+	  const userId = '<sec:authentication property="name"/>'; 
+
+	  if(!userId || userId === 'anonymousUser'){
+	    alert("로그인 후 이용 가능합니다.");
+	    
+	    const loginModal = document.getElementById('loginModal');
+	    
+	    if(loginModal){
+	      loginModal.classList.add('show');
+	    }
+	    return;
+	  }
+	
+	  const isbn = $(this).data("isbn");
+	  const quantity = $(".num").val();
+	  if (!isbn || !quantity || parseInt(quantity) < 1) {
+	      alert("오류: 상품 정보나 수량을 가져올 수 없습니다. 페이지를 새로고침 해주세요.");
+	      return; // 값이 없으면 여기서 실행을 멈춥니다.
+	  }
+	  const contextPath = '<%= request.getContextPath() %>';
+	  
+	  window.location.href = `${contextPath}/controller/order/orderMain.do?isbn=${isbn}&quantity=${quantity}`;
+	});
 });
 </script>
 </body>
