@@ -8,6 +8,7 @@
 <head>
 	<meta charset="UTF-8">
 	<title>index</title>
+	<link rel="icon" href="data:,">
 	<script src="<%=request.getContextPath()%>/resources/js/jquery-3.7.1.js"></script>
 	<link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/resources/css/index.css"/>
 <style>

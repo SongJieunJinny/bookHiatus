@@ -42,12 +42,12 @@ public class KakaoLoginController {
 
 	    // 1차 조회: 카카오 ID 기준
 	    UserInfoVO user = userService.findByKakaoId(kakaoId);
-	    System.out.println("kakaoId 조회 결과: " + user);
+	    //System.out.println("kakaoId 조회 결과: " + user);
 
 	    if (user == null) {
 	        // 2차 조회: 혹시 userId로도 존재하는 경우
 	        user = userService.findById(userId);
-	        System.out.println("userId 조회 결과: " + user);
+	        //System.out.println("userId 조회 결과: " + user);
 	        
 	        if (user == null) {
 	            // 신규 회원 등록
@@ -86,39 +86,36 @@ public class KakaoLoginController {
 	}
 	
 	
-	@PostMapping("/kakaoServerLogout.do")
-	@ResponseBody
-	public Map<String, Object> kakaoServerLogout(HttpSession session) {
-	    String accessToken = (String) session.getAttribute("KAKAO_ACCESS_TOKEN");
-	    String url = "https://kapi.kakao.com/v1/user/logout";
+    @PostMapping("/kakaoServerLogout.do")
+    @ResponseBody
+    public Map<String, Object> kakaoServerLogout(HttpSession session) {
+        String accessToken = (String) session.getAttribute("KAKAO_ACCESS_TOKEN");
+        String url = "https://kapi.kakao.com/v1/user/unlink";
+        Map<String, Object> result = new HashMap<>();
 
-	    Map<String, Object> result = new HashMap<>();
+        if (accessToken != null && !accessToken.isEmpty()) {
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "Bearer " + accessToken);
+            HttpEntity<String> entity = new HttpEntity<>(headers);
 
-	    if (accessToken == null || accessToken.isEmpty()) {
-	        result.put("status", "fail");
-	        result.put("message", "AccessToken 없음");
-	        return result;
-	    }
+            RestTemplate restTemplate = new RestTemplate();
+            try {
+                restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
+                result.put("message", "카카오 계정 연결 해제 완료");
+            } catch (Exception e) {
+                result.put("message", "카카오 unlink 실패: " + e.getMessage());
+            }
+        }
 
-	    HttpHeaders headers = new HttpHeaders();
-	    headers.set("Authorization", "Bearer " + accessToken);
-	    HttpEntity<String> entity = new HttpEntity<>(headers);
+        // Spring Security 세션 초기화
+        SecurityContextHolder.clearContext();
+        session.invalidate();
 
-	    RestTemplate restTemplate = new RestTemplate();
-	    try {
-	        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
-	        result.put("status", "success");
-	        result.put("message", "카카오 서버 로그아웃 완료: " + response.getBody());
-	    } catch (Exception e) {
-	        result.put("status", "fail");
-	        result.put("message", "카카오 서버 로그아웃 실패: " + e.getMessage());
-	    }
-
-	    // 토큰 제거 후 Spring Security 로그아웃
-	    session.removeAttribute("KAKAO_ACCESS_TOKEN");
-	    result.put("redirect", "/logout.do");  // 클라이언트에서 Spring Security 로그아웃으로 리다이렉트
-	    return result;
-	}
+        result.put("status", "success");
+        // 로그아웃 후 Spring Security logout 처리 URL로 리디렉션
+        result.put("redirect", "/logout.do");
+        return result;
+    }
 
 	
 	
