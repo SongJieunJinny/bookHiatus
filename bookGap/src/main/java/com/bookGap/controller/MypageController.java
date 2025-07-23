@@ -112,21 +112,24 @@ public class MypageController {
     	System.out.println(" POST /user/mypageInfo.do 호출됨"); 
     	MypageVO mypageUser = (MypageVO) session.getAttribute("LOGIN_USER");
     	if (mypageUser == null) { 
-    		System.out.println(" 세션 정보 없음. 본인확인 필요"); return "redirect:/mypage.do"; 
-    		} vo.setUserId(mypageUser.getUserId()); // 보안상 세션에서 ID 설정 
-    		int result = mypageService.userUpdate(vo); 
-    		if (result > 0) { 
-    			System.out.println("사용자 정보 수정 성공"); 
-    			MypageVO updatedUser = mypageService.getUserById(vo.getUserId()); 
-    			session.setAttribute("LOGIN_USER", updatedUser); 
-    			model.addAttribute("user", updatedUser); // 성공 시도 새 정보 반영 
-    			model.addAttribute("message", "정보가 성공적으로 수정되었습니다."); 
-    			} else { 
-    				System.out.println(" 사용자 정보 수정 실패"); 
-    				model.addAttribute("error", "정보 수정에 실패했습니다."); 
-    				model.addAttribute("user", vo); // 입력값 유지 
-    				} return "redirect:/"; 
-    			}
+    		System.out.println(" 세션 정보 없음. 본인확인 필요"); 
+    		return "redirect:/mypage.do"; 
+    	}
+		vo.setUserId(mypageUser.getUserId()); // 보안상 세션에서 ID 설정 
+		int result = mypageService.userUpdate(vo); 
+		if (result > 0) { 
+			System.out.println("사용자 정보 수정 성공"); 
+			MypageVO updatedUser = mypageService.getUserById(vo.getUserId()); 
+			session.setAttribute("LOGIN_USER", updatedUser); 
+			model.addAttribute("user", updatedUser); // 성공 시도 새 정보 반영 
+			model.addAttribute("message", "정보가 성공적으로 수정되었습니다."); 
+			} else { 
+				System.out.println(" 사용자 정보 수정 실패"); 
+				model.addAttribute("error", "정보 수정에 실패했습니다."); 
+				model.addAttribute("user", vo); // 입력값 유지 
+			} 
+			return "redirect:/"; 
+    	}
     	
     
 
