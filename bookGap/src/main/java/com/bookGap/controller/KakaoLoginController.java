@@ -57,7 +57,7 @@ public class KakaoLoginController {
 	            user.setKakaoId(kakaoId);
 	            user.setOauthProvider("kakao");
 	            user.setUserEnabled(true);
-	            user.setUserAuthority("ROLE_USER");
+	            user.setUserAuthority("ROLE_USER_KAKAO");
 	            user.setUserState(1);
 
 	            userService.insertKakaoUser(user);

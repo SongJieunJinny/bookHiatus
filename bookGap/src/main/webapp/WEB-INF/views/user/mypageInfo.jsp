@@ -242,7 +242,7 @@
           return;
       }
       alert('정보수정이 완료되었습니다!');
-      window.location.href = "./myInfo.html";
+      window.location.href = "<%=request.getContextPath()%>/user/mypageInfo.do";
     });
 
     $('#myInfoCancelBtn').click(function() {

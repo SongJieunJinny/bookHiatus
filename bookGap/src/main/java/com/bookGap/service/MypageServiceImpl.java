@@ -38,4 +38,11 @@ public class MypageServiceImpl implements MypageService{
 		return mypageDAO.userPwUpdate(mypageVO);
 	}
 	
+	 @Override
+	    public int updateKakaoUser(MypageVO mypageVO) {
+	        System.out.println("[Service] updateKakaoUser 호출됨");
+	        System.out.println("[Service] VO 데이터: " + mypageVO);
+	        return mypageDAO.updateKakaoUser(mypageVO);
+	    }
+	
 }

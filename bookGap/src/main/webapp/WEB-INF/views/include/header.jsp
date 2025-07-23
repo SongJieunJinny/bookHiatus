@@ -109,14 +109,20 @@
 			    </a>
 			  </div>
 			</sec:authorize> 
-			
-			<sec:authorize access="!hasRole('ROLE_ADMIN')">
-			 <!-- 일반 사용자일 경우: 마이페이지 아이콘 -->
-			<div id="menuMypage" class="menuItem">
-			   <a href="<%=request.getContextPath()%>/mypage.do">
-			     <img id="mypageImg" src="<%=request.getContextPath()%>/resources/img/icon/edit.png" alt="마이페이지">
-			   </a>
-			 </div>
+			<sec:authorize access="hasRole('ROLE_USER_KAKAO')">
+			  <div id="menuMypage" class="menuItem">
+			    <a href="<%=request.getContextPath()%>/user/mypageInfo.do">
+			      <img id="mypageImg" src="<%=request.getContextPath()%>/resources/img/icon/edit.png" alt="마이페이지">
+			    </a>
+			  </div>
+			</sec:authorize>
+			<!-- 일반 로그인 사용자 (ROLE_USER) -->
+			<sec:authorize access="hasRole('ROLE_USER') and !hasRole('ROLE_USER_KAKAO')">
+			  <div id="menuMypage" class="menuItem">
+			    <a href="<%=request.getContextPath()%>/mypage.do">
+			      <img id="mypageImg" src="<%=request.getContextPath()%>/resources/img/icon/edit.png" alt="마이페이지">
+			    </a>
+			  </div>
 			</sec:authorize>
 			<div id="menuCart" class="menuItem">
 		      <a href="<%=request.getContextPath()%>/product/cart.do"><img id="cartImg" src="<%=request.getContextPath()%>/resources/img/icon/cart.png"></a>
@@ -388,7 +394,7 @@ function kakaoLogout() {
       '&logout_redirect_uri=' + encodeURIComponent(redirectUri);
   })
   .catch(err => {
-    console.error("[LOGOUT] 에러:", err);
+    console.error("로그아웃 에러:", err);
     window.location.href = '<%=request.getContextPath()%>/';
   });
 }
