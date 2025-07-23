@@ -4,22 +4,24 @@
 <mapper namespace="com.bookGap.mapper.orderMapper">
   <!-- 상품 정보 조회 --> 
 	<select id="findBookByIsbn" parameterType="string" resultType="com.bookGap.vo.BookVO">
-		SELECT title,     -- 상품명
-			     image,     -- 대표 이미지
-			     discount,  -- 할인가 (실제 판매 가격)
-				   BOOK_NO                AS bookNo,
-				   BOOK_RDATE             AS bookRdate,
-				   BOOK_TRANS             AS bookTrans,
-				   BOOK_STOCK             AS bookStock,
-				   BOOK_STATE             AS bookState,
-				   BOOK_CATEGORY          AS bookCategory,
-				   isbn,
-				   BOOK_IMGURL            AS bookImgUrl,
-				   BOOK_INDEX             AS bookIndex,
-				   PUBLISHER_BOOK_REVIEW  AS publisherBookReview,
-				   COMMENT_COUNT          AS commentCount
-			FROM BOOK
-		 WHERE isbn = #{isbn}
+		SELECT pa.title,     -- 상품명
+			     pa.image,     -- 대표 이미지
+			     pa.discount,  -- 할인가 (실제 판매 가격)
+				   b.BOOK_NO                AS bookNo,
+				   b.BOOK_RDATE             AS bookRdate,
+				   b.BOOK_TRANS             AS bookTrans,
+				   b.BOOK_STOCK             AS bookStock,
+				   b.BOOK_STATE             AS bookState,
+				   b.BOOK_CATEGORY          AS bookCategory,
+				   b.isbn,
+				   b.BOOK_IMGURL            AS bookImgUrl,
+				   b.BOOK_INDEX             AS bookIndex,
+				   b.PUBLISHER_BOOK_REVIEW  AS publisherBookReview,
+   (SELECT COUNT(*) FROM COMMENT c WHERE c.isbn = b.isbn) AS commentCount
+			FROM BOOK b
+			JOIN PRODUCT_API pa 
+			  ON b.isbn = pa.isbn
+		 WHERE b.isbn = #{isbn}
 	</select>
 	
 	<!-- 사용자의 기본 배송지 정보 조회 --> 

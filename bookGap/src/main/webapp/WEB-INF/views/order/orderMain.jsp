@@ -241,10 +241,10 @@ $(document).ready(function () {
 										       roadAddress: $("#address").val(),
 										       detailAddress: $("#addressDetail").val() };
 		
-		if(!newAddressData.addressName || !newAddressData.userName || !newAddressData.postCode){
-		  alert("배송지 이름, 받는 사람, 주소는 필수입니다.");
-		  return;
-		}
+		if(!newAddressData.addressName || !newAddressData.userName || !newAddressData.userPhone || !newAddressData.postCode){
+	    alert("배송지 이름, 받는 사람, 연락처, 주소는 필수 항목입니다.");
+	    return; // 함수 실행 중단
+	  }
 
 		$.ajax({
 	    type: "POST",
@@ -256,7 +256,8 @@ $(document).ready(function () {
 	         alert("새 배송지가 추가되었습니다.");  // 성공 시, 페이지를 새로고침하여 목록을 갱신합니다.
 	         location.reload(); 
 	    	 }else{
-	         alert("주소 추가에 실패했습니다. 오류: " + response);
+	         alert("주소 추가에 실패했습니다.");
+	         console.log("주소 추가에 실패했습니다. 오류: " + response);
 	       }
 			},
 	    error: function (xhr) {
