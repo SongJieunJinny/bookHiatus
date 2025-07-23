@@ -28,17 +28,4 @@ public class MypageDAO {
 		return sqlSession.update(name_space+"userPwUpdate",mypageVO);
 	}
 	
-	  public int updateKakaoUser(MypageVO mypageVO) {
-	        System.out.println("[DAO] updateKakaoUser 호출됨");
-	        System.out.println("[DAO] 파라미터: userId=" + mypageVO.getUserId()
-	            + ", kakaoId=" + mypageVO.getKakaoId()
-	            + ", userName=" + mypageVO.getUserName()
-	            + ", userPhone=" + mypageVO.getUserPhone()
-	            + ", userEmail=" + mypageVO.getUserEmail());
-	        
-	        int rows = sqlSession.update(name_space + "updateKakaoUser", mypageVO);
-	        System.out.println("[DAO] update 결과: " + rows + "건 수정됨");
-	        return rows;
-	    }
-	
 }

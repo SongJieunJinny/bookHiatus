@@ -15,6 +15,5 @@ public interface MypageService {
     
    // 사용자 비밀번호 변경
     int userPwUpdate(MypageVO mypageVO);
-    // 카카오 사용자 정보 변경 (비밀번호 제외)
-    int updateKakaoUser(MypageVO mypageVO); 
+
 }

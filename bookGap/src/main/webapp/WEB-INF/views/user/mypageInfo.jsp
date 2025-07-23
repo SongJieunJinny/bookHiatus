@@ -105,6 +105,7 @@
 	            </div>
 	          </div>
 	        </div>
+	        <sec:authorize access="hasRole('ROLE_USER')">
 	        <div id="changePw">
 	          <button id="changePwBtn" type="button" onclick="openPwChangeModal();">Change PW</button>
 	          <!-- 에러 메시지 출력 -->
@@ -119,6 +120,7 @@
 						  </script>
 						</c:if>
 	        </div>
+	        </sec:authorize>
 	      </div>
 	      <div id="myInfoEnd">
 	        <div id="myInfoBtnDiv">

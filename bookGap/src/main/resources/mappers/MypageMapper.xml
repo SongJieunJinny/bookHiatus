@@ -35,12 +35,5 @@
 		 WHERE USER_ID = #{userId}
 	</update>
 	
-		<update id="updateKakaoUser" parameterType="com.bookGap.vo.MypageVO">
-		     UPDATE USER
-			    SET USER_NAME = #{userName},
-			        USER_PHONE = #{userPhone},
-			        USER_EMAIL = #{userEmail}
-			    WHERE USER_ID = #{userId} 
-	</update>
 
 </mapper>
