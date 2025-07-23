@@ -106,7 +106,7 @@
 	          </div>
 	        </div>
 	        <sec:authorize access="hasRole('ROLE_USER')">
-	        <div id="changePw">
+	        <div id="changePw"> 
 	          <button id="changePwBtn" type="button" onclick="openPwChangeModal();">Change PW</button>
 	          <!-- 에러 메시지 출력 -->
 					  <c:if test="${not empty error || not empty message}">

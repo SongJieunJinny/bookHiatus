@@ -13,7 +13,7 @@ public class MypageVO {
 	private String detailAddress; //배송지주소(상세주소)
 	private String oauthProvider; // 로그인 제공자
 	private String kakaoId;   
-	
+	 
 	public String getKakaoId() {
 		return kakaoId;
 	}

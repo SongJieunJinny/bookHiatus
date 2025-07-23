@@ -108,7 +108,7 @@
 			      <img id="mypageImg" src="<%=request.getContextPath()%>/resources/img/icon/setting.png" alt="설정">
 			    </a>
 			  </div>
-			</sec:authorize> 
+			</sec:authorize>  
 			<sec:authorize access="hasRole('ROLE_USER_KAKAO')">
 			  <div id="menuMypage" class="menuItem">
 			    <a href="<%=request.getContextPath()%>/user/mypageInfo.do">

@@ -11,7 +11,7 @@
 	<link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/resources/css/index.css"/>
 	<link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/resources/css/user/mypage.css"/>
 </head>
-<body>
+<body> 
   <!-- header part -->
 	<jsp:include page="/WEB-INF/views/include/header.jsp" />
   <section>
