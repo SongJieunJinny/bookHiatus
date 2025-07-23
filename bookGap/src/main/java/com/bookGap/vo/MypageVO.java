@@ -11,7 +11,25 @@ public class MypageVO {
 	private int postCode; //배송지주소(우편번호)
 	private String roadAddress; //배송지주소(도로명주소)
 	private String detailAddress; //배송지주소(상세주소)
+	private String oauthProvider; // 로그인 제공자
+	private String kakaoId;   
 	
+	public String getKakaoId() {
+		return kakaoId;
+	}
+
+	public void setKakaoId(String kakaoId) {
+		this.kakaoId = kakaoId;
+	}
+
+	public String getOauthProvider() {
+		return oauthProvider;
+	}
+
+	public void setOauthProvider(String oauthProvider) {
+		this.oauthProvider = oauthProvider;
+	}
+
 	@Override
 	public String toString() {
 		return "MypageVO [userId=" + userId + ", userPw=" + userPw + ", userName=" + userName + ", userPhone="

@@ -9,5 +9,6 @@ public interface UserService {
 	UserInfoVO findByKakaoId(String kakaoId);
 	void insertKakaoUser(UserInfoVO user);
 	UserInfoVO findById(String userId);
+	
 
 }
