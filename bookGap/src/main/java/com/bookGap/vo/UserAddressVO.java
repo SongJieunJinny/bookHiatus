@@ -59,11 +59,10 @@ public class UserAddressVO {
   public void setUserName(String userName) {
     this.userName = userName;
   }
-  public String getPhone() {
+  public String getUserPhone() {
     return userPhone;
   }
-  public void setPhone(String phone) {
+  public void setUserPhone(String userPhone) {
     this.userPhone = userPhone;
   }
-  
 }

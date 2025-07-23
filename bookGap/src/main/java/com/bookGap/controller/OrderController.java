@@ -1,9 +1,9 @@
 package com.bookGap.controller;
 
+import java.security.Principal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.web.bind.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.bookGap.service.OrderService;
 import com.bookGap.vo.BookVO;
 import com.bookGap.vo.UserAddressVO;
-import com.bookGap.vo.UserVO;
 
 @RequestMapping(value="/order")
 @Controller
@@ -32,22 +31,24 @@ public class OrderController {
 	
 	@GetMapping("/orderMain.do")
   public String orderMain(@RequestParam(value = "isbn", required = false) String isbn,
-                          @AuthenticationPrincipal UserVO user, Model model, 
-                          @RequestParam(value = "quantity", defaultValue = "1") int quantity) {
+                          @RequestParam(value = "quantity", defaultValue = "1") int quantity,
+                          Principal principal, Model model) {
 
-	  if(user == null){
+	  // 로그인하지 않은 사용자는 주소 정보 없이 페이지만 보여줌
+	  if(principal == null){
       model.addAttribute("book", null);
       model.addAttribute("quantity", 0);
       model.addAttribute("defaultAddress", null);
       model.addAttribute("addressList", null);
       return "order/orderMain";
     }
-
-    String userId = user.getUsername();
+	  
+	  // 로그인한 사용자의 ID를 가져옴
+    String userId = principal.getName();
     
     BookVO book = null;
-    if (isbn != null && !isbn.isEmpty()) {
-        book = orderService.getBookByIsbn(isbn);
+    if(isbn != null && !isbn.isEmpty()){
+      book = orderService.getBookByIsbn(isbn);
     }
 
     UserAddressVO defaultAddress = orderService.getDefaultAddress(userId);
@@ -63,15 +64,25 @@ public class OrderController {
 
 	@PostMapping("/addAddress.do")
 	@ResponseBody // 페이지 이동 없이 데이터만 반환
-	public String addAddress(@RequestBody UserAddressVO addressVO, @AuthenticationPrincipal UserVO user) {
-    try{
-      addressVO.setUserId(user.getUsername()); // 현재 로그인한 사용자 ID 설정
-      orderService.addAddress(addressVO); // 서비스에 주소 추가 로직 호출
+	public String addAddress(@RequestBody UserAddressVO addressVO, Principal principal) {
+	  if(principal != null){
+      String loginId = principal.getName();
+      System.out.println("### 서버가 인식한 로그인 ID: [" + loginId + "]"); 
+      addressVO.setUserId(loginId);
+    }else{
+      System.out.println("### 경고: Principal 객체가 null입니다. 로그인 상태가 아닙니다.");
+      return "FAIL: NOT_LOGGED_IN"; // 여기서 처리를 중단.
+    }
+	  
+	  try{
+      orderService.addAddress(addressVO);
       return "SUCCESS";
     }catch(Exception e){
+      System.out.println("### 데이터베이스 저장 실패! 전달된 VO 정보: " + addressVO.toString()); 
+      e.printStackTrace();
       return "FAIL: " + e.getMessage();
     }
-	}
+  }
 	
 	@PostMapping("/deleteAddress.do")
 	@ResponseBody
