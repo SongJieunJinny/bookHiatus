@@ -88,7 +88,7 @@ public class MypageController {
 	    model.addAttribute("error", "사용자 정보를 찾을 수 없습니다.");
 	    return "user/mypage";
 	  }
-	
+	 
 	  //비밀번호 비교 (암호화된 비밀번호 비교)
 	  if (!passwordEncoder.matches(inputPw, vo.getUserPw())) {
 	    //System.out.println(" 비밀번호 불일치");

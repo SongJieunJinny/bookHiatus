@@ -37,5 +37,5 @@ public class MypageServiceImpl implements MypageService{
 	public int userPwUpdate(MypageVO mypageVO) {
 		return mypageDAO.userPwUpdate(mypageVO);
 	}
-	
+	 
 }

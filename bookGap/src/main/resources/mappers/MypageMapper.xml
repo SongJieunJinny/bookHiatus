@@ -34,6 +34,6 @@
 			 SET USER_PW = #{userPw}
 		 WHERE USER_ID = #{userId}
 	</update>
-	
+	 
 
 </mapper>
