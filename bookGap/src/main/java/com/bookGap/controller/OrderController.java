@@ -26,7 +26,7 @@ public class OrderController {
 	
 	@GetMapping("/orderDetails.do")
 	public String orderDetails() {
-		return "/orderDetails";
+		return "order/orderDetails";
 	}
 	
 	@GetMapping("/orderMain.do")
