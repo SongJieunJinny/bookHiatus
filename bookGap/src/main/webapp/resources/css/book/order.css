@@ -241,7 +241,6 @@ section{
 }
 .deliveryContainer, .requestContainer{
   display: flex;
-  align-items: center;
   width: 80%;
   margin: 15px auto;
   gap: 15px; 
@@ -253,7 +252,7 @@ section{
   font-weight: bold;
 }
 .orderMainDelivery{
-	margin-bottom: 30px;
+	margin : 7px 0px 30px 0px;
 }
 
 .deliveryAddress, .orderMainRequestInput {
@@ -628,9 +627,12 @@ font-size: 13px;
   border-bottom: solid 2px;
   border-color: black;
 }
+.agree4Div, .agree2Div{
+	text-align: center;
+}
  .guideText {
   margin-top: 5%;
-  width: 100%;
+  width: 400px;
   height: auto;
   background-color: #f9f9f9;
   border: 1px solid #ddd;
@@ -639,6 +641,9 @@ font-size: 13px;
   color: #333;
   border-radius: 4px;
   display: none;
+}
+.guideText.expanded {
+  display: block;
 }
 #guidePrivacyText{
   margin-top: 5%;
@@ -664,4 +669,5 @@ font-size: 13px;
 	display: inline-flex;
 	align-items: center;
 	gap: 4px;
+	margin: 0px 0px 5px 0px;
 }

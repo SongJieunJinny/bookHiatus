@@ -13,7 +13,7 @@
 </head>
 <body>
   <!-- header part -->
-  <div id="header"></div>
+  <jsp:include page="/WEB-INF/views/include/header.jsp" />
   <section>
   <form action="joinOk.do" method="post">
     <div id="navJoin">
@@ -49,17 +49,15 @@
           <div id="userAddressCode">
             <span id="titlePost">POST NO</span>
             <div id="userAddressCodeDiv">
-              <input id="userAddressCodeInput" name="userAddressCode" type="text">
+              <input id="userAddressCodeInput" name="postCode" type="text" readonly>
               <input id="userAddressCodeButton" name="userAddressButton" type="button" value="검색">
             </div>
           </div>
           <div id="userAddress">
-            <div id="userAddressDiv1">
               <span id="titleAddress">ADDRESS</span>
-              <input id="userAddress1Input" name="userAddress1" type="text">
-            </div>
-            <div id="userAddressDiv2">
-              <input id="userAddress2Input" name="userAddress2" type="text">
+            <div id="userAddressDiv">
+              <input id="userAddress1Input" name="roadAddress" type="text" readonly><p style="margin:1%;"></p>
+              <input id="userAddress2Input" name="detailAddress" type="text" placeholder="상세주소 입력">
             </div>
           </div>
         </div>
@@ -74,20 +72,15 @@
     </form>
   </section>
   <!-- footer part -->
-  <div id="footer"></div>
+  <jsp:include page="/WEB-INF/views/include/footer.jsp" />
     <!-- 카카오 주소 검색 API 추가 -->
   <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 	<script>
 	$(document).ready(function () {
-		// 헤더 & 푸터 로드
-		$("#header").load("<%= request.getContextPath() %>/include/header", function () {
-			updateCartCount(); // 장바구니 개수 업데이트
-			initHeaderEvents();		
-		});
-		$("#footer").load("<%= request.getContextPath() %>/include/footer");
-	});
-		
-  // 장바구니 개수 업데이트 함수
+		updateCartCount(); // 장바구니 개수 업데이트
+    initHeaderEvents();
+  });
+  
 	function updateCartCount() {
 		let cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
 		let cartCount = cartItems.length;
@@ -104,9 +97,9 @@
     new daum.Postcode({
       oncomplete: function (data) {
       // 선택한 주소 정보를 입력 필드에 넣기
-        $("#userAddressCodeInput").val(data.zonecode); // 우편번호
-        $("#userAddress1Input").val(data.address); // 기본 주소
-        $("#userAddress2Input").focus(); // 상세주소 입력란에 포커스 이동
+    	  $("#userAddressCodeInput").val(data.zonecode);
+        $("#userAddress1Input").val(data.roadAddress); // API v2에서는 address 대신 roadAddress 사용 권장
+        $("#userAddress2Input").focus(); 
       }
     }).open();
   });

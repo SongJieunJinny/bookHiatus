@@ -6,6 +6,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.bookGap.vo.UserAddressVO;
 import com.bookGap.vo.UserInfoVO;
 
 @Repository
@@ -20,6 +21,10 @@ public class UserDAO {
 		return sqlSession.insert(name_space+"insertUser", userInfoVO);
 	}
 	
+	public int insertUserAddress(UserAddressVO userAddressVO) {
+    return sqlSession.insert(name_space + "insertUserAddress", userAddressVO);
+  }
+
 	public  List<UserInfoVO> selectAllUser() {
 		return sqlSession.selectList(name_space + "selectAllUser");
 	}
