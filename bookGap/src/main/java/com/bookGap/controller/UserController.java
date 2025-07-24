@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.bookGap.vo.UserAddressVO;
 import com.bookGap.vo.UserInfoVO;
 import com.bookGap.service.UserService;
 
@@ -24,8 +25,9 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/joinOk.do", method = RequestMethod.POST)
-	public String joinOk(UserInfoVO userInfoVO) {
+	public String joinOk(UserInfoVO userInfoVO, UserAddressVO userAddressVO) {
 	  System.out.println("USER_ID: " + userInfoVO.getUserId());
+	  System.out.println("Address PostCode: " + userAddressVO.getPostCode());
 
 	  if (userInfoVO.getUserPw() == null || userInfoVO.getUserPw().isEmpty()) {
 	    System.out.println("🚨 오류: 비밀번호가 null이거나 비어 있습니다!");
@@ -34,18 +36,17 @@ public class UserController {
 
 	  // 정상적으로 비밀번호가 존재하면 암호화 진행
 	  epwe = new BCryptPasswordEncoder();
-	  String encodedPassword = epwe.encode(userInfoVO.getUserPw());
-	  userInfoVO.setUserPw(encodedPassword);
-	  System.out.println("암호화된 비밀번호: " + encodedPassword);
+    String encodedPassword = epwe.encode(userInfoVO.getUserPw());
+    userInfoVO.setUserPw(encodedPassword);
 
-	  int result = userService.insertUser(userInfoVO);
+    boolean isSuccess = userService.joinUserAndAddress(userInfoVO, userAddressVO);
 
-	  if (result > 0) {
-        System.out.println("✅ 회원가입 성공");
-	  }else{
-	    System.out.println("🚨 회원가입 실패");
-	  }
-
+    if(isSuccess){
+      System.out.println("✅ 회원가입 및 주소 등록 성공");
+    }else{
+      System.out.println("🚨 회원가입 실패");
+      return "redirect:/join.do"; 
+    }
 	  return "redirect:/";
 	}
 

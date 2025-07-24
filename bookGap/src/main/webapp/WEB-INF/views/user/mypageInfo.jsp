@@ -96,13 +96,11 @@
 	            </div>
 	          </div>
 	          <div id="userAddress">
-	            <div id="userAddressDiv1">
-	              <span id="titleAddress">ADDRESS</span>
-	              <input id="userAddress1Input" name="roadAddress" value="${user.roadAddress}" type="text">
-	            </div>
-	            <div id="userAddressDiv2">
-	              <input id="userAddress2Input" name="detailAddress" value="${user.detailAddress}" type="text">
-	            </div>
+	            <span id="titleAddress">ADDRESS</span>
+	          <div id="userAddressDiv">
+	            <input id="userAddress1Input" name="roadAddress" value="${user.roadAddress}" type="text"><p style="margin:1%;"></p>
+	            <input id="userAddress2Input" name="detailAddress" value="${user.detailAddress}" type="text">
+	          </div>
 	          </div>
 	        </div>
 	        <sec:authorize access="hasRole('ROLE_USER')">

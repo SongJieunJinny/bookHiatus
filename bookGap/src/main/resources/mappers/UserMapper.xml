@@ -31,26 +31,47 @@
 	
 	<insert id="insertUser" parameterType="userInfoVO">
 		INSERT INTO USER (
-			   USER_ID 
-			  ,USER_PW
-			  ,USER_ENABLED 
-			  ,USER_AUTHORITY 
-			  ,USER_NAME 
-			  ,USER_PHONE 
-			  ,USER_EMAIL 
-			  ,USER_JOIN_DATE
-			) 
-			VALUES (
-			 #{userId}
-			,#{userPw}
-			,1
-			,'ROLE_USER'
-			,#{userName}
-			,#{userPhone}
-			,#{userEmail}
-			,now()
+		  USER_ID 
+		 ,USER_PW
+		 ,USER_ENABLED 
+		 ,USER_AUTHORITY 
+		 ,USER_NAME 
+		 ,USER_PHONE 
+		 ,USER_EMAIL 
+		 ,USER_JOIN_DATE
+		) VALUES (
+		 #{userId}
+		,#{userPw}
+		,1
+		,'ROLE_USER'
+		,#{userName}
+		,#{userPhone}
+		,#{userEmail}
+		,now()
 			);
 	</insert>
+	
+	<insert id="insertUserAddress" parameterType="com.bookGap.vo.UserAddressVO">
+	  INSERT INTO USER_ADDRESS (
+	    ADDRESS_NAME
+	   ,POST_CODE
+	   ,ROAD_ADDRESS
+	   ,DETAIL_ADDRESS
+	   ,IS_DEFAULT
+	   ,USER_ID
+	   ,USER_NAME
+	   ,USER_PHONE
+	  ) VALUES (
+	    '기본 배송지'     <!-- 회원가입시 첫 주소이므로 '기본 배송지'로 고정 -->
+	   ,#{postCode}
+	   ,#{roadAddress}
+	   ,#{detailAddress}
+	   ,1                <!-- 기본 배송지로 설정 (1=기본) -->
+	   ,#{userId}
+	   ,#{userName}
+	   ,#{userPhone}
+	  )
+  </insert>
 	
 	<select id="selectAllUser" resultMap="userInfoResultMap">
 		SELECT USER_ID, 
