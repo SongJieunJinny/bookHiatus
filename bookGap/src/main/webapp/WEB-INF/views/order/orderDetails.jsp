@@ -10,7 +10,7 @@
 <title>orderDetails</title>
 <script src="<%=request.getContextPath()%>/resources/js/jquery-3.7.1.js"></script>
 <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/resources/css/index.css"/>
-<link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/resources/css/book/order"/>
+<link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/resources/css/book/order.css"/>
 </head>
 <body>
 <jsp:include page="/WEB-INF/views/include/header.jsp" />

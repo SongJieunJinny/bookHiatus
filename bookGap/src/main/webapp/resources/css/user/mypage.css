@@ -1,5 +1,15 @@
 @charset "UTF-8";
-
+*{
+  box-sizing: border-box;   /* ✨ 전역 설정: 요소 크기 계산 안정화 */
+}
+body{
+  font-size: clamp(14px, 2vw, 18px); /* ✨ 글자 크기 유동적으로 */
+}
+section{
+  width: 90%;
+  height: auto;
+  margin: 2% 5% 0% 5%;
+}
 /* mypage part */
 #navMypage{
 	width: 100%;
