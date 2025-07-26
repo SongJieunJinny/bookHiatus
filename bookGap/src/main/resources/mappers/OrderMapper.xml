@@ -2,6 +2,67 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
 			"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.bookGap.mapper.orderMapper">
+	<!-- BookVO에 대응하는 resultMap -->
+	<resultMap id="BookResultMap" type="com.bookGap.vo.BookVO">
+	  <id property="bookNo" column="BOOK_NO"/><!-- BOOK 테이블 -->
+	  <result property="bookRdate" column="BOOK_RDATE"/>
+	  <result property="bookTrans" column="BOOK_TRANS"/>
+	  <result property="bookStock" column="BOOK_STOCK"/>
+	  <result property="bookState" column="BOOK_STATE"/>
+	  <result property="bookCategory" column="BOOK_CATEGORY"/>
+	  <result property="bookImgUrl" column="BOOK_IMGURL"/>
+	  <result property="bookIndex" column="BOOK_INDEX"/>
+	  <result property="publisherBookReview" column="PUBLISHER_BOOK_REVIEW"/>
+	  
+	  <result property="isbn" column="isbn"/><!-- PRODUCT_API 테이블 -->
+	  <result property="title" column="title"/>
+	  <result property="discount" column="discount"/>
+	  <result property="pubdate" column="pubdate"/>
+	  <result property="publisher" column="publisher"/>
+	  <result property="author" column="author"/>
+	  <result property="description" column="description"/>
+	  <result property="link" column="link"/>
+	  <result property="image" column="image"/>
+	</resultMap>
+
+	<!-- OrderDetailVO에 대응하는 resultMap -->
+  <resultMap id="OrderDetailResultMap" type="com.bookGap.vo.OrderDetailVO">
+	  <id property="orderDetailNo" column="ORDER_DETAIL_NO"/>
+	  <result property="orderCount" column="ORDER_COUNT"/>
+	  <result property="orderPrice" column="ORDER_PRICE"/>
+	  <result property="refundCheck" column="REFUND_CHECK"/>
+	  <result property="bookNo" column="BOOK_NO"/>
+	  <result property="orderId" column="ORDER_ID"/>
+	  <association property="book" resultMap="BookResultMap"/>
+  </resultMap>
+
+	<!-- OrderVO에 대응하는 resultMap -->
+  <resultMap id="OrderResultMap" type="com.bookGap.vo.OrderVO">
+	  <id property="orderId" column="ORDER_ID"/>
+	  <result property="orderDate" column="ORDER_DATE"/>
+	  <result property="orderStatus" column="ORDER_STATUS"/>
+	  <result property="totalPrice" column="TOTAL_PRICE"/>
+	  <result property="orderType" column="ORDER_TYPE"/>
+	  <result property="userId" column="USER_ID"/>
+	  <collection property="orderDetails" ofType="com.bookGap.vo.OrderDetailVO" resultMap="OrderDetailResultMap"/>
+  </resultMap>
+
+  <select id="getOrdersByUserId" parameterType="string" resultMap="OrderResultMap">
+	  SELECT o.ORDER_ID, o.ORDER_DATE, o.ORDER_STATUS, o.TOTAL_PRICE, o.ORDER_TYPE, o.USER_ID,
+           od.ORDER_DETAIL_NO, od.ORDER_COUNT, od.ORDER_PRICE, od.REFUND_CHECK, od.BOOK_NO,
+           b.BOOK_NO, b.BOOK_RDATE, b.BOOK_TRANS, b.BOOK_STOCK, b.BOOK_STATE, b.BOOK_CATEGORY, b.BOOK_IMGURL, b.BOOK_INDEX, b.PUBLISHER_BOOK_REVIEW,
+           p.isbn, p.title, p.discount, p.pubdate, p.publisher, p.author, p.description, p.link, p.image
+			FROM ORDERS o
+			JOIN ORDER_DETAIL od
+				ON o.ORDER_ID = od.ORDER_ID
+			JOIN BOOK b
+				ON od.BOOK_NO = b.BOOK_NO
+			JOIN PRODUCT_API p
+				ON b.isbn = p.isbn
+		 WHERE o.USER_ID = #{userId}
+		 ORDER BY o.ORDER_DATE DESC
+	</select>
+    
   <!-- 상품 정보 조회 --> 
 	<select id="findBookByIsbn" parameterType="string" resultType="com.bookGap.vo.BookVO">
 		SELECT pa.title,     -- 상품명

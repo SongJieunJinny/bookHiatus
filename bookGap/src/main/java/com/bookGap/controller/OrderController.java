@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.bookGap.service.OrderService;
 import com.bookGap.vo.BookVO;
+import com.bookGap.vo.OrderVO;
 import com.bookGap.vo.UserAddressVO;
 
 @RequestMapping(value="/order")
@@ -24,10 +25,20 @@ public class OrderController {
   @Autowired
   private OrderService orderService;
 	
-	@GetMapping("/orderDetails.do")
-	public String orderDetails() {
-		return "order/orderDetails";
-	}
+  @GetMapping("/orderDetails.do")
+  public String orderDetails(Principal principal, Model model) {
+    if(principal == null){
+      model.addAttribute("orderList", null); // 비로그인 시
+      return "order/orderDetails";
+    }
+  
+    String userId = principal.getName();
+
+    List<OrderVO> orderList = orderService.getOrdersByUserId(userId);
+    model.addAttribute("orderList", orderList);
+  
+    return "order/orderDetails";
+  }
 	
 	@GetMapping("/orderMain.do")
   public String orderMain(@RequestParam(value = "isbn", required = false) String isbn,
