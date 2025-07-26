@@ -9,6 +9,8 @@ import com.bookGap.vo.UserAddressVO;
 public interface OrderService {
   public BookVO getBookByIsbn(String isbn);
   
+  public List<BookVO> getBooksByIsbnList(List<String> isbns);
+  
   public UserAddressVO getDefaultAddress(String userId);
   
   public List<UserAddressVO> getAddressListByUserId(String userId);
