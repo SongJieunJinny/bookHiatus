@@ -62,6 +62,21 @@
 		 WHERE o.USER_ID = #{userId}
 		 ORDER BY o.ORDER_DATE DESC
 	</select>
+	
+	<!-- 여러 개의 isbn을 리스트로 받아 해당 도서 목록을 조회 -->
+	<select id="selectBooksByIsbnList" resultType="com.bookGap.vo.BookVO" parameterType="java.util.List">
+  SELECT pa.title, pa.image, pa.discount,
+	       b.BOOK_NO AS bookNo, b.BOOK_RDATE AS bookRdate, b.BOOK_TRANS AS bookTrans,
+	       b.BOOK_STOCK AS bookStock, b.BOOK_STATE AS bookState, b.BOOK_CATEGORY AS bookCategory,
+	       b.isbn, b.BOOK_IMGURL AS bookImgUrl, b.BOOK_INDEX AS bookIndex,
+	       b.PUBLISHER_BOOK_REVIEW AS publisherBookReview
+    FROM BOOK b
+    JOIN PRODUCT_API pa ON b.isbn = pa.isbn
+   WHERE b.isbn IN
+    <foreach item="isbnItem" collection="list" open="(" separator="," close=")">
+      #{isbnItem}
+    </foreach>
+  </select>
     
   <!-- 상품 정보 조회 --> 
 	<select id="findBookByIsbn" parameterType="string" resultType="com.bookGap.vo.BookVO">

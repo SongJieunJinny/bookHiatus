@@ -71,24 +71,26 @@
 			    <div class="orderMainTableTitle">ORDER DETAILS</div>
 			    <div class="orderDetailLayout">
 			      <c:choose>
-			        <c:when test="${book != null}">
+			        <c:when test="${not empty orderItems}"><%-- orderItems 리스트가 비어있지 않은 경우 (장바구니 또는 단일 주문 성공) --%>
+			          <c:forEach var="item" items="${orderItems}"><%-- forEach를 사용하여 리스트의 모든 상품을 반복 출력 --%>
 			          <div class="orderDetail">
 			            <div class="orderDetailDiv">
-			              <input type="hidden" id="orderIsbn" value="${book.isbn}">
-			              <input type="hidden" id="orderQuantity" value="${quantity}">
-			              <img class="orderImg" src="${book.image}" alt="${book.title}">
+			              <input type="hidden" class="orderItemIsbn" value="${item.book.isbn}">
+                    <input type="hidden" class="orderItemQuantity" value="${item.quantity}">
+			              <img class="orderImg" src="${item.book.image}" alt="${item.book.title}">
 			              <div class="orderDetails">
-			                <div class="orderDetailsTitle">${book.title}</div>
-			                <div class="orderDetailsContainer">
-			                  <span class="orderCount">${quantity}개</span>
+			                <div class="orderDetailsTitle">${item.book.title}</div>
+                      <div class="orderDetailsContainer">
+			                  <span class="orderCount">${item.quantity}개</span>
 			                  <span class="orderSlash">/</span>
 			                  <span class="orderPrice">
-			                    <fmt:formatNumber value="${book.discount * quantity}" pattern="#,###" />원
+			                    <fmt:formatNumber value="${item.book.discount * item.quantity}" pattern="#,###" />원
 			                  </span>
 			                </div>
 			              </div>
 			            </div>
 			          </div>
+			          </c:forEach>
 			        </c:when>
 			        <c:otherwise>
 			          <div style="padding: 20px; text-align: center; color: #666;">
@@ -337,11 +339,28 @@ $(document).ready(function () {
       return;
     }
   	
-    let orderData = { userAddressId: selectedAddress.data("address-id"),
-								      orderPrice: parseInt($('.finalPaymentPrice').text().replace(/[^0-9]/g, '')),
-								      deliveryFee: parseInt($('.deliveryFee').text().replace(/[^0-9]/g, '')),
-								      items: [ { isbn: $("#orderIsbn").val(), quantity: $("#orderQuantity").val() } ] };
+  	let orderItems = [];
+    $("#orderDetailSection .orderDetail").each(function() {
+	    let isbn = $(this).find(".orderItemIsbn").val();
+	    let quantity = $(this).find(".orderItemQuantity").val();
+	    if(isbn && quantity){
+	      orderItems.push({ 
+	        isbn: isbn, 
+	        quantity: parseInt(quantity) 
+	      });
+	    }
+    });
+    
+    if (orderItems.length === 0) {
+	    alert("주문할 상품 정보가 없습니다. 페이지를 새로고침 해주세요.");
+	    return;
+    }
 
+    let orderData = { userAddressId: selectedAddress.data("address-id"),
+					            orderPrice: parseInt($('.finalPaymentPrice').text().replace(/[^0-9]/g, '')),
+					            deliveryFee: parseInt($('.deliveryFee').text().replace(/[^0-9]/g, '')),
+					            items: orderItems };
+    
     console.log("결제 요청 데이터:", orderData);
     alert("이제 이 데이터를 가지고 실제 결제 API 연동을 진행하거나, 서버에 주문 정보를 저장합니다.");
 

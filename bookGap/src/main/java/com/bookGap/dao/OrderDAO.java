@@ -22,6 +22,10 @@ public class OrderDAO {
     return sqlSession.selectOne(name_space + "findBookByIsbn", isbn);
   }
 
+  public List<BookVO> selectBooksByIsbnList(List<String> isbns) {
+    return sqlSession.selectList(name_space + "selectBooksByIsbnList", isbns);
+  }
+  
   public UserAddressVO findDefaultAddressByUserId(String userId) {
     return sqlSession.selectOne(name_space + "findDefaultAddressByUserId", userId);
   }

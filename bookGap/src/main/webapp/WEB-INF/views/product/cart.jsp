@@ -109,20 +109,20 @@
 </script>
 <script>
 function getCartItemsFromLocalStorage() {
-	  const raw = localStorage.getItem("cartItems");
-	  let cartItems = [];
-	  try {
-	    const parsed = JSON.parse(raw);
-	    if (Array.isArray(parsed)) {
-	      cartItems = parsed;
-	    } else if (typeof parsed === 'object' && parsed !== null) {
-	      cartItems = Object.values(parsed).filter(item => typeof item === 'object');
-	    }
-	  } catch (e) {
-	    console.error("localStorage 파싱 오류", e);
-	  }
-	  return cartItems;
-	}
+  const raw = localStorage.getItem("cartItems");
+  let cartItems = [];
+  try {
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) {
+      cartItems = parsed;
+    } else if (typeof parsed === 'object' && parsed !== null) {
+      cartItems = Object.values(parsed).filter(item => typeof item === 'object');
+    }
+  } catch (e) {
+    console.error("localStorage 파싱 오류", e);
+  }
+  return cartItems;
+}
 
 function updateCartCount() {
 	  let cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
@@ -427,28 +427,43 @@ $(document).ready(function () {
 
 	  // 주문 버튼 클릭
 	  $("#orderBtn").on("click", function () {
-	    const selectedCount = $(".cartItemCheckbox:checked").length;
-	    if (selectedCount < 1) {
+	    // selectedCount -> selectedItems로 변수명을 수정하고, 먼저 선언합니다.
+	    const selectedItems = $(".cartItemCheckbox:checked"); 
+
+	    if (selectedItems.length < 1) { // .length로 개수를 확인합니다.
 	      alert("주문할 상품을 선택해주세요.");
 	      return;
 	    }
 
 	    if (typeof isLoggedIn !== "undefined" && isLoggedIn) {
-	      // 로그인 상태 → 주문 페이지 이동
-		    const quantity = $(".num").val();
-		    const isbn = "${bookDetail.isbn}"; // ISBN
-		
-		    window.location.href = `/controller/order/orderMain.do?isbn=${isbn}&quantity=${quantity}`;
+        // --- 로그인 상태: 선택된 상품 정보를 URL로 만들기 ---
+        let params = []; 
+
+        // 위에서 선언한 selectedItems 변수를 사용합니다.
+        selectedItems.each(function() {
+            const item = $(this).closest(".cartItem");
+            const isbn = item.data("id");
+            const quantity = item.find(".num").val();
+            
+            params.push("isbns=" + encodeURIComponent(isbn));
+            params.push("quantities=" + encodeURIComponent(quantity));
+        });
+        
+        const contextPath = '<%= request.getContextPath() %>';
+        const queryString = params.join('&');
+        const finalUrl = contextPath + "/order/orderMain.do?" + queryString;
+        
+        window.location.href = finalUrl;
+
 	    } else {
-	      // 비로그인 상태 → 모달 열기
+	      // 비로그인 상태
+	      alert("로그인이 필요합니다.");
 	      const menuLogin = document.getElementById("menuLogin");
 	      if (menuLogin) {
 	        menuLogin.click();
-	      } else {
-	        alert("로그인 모달을 열 수 없습니다.");
 	      }
 	    }
-	  });
+		});
 	});
 </script>
 <script>		
