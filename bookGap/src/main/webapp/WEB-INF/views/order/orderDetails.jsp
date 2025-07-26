@@ -40,67 +40,63 @@
             <input class="orderDateButton" type="button" value="조회">
           </div>                      
         </div>
-        <div class="orderMsg">취소신청은 배송완료일 기준 7일 까지 가능합니다.</div>
-      </div>
+        <div class="orderMsg">조회할 기간을 선택해주세요.</div>
+      </div><br>
       <div id="orderDetailsEnd">
-        <!--주문내용1-->
-        <div class="orderPayComplDiv">
-          <img class="orderPayComplImg" src="인생의의미.jpg">
-          <div class="orderPayCompl">
-            <div class="orderPayComplInfoDiv1">
-              <div class="orderPayDate">2025-03-20</div>
-              <div class="orderPayComplInfo">[인문]인생의 의미 | 1부 </div>
-              <div class="orderPayComplInfo">토마스 힐란드 에릭센 저자  |  이영래 번역  |  더퀘스트 출판</div>
-              <div class="orderPayComplInfo">18,800원 + 배송비 3,000원 = 21,800원</div>
-            </div>
-            <div class="orderPayComplInfoDiv2">
-              <div class="orderPayComplInfo2">배송완료</div>
-            </div>
-          </div>                        
-        </div>
-        <!--주문내용2-->
-        <div class="orderPayComplDiv">
-          <img class="orderPayComplImg" src="더인간적인건축.jpg">
-          <div class="orderPayCompl">
-            <div class="orderPayComplInfoDiv1">
-              <div class="orderPayDate">2025-03-01</div>
-              <div class="orderPayComplInfo">[인문]더 인간적인 건축 | 1부 </div>
-              <div class="orderPayComplInfo">토마스 헤더윅 저자  |  알에이치코리아 출판</div>
-              <div class="orderPayComplInfo">30,000원 + 배송비 3,000원 = 33,000원</div>
-            </div>
-            <div class="orderPayComplInfoDiv2">
-              <div class="orderPayComplInfo2">배송완료</div>
-            </div>
-          </div>                        
-        </div>
-        <!--주문내용3-->
-        <div class="orderPayComplDiv">
-          <img class="orderPayComplImg" src="소년이온다.jpg">
-          <div class="orderPayCompl">
-            <div class="orderPayComplInfoDiv1">
-              <div class="orderPayDate">2024-12-14</div>
-              <div class="orderPayComplInfo">[소설]소년이 온다 | 1부 </div>
-              <div class="orderPayComplInfo">한강 저자  |  한강 출판</div>
-              <div class="orderPayComplInfo">15,000원 + 배송비 3,000원 = 18,000원</div>
-            </div>
-            <div class="orderPayComplInfoDiv2">
-              <div class="orderPayComplInfo2">배송완료</div>
-            </div>
-          </div>                        
-        </div>
-        <!--페이징-->
-        <div class="paging">
-          <ul class="pagination">
-              <li class="disabled"><a href="#">«</a></li>
-              <li class="active"><a href="#">1</a></li>
-              <li><a href="#">2</a></li>
-              <li><a href="#">3</a></li>
-              <li><a href="#">4</a></li>
-              <li><a href="#">5</a></li>
-              <li><a href="#">»</a></li>
-          </ul>
-        </div> 
+        <c:choose>
+	        <c:when test="${empty orderList}"><%-- orderList가 비어있거나, "주문 내역이 없습니다" 메시지를 여기에 직접 표시할 수 있다. --%>
+	        </c:when>
+          <c:otherwise>
+            <c:forEach var="order" items="${orderList}">  <%-- orderList에 데이터가 있는 경우, 반복문 실행 --%>
+							<c:forEach var="detail" items="${order.orderDetails}">  <%-- MyBatis의 resultMap 덕분에 OrderVO 안에 OrderDetailVO 리스트가 들어있다. --%>
+				        <!--주문내용-->
+				        <div class="orderPayComplDiv">
+				          <img class="orderPayComplImg" src="${detail.book.image}" alt="${detail.book.title}">
+				          <div class="orderPayCompl">
+				            <div class="orderPayComplInfoDiv1">
+				              <div class="orderPayDate">
+				              	<%-- 날짜 포맷팅 --%>
+				                <fmt:formatDate value="${order.orderDate}" pattern="yyyy-MM-dd" />
+				                (주문번호: ${order.orderId})
+				              </div>
+				              <div class="orderPayComplInfo">[${detail.book.bookCategory}] ${detail.book.title}</div>
+				              <div class="orderPayComplInfo">${detail.book.author} 저자 | ${detail.book.bookTrans} 번역 | ${detail.book.publisher} 출판</div>
+				              <div class="orderPayComplInfo"> <fmt:formatNumber value="${detail.orderPrice}" pattern="#,###" />원 (수량: ${detail.orderCount}개)</div>
+				            </div>
+				            <div class="orderPayComplInfoDiv2">
+				              <div class="orderPayComplInfo2">
+				              	<%-- 주문 상태 표시 --%>
+				                <c:choose>
+					                <c:when test="${order.orderStatus == 1}">배송준비중</c:when>
+					                <c:when test="${order.orderStatus == 2}">배송중</c:when>
+					                <c:when test="${order.orderStatus == 3}">배송완료</c:when>
+					                <c:when test="${order.orderStatus == 4}">주문취소</c:when>
+					                <c:when test="${order.orderStatus == 5}">교환/반품</c:when>
+					                <c:otherwise>상태미정</c:otherwise>
+				                </c:choose>
+				              </div>
+				            </div>
+				          </div>                        
+				        </div>
+							</c:forEach>
+            </c:forEach>
+          </c:otherwise>
+        </c:choose>
       </div>
+      <!--페이징-->
+      <c:if test="${not empty orderList and fn:length(orderList) > 3}">
+	      <div class="paging">
+	        <ul class="pagination">
+		        <li class="disabled"><a href="#">«</a></li>
+		        <li class="active"><a href="#">1</a></li>
+		        <li><a href="#">2</a></li>
+		        <li><a href="#">3</a></li>
+		        <li><a href="#">4</a></li>
+		        <li><a href="#">5</a></li>
+		        <li><a href="#">»</a></li>
+	        </ul>
+	      </div>
+      </c:if>
     </div>
   </section>
 <jsp:include page="/WEB-INF/views/include/footer.jsp" />
@@ -121,83 +117,97 @@
 		}
 	}
 </script>
-  <script>
-    $(document).ready(function () {
-      // 페이지 로드 시 모든 주문 내용을 숨기기
-      $(".orderPayComplDiv").hide();
-      function updateDateRange(value) {
-        let today = new Date();
-        let startDate = new Date(today.getTime()); // 새로운 객체 복사
+<script>
+$(document).ready(function () {
+	// 날짜를 기준으로 주문을 필터링하고 결과를 표시하는 함수
+  function filterAndDisplayOrders() {
+    let startDateString = $("#orderDateStart").val();
+    let endDateString = $("#orderDateLast").val();
 
-        if (value === "오늘") {
-          startDate = new Date(today.getTime());
-        } else if (value === "1주일") {
-          startDate.setDate(today.getDate() - 7);
-        } else if (value === "1개월") {
-          startDate.setMonth(today.getMonth() - 1);
-        } else if (value === "3개월") {
-          startDate.setMonth(today.getMonth() - 3);
-        }
+    // 날짜가 하나라도 설정되지 않았다면 함수 종료
+    if(!startDateString || !endDateString){
+	    $(".orderPayComplDiv").show();
+	    $(".orderMsg").hide(); // 날짜가 없을땐 메시지를 숨겨야함
+	    return;
+	  }
 
-        let todayStr = today.toISOString().split("T")[0];
-        let startDateStr = startDate.toISOString().split("T")[0];
+    let startDate = new Date(startDateString);
+    let endDate = new Date(endDateString);
+    // 종료 날짜의 시간을 23:59:59로 설정하여 해당일 전체를 포함하도록 함
+    endDate.setHours(23, 59, 59, 999);
 
-        console.log("클릭된 버튼:", value);
-        console.log("시작 날짜:", startDateStr);
-        console.log("오늘 날짜:", todayStr);
+    let foundOrders = 0;
+    $(".orderPayComplDiv").hide(); // 우선 모든 주문내역을 숨김
 
-        $("#orderDateStart").val(startDateStr);
-        $("#orderDateLast").val(todayStr);
+    $(".orderPayComplDiv").each(function () {
+    	let dateText = $(this).find(".orderPayDate").text().trim().split('(')[0].trim();
+      let orderDate = new Date(dateText);
+
+      // 주문 날짜가 선택된 범위 내에 있는지 확인
+      if(orderDate >= startDate && orderDate <= endDate){
+        $(this).show(); // 조건에 맞으면 표시
+        foundOrders++;
       }
-
-      $(".orderWeekButton").hover(
-        function () {
-          $(this).css("background-color", "black").css("color", "white");
-        },
-        function () {
-          if (!$(this).hasClass("selected")) {
-            $(this).css("background-color", "white").css("color", "black");
-          }
-        }
-      );
-
-      $(".orderWeekButton").click(function () {
-        $(".orderWeekButton")
-          .removeClass("selected")
-          .css("background-color", "white")
-          .css("color", "black");
-        $(this).addClass("selected").css("background-color", "black").css("color", "white");
-
-        updateDateRange($(this).val());
-      });
-
-      // 페이지 로드시 날짜 자동 설정 안 함
-      $("#orderDateStart").val("");
-      $("#orderDateLast").val("");
-
-      // 조회 버튼 클릭 이벤트
-      $(".orderDateButton").click(function () {
-        let startDate = new Date($("#orderDateStart").val());
-        let endDate = new Date($("#orderDateLast").val());
-
-        console.log("조회 시작 날짜:", startDate);
-        console.log("조회 종료 날짜:", endDate);
-
-        // 모든 주문 내용을 숨기기
-        $(".orderPayComplDiv").hide();
-
-        // 날짜 범위에 맞는 주문 내용만 표시
-        $(".orderPayComplDiv").each(function () {
-          let orderDate = new Date($(this).find(".orderPayDate").text());
-          console.log("주문 날짜:", orderDate);
-
-          // orderPayDate가 범위 내에 있으면 표시
-          if (orderDate >= startDate && orderDate <= endDate) {
-            $(this).show();
-          }
-        });
-      });
     });
-  </script>
+
+    // 조회된 주문이 있으면 메시지를 숨기고, 없으면 '주문내역이 없습니다'를 표시
+    if(foundOrders > 0){
+      $(".orderMsg").hide();
+    }else{
+      $(".orderMsg").text("해당 기간의 주문내역이 없습니다.").show();
+    }
+  }
+
+  // 날짜 범위를 설정하는 함수
+  function updateDateRange(value) {
+    let today = new Date();
+    let startDate = new Date(today.getTime()); // 새로운 객체 복사
+    
+    const cleanValue = value.trim(); 
+
+    if(value === "오늘"){
+      startDate = new Date(today.getTime());
+    }else if(value === "1주일"){
+      startDate.setDate(today.getDate() - 7);
+    }else if(value === "1개월"){
+      startDate.setMonth(today.getMonth() - 1);
+    }else if(value === "3개월"){
+      startDate.setMonth(today.getMonth() - 3);
+    }
+
+    let todayStr = today.toISOString().split("T")[0];
+    let startDateStr = startDate.toISOString().split("T")[0];
+
+    console.log("클릭된 버튼:", value);
+    console.log("시작 날짜:", startDateStr);
+    console.log("오늘 날짜:", todayStr);
+
+    $("#orderDateStart").val(startDateStr);
+    $("#orderDateLast").val(todayStr);
+  }
+  
+  //페이지 로드 시 초기 상태 설정
+  $("#orderDateStart").val("");
+  $("#orderDateLast").val("");
+  $(".orderMsg").hide(); // 메시지만 숨깁니다.
+  if($(".orderPayComplDiv").length === 0){
+      $(".orderMsg").text("주문내역이 없습니다.").show();
+  }
+
+  //기간 버튼에 대한 호버(hover) 이벤트
+  $(".orderWeekButton").hover(
+	  function() { $(this).css({backgroundColor: "black", color: "white"}); },
+	  function() { if (!$(this).hasClass("selected")) $(this).css({backgroundColor: "white", color: "black"}); }
+	);
+  
+	$(".orderWeekButton").click(function () {
+	  $(".orderWeekButton").removeClass("selected").css({backgroundColor: "white", color: "black"});
+	  $(this).addClass("selected").css({backgroundColor: "black", color: "white"});
+	  updateDateRange($(this).val());
+	});
+	
+	$(".orderDateButton").click(filterAndDisplayOrders);
+});
+</script>
 </body>
 </html>

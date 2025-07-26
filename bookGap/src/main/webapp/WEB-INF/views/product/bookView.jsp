@@ -704,7 +704,7 @@ $(document).ready(function() {
 	  }
 	  const contextPath = '<%= request.getContextPath() %>';
 	  
-	  window.location.href = `${contextPath}/controller/order/orderMain.do?isbn=${isbn}&quantity=${quantity}`;
+	  window.location.href = contextPath + "/order/orderMain.do?isbn=" + isbn + "&quantity=" + quantity;
 	});
 });
 </script>

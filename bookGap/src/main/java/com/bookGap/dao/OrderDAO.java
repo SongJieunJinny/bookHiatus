@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.bookGap.vo.BookVO;
+import com.bookGap.vo.OrderVO;
 import com.bookGap.vo.UserAddressVO;
 
 @Repository
@@ -35,6 +36,10 @@ public class OrderDAO {
 
   public void deleteAddress(int userAddressId) {
     sqlSession.delete(name_space + "deleteAddress", userAddressId);
+  }
+  
+  public List<OrderVO> getOrdersByUserId(String userId) {
+    return sqlSession.selectList(name_space + "getOrdersByUserId", userId);
   }
 
 }

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.bookGap.dao.OrderDAO;
 import com.bookGap.vo.BookVO;
+import com.bookGap.vo.OrderVO;
 import com.bookGap.vo.UserAddressVO;
 
 @Service
@@ -38,6 +39,11 @@ public class OrderServiceImpl implements OrderService {
   @Override
   public void deleteAddress(int userAddressId) {
     orderDAO.deleteAddress(userAddressId);
+  }
+
+  @Override
+  public List<OrderVO> getOrdersByUserId(String userId) {
+    return orderDAO.getOrdersByUserId(userId);
   }
 
 }
