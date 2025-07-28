@@ -21,7 +21,7 @@ import com.bookGap.vo.SearchVO;
 @Controller
 public class BookController {
 	@Autowired
-	public BookService bookService;
+	public BookService bookService; 
 	
 	@RequestMapping(value = "product/bookList.do", method = RequestMethod.GET)
 	public String bookList(@RequestParam(required = false) String category,

@@ -580,13 +580,15 @@ document.addEventListener("DOMContentLoaded", function() {
   const plusBtn = document.querySelector(".plus");
   const numInput = document.querySelector(".num");
   const totalPrice = document.getElementById("totalPrice");
-  const unitPrice = ${bookDetail.discount};
-  const maxStock = ${bookDetail.bookStock}; // 재고 수량 가져오기
+
+  // 숫자로 직접 JSP 값 주입 (따옴표 없이)
+  const unitPrice = ${bookDetail.discount != null ? bookDetail.discount : 0};
+  const maxStock = ${bookDetail.bookStock != null ? bookDetail.bookStock : 0};
 
   function updateTotalPrice() {
     let qty = parseInt(numInput.value) || 1;
     if (qty < 1) qty = 1;
-    if (qty > maxStock) qty = maxStock; // 재고 초과 방지
+    if (qty > maxStock) qty = maxStock;
     numInput.value = qty;
     totalPrice.textContent = (unitPrice * qty).toLocaleString() + "원";
   }
@@ -600,11 +602,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
   plusBtn.addEventListener("click", () => {
     const current = parseInt(numInput.value) || 1;
-    if (current < maxStock) { // 재고보다 작을 때만 증가
+    if (current < maxStock) {
       numInput.value = current + 1;
       updateTotalPrice();
     } else {
-      alert(`재고는 최대 ${maxStock}권까지 구매 가능합니다.`);
+    	alert("도서는 최대 " + maxStock + "권까지 구매 가능합니다.");
     }
   });
 
@@ -613,7 +615,7 @@ document.addEventListener("DOMContentLoaded", function() {
     let value = parseInt(numInput.value) || 1;
     if (value < 1) value = 1;
     if (value > maxStock) {
-      alert(`재고는 최대 ${maxStock}권까지 구매 가능합니다.`);
+    	alert("도서는 최대 " + maxStock + "권까지 구매 가능합니다.");
       value = maxStock;
     }
     numInput.value = value;
@@ -702,7 +704,6 @@ function syncLocalCartToDB() {
       count: i.quantity || i.count || 1
     }));
 
-<<<<<<< HEAD
   return $.ajax({
     url: contextPath + "/product/syncCart.do",
     type: "POST",
@@ -832,7 +833,7 @@ $(document).ready(function () {
 	    }
 	    return;
 	  }
-	
+	 
 	  const isbn = $(this).data("isbn");
 	  const quantity = $(".num").val();
 	  if (!isbn || !quantity || parseInt(quantity) < 1) {
@@ -844,7 +845,6 @@ $(document).ready(function () {
 	  window.location.href = contextPath + "/order/orderMain.do?isbn=" + isbn + "&quantity=" + quantity;
 	});
 
-});
 </script>
 </body>
 </html>
