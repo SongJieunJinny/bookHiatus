@@ -24,6 +24,7 @@
 		<typeAlias type="com.bookGap.vo.PaymentVO" alias="PaymentVO"/>
 		<typeAlias type="com.bookGap.vo.OrderVO" alias="OrderVO"/>
 		<typeAlias type="com.bookGap.vo.OrderDetailVO" alias="OrderDetailVO"/>
+		<typeAlias type="com.bookGap.vo.CartVO" alias="CartVO"/>
 	</typeAliases>
 
 </configuration>

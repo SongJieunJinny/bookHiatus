@@ -13,6 +13,12 @@
 <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/resources/css/book/bookView.css?v=2"/>
 </head>
 <body>
+<sec:authorize access="isAuthenticated()">
+  <script>const isLoggedIn = true;</script>
+</sec:authorize>
+<sec:authorize access="isAnonymous()">
+  <script>const isLoggedIn = false;</script>
+</sec:authorize>
 	<jsp:include page="/WEB-INF/views/include/header.jsp" />
 	<c:choose>
 	  <c:when test="${not empty bookDetail.discount and bookDetail.discount > 0}">
@@ -48,13 +54,36 @@
 							<div id="totalPrice">26,000원</div>
 						</div>
 					</div>
+					<div id="bookStatusMessage">
+					    <c:choose>
+					        <c:when test="${bookDetail.bookState == 0}">
+					            <div >품절되었습니다.</div>
+					        </c:when>
+					        <c:when test="${bookDetail.bookStock <= 0}">
+					            <div >재고가 없습니다.</div>
+					        </c:when>
+					    </c:choose>
+					</div>
+					
 					<div id="bookCheckBtn">
-						<div>
-							<button  id="bookChartBtn">장바구니</button>
-						</div>
-						<div>
-							<button id="bookOrderBtn" type="button" data-isbn="${bookDetail.isbn}">바로구매</button>
-						</div>
+					    <c:choose>
+					        <c:when test="${bookDetail.bookState == 0 || bookDetail.bookStock <= 0}">
+					            <div>
+					                <button id="bookChartBtn" disabled style="background-color: #ccc; cursor: not-allowed;">장바구니</button>
+					            </div>
+					            <div>
+					                <button id="bookOrderBtn" type="button" disabled style="background-color: #ccc; cursor: not-allowed;">바로구매</button>
+					            </div>
+					        </c:when>
+					        <c:otherwise>
+					            <div>
+					                <button id="bookChartBtn">장바구니</button>
+					            </div>
+					            <div>
+					                <button id="bookOrderBtn" type="button" data-isbn="${bookDetail.isbn}">바로구매</button>
+					            </div>
+					        </c:otherwise>
+					    </c:choose>
 					</div>
 				</div>
 			</div> 
@@ -501,211 +530,296 @@ function toggleLove(commentNo, isbn, userId, checkbox){
 </section>
 <jsp:include page="/WEB-INF/views/include/footer.jsp" />
 <script>
-// 장바구니 개수 업데이트 함수
+const contextPath = '<%= request.getContextPath() %>';
 $(document).ready(function() {
-  updateCartCount(); // 장바구니 개수 업데이트
-  initHeaderEvents();
+  updateCartCount(); 
+  if (typeof initHeaderEvents === "function") {
+    initHeaderEvents(); // header.jsp에 있을 가능성 있는 함수
+  }
+  if (isLoggedIn) {
+    syncLocalCartToDB(); // 로그인 시 동기화
+  }
 });
- 
+
+// 장바구니 개수 업데이트 (bookView.jsp에서는 카운트만 갱신)
 function updateCartCount() {
-  let cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
-  if (!Array.isArray(cartItems)) {
-    cartItems = Object.values(cartItems).filter(item => typeof item === 'object');
-  }
-
-  const cartCount = cartItems.length;
-  const cartCountElement = document.getElementById("cart-count");
-
-  if (cartCountElement) {
-    cartCountElement.textContent = cartCount;
-    cartCountElement.style.visibility = cartCount > 0 ? "visible" : "hidden";
-  }
-}
-
-document.addEventListener("DOMContentLoaded", function() {
-	const minusBtn = document.querySelector(".minus");
-	const plusBtn = document.querySelector(".plus");
-	const numInput = document.querySelector(".num");
-	const totalPrice = document.getElementById("totalPrice");
-
-	const unitPrice = ${bookDetail.discount}; // 개당 가격
-
-	// 총 금액 업데이트 함수
-	function updateTotalPrice() {
-		let quantity = parseInt(numInput.value);
-		totalPrice.textContent = (unitPrice * quantity).toLocaleString() + "원"; // 천 단위 콤마 추가
-	}
-
-	// 숫자 감소 기능
-	minusBtn.addEventListener("click", function() {
-		let currentValue = parseInt(numInput.value);
-		if (currentValue > 1) { // 최소값 제한
-			numInput.value = currentValue - 1;
-			updateTotalPrice();
-		}
-	});
-
-	// 숫자 증가 기능
-	plusBtn.addEventListener("click", function() {
-		let currentValue = parseInt(numInput.value);
-		numInput.value = currentValue + 1;
-		updateTotalPrice();
-	});
-
-	// 숫자 입력 필드 직접 수정 시 숫자만 입력 가능하도록 처리
-	numInput.addEventListener("input", function() {
-		this.value = this.value.replace(/[^0-9]/g, ''); // 숫자만 허용
-		if (this.value === "" || parseInt(this.value) < 1) {
-			this.value = 1; // 최소값 제한
-		}
-		updateTotalPrice();
-	});
-
-	// 초기 총 금액 설정
-	updateTotalPrice();
-});
-
-$(document).ready(function() {
-
-  // --- 장바구니 버튼 클릭 이벤트 ---
-  $("#bookChartBtn").on("click", function(event) {
-    event.preventDefault();
-
-    let quantity = parseInt($(".num").val()) || 1;
     let cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
     if (!Array.isArray(cartItems)) {
         cartItems = Object.values(cartItems).filter(item => typeof item === 'object');
     }
+    const cartCount = cartItems.length;
+    const cartCountElement = document.getElementById("cart-count");
+    const cartCountTitle = document.getElementById("cartCountTitle");
 
-    const newItem = { id: "${bookDetail.isbn}",
-							        title: "${bookDetail.title}",
-							        price: Number("${bookPrice}"),
-							        image: "${bookDetail.image}",
-							        quantity: quantity };
-
-    let existingItem = cartItems.find(item => item.id === newItem.id);
-    if(existingItem){
-      existingItem.quantity += quantity;
-    }else{
-      cartItems.push(newItem);
+    if (cartCountTitle) {
+        cartCountTitle.textContent = "장바구니(" + cartCount + ")";
     }
 
-    localStorage.setItem("cartItems", JSON.stringify(cartItems));
-    updateCartCount();
+    if (cartCountElement) {
+        cartCountElement.textContent = cartCount;
+        cartCountElement.style.visibility = cartCount > 0 ? "visible" : "hidden";
+    }
+}
 
-    if (confirm("장바구니 페이지로 이동하시겠습니까?")) {
-      window.location.href = "<%= request.getContextPath() %>/product/cart.do";
+// 비회원 장바구니 로컬스토리지 가져오기
+function getCartItemsFromLocalStorage() {
+  const raw = localStorage.getItem("cartItems");
+  if (!raw) return [];
+  try {
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : Object.values(parsed).filter(i => typeof i === 'object');
+  } catch (e) {
+    console.error("localStorage 파싱 오류", e);
+    return [];
+  }
+}
+
+// 수량 및 총 가격 계산
+document.addEventListener("DOMContentLoaded", function() {
+  const minusBtn = document.querySelector(".minus");
+  const plusBtn = document.querySelector(".plus");
+  const numInput = document.querySelector(".num");
+  const totalPrice = document.getElementById("totalPrice");
+  const unitPrice = ${bookDetail.discount};
+  const maxStock = ${bookDetail.bookStock}; // 재고 수량 가져오기
+
+  function updateTotalPrice() {
+    let qty = parseInt(numInput.value) || 1;
+    if (qty < 1) qty = 1;
+    if (qty > maxStock) qty = maxStock; // 재고 초과 방지
+    numInput.value = qty;
+    totalPrice.textContent = (unitPrice * qty).toLocaleString() + "원";
+  }
+
+  minusBtn.addEventListener("click", () => {
+    if (parseInt(numInput.value) > 1) {
+      numInput.value = parseInt(numInput.value) - 1;
+      updateTotalPrice();
     }
   });
 
-});
-</script>
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-  const openLoginModalLink = document.getElementById('openLoginModal');
-  const loginModal = document.getElementById('loginModal');
-  const closeButton = document.getElementById('closeLoginModal');
-  const contextPath = '<%= request.getContextPath() %>';
+  plusBtn.addEventListener("click", () => {
+    const current = parseInt(numInput.value) || 1;
+    if (current < maxStock) { // 재고보다 작을 때만 증가
+      numInput.value = current + 1;
+      updateTotalPrice();
+    } else {
+      alert(`재고는 최대 ${maxStock}권까지 구매 가능합니다.`);
+    }
+  });
 
-  document.querySelectorAll(".toggle-btn").forEach(function (btn) {
-    const targetId = btn.getAttribute("data-target");
-    const target = document.getElementById(targetId);
-    if (!target) return;
-    if (target.scrollHeight <= 160) {
-      btn.style.display = "none";
+  numInput.addEventListener("input", () => {
+    numInput.value = numInput.value.replace(/[^0-9]/g, '');
+    let value = parseInt(numInput.value) || 1;
+    if (value < 1) value = 1;
+    if (value > maxStock) {
+      alert(`재고는 최대 ${maxStock}권까지 구매 가능합니다.`);
+      value = maxStock;
+    }
+    numInput.value = value;
+    updateTotalPrice();
+  });
+
+  updateTotalPrice();
+});
+
+// 장바구니 담기 로직
+$(document).ready(function () {
+  $("#bookChartBtn").on("click", function () {
+    const quantity = parseInt($(".num").val()) || 1;
+    const isbn = "${bookDetail.isbn}";
+    const title = "${bookDetail.title}";
+    const price = ${bookDetail.discount};
+    const image = "${bookDetail.image}";
+    const bookNo = ${bookDetail.bookNo};
+    const userId = '<sec:authentication property="name"/>';
+
+    if (!userId || userId === 'anonymousUser') {
+      // 비회원 로컬스토리지
+      let cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
+      const existing = cartItems.find(item => item.bookNo === bookNo || item.id === isbn);
+      if (existing) {
+        if (!confirm("이미 장바구니에 있는 도서입니다. 수량을 추가하시겠습니까?")) {
+          return;
+        }
+        existing.quantity += quantity;
+      } else {
+        cartItems.push({ id: isbn, bookNo, title, price, image, quantity });
+      }
+      localStorage.setItem("cartItems", JSON.stringify(cartItems));
+      updateCartCount();
+      alert("장바구니에 담았습니다.");
+      if (confirm("장바구니 페이지로 이동하시겠습니까?")) {
+        window.location.href = "<%= request.getContextPath() %>/product/cart.do";
+      }
       return;
     }
 
-	  setToggleButton(btn, false, contextPath);
+    $.get("<%=request.getContextPath()%>/product/getCartCount.do",
+            { bookNo: bookNo, userId: userId },
+            function(existingCount) {
+              const finalCount = (parseInt(existingCount) || 0) + quantity;
 
-  	btn.addEventListener("click", function () {
-  	  const isExpanded = target.classList.contains("expanded");
-  	  target.classList.toggle("expanded");
-  	  setToggleButton(btn, !isExpanded, contextPath);
-
-  	  if (isExpanded) {
-  	    // 접기인 경우 → transitionend 이벤트 기다렸다가 scrollIntoView 실행
-  	    const onTransitionEnd = () => {
-  	      target.removeEventListener("transitionend", onTransitionEnd);
-
-  	      requestAnimationFrame(() => {
-  	        btn.scrollIntoView({ behavior: "smooth", block: "center" });
-  	      });
-  	    };
-  	    target.addEventListener("transitionend", onTransitionEnd);
-  	  }
-  	});
-	});
-
-	function setToggleButton(button, isExpanded, contextPath) {
-	  button.innerHTML = "";
-	  const label = document.createElement("span");
-	  label.textContent = isExpanded ? "접기" : "펼쳐보기";
-	  label.style.display = "inline-block";
-	  label.style.textAlign = "center";
-	  button.appendChild(label);
-	
-	  const iconImg = document.createElement("img");
-	  iconImg.src = contextPath + "/resources/img/icon/" + (isExpanded ? "collapse" : "expand") + ".png";
-	  iconImg.width = 18;
-	  iconImg.height = 10;
-	  iconImg.style.verticalAlign = "middle";
-	  button.appendChild(iconImg);
-  }
-	
-  if(openLoginModalLink){
-    openLoginModalLink.addEventListener('click', function(event) {
-      event.preventDefault();
-      if(loginModal){
-    	  loginModal.classList.add('show');
-      }
-    });
-  }
-  
-  if(closeButton){
-    closeButton.addEventListener('click', function(){
-    	if(loginModal){
-        loginModal.classList.remove('show');
-      }
-    });
-  }
-  
-  if(loginModal){
-	  window.addEventListener('click', function(event) {
-	    if(event.target == loginModal){
-	      loginModal.classList.remove('show');
-	    }
-	  });
-  }
+              // 2. 최종 수량으로 서버에 전달
+              $.ajax({
+                url: "<%=request.getContextPath()%>/product/addOrUpdateCart.do",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({ userId, bookNo: parseInt(bookNo, 10), count: finalCount }),
+                success: function (res) {
+                  if (res === "DB_OK") {
+                    alert("장바구니에 새 도서를 추가했습니다.");
+                  } else if (res === "EXISTING_UPDATED") {
+                    alert("장바구니 수량이 갱신되었습니다.");
+                  } else {
+                    alert("장바구니 처리 실패: " + res);
+                  }
+                  updateCartCount();
+                  if (confirm("장바구니 페이지로 이동하시겠습니까?")) {
+                    window.location.href = "<%= request.getContextPath() %>/product/cart.do";
+                  }
+                },
+                error: function () {
+                  alert("서버 오류로 장바구니 저장에 실패했습니다.");
+                }
+              });
+            });
+  });
 });
 
-$(document).ready(function() {
-	$("#bookOrderBtn").on("click", function(event) {
-	  event.preventDefault(); // 페이지 이동을 잠시 막습니다.
-	  
-	  const userId = '<sec:authentication property="name"/>'; 
+// 로그인 시 로컬 장바구니를 DB로 동기화 (bookView에서는 카운트만 업데이트)
+function syncLocalCartToDB() {
+  const localItems = getCartItemsFromLocalStorage();
+  if (!localItems.length) {
+    fetchCartCountFromDB(); // DB에서 카운트 가져오기
+    return;
+  }
+  const payload = localItems
+    .filter(i => (i.quantity || i.count || 1) > 0)
+    .map(i => ({
+      userId: i.userId || '',
+      bookNo: i.bookNo,
+      count: i.quantity || i.count || 1
+    }));
 
-	  if(!userId || userId === 'anonymousUser'){
-	    alert("로그인 후 이용 가능합니다.");
-	    
-	    const loginModal = document.getElementById('loginModal');
-	    
-	    if(loginModal){
-	      loginModal.classList.add('show');
-	    }
-	    return;
-	  }
-	
-	  const isbn = $(this).data("isbn");
-	  const quantity = $(".num").val();
-	  if (!isbn || !quantity || parseInt(quantity) < 1) {
-	      alert("오류: 상품 정보나 수량을 가져올 수 없습니다. 페이지를 새로고침 해주세요.");
-	      return; // 값이 없으면 여기서 실행을 멈춥니다.
-	  }
-	  const contextPath = '<%= request.getContextPath() %>';
-	  
-	  window.location.href = `${contextPath}/controller/order/orderMain.do?isbn=${isbn}&quantity=${quantity}`;
-	});
+  return $.ajax({
+    url: contextPath + "/product/syncCart.do",
+    type: "POST",
+    contentType: "application/json",
+    data: JSON.stringify(payload),
+    success: function () {
+      console.log("장바구니 동기화 완료");
+      localStorage.removeItem("cartItems");
+      fetchCartCountFromDB(); // 동기화 후 DB 기준으로 다시 카운트 가져오기
+    },
+    error: function (xhr) {
+      console.error("동기화 실패:", xhr.responseText);
+    }
+  });
+}
+
+function fetchCartCountFromDB() {
+  $.get(contextPath + "/product/getCartCount.do", function(count) {
+    const cartCountElement = document.getElementById("cart-count");
+    if (cartCountElement) {
+      cartCountElement.textContent = count;
+      cartCountElement.style.visibility = count > 0 ? "visible" : "hidden";
+    }
+  });
+}
+</script>
+<script>
+// 로그인 모달, 펼쳐보기/접기 버튼
+document.addEventListener("DOMContentLoaded", function () {
+    const openLoginModalLink = document.getElementById('openLoginModal');
+    const loginModal = document.getElementById('loginModal');
+    const closeButton = document.getElementById('closeLoginModal');
+    const contextPath = '<%= request.getContextPath() %>';
+
+    document.querySelectorAll(".toggle-btn").forEach(function (btn) {
+        const targetId = btn.getAttribute("data-target");
+        const target = document.getElementById(targetId);
+        if (!target) return;
+        if (target.scrollHeight <= 160) {
+            btn.style.display = "none";
+            return;
+        }
+
+        setToggleButton(btn, false, contextPath);
+
+        btn.addEventListener("click", function () {
+            const isExpanded = target.classList.contains("expanded");
+            target.classList.toggle("expanded");
+            setToggleButton(btn, !isExpanded, contextPath);
+
+            if (isExpanded) {
+                const onTransitionEnd = () => {
+                    target.removeEventListener("transitionend", onTransitionEnd);
+                    requestAnimationFrame(() => {
+                        btn.scrollIntoView({ behavior: "smooth", block: "center" });
+                    });
+                };
+                target.addEventListener("transitionend", onTransitionEnd);
+            }
+        });
+    });
+
+    function setToggleButton(button, isExpanded, contextPath) {
+        button.innerHTML = "";
+        const label = document.createElement("span");
+        label.textContent = isExpanded ? "접기" : "펼쳐보기";
+        label.style.display = "inline-block";
+        label.style.textAlign = "center";
+        button.appendChild(label);
+
+        const iconImg = document.createElement("img");
+        iconImg.src = contextPath + "/resources/img/icon/" + (isExpanded ? "collapse" : "expand") + ".png";
+        iconImg.width = 18;
+        iconImg.height = 10;
+        iconImg.style.verticalAlign = "middle";
+        button.appendChild(iconImg);
+    }
+
+    if (openLoginModalLink) {
+        openLoginModalLink.addEventListener('click', function (event) {
+            event.preventDefault();
+            if (loginModal) loginModal.classList.add('show');
+        });
+    }
+    if (closeButton) {
+        closeButton.addEventListener('click', function () {
+            if (loginModal) loginModal.classList.remove('show');
+        });
+    }
+    if (loginModal) {
+        window.addEventListener('click', function (event) {
+            if (event.target == loginModal) {
+                loginModal.classList.remove('show');
+            }
+        });
+    }
+});
+
+// 바로구매 버튼
+$(document).ready(function () {
+    $("#bookOrderBtn").on("click", function (event) {
+        event.preventDefault();
+        const userId = '<sec:authentication property="name"/>';
+        if (!userId || userId === 'anonymousUser') {
+            alert("로그인 후 이용 가능합니다.");
+            const loginModal = document.getElementById('loginModal');
+            if (loginModal) loginModal.classList.add('show');
+            return;
+        }
+        const isbn = $(this).data("isbn");
+        const quantity = $(".num").val();
+        if (!isbn || !quantity || parseInt(quantity) < 1) {
+            alert("오류: 상품 정보나 수량을 가져올 수 없습니다.");
+            return;
+        }
+        const contextPath = '<%= request.getContextPath() %>';
+        window.location.href = `${contextPath}/controller/order/orderMain.do?isbn=${isbn}&quantity=${quantity}`;
+    });
 });
 </script>
 </body>

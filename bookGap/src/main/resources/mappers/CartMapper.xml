@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bookGap.mapper.CartMapper">
+
+  <!-- 회원 장바구니 조회 (BOOK + PRODUCT_API 조인) -->
+  <select id="getCartByUser" resultType="com.bookGap.vo.CartVO">
+    SELECT 
+        c.CART_NO AS cartNo,
+        c.USER_ID AS userId,
+        c.BOOK_NO AS bookNo,
+        b.isbn AS isbn,
+        pa.title AS title,
+        pa.image AS image,
+        pa.discount AS price,
+        c.COUNT AS count
+    FROM CART c
+    LEFT JOIN BOOK b ON c.BOOK_NO = b.BOOK_NO
+    LEFT JOIN PRODUCT_API pa ON b.isbn = pa.isbn
+    WHERE c.USER_ID = #{userId}
+</select>
+
+ <!-- 장바구니 아이템 추가 -->
+  <insert id="insertCartItem">
+    INSERT INTO CART (USER_ID, BOOK_NO, COUNT)
+    VALUES (#{userId}, #{bookNo}, #{count})
+  </insert>
+
+  <!-- 장바구니 수량 업데이트 -->
+  <update id="updateCartCount">
+    UPDATE CART SET COUNT = #{count} WHERE CART_NO = #{cartNo}
+  </update>
+
+  <!-- 기존 항목 수량 증가 -->
+  <update id="incrementCartCount">
+    UPDATE CART SET COUNT = COUNT + #{addCount} WHERE CART_NO = #{cartNo}
+  </update>
+
+  <!-- 중복 항목 찾기 -->
+  <select id="findCartNoByUserAndBook" resultType="int">
+    SELECT CART_NO FROM CART WHERE USER_ID = #{userId} AND BOOK_NO = #{bookNo}
+  </select>
+
+  <!-- 장바구니 삭제 -->
+  <delete id="deleteCartItem">
+    DELETE FROM CART WHERE CART_NO = #{cartNo}
+  </delete>
+</mapper>
