@@ -138,7 +138,7 @@
 		    p.image,
 		    p.discount,
 		    p.pubdate,
-		    p.link,
+		    p.link, 
 		    b.BOOK_NO AS bookNo,
 		    b.BOOK_RDATE AS bookRdate,
 		    b.BOOK_TRANS AS bookTrans,

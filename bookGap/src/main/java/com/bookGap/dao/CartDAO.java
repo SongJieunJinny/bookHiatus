@@ -19,7 +19,7 @@ public class CartDAO {
 	 private final String namespace = "com.bookGap.mapper.CartMapper.";
 
 	 public List<CartVO> getCartByUser(String userId) {
-	        return sqlSession.selectList(namespace + "getCartByUser", userId);
+	        return sqlSession.selectList(namespace + "getCartByUser", userId); 
 	    }
 
 	    public int insertCartItem(CartVO vo) {

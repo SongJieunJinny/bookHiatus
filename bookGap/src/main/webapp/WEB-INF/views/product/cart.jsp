@@ -63,29 +63,10 @@
 	      <h2>ADDRESS</h2>
 	      <button id="addAddressBtn">+ 배송지 추가</button>
 	      <div id="addressList">
-	        <!-- 기본 배송지 -->
-	        <div class="addressItem">
-	          <label>
-	            <input type="radio" name="address" checked>
-	            <span>자취방 <span class="defaultTag">[기본배송지]</span></span>
-	          </label>
-	          <p>유저이 / 010-0000-0002</p>
-	          <p>[50248] 전북특별자치도 전주시 덕진구 3길 8 상상주택 805호</p>
-	          <button class="deleteAddress">삭제</button>
-	        </div>
-	        <!-- 추가 배송지 -->
-	        <div class="addressItem">
-	          <label>
-	            <input type="radio" name="address">
-	            <span>학교</span>
-	          </label>
-	          <p>유저이 / 010-0000-0002</p>
-	          <p>[50248] 전북특별자치도 전주시 백제대로585 이전학교 503호</p>
-	          <button class="deleteAddress">삭제</button>
-	        </div>
 	      </div>
 	    </div>
 	  </div>
+	   <!-- 모달: 배송지 추가 -->
 	  <div id="secondModal" class="modal">
 	    <div class="modalContent">
 	      <span class="close" id="closeSecondModal">&times;</span>
@@ -125,7 +106,6 @@ try {
 }
 
 function getCartItemsFromLocalStorage() {
-
     const raw = localStorage.getItem("cartItems");
     if (!raw) return [];
     try {
@@ -525,176 +505,153 @@ $(document).ready(function () {
 	      }
 	    }
 		});
-	});
 
 </script>
 <script>		
-			
-document.addEventListener("DOMContentLoaded", function () {
-      const firstModal = document.getElementById("firstModal");
-      const cartInfoBtn = document.getElementById("cartInfoBtn");
-      const closeFirstModalBtn = document.getElementById("closeFirstModal");
+//========== 배송지 목록 불러오기 (회원 전용) ==========
+function loadAddressList() {
+    $.get(contextPath + "/address/list.do", function(addresses) {
+        const list = $("#addressList");
+        list.empty();
 
-      const secondModal = document.getElementById("secondModal");
-      const addAddressBtn = document.getElementById("addAddressBtn");
-      const saveAddress = document.getElementById("saveAddress");
-	  const closeSecondModalBtn = document.getElementById("closeSecondModal");
-
-      // 페이지 로드 시 모달을 숨김
-      firstModal.style.display = "none";
-      secondModal.style.display = "none";
-
-      // 첫 번째 모달 열기 버튼 클릭 시
-      cartInfoBtn.addEventListener("click", function () {
-        firstModal.style.display = "flex";  // display: flex 적용하여 가운데 정렬
-      });
-
-      // 첫 번째 모달 닫기 버튼 클릭 시
-      closeFirstModalBtn.addEventListener("click", function () {
-        firstModal.style.display = "none";
-      });
-
-      // 두 번째 모달 열기 버튼 클릭 시
-      addAddressBtn.addEventListener("click", function () {
-        secondModal.style.display = "flex";
-      });
-
-      // 두 번째 모달 닫기 버튼 클릭 시
-      saveAddress.addEventListener("click", function () {
-        secondModal.style.display = "none";
-      });
-
-			// 첫 번째 모달 닫기 버튼 클릭 시
-      closeSecondModalBtn.addEventListener("click", function () {
-        secondModal.style.display = "none";
-      });
-
-      // ESC 키를 누르면 모달 닫기
-      window.addEventListener("keydown", function (event) {
-        if (event.key === "Escape") {
-            firstModal.style.display = "none";
-            secondModal.style.display = "none";
+        if (!addresses || addresses.length === 0) {
+            list.append("<p>등록된 배송지가 없습니다.</p>");
+            return;
         }
-      });
 
-      // 모달 바깥을 클릭하면 닫힘
-      window.addEventListener("click", function (event) {
-        if (event.target === firstModal) {
-            firstModal.style.display = "none";
-        }
-        if (event.target === secondModal) {
-            secondModal.style.display = "none";
-        }
-      });
-    });
-		
-    // 삭제 기능
-      document.addEventListener("click", function(event) {
-          if (event.target.classList.contains("deleteAddress")) {
-              event.target.closest(".addressItem").remove();
-          }
-      });
-      $(document).ready(function () {
-        $("#addressModal").hide();
-
-				// 배송지 추가 버튼 클릭 시 입력 폼 표시
-        $("#addAddressBtn").click(() => $("#addressForm").show());
-
-        // 카카오 주소 검색 API 연동
-        $("#searchAddress").click(function (event) {
-            event.preventDefault();
-            new daum.Postcode({
-                oncomplete: function (data) {
-                    $("#zipcode").val(data.zonecode);
-                    $("#address").val(data.roadAddress);
-                    $("#addressDetail").focus();
-                    $("#addressForm").show();
-                }
-            }).open();
-        });
-
-        // 배송지 업데이트 함수
-        function updateDeliveryInfo() {
-		  const selectedAddress = $("input[name='address']:checked").closest(".addressItem");
-		
-		  let addressText = "배송지 등록 필요";
-		  if (selectedAddress.length > 0) {
-		    addressText =
-		      selectedAddress.find("p:nth-child(2)").text() + "\n" +
-		      selectedAddress.find("p:nth-child(3)").text();
-		  }
-		
-		  // 템플릿 가져오기
-		  const template = document.getElementById("deliveryInfoTemplate");
-		
-		  document.querySelectorAll(".cartItem").forEach(cartItem => {
-		    // 기존 deliveryInfo 제거
-		    const oldDelivery = cartItem.querySelector(".deliveryInfo");
-		    if (oldDelivery) oldDelivery.remove();
-		
-		    // 새 템플릿 복제
-		    const clone = template.content.cloneNode(true);
-		    const statusElement = clone.querySelector(".deliveryStatus");
-		    statusElement.textContent = addressText;
-		
-		    // cartItem 하위에 삽입 (삭제 버튼 바로 앞에 넣는 구조라면 이 줄 조정 가능)
-		    cartItem.insertBefore(clone, cartItem.querySelector(".removeBtn"));
-		  });
-		}
-
-        // 페이지 로드 시 기본 배송지 설정
-        updateDeliveryInfo();
-
-        // 배송지가 변경될 때마다 업데이트
-        $(document).on("change", "input[name='address']", function () {
-            updateDeliveryInfo();
-        });
-
-         // 저장 버튼 클릭 시 새로운 배송지 추가
-        $(document).on("click", "#saveAddress", function (event) {
-            event.preventDefault();
-
-            let name = $("#addressName").val();
-            let recipient = $("#recipient").val();
-            let phone = $("#phone").val();
-            let zipcode = $("#zipcode").val();
-            let address = $("#address").val();
-            let detail = $("#addressDetail").val();
-
-            if (!name || !recipient || !phone || !zipcode || !address || !detail) {
-                alert("모든 정보를 입력해주세요.");
-                return;
-            }
-
-            let newAddress = `
-                <div class="addressItem">
-                    <label>
-                        <input type="radio" name="address">
-                        <span>${name}</span>
-                    </label>
-                    <p>${recipient} / ${phone}</p>
-                    <p>[${zipcode}] ${address} ${detail}</p>
-                    <button class="deleteAddress">삭제</button>
+        addresses.forEach(addr => {
+            const isDefaultTag = addr.isDefault ? '<span class="defaultTag">[기본배송지]</span>' : '';
+            list.append(`
+                <div class="addressItem" data-id="${addr.userAddressId}">
+                  <label>
+                    <input type="radio" name="address" ${addr.isDefault ? "checked" : ""}>
+                    <span>${addr.addressName || "배송지"}</span> ${isDefaultTag}
+                  </label>
+                  <p>${addr.userName} / ${addr.userPhone}</p>
+                  <p>[${addr.postCode}] ${addr.roadAddress} ${addr.detailAddress}</p>
+                  <button class="deleteAddress">삭제</button>
                 </div>
-            `;
-
-            $("#addressList").append(newAddress);
-            $("#addressForm").hide();
-            $("#addressName, #recipient, #phone, #zipcode, #address, #addressDetail").val("");
+            `);
         });
 
-        // 삭제 기능 (이벤트 위임 방식)
-        $(document).on("click", ".deleteAddress", function () {
-            $(this).closest(".addressItem").remove();
-            updateDeliveryInfo(); // 삭제 후 배송지 업데이트
-        });
+        updateDeliveryInfo();
+    });
+}
 
-        // 기본 배송지가 변경될 때마다 업데이트
-        $(document).on("change", "input[name='address']", function () {
-            updateDeliveryInfo();
-        });
-    	});
-  </script>
+// ========== 배송지 추가 (회원 전용) ==========
+$("#saveAddress").on("click", function (event) {
+    event.preventDefault();
+
+    const payload = {
+        addressName: $("#addressName").val(),
+        userName: $("#recipient").val(),
+        userPhone: $("#phone").val(),
+        postCode: $("#zipcode").val(),
+        roadAddress: $("#address").val(),
+        detailAddress: $("#addressDetail").val(),
+        isDefault: 0
+    };
+
+    $.ajax({
+        url: contextPath + "/address/add",
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify(payload),
+        success: function(res) {
+            if (res === "SUCCESS") {
+                alert("배송지가 추가되었습니다.");
+                $("#addressForm").trigger("reset").hide();
+                loadAddressList();
+                $("#secondModal").hide();
+            } else {
+                alert("배송지 추가 실패: " + res);
+            }
+        }
+    });
+});
+
+// ========== 카카오 주소 검색 API ==========
+$("#searchAddress").on("click", function (event) {
+    event.preventDefault();
+    new daum.Postcode({
+        oncomplete: function (data) {
+            $("#zipcode").val(data.zonecode);
+            $("#address").val(data.roadAddress);
+            $("#addressDetail").focus();
+            $("#addressForm").show(); // 검색 후 폼 자동 표시
+        }
+    }).open();
+});
+
+// ========== 배송지 삭제 (회원 전용) ==========
+$(document).on("click", ".deleteAddress", function () {
+    const addressId = $(this).closest(".addressItem").data("id");
+    if (!confirm("이 배송지를 삭제하시겠습니까?")) return;
+
+    $.post(contextPath + "/address/delete", { addressId }, function (res) {
+        if (res === "SUCCESS") {
+            alert("삭제되었습니다.");
+            loadAddressList();
+        } else {
+            alert("삭제 실패: " + res);
+        }
+    });
+});
+
+// ========== 배송지 선택 시 UI 업데이트 ==========
+function updateDeliveryInfo() {
+    const selectedAddress = $("input[name='address']:checked").closest(".addressItem");
+    let addressText = "배송지 등록 필요";
+
+    if (selectedAddress.length > 0) {
+        addressText =
+          selectedAddress.find("p:nth-child(2)").text() + "\n" +
+          selectedAddress.find("p:nth-child(3)").text();
+    }
+
+    const template = document.getElementById("deliveryInfoTemplate");
+    document.querySelectorAll(".cartItem").forEach(cartItem => {
+        const oldDelivery = cartItem.querySelector(".deliveryInfo");
+        if (oldDelivery) oldDelivery.remove();
+        const clone = template.content.cloneNode(true);
+        clone.querySelector(".deliveryStatus").textContent = addressText;
+        cartItem.insertBefore(clone, cartItem.querySelector(".removeBtn"));
+    });
+}
+
+// ========== 모달 열기/닫기 ==========
+document.addEventListener("DOMContentLoaded", function () {
+    const firstModal = document.getElementById("firstModal");
+    const secondModal = document.getElementById("secondModal");
+    const cartInfoBtn = document.getElementById("cartInfoBtn");
+    const closeFirst = document.getElementById("closeFirstModal");
+    const closeSecond = document.getElementById("closeSecondModal");
+
+    firstModal.style.display = "none";
+    secondModal.style.display = "none";
+
+    // 배송지 목록 모달 열기
+    cartInfoBtn.addEventListener("click", function () {
+        firstModal.style.display = "flex";
+        loadAddressList();
+    });
+
+    closeFirst.addEventListener("click", function () {
+        firstModal.style.display = "none";
+    });
+
+    // 배송지 추가 모달 열기
+    document.getElementById("addAddressBtn").addEventListener("click", function () {
+        secondModal.style.display = "flex";
+        $("#addressForm").show();
+    });
+
+    closeSecond.addEventListener("click", function () {
+        secondModal.style.display = "none";
+        $("#addressForm").hide();
+    });
+});
+</script>
 <script>
 function syncLocalCartToDB() {
 	if (sessionStorage.getItem("cartSynced")) {

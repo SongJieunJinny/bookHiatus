@@ -32,7 +32,7 @@
     UPDATE CART SET COUNT = #{count} WHERE CART_NO = #{cartNo}
   </update>
 
-  <!-- 기존 항목 수량 증가 -->
+  <!-- 기존 항목 수량 증가 --> 
   <update id="incrementCartCount">
     UPDATE CART SET COUNT = COUNT + #{addCount} WHERE CART_NO = #{cartNo}
   </update>
