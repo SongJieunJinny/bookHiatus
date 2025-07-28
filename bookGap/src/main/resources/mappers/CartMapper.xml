@@ -27,7 +27,7 @@
     VALUES (#{userId}, #{bookNo}, #{count})
   </insert>
 
-  <!-- 장바구니 수량 업데이트 -->
+  <!-- 장바구니 수량 업데이트 --> 
   <update id="updateCartCount">
     UPDATE CART SET COUNT = #{count} WHERE CART_NO = #{cartNo}
   </update>
