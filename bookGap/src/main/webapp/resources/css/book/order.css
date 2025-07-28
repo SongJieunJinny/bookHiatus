@@ -21,14 +21,13 @@ section{
 }
 #orderDetailsHead{
   width: 100%;
-  height: 20%;
 }
 #orderDetailsDiv{
-  margin-top: 3%;
-  margin-bottom: 2%;
+  margin-top: 2%;
+	margin-bottom: 2%;
   margin-left: 3.5%;
-  text-align: center;
-  font-size: 25px;
+	text-align: center;
+	font-size: 25px;
   display: flex;
   justify-items: center;
   justify-content: center;
@@ -62,7 +61,7 @@ section{
   flex-direction: column;
 }
 .orderDetailsDivLine{
-  width: 100.15%;
+  width: 100%;
   border-bottom: solid 7px;
   border-color: black;
   font-size: 20px;
@@ -111,7 +110,7 @@ section{
   background-color: black;
   color: white;
   cursor: pointer;
-  width: 120%;
+  width: 100%;
   font-size: 18px;
 }
 .orderMsg{
@@ -241,7 +240,6 @@ section{
 }
 .deliveryContainer, .requestContainer{
   display: flex;
-  align-items: center;
   width: 80%;
   margin: 15px auto;
   gap: 15px; 
@@ -253,7 +251,7 @@ section{
   font-weight: bold;
 }
 .orderMainDelivery{
-	margin-bottom: 30px;
+	margin : 7px 0px 30px 0px;
 }
 
 .deliveryAddress, .orderMainRequestInput {
@@ -333,7 +331,7 @@ font-size: 13px;
 }
 #orderDetailSection{
   width: 100%;
-  height: 50%;
+  height: auto;
   text-align: center;
 }
 .orderMainTableTitle{
@@ -346,7 +344,7 @@ font-size: 13px;
   height: auto;
   border: 1px solid black;
   border-radius: 20px;
-  margin-bottom: 5%;
+  margin-bottom: 10%;
   padding: 3%;
   margin-left: auto;
   margin-right: auto;
@@ -368,7 +366,7 @@ font-size: 13px;
   width: 33.3%;
   height: 100%;
 }
-.paymentMathodLayout{
+.paymentMethodLayout{
   width: 70%;
   height: 50%;
   border: 1px solid black;
@@ -377,11 +375,11 @@ font-size: 13px;
   padding: 3%;
   margin: 0 auto 5% auto;
 }
-#paymentMathodAside{
+#paymentMethodAside{
   text-align: center;
   margin-bottom: 5%;
 }
-.paymentMathodContainer{
+.paymentMethodContainer{
   width: 100%;
   height: 100%;
   display: flex;
@@ -390,8 +388,8 @@ font-size: 13px;
   justify-content: center;
   gap: 20px;
 }
-.paymentMathodIcon{
-  width: 150px;
+.paymentMethodIcon{
+  width: 50%;
   height: 80px;
   border: 1px solid black;
   border-radius: 20px;
@@ -400,26 +398,26 @@ font-size: 13px;
   justify-content: center;
   cursor: pointer;
 }
-.paymentMathodKakao{
+.paymentMethodKakao{
   width: 100%;
   height: 100%;
   border-radius: 20px;
   justify-content: center;
   align-items: center;
 }
-.paymentMathodKakaoimg{
+.paymentMethodKakaoimg{
   width: 100%;
   height: 100%;
   border-radius: 20px;
 }
-.paymentMathodToss{
+.paymentMethodToss{
   width: 100%;
   height: 100%;
   border-radius: 20px;
   justify-content: center;
   align-items: center;
 }
-.paymentMathodTossimg{
+.paymentMethodTossimg{
   width: 100%;
   height: 100%;
   border-radius: 20px;
@@ -591,4 +589,84 @@ font-size: 13px;
   border-radius: 5px;
   cursor: pointer;
   width: 100%;
+}
+#agreeTable{
+  width: 100%;
+  margin-top: 10%;
+}
+.asideAgree{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.asideTextPrice{
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+.agreeIcon1{
+  width: 8%;
+  height: 8%;
+  margin-bottom: 0.5%;
+  margin-left: 1%;
+  margin-right: 0%;
+  cursor: pointer;
+}
+.agreeIcon2{
+  width: 5%;
+  height: 5%;
+  margin-bottom: 0.5%;
+  margin-left: 0.5%;
+  margin-right: 0%;
+  cursor: pointer;
+}
+.agreeLine{
+  width: 100%;
+  border-bottom: solid 2px;
+  border-color: black;
+}
+.agree4Div, .agree2Div{
+	text-align: center;
+}
+ .guideText {
+  margin-top: 5%;
+  width: 400px;
+  height: auto;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  padding: 3%;
+  font-size: 14px;
+  color: #333;
+  border-radius: 4px;
+  display: none;
+}
+.guideText.expanded {
+  display: block;
+}
+#guidePrivacyText{
+  margin-top: 5%;
+  width: 100%;
+  height: 200px; /* 고정된 높이값 */
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  padding: 3%;
+  font-size: 14px;
+  color: #333;
+  border-radius: 4px;
+  display: none;
+  overflow-y: scroll; 
+}
+.agreeToggleBtn{
+	width: auto;
+	height: 25px;
+	padding: 0 8px;
+	background-color: #f0f0f0;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	cursor: pointer;
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	margin: 0px 0px 5px 0px;
 }

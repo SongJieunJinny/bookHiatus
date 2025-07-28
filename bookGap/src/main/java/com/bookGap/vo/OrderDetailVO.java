@@ -8,6 +8,14 @@ public class OrderDetailVO {
   private int bookNo;             // 상품번호 (FK)
   private int orderId;            // 주문ID (FK)
   
+  private BookVO book; 
+  
+  public BookVO getBook() {
+    return book;
+  }
+  public void setBook(BookVO book) {
+    this.book = book;
+  }  
   public int getOrderDetailNo() {
     return orderDetailNo;
   }
