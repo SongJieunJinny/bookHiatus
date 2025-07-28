@@ -1,30 +1,52 @@
 package com.bookGap.controller;
 
+
 import java.security.Principal;
 import java.util.List;
 
+=======
+>>>>>>> branch 'main' of https://github.com/SongJieunJinny/bookHiatus.git
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+<<<<<<< HEAD
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+=======
+>>>>>>> branch 'main' of https://github.com/SongJieunJinny/bookHiatus.git
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+<<<<<<< HEAD
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+=======
+>>>>>>> branch 'main' of https://github.com/SongJieunJinny/bookHiatus.git
 
 import com.bookGap.service.BookService;
+<<<<<<< HEAD
 import com.bookGap.service.CartService;
 import com.bookGap.vo.BookVO;
 import com.bookGap.vo.CartVO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+
 @Controller
 public class CartController {
+
 	
 	@Autowired
     private CartService  cartService;
+
+	@Autowired
+	public BookService bookService;
+	@RequestMapping(value = "/product/cart.do", method = RequestMethod.GET)
+	public String cart() {
+		
+	    return "product/cart"; // 해당 JSP 파일명
+	} 
+
+
 
 	// 장바구니 페이지
 	@RequestMapping(value = "/product/cart.do", method = RequestMethod.GET)
@@ -109,3 +131,6 @@ public class CartController {
         return cartService.addOrUpdateCartItem(vo); // DB_OK 또는 EXISTING_UPDATED 반환
     }
 }
+
+
+

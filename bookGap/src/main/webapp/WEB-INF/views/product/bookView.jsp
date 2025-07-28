@@ -702,6 +702,7 @@ function syncLocalCartToDB() {
       count: i.quantity || i.count || 1
     }));
 
+<<<<<<< HEAD
   return $.ajax({
     url: contextPath + "/product/syncCart.do",
     type: "POST",
@@ -820,6 +821,29 @@ $(document).ready(function () {
         const contextPath = '<%= request.getContextPath() %>';
         window.location.href = `${contextPath}/controller/order/orderMain.do?isbn=${isbn}&quantity=${quantity}`;
     });
+
+	  if(!userId || userId === 'anonymousUser'){
+	    alert("로그인 후 이용 가능합니다.");
+	    
+	    const loginModal = document.getElementById('loginModal');
+	    
+	    if(loginModal){
+	      loginModal.classList.add('show');
+	    }
+	    return;
+	  }
+	
+	  const isbn = $(this).data("isbn");
+	  const quantity = $(".num").val();
+	  if (!isbn || !quantity || parseInt(quantity) < 1) {
+	      alert("오류: 상품 정보나 수량을 가져올 수 없습니다. 페이지를 새로고침 해주세요.");
+	      return; // 값이 없으면 여기서 실행을 멈춥니다.
+	  }
+	  const contextPath = '<%= request.getContextPath() %>';
+	  
+	  window.location.href = contextPath + "/order/orderMain.do?isbn=" + isbn + "&quantity=" + quantity;
+	});
+
 });
 </script>
 </body>

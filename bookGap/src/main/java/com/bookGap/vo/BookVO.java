@@ -13,7 +13,7 @@ public class BookVO extends ProductApiVO {
 		private String publisherBookReview;
 		private String commentCount; 
 		
-		public String getCommentCount() {
+    public String getCommentCount() {
       return commentCount;
     }
     public void setCommentCount(String commentCount) {
