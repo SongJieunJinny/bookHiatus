@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
 			"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.bookGap.mapper.bookMapper">
-<resultMap id="bookDetailMap" type="com.bookGap.vo.BookVO">
+  <resultMap id="bookDetailMap" type="com.bookGap.vo.BookVO">
     <result property="isbn" column="isbn"/>
     <result property="title" column="title"/>
     <result property="author" column="author"/>
@@ -18,7 +18,10 @@
     <result property="bookImgUrl" column="bookImgUrl"/>
     <result property="bookIndex" column="bookIndex"/>
     <result property="publisherBookReview" column="publisherBookReview"/>
-</resultMap>
+    <result property="bookRdate" column="bookRdate"/>
+    <result property="bookStock" column="bookStock"/>
+    <result property="bookState" column="bookState"/>
+  </resultMap>
 	 <!-- 도서 등록 -->
 		<insert id="insertBook" parameterType="BookVO">
 		    INSERT INTO BOOK (BOOK_TRANS, BOOK_CATEGORY, isbn, BOOK_IMGURL, BOOK_INDEX, PUBLISHER_BOOK_REVIEW)
@@ -129,28 +132,12 @@
 	</select>
 	
 	<select id="selectBookDetailByIsbn" parameterType="String"  resultMap="bookDetailMap">
-		SELECT 
-		    p.isbn,
-		    p.title,
-		    p.author,
-		    p.publisher,
-		    p.description,
-		    p.image,
-		    p.discount,
-		    p.pubdate,
-		    p.link, 
-		    b.BOOK_NO AS bookNo,
-		    b.BOOK_RDATE AS bookRdate,
-		    b.BOOK_TRANS AS bookTrans,
-		    b.BOOK_STOCK AS bookStock,
-		    b.BOOK_STATE AS bookState,
-		    b.BOOK_CATEGORY AS bookCategory,
-		    b.BOOK_IMGURL AS bookImgUrl,
-		    b.BOOK_INDEX AS bookIndex,
-		    b.PUBLISHER_BOOK_REVIEW AS publisherBookReview
-		FROM PRODUCT_API p
-		INNER JOIN BOOK b ON p.isbn = b.isbn
-		WHERE p.isbn = #{isbn}
+		SELECT p.isbn, p.title, p.author, p.publisher, p.description, p.image, p.discount, p.pubdate, p.link, 
+           b.BOOK_NO AS bookNo, b.BOOK_RDATE AS bookRdate, b.BOOK_TRANS AS bookTrans, b.BOOK_STOCK AS bookStock, b.BOOK_STATE AS bookState,
+           b.BOOK_CATEGORY AS bookCategory, b.BOOK_IMGURL AS bookImgUrl, b.BOOK_INDEX AS bookIndex, b.PUBLISHER_BOOK_REVIEW AS publisherBookReview
+      FROM PRODUCT_API p
+INNER JOIN BOOK b ON p.isbn = b.isbn
+     WHERE p.isbn = #{isbn}
 	</select>
 	
 	<select id="adminInventoryManagementSelectAll"   resultType="BookVO" >
