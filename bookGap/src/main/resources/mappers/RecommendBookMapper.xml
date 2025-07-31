@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bookGap.mapper.recommendBookMapper">
+
+    <!-- 추천 도서 목록 (타입별 필터링 + 페이징 지원) -->
+    <select id="selectRecommendBooks" parameterType="com.bookGap.vo.SearchVO" resultType="com.bookGap.vo.RecommendBookVO">
+        SELECT 
+            b.BOOK_NO AS bookNo,
+            p.isbn,
+            p.title,
+            p.image,
+            p.discount,
+            r.RECOMMEND_TYPE AS recommendType,
+            r.RECOMMEND_COMMENT AS recommendComment
+        FROM RECOMMEND_BOOK r
+        INNER JOIN BOOK b ON r.BOOK_NO = b.BOOK_NO
+        INNER JOIN PRODUCT_API p ON b.isbn = p.isbn
+        <where>
+            <if test="recommendType != null and recommendType != ''">
+                r.RECOMMEND_TYPE = #{recommendType}
+            </if>
+        </where>
+        ORDER BY r.RECOMMEND_DATE DESC
+        LIMIT #{start}, #{perPage}
+    </select>
+
+    <!-- 추천 도서 총 개수 -->
+    <select id="getRecommendBookTotalCount" parameterType="com.bookGap.vo.SearchVO" resultType="int">
+        SELECT COUNT(*)
+        FROM RECOMMEND_BOOK r
+        INNER JOIN BOOK b ON r.BOOK_NO = b.BOOK_NO
+        <where>
+            <if test="recommendType != null and recommendType != ''">
+                r.RECOMMEND_TYPE = #{recommendType}
+            </if>
+        </where>
+    </select>
+
+    <!-- 추천 도서 등록 (중복 시 UPDATE) -->
+    <insert id="insertRecommendBook" parameterType="com.bookGap.vo.RecommendBookVO">
+        INSERT INTO RECOMMEND_BOOK (BOOK_NO, RECOMMEND_TYPE, RECOMMEND_COMMENT)
+        VALUES (#{bookNo}, #{recommendType}, #{recommendComment})
+        ON DUPLICATE KEY UPDATE RECOMMEND_COMMENT = VALUES(RECOMMEND_COMMENT)
+    </insert>
+
+    <!-- 추천 도서 삭제 -->
+    <delete id="deleteRecommendBook" parameterType="com.bookGap.vo.RecommendBookVO">
+        DELETE FROM RECOMMEND_BOOK
+        WHERE BOOK_NO = #{bookNo} AND RECOMMEND_TYPE = #{recommendType}
+    </delete>
+
+    <!-- 추천 도서 정보 수정 (추천 타입/사유 업데이트) -->
+	<update id="updateRecommendBook" parameterType="com.bookGap.vo.RecommendBookVO">
+	    UPDATE RECOMMEND_BOOK
+	    SET RECOMMEND_TYPE = #{recommendType},
+	        RECOMMEND_COMMENT = #{recommendComment}
+	    WHERE BOOK_NO = #{bookNo}
+	      AND RECOMMEND_TYPE = #{oldRecommendType}
+	</update>
+    
+</mapper>
