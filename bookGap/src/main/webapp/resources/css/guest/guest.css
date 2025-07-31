@@ -1,0 +1,333 @@
+@charset "UTF-8";
+/* guestOrder */
+#guestOrder{
+	width: 100%;
+	height: 100%;
+  margin-bottom: 4%;
+  margin-left: 4%;
+  display: flex;
+}
+#guestOrderHead{
+  width: 100%;
+  height: 10%;
+  display: flex;
+  justify-content: center;
+}
+#Order{
+  width: 80%;
+	margin-top: 3%;
+	margin-bottom: 3%;
+	text-align: center;
+	font-size: 25px;
+}
+#guestOrderNav{
+  height: 100%;
+  margin-left: 2%;
+}
+.guestInfoTable{
+  width: 150%;
+}
+#deliveryInfoTable{
+  width: 150%;
+}
+.TableCategory{
+  text-align: center;
+  font-size: 20px;
+  margin-bottom: 3%;
+  margin-right: 18%;
+}
+.guestInfoTableContainer{
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin: 1%;
+  width: 70%;
+}
+.guestInfoCategory{
+  font-size: 17px;
+  margin: 0.5%;
+}
+.guestInfoTableInput{
+  width: 70%;
+  border: 1px solid black;
+  border-radius: 5px;
+  margin: 1%;
+  text-align: center;
+  align-items: center;
+  padding: 2.5%;
+  font-size: 15px;
+}
+.guestInfoTablePostInput{
+  width: 50%;
+  border: 1px solid black;
+  border-radius: 5px;
+  margin: 1%;
+  text-align: center;
+  align-items: center;
+  padding: 2.5%;
+  font-size: 15px;
+}
+.guestInfoTablePostButton{
+  width: 18%;
+  border: 1px solid black;
+  background-color: black;
+  color: white;
+  border-radius: 5px;
+  margin: 1%;
+  text-align: center;
+  align-items: center;
+  padding: 1.5%;
+  font-size: 17px;
+  cursor: pointer;
+}
+.guestInfoTableAddress1{
+  width: 70%;
+  border: 1px solid black;
+  border-radius: 5px;
+  margin: 1%;
+  text-align: center;
+  align-items: center;
+  padding: 2.5%;
+  font-size: 15px;
+}
+.guestInfoTableAddress2{
+  width: 70%;
+  border: 1px solid black;
+  border-radius: 5px;
+  margin: 1%;
+  text-align: center;
+  align-items: center;
+  padding: 2.5%;
+  font-size: 15px;
+}
+#deliveryInfo{
+font-size: 13px;
+}
+#guestOrderSection{
+  width: 30%;
+  height: 100%;
+  margin-left: 8%;
+}
+#orderTable{
+  width: 100%;
+  height: 50%;
+  text-align: center;
+}
+#payMathodTable{
+  width: 100%;
+  height: 50%;
+  text-align: center;
+  margin-bottom: 15%;
+}
+.SectionTitle{
+	text-align: center;
+	font-size: 20px;
+  margin-bottom: 4%;
+  margin-right: 23%;
+}
+.layout{
+  width: 70%;
+  height: 100%;
+  border: 1px solid black;
+  border-radius: 20px;
+  margin-bottom: 5%;
+  padding: 3%
+}
+.orderDetail{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.orderDetailDiv{
+  display: flex;
+  justify-content: center;
+}
+.orderImg{
+  width: 25%;
+  height: 25%;
+  margin: 4%;
+}
+.orderDetails{
+  display: flex;
+  flex-direction: column;
+  font-size: 17px;
+  margin-top: 10%;
+  margin-left: 3%;
+  margin-right: 2%;
+}
+.orderTotalPrice{
+  font-size: 17px;
+  color: blue;
+  margin-top: 5%;
+  margin-bottom: 5%;
+}
+.payContainer{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: center;
+  gap: 20px;
+}
+.payIcon{
+  width: 150px;
+  height: 80px;
+  border: 1px solid black;
+  border-radius: 20px;
+  margin: 1%;
+  display: flex;
+  justify-content: center;
+  cursor: pointer;
+}
+.kakao{
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+  justify-content: center;
+  align-items: center;
+}
+.toss{
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+  justify-content: center;
+  align-items: center;
+}
+.kakaoimg{
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+}
+.tossimg{
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+}
+#guestOrderAside{
+  width: 25%;
+  height: 100%;
+}
+#paymentTable{
+  width: 100%;
+  height: 50%;
+}
+.asideLine{
+  width: 100%;
+  border-bottom: solid 2px;
+  border-color: black;
+}
+.asideDiv{
+  padding: 3%;
+  font-size: 17px;
+}
+.agree1Div{
+  margin-left: 10%;
+  margin-right: 5%;
+}
+.agree2Div{
+  margin-left: 25%;
+  margin-right: 30%;
+}
+input[type="checkbox"] {
+  accent-color: black;
+}
+.agree3Div{
+  margin-left: 10%;
+  margin-right: 18%;
+}
+.agree4Div{
+  margin-left: 25%;
+  margin-right: 28%;
+}
+.asideText1{
+  padding: 3%;
+}
+.asideText2{
+  text-align: center;
+  padding: 3%;
+}
+.finalPrice{
+  text-align: center;
+  color: blue;
+  padding: 1%;
+}
+#agreeTable{
+  width: 100%;
+  margin-left: -7%;
+  margin-top: 10%;
+}
+.asideAgree{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.asideTextPrice{
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+.agreeIcon1{
+  width: 8%;
+  height: 8%;
+  margin-bottom: 0.5%;
+  margin-left: 1%;
+  margin-right: 0%;
+  cursor: pointer;
+}
+.agreeIcon2{
+  width: 5%;
+  height: 5%;
+  margin-bottom: 0.5%;
+  margin-left: 0.5%;
+  margin-right: 0%;
+  cursor: pointer;
+}
+.agreeLine{
+  width: 100%;
+  border-bottom: solid 2px;
+  border-color: black;
+}
+.payBtnDiv{
+  display: flex;
+  justify-content: space-evenly;
+  margin-top: 10%;
+}
+.payBtn{
+  border: 1px solid black;
+  border-radius: 10px;
+  background-color: black;
+  color: white;
+  width: 60%;
+  height: 40%;
+  font-size: 25px;
+  padding: 2%;
+  cursor: pointer;
+}
+.guideText {
+  margin-top: 5%;
+  width: 100%;
+  height: auto;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  padding: 3%;
+  font-size: 14px;
+  color: #333;
+  border-radius: 4px;
+  display: none;
+}
+#guidePrivacyText{
+  margin-top: 5%;
+  width: 100%;
+  height: 200px; /* 고정된 높이값 */
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  padding: 3%;
+  font-size: 14px;
+  color: #333;
+  border-radius: 4px;
+  display: none;
+  overflow-y: scroll; 
+}
