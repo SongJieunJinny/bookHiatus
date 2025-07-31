@@ -10,7 +10,7 @@
 <title>choiceList</title>
 <script src="<%=request.getContextPath()%>/resources/js/jquery-3.7.1.js"></script>
 <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/resources/css/index.css"/>
-<link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/resources/css/book/bookList.css?v=2"/>
+<link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/resources/css/book/choiceList.css?v=2"/>
 <style>
 .filterButtons button {
     margin-right: 10px;
@@ -60,21 +60,23 @@
         <div class="bookItems">
             <c:forEach items="${selectBookList}" var="vo">
                 <div class="bookItem">
-                    <input type="hidden" name="isbn" value="${vo.isbn}">
-                    <div class="bookImg">
-                        <a href="../product/bookView.do?isbn=${vo.isbn}">
-                            <img src="${vo.image}" alt="${vo.title}" style="height: 260px;"/>
-                        </a>
-                    </div>
-                    <div class="bookTitle">
-                        <c:out value="${fn:replace(vo.title, '(', '<br>(')}" escapeXml="false"/>
-                    </div>
-                    <div class="bookPrice">${vo.discount}원</div>
-                    <div class="bookRecommendType">[추천 종류] ${vo.recommendType}</div>
-                    <c:if test="${not empty vo.recommendComment}">
-                        <div class="bookRecommendComment">추천 이유: ${vo.recommendComment}</div>
-                    </c:if>
-                </div>
+				  <input type="hidden" name="isbn" value="${vo.isbn}">
+				  <div class="bookImg">
+				    <a href="../product/bookView.do?isbn=${vo.isbn}">
+				      <img src="${vo.image}" alt="${vo.title}" />
+				    </a>
+				  </div>
+				  <div class="bookContent">
+				    <div class="bookTitle">
+				      <c:out value="${fn:replace(vo.title, '(', '<br>(')}" escapeXml="false"/>
+				    </div>
+				    <div class="bookPrice">${vo.discount}원</div>
+				    <div class="bookRecommendType">[추천 종류] ${vo.recommendType}</div>
+				    <c:if test="${not empty vo.recommendComment}">
+				      <div class="bookRecommendComment">${vo.recommendComment}</div>
+				    </c:if>
+				  </div>
+				</div>
             </c:forEach>
         </div>
     </section>
@@ -100,7 +102,6 @@
             <a href="choiceList.do?nowpage=${paging.endPage + 1}&recommendType=${recommendType}">&gt;</a>
         </c:if>
     </div>
-
 <script>
 function filterType(type){
     window.location.href = 'choiceList.do?recommendType=' + type;
@@ -109,6 +110,12 @@ function filterType(type){
 $(document).ready(function() {
     updateCartCount();
     initHeaderEvents();
+
+    // 셀렉트박스 이벤트 바인딩
+    $('#recommendTypeSelect').on('change', function(){
+        const selected = $(this).val();
+        filterType(selected);
+    });
 });
 
 function updateCartCount() {
