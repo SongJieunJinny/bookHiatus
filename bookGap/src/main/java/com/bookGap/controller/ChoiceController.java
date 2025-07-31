@@ -10,68 +10,45 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.bookGap.service.BookService;
+import com.bookGap.service.RecommendBookService;
 import com.bookGap.vo.ProductApiVO;
+import com.bookGap.vo.RecommendBookVO;
 import com.bookGap.vo.SearchVO;
 
 @Controller
 public class ChoiceController {
 	
-	@Autowired
-	public BookService bookService;
-	
-	@RequestMapping(value = "choice/choiceList.do", method = RequestMethod.GET)
-	public String choiceList(@RequestParam(required = false) String category,
-	                       @RequestParam(value = "nowpage", required = false, defaultValue = "1") int nowpage,
-	                       SearchVO searchVO,
-	                       Model model) {
+	  @Autowired
+	    public RecommendBookService recommendBookService;
 
-	    searchVO.setNowPage(nowpage);
-	    searchVO.setPerPage(5); // 페이지당 항목 수
-	    searchVO.setCategory(category); // 카테고리 필터용 (SearchVO에 추가 필요)
-	    
-	    
-	    System.out.println("Current Page: " + nowpage);
-	    System.out.println("Per Page: " + searchVO.getPerPage());
-	    System.out.println("Category: " + category);
-	    // 전체 개수 조회
-	    int total = (category != null && !category.isEmpty())
-	                ? bookService.getTotalByCategory(searchVO)
-	                : bookService.getTotalBookCount(searchVO);
-	    System.out.println("Total books: " + total);
-	    searchVO.setTotal(total);
-	    searchVO.calcStartEnd(nowpage, searchVO.getPerPage());
-	    searchVO.calcLastPage(total, searchVO.getPerPage());
-	    searchVO.calcStartEndPage(nowpage, searchVO.getCntPage());
-	    System.out.println("Start Index: " + searchVO.getStart());
-	    System.out.println("End Index: " + searchVO.getEnd());
+	    @RequestMapping(value = "choice/choiceList.do", method = RequestMethod.GET)
+	    public String choiceList(@RequestParam(value = "nowpage", required = false, defaultValue = "1") int nowpage,
+	                             @RequestParam(value = "recommendType", required = false, defaultValue = "") String recommendType,
+	                             SearchVO searchVO,
+	                             Model model) {
 
-	    // 책 목록 조회 (카테고리 필터 여부에 따라)
-	    List<ProductApiVO> selectBookList;
-	    if (category != null && !category.isEmpty()) {
-	    	
-	        selectBookList = bookService.getBooksByCategoryPaging(searchVO);
-	    } else {
-	    	
-	        selectBookList = bookService.getBooksPaging(searchVO);
+	        // 페이징 및 추천 타입 설정
+	        searchVO.setNowPage(nowpage);
+	        searchVO.setPerPage(5);
+	        searchVO.setRecommendType(recommendType);
+
+	        // 전체 추천 도서 개수 가져오기
+	        int total = recommendBookService.getTotalRecommendBooks(searchVO);
+	        searchVO.setTotal(total);
+
+	        // 페이징 계산
+	        searchVO.calcStartEnd(nowpage, searchVO.getPerPage());
+	        searchVO.calcLastPage(total, searchVO.getPerPage());
+	        searchVO.calcStartEndPage(nowpage, searchVO.getCntPage());
+
+	        // 추천 도서 목록 가져오기
+	        List<RecommendBookVO> selectBookList = recommendBookService.getRecommendBooks(searchVO);
+
+	        // 뷰로 데이터 전달
+	        model.addAttribute("selectBookList", selectBookList);
+	        model.addAttribute("paging", searchVO);
+	        model.addAttribute("recommendType", recommendType);
+
+	        return "choice/choiceList";
 	    }
-	    
-	    System.out.println("Books returned: " + (selectBookList != null ? selectBookList.size() : 0));
-	    if (selectBookList != null) {
-	        for (ProductApiVO vo : selectBookList) {
-	            System.out.println(" - " + vo.getTitle());
-	        }
-	    }
-
-	    List<String> categories = bookService.getDistinctCategories();
-
-	    model.addAttribute("selectBookList", selectBookList);
-	    model.addAttribute("bookCategories", categories);
-	    model.addAttribute("paging", searchVO);
-	    model.addAttribute("searchType", searchVO.getSearchType());
-	    model.addAttribute("searchValue", searchVO.getSearchValue());
-	    model.addAttribute("category", category); // 선택된 카테고리 유지용
-
-	    return "choice/choiceList";
-	}
-
 }
