@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+			"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bookGap.mapper.guestMapper"> 
+
+  <insert id="insertGuest" parameterType="com.bookGap.vo.GuestVO">
+	  INSERT INTO GUEST (
+	    GUEST_ID, 
+	    GUEST_NAME, 
+	    GUEST_PHONE,
+	    GUEST_EMAIL,
+	    GUEST_CREATED_AT
+	  ) VALUES (
+	    #{guestId}, 
+	    #{guestName}, 
+	    #{guestPhone},
+	    #{guestEmail},
+	    NOW()
+	  )
+  </insert>
+    
+  <insert id="insertGuestAddress" parameterType="com.bookGap.vo.GuestVO">
+	  INSERT INTO GUEST_ADDRESS (
+	   GUEST_ID, 
+	   GUEST_POST_CODE,
+	   GUEST_ROAD_ADDRESS,
+	   GUEST_DETAIL_ADDRESS
+	  ) VALUES (
+	   #{guestId},        
+	   #{guestPostCode}, 
+	   #{guestRoadAddress},
+	   #{guestDetailAddress}
+	  )
+  </insert>
+</mapper>
