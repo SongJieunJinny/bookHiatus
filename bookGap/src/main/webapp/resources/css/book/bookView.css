@@ -12,9 +12,7 @@ section{
 	margin-left: 15%;
 	margin-right: 15%;
 	padding-top: 5%;
-	position: relative;
-  z-index: -1; 
-}
+}     
 .bookPart {
 	display: flex;   /* 가로 정렬 */
 	align-items: center;  /* 세로 중앙 정렬 */
