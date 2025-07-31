@@ -4,13 +4,16 @@
 }
 body{
   font-size: clamp(14px, 2vw, 18px); /* ✨ 글자 크기 유동적으로 */
+  display: block !important;
 }
 section{
 	width: 70%;
 	height: auto;
 	margin-left: 15%;
 	margin-right: 15%;
-	margin-top: 5%;
+	padding-top: 5%;
+	position: relative;
+  z-index: -1; 
 }
 .bookPart {
 	display: flex;   /* 가로 정렬 */
