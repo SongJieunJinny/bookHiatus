@@ -25,7 +25,11 @@
 		<typeAlias type="com.bookGap.vo.OrderVO" alias="OrderVO"/>
 		<typeAlias type="com.bookGap.vo.OrderDetailVO" alias="OrderDetailVO"/>
 		<typeAlias type="com.bookGap.vo.CartVO" alias="CartVO"/>
+<<<<<<< HEAD
+		<typeAlias type="com.bookGap.vo.RecommendBookVO" alias="RecommendBookVO"/>
+=======
 		<typeAlias type="com.bookGap.vo.GuestVO" alias="GuestVO"/>
+>>>>>>> branch 'main' of https://github.com/SongJieunJinny/bookHiatus.git
 	</typeAliases>
 
 </configuration>

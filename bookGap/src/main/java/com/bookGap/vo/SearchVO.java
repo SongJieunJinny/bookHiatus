@@ -32,8 +32,14 @@ public class SearchVO extends PagingUtil {
 	private int bookNo;
 	 private String isbn; 
 	 
+	 private String recommendType;
 	
-	
+	public String getRecommendType() {
+		return recommendType;
+	}
+	public void setRecommendType(String recommendType) {
+		this.recommendType = recommendType;
+	}
 	public String getIsbn() {
     return isbn;
   }
