@@ -40,10 +40,12 @@ public class AdminRecommendController {
         searchVO.calcStartEndPage(nowpage, searchVO.getCntPage());
 
         List<RecommendBookVO> recommendBooks = recommendBookService.getRecommendBooks(searchVO);
+        List<String> recommendTypes = recommendBookService.getAllRecommendTypes();
 
         model.addAttribute("recommendBooks", recommendBooks);
         model.addAttribute("paging", searchVO);
         model.addAttribute("recommendType", recommendType); // 필터 상태 유지
+        model.addAttribute("recommendTypes", recommendTypes);
 
         return "admin/adminRecommendBooks";
     }
@@ -52,8 +54,14 @@ public class AdminRecommendController {
     @PostMapping("/add")
     @ResponseBody
     public String add(@RequestParam int bookNo,
-                      @RequestParam(defaultValue = "BASIC") String recommendType,
-                      @RequestParam(defaultValue = "") String recommendComment) {
+			                      @RequestParam(defaultValue = "BASIC") String recommendType,
+			                      @RequestParam(defaultValue = "") String recommendComment) {
+    	
+    	recommendType = recommendType.trim();  // 공백 제거
+    	    if (recommendType.isEmpty()) {
+    	        return "추천 타입이 유효하지 않습니다.";
+    	    }
+    	
         RecommendBookVO vo = new RecommendBookVO();
         vo.setBookNo(bookNo);
         vo.setRecommendType(recommendType);

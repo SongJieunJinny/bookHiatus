@@ -59,5 +59,11 @@
 	    WHERE BOOK_NO = #{bookNo}
 	      AND RECOMMEND_TYPE = #{oldRecommendType}
 	</update>
+	
+	<select id="getAllRecommendTypes" resultType="string">
+	    SELECT DISTINCT RECOMMEND_TYPE
+	    FROM RECOMMEND_BOOK
+	    ORDER BY RECOMMEND_TYPE
+	</select>
     
 </mapper>

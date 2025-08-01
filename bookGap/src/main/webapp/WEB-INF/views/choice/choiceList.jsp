@@ -38,23 +38,22 @@
     <section class="bookList">
         <div class="bookAll">
             <div class="bookTitleName">
-                추천 도서 
                 <c:choose>
-                    <c:when test="${recommendType eq ''}">(전체)</c:when>
-                    <c:otherwise>(${recommendType})</c:otherwise>
+                    <c:when test="${recommendType eq ''}">전체 추천도서 </c:when>
+                    <c:otherwise>${recommendType}</c:otherwise>
                 </c:choose>
             </div>
         </div>
 
         <!-- 추천 타입 필터 버튼 -->
       <div class="filterButtons selectBoxWrapper">
-		  <label for="recommendTypeSelect">추천 타입 선택:</label>
-		  <select id="recommendTypeSelect" class="form-select" style="width: 150px;  height: 30px;">
-		    <option value="" ${recommendType eq '' ? 'selected' : ''}>전체</option>
-		    <option value="BASIC" ${recommendType eq 'BASIC' ? 'selected' : ''}>BASIC</option>
-		    <option value="SEASON" ${recommendType eq 'SEASON' ? 'selected' : ''}>SEASON</option>
-		    <option value="THEME" ${recommendType eq 'THEME' ? 'selected' : ''}>THEME</option>
-		  </select>
+		    <label for="recommendTypeSelect">추천 타입 선택:</label>
+		    <select id="recommendTypeSelect" class="form-select" style="width: 150px; height: 30px;">
+		        <option value="" ${recommendType eq '' ? 'selected' : ''}>전체</option>
+		        <c:forEach var="type" items="${recommendTypes}">
+		            <option value="${type}" ${recommendType eq type ? 'selected' : ''}>${type}</option>
+		        </c:forEach>
+		    </select>
 		</div>
         <!-- 도서 목록 -->
         <div class="bookItems">
@@ -71,7 +70,7 @@
 				      <c:out value="${fn:replace(vo.title, '(', '<br>(')}" escapeXml="false"/>
 				    </div>
 				    <div class="bookPrice">${vo.discount}원</div>
-				    <div class="bookRecommendType">[추천 종류] ${vo.recommendType}</div>
+				    <div class="bookRecommendType">[추천 타입] ${vo.recommendType}</div>
 				    <c:if test="${not empty vo.recommendComment}">
 				      <div class="bookRecommendComment">${vo.recommendComment}</div>
 				    </c:if>
