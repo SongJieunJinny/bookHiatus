@@ -43,4 +43,7 @@ public class RecommendBookDAO {
     public void updateRecommendBook(RecommendBookVO vo) {
         sqlSession.update(namespace + "updateRecommendBook", vo);
     }
+    public List<String> getAllRecommendTypes() {
+        return sqlSession.selectList(namespace + "getAllRecommendTypes");
+    }
 }

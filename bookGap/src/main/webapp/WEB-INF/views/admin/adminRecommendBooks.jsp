@@ -24,7 +24,11 @@
     text-align: center;
     vertical-align: middle;
 }
-#filterButtons button { margin: 5px; }
+#filterButtons button { margin: 5px;
+ }
+#customTypeInput {
+    margin-top: 10px;
+}
 </style>
 </head>
 <body class="sb-nav-fixed">
@@ -63,12 +67,13 @@
                         <div class="card-body">
                             <!-- 필터 버튼 -->
                             <div id="filterButtons" class="mb-3">
-                                <button class="btn btn-outline-primary" onclick="filterType('')">전체</button>
-                                <button class="btn btn-outline-success" onclick="filterType('BASIC')">BASIC</button>
-                                <button class="btn btn-outline-warning" onclick="filterType('SEASON')">SEASON</button>
-                                <button class="btn btn-outline-info" onclick="filterType('THEME')">THEME</button>
-                               <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">추천 도서 추가</button>
-                            </div>
+							    <button class="btn btn-outline-primary" onclick="filterType('')">전체</button>
+							    <c:forEach var="type" items="${recommendTypes}">
+							        <c:set var="btnClass" value="${typeColorMap[type] != null ? typeColorMap[type] : 'btn-outline-secondary'}" />
+							        <button class="btn ${btnClass}" onclick="filterType('${type}')">${type}</button>
+							    </c:forEach>
+							    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">추천 도서 추가</button>
+							</div>
 
                             <table id="datatablesSimple" class="table table-bordered">
                                 <thead>
@@ -89,12 +94,14 @@
 									    </td>
 									    <td>${vo.title}</td>
 									    <td>
-									      <select class="recommendType form-select form-select-sm">
-									        <option value="BASIC" ${vo.recommendType eq 'BASIC' ? 'selected' : ''}>BASIC</option>
-									        <option value="SEASON" ${vo.recommendType eq 'SEASON' ? 'selected' : ''}>SEASON</option>
-									        <option value="THEME" ${vo.recommendType eq 'THEME' ? 'selected' : ''}>THEME</option>
-									      </select>
-									    </td>
+										  <select class="recommendType form-select form-select-sm">
+											  <c:forEach var="type" items="${recommendTypes}">
+											    <option value="${type}" ${type eq vo.recommendType ? 'selected' : ''}>${type}</option>
+											  </c:forEach>
+											  <option value="custom">직접 입력</option>
+										  </select>
+										<input type="text" class="form-control customRecommendType mt-1" placeholder="추천 타입 직접 입력" style="display: none;" value="" />
+										</td>
 									    <td>
 									      <input type="text" class="form-control recommendComment" value="${vo.recommendComment}" />
 									    </td>
@@ -128,11 +135,15 @@
 		          </div>
 		          <div class="mb-3">
 		            <label for="addType" class="form-label">추천 타입</label>
-		            <select id="addType" class="form-select" required>
-		              <option value="BASIC">BASIC</option>
-		              <option value="SEASON">SEASON</option>
-		              <option value="THEME">THEME</option>
-		            </select>
+						<select id="addType" class="form-select" required>
+						  <option value="BASIC">BASIC</option>
+						  <option value="SEASON">SEASON</option>
+						  <option value="THEME">THEME</option>
+						  <option value="custom">직접 입력</option> <!-- 새로운 옵션 -->
+						</select>
+						<!-- 직접 입력 필드 (초기에는 숨김 처리) -->
+						<input type="text" id="customTypeInput" maxlength="50" placeholder="추천 타입 (최대 50자)" class="form-control mt-2"
+						       placeholder="새로운 추천 타입을 입력하세요" style="display: none;" />
 		          </div>
 		          <div class="mb-3">
 		            <label for="addComment" class="form-label">추천 사유</label>
@@ -154,7 +165,6 @@
 <script src="<%=request.getContextPath()%>/resources/js/datatables-simple-demo.js"></script>
 
 <script>
-// DataTables 초기화
 document.addEventListener("DOMContentLoaded", function () {
     const table = new simpleDatatables.DataTable("#datatablesSimple", {
         labels: {
@@ -171,33 +181,167 @@ function filterType(type){
     window.location.href = '${pageContext.request.contextPath}/admin/recommend/list?recommendType=' + type;
 }
 
-// Ajax 이벤트
 $(document).ready(function(){
     // 도서 추가
-	   $('#addForm').on('submit', function(e){
-	    e.preventDefault();
+    $('#addForm').on('submit', function(e){
+        e.preventDefault();
+
+        const bookNo = $('#addBookNo').val().trim();
+        let recommendType = $('#addType').val();
+        const customType = $('#customTypeInput').val().trim();
+        const recommendComment = $('#addComment').val().trim();
+
+        if (recommendType === 'custom') {
+            if (!customType) {
+                alert('추천 타입을 입력해주세요.');
+                return;
+            }
+            recommendType = customType;
+        }
+
+        if (!bookNo || !recommendType) {
+            alert('도서번호와 추천타입은 필수입니다.');
+            return;
+        }
+
+        $.post('${pageContext.request.contextPath}/admin/recommend/add', {
+            bookNo: bookNo,
+            recommendType: recommendType,
+            recommendComment: recommendComment
+        }, function(){
+            alert('추천 도서가 추가되었습니다.');
+            $('#addModal').modal('hide');
+            location.reload();
+        }).fail(function(xhr){
+            alert('추가 실패: ' + xhr.responseText);
+        });
+    });
+
+    // 모달에서 직접입력 선택 시 input 표시
+    $('#addType').on('change', function () {
+        if ($(this).val() === 'custom') {
+            $('#customTypeInput').show();
+        } else {
+            $('#customTypeInput').hide().val('');
+        }
+    });
+
+    // 모달에서 입력한 추천타입을 select에 추가
+    $('#customTypeInput').on('change', function () {
+        const customVal = $(this).val().trim();
+        const select = $('#addType');
+
+        if (customVal !== '') {
+            const exists = select.find('option').filter(function() {
+                return $(this).val() === customVal;
+            }).length > 0;
+
+            if (!exists) {
+                select.append($('<option>', {
+                    value: customVal,
+                    text: customVal
+                }));
+            }
+
+            select.val(customVal);
+        }
+    });
+
+    // 테이블 select에서 '직접 입력' 선택 시 input 표시
+	 $(document).on('change', '.recommendType', function () {
+	    const row = $(this).closest('tr');
+	    const selectedVal = $(this).val();
+	    const input = row.find('.customRecommendType');
 	
-	    const bookNo = $('#addBookNo').val().trim();
-	    const recommendType = $('#addType').val();
-	    const recommendComment = $('#addComment').val().trim();
+	    if (selectedVal === 'custom') {
+	        input.val('').show().focus(); // 여기서도 초기화
+	    } else {
+	        input.hide().val('');
+	    }
+	});
 	
-	    if(!bookNo || !recommendType){
-	        alert('도서번호와 추천타입은 필수입니다.');
+	// 테이블에서 custom 입력 시 자동 추가 및 선택
+	$(document).on('input', '.customRecommendType', function () {
+	    const row = $(this).closest('tr');
+	    const customVal = $(this).val().trim();
+	    const select = row.find('.recommendType');
+	
+	    if (customVal !== '') {
+	        const exists = select.find('option').filter(function () {
+	            return $(this).val() === customVal;
+	        }).length > 0;
+	
+	        if (!exists) {
+	            select.append($('<option>', {
+	                value: customVal,
+	                text: customVal
+	            }));
+	        }
+	
+	        //  여기서는 자동 선택만, 이벤트 트리거는 제거!
+	        select.val(customVal);
+	    }
+	});
+
+
+	// select, comment input은 change로 처리
+	$(document).on('change', '.recommendType, .recommendComment', function () {
+	    handleUpdate($(this).closest('tr'));
+	});
+
+	// customRecommendType은 blur 또는 Enter에서만 처리
+	$(document).on('blur', '.customRecommendType', function () {
+	    handleUpdate($(this).closest('tr'));
+	});
+	$(document).on('keyup', '.customRecommendType', function (e) {
+	    if (e.key === 'Enter') {
+	        e.preventDefault();         // 폼 제출 방지
+	        $(this).blur();             // blur 이벤트 강제 발생
+	    }
+	});
+
+	$(document).on('keyup', '.customRecommendType', function (e) {
+	    if (e.key === 'Enter') {
+	        handleUpdate($(this).closest('tr'));
+	    }
+	});
+
+	function handleUpdate(row) {
+	    const bookNo = row.find('td:eq(0)').text().trim();
+	    const oldRecommendType = row.find('.oldRecommendType').val();
+	    const selectVal = row.find('.recommendType').val();
+	    const customVal = row.find('.customRecommendType').val().trim();
+	    const recommendComment = row.find('.recommendComment').val();
+
+	    let recommendType = '';
+
+	    if (selectVal === 'custom') {
+	        if (customVal === '') {
+	            // 입력 안 되었을 경우 업데이트 하지 않음
+	            return;
+	        }
+	        recommendType = customVal;
+	    } else {
+	        recommendType = selectVal;
+	    }
+
+	    if (!bookNo || !recommendType || !oldRecommendType) {
+	        alert('필수값 누락!');
 	        return;
 	    }
-	
-	    $.post('${pageContext.request.contextPath}/admin/recommend/add', {
+
+	    $.post('${pageContext.request.contextPath}/admin/recommend/update', {
 	        bookNo: bookNo,
+	        oldRecommendType: oldRecommendType,
 	        recommendType: recommendType,
 	        recommendComment: recommendComment
-	    }, function(){
-	        alert('추천 도서가 추가되었습니다.');
-	        $('#addModal').modal('hide');
-	        location.reload();
-	    }).fail(function(xhr){
-	        alert('추가 실패: ' + xhr.responseText);
+	    }).done(function () {
+	        row.find('.oldRecommendType').val(recommendType);
+	        alert('추천 도서가 성공적으로 업데이트되었습니다.');
+	    }).fail(function (xhr) {
+	        alert('업데이트 실패\n' + xhr.responseText);
 	    });
-	});
+	}
 
     // 도서 삭제
     $('.btnDelete').click(function(){
@@ -212,40 +356,6 @@ $(document).ready(function(){
             ).fail(function(){ alert('삭제 실패'); });
         }
     });
-
- // 타입/사유 변경 시 업데이트
-    $('.recommendType, .recommendComment').on('change', function () {
-    	  const row = $(this).closest('tr');
-    	  const bookNo = row.find('td:eq(0)').text().trim();
-    	  const oldRecommendType = row.find('.oldRecommendType').val(); // ← 이게 핵심!
-    	  const recommendType = row.find('.recommendType').val();
-    	  const recommendComment = row.find('.recommendComment').val();
-
-    	  console.log('---[업데이트 요청]---');
-    	  console.log('bookNo:', bookNo);
-    	  console.log('oldRecommendType:', oldRecommendType);
-    	  console.log('recommendType:', recommendType);
-    	  console.log('recommendComment:', recommendComment);
-
-    	  if (!bookNo || !recommendType || !oldRecommendType) {
-    	    alert('필수값 누락! bookNo, oldRecommendType, recommendType 확인 필요');
-    	    return;
-    	  }
-
-    	  $.post('${pageContext.request.contextPath}/admin/recommend/update', {
-    	    bookNo: bookNo,
-    	    oldRecommendType: oldRecommendType,
-    	    recommendType: recommendType,
-    	    recommendComment: recommendComment
-    	  }).done(function (response) {
-    	    console.log('서버 응답 성공:', response);
-    	    row.find('.oldRecommendType').val(recommendType); // ← 기준값 갱신!
-    	    alert('추천 도서를 업데이트 하는데 성공 하셨습니다.');
-    	  }).fail(function (xhr) {
-    	    console.error('업데이트 실패:', xhr.responseText);
-    	    alert('업데이트 실패\n' + xhr.responseText);
-    	  });
-    	});
 });
 </script>
 </body>

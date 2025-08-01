@@ -38,5 +38,10 @@ public class RecommendBookServiceImpl implements RecommendBookService  {
     public void updateRecommendBook(RecommendBookVO vo) {
         recommendBookDAO.updateRecommendBook(vo);
     }
+    
+    @Override
+    public List<String> getAllRecommendTypes() {
+        return recommendBookDAO.getAllRecommendTypes();
+    }
 
 }

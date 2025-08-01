@@ -12,5 +12,6 @@ public interface RecommendBookService {
     void addRecommendBook(RecommendBookVO vo);
     void removeRecommendBook(int bookNo, String recommendType);
     void updateRecommendBook(RecommendBookVO vo);
+    List<String> getAllRecommendTypes();
 
 }
