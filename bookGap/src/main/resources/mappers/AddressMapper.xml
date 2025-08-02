@@ -2,22 +2,34 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
 			"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.bookGap.mapper.AddressMapper">
+<resultMap id="addressResultMap" type="com.bookGap.vo.UserAddressVO">
+  <result property="userAddressId" column="USER_ADDRESS_ID" />
+  <result property="addressName" column="ADDRESS_NAME" />
+  <result property="postCode" column="POST_CODE" />
+  <result property="roadAddress" column="ROAD_ADDRESS" />
+  <result property="detailAddress" column="DETAIL_ADDRESS" />
+  <result property="isDefault" column="IS_DEFAULT" />
+  <result property="userId" column="USER_ID" />
+  <result property="userName" column="USER_NAME" />
+  <result property="userPhone" column="USER_PHONE" />
+</resultMap>
 	  <!-- 배송지 목록 조회 -->
-  <select id="selectUserAddresses" parameterType="string" resultType="com.bookGap.vo.UserAddressVO">
-    SELECT 
-      USER_ADDRESS_ID AS userAddressId,
-      USER_ID AS userId,
-      ADDRESS_NAME AS addressName,
-      POST_CODE AS postCode,
-      ROAD_ADDRESS AS roadAddress,
-      DETAIL_ADDRESS AS detailAddress,
-      IS_DEFAULT AS isDefault,
-      USER_NAME AS userName,
-      USER_PHONE AS userPhone
-    FROM USER_ADDRESS
-    WHERE USER_ID = #{userId}
-    ORDER BY IS_DEFAULT DESC, USER_ADDRESS_ID DESC
-  </select>
+  <select id="selectUserAddresses" parameterType="string" resultMap="addressResultMap">
+	  SELECT 
+	    ua.USER_ADDRESS_ID AS USER_ADDRESS_ID,
+	    ua.ADDRESS_NAME    AS ADDRESS_NAME,
+	    ua.POST_CODE       AS POST_CODE,
+	    ua.ROAD_ADDRESS    AS ROAD_ADDRESS,
+	    ua.DETAIL_ADDRESS  AS DETAIL_ADDRESS,
+	    ua.IS_DEFAULT      AS IS_DEFAULT,
+	    ua.USER_ID         AS USER_ID,
+	    ua.USER_NAME        AS USER_NAME,
+	    ua.USER_PHONE       AS USER_PHONE
+	  FROM USER_ADDRESS ua
+	  JOIN USER u ON ua.USER_ID = u.USER_ID
+	  WHERE ua.USER_ID = #{userId}
+	  ORDER BY ua.IS_DEFAULT DESC, ua.USER_ADDRESS_ID ASC
+</select>
 
   <!-- 배송지 추가 -->
   <insert id="insertUserAddress" parameterType="com.bookGap.vo.UserAddressVO">

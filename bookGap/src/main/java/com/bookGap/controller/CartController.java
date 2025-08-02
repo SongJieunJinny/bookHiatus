@@ -45,7 +45,7 @@ public class CartController {
 	    if (principal != null) {
 	        String userId = principal.getName();
 	        List<CartVO> cartItems = cartService.getCartByUser(userId);
-	        System.out.println("[디버그] cartPage() 호출: userId=" + userId + ", cartItems=" + cartItems);
+	        //System.out.println("[디버그] cartPage() 호출: userId=" + userId + ", cartItems=" + cartItems);
 
 	        String cartItemsJson = "[]";
 	        try {
@@ -54,10 +54,10 @@ public class CartController {
 	            e.printStackTrace();
 	        }
 
-	        System.out.println("[디버그] cartItemsJson=" + cartItemsJson);
+	        //System.out.println("[디버그] cartItemsJson=" + cartItemsJson);
 	        model.addAttribute("cartItemsJson", cartItemsJson);
 	    } else {
-	        System.out.println("[디버그] 비로그인 사용자, 빈 장바구니");
+	       // System.out.println("[디버그] 비로그인 사용자, 빈 장바구니");
 	        model.addAttribute("cartItemsJson", "[]");
 	    }
 	    return "product/cart";
