@@ -27,6 +27,7 @@
 		<typeAlias type="com.bookGap.vo.CartVO" alias="CartVO"/>
 		<typeAlias type="com.bookGap.vo.RecommendBookVO" alias="RecommendBookVO"/>
 		<typeAlias type="com.bookGap.vo.GuestVO" alias="GuestVO"/>
+		<typeAlias type="com.bookGap.vo.ComplainVO" alias="ComplainVO"/>
 	</typeAliases>
 
 </configuration>

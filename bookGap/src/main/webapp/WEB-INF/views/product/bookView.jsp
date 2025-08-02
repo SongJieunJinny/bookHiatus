@@ -171,6 +171,25 @@
 	</div>
 </section>
 <jsp:include page="/WEB-INF/views/include/footer.jsp" />
+<!-- 신고 사유 선택 모달 -->
+<div id="reportModal" class="modal-background">
+  <div class="modal-content">
+    <h3>신고 사유를 선택해주세요.</h3>
+    <form id="reportForm">
+      <input type="hidden" id="reportCommentNo" name="commentNo">
+      <div>
+        <label><input type="radio" name="complainType" value="1" checked> 욕설 / 비방</label><br>
+        <label><input type="radio" name="complainType" value="2"> 스팸 / 광고성 댓글</label><br>
+        <label><input type="radio" name="complainType" value="3"> 음란물</label><br>
+        <label><input type="radio" name="complainType" value="99"> 기타</label><br>
+      </div>
+      <div class="modal-buttons">
+        <button type="submit" id="submitReportBtn">제출</button>
+        <button type="button" id="cancelReportBtn">취소</button>
+      </div>
+    </form>
+  </div>
+</div>
 <script type="text/javascript">
 const BOOK_ISBN = "${bookDetail.isbn}";
 const userId = '<sec:authentication property="name" />';
@@ -263,10 +282,7 @@ $(document).ready(function() {
     const targetUrl = contextPath + "/order/orderMain.do?isbn=" + encodeURIComponent(BOOK_ISBN) + "&quantity=" + encodeURIComponent(quantity);
     window.location.href = targetUrl;
   });
-  // =============================================================
-  // 3. 페이지 내 요소들을 직접 제어하는 코드 (오류 수정 완료)
-  // =============================================================
-
+  
   // 수량 계산기 로직: 변수를 먼저 선언하고, 그 다음에 if 문으로 존재하는지 확인합니다.
   const minusBtn = document.querySelector(".minus");
   const plusBtn = document.querySelector(".plus");
@@ -322,24 +338,24 @@ $(document).ready(function() {
   const closeButton = document.getElementById('closeLoginModal');
   
   document.querySelectorAll(".toggle-btn").forEach(function (btn) {
-      const targetId = btn.getAttribute("data-target");
+    const targetId = btn.getAttribute("data-target");
 	  const target = document.getElementById(targetId);
 	  if (!target) return;
 	  if (target.scrollHeight <= 160) { btn.style.display = "none"; return; }
-	  
-      const setToggleButton = (button, isExpanded) => {
-	      button.innerHTML = "";
-	      const label = document.createElement("span");
-	      label.textContent = isExpanded ? "접기" : "펼쳐보기";
-          label.style.display = "inline-block";
-          label.style.textAlign = "center";
-	      button.appendChild(label);
-	      const iconImg = document.createElement("img");
-	      iconImg.src = contextPath + "/resources/img/icon/" + (isExpanded ? "collapse" : "expand") + ".png";
-	      iconImg.width = 18; iconImg.height = 10;
-          iconImg.style.verticalAlign = "middle";
-	      button.appendChild(iconImg);
-      };
+
+    const setToggleButton = (button, isExpanded) => {
+      button.innerHTML = "";
+      const label = document.createElement("span");
+      label.textContent = isExpanded ? "접기" : "펼쳐보기";
+      label.style.display = "inline-block";
+      label.style.textAlign = "center";
+      button.appendChild(label);
+      const iconImg = document.createElement("img");
+      iconImg.src = contextPath + "/resources/img/icon/" + (isExpanded ? "collapse" : "expand") + ".png";
+      iconImg.width = 18; iconImg.height = 10;
+      iconImg.style.verticalAlign = "middle";
+      button.appendChild(iconImg);
+    };
 
 	  setToggleButton(btn, false);
 	  btn.addEventListener("click", function () {
@@ -363,6 +379,44 @@ $(document).ready(function() {
 	    if (event.target == loginModal) { loginModal.classList.remove('show'); }
 	  });
   }
+  
+  $('#reportForm').on('submit', function(e) {
+		e.preventDefault();
+		
+		const commentNo = $('#reportCommentNo').val();
+		const complainType = $('input[name="complainType"]:checked').val();
+		
+		if(!commentNo || !complainType){
+			alert("오류: 신고 정보를 찾을 수 없습니다.");
+			return;
+		}
+		
+		$.ajax({ url: contextPath + "/comment/report.do",
+						 type: "POST",
+						 data: { commentNo: commentNo,
+										 complainType: complainType,
+										 userId: userId },
+						 success: function(response) {
+												if(response === "Success"){
+													alert("신고가 정상적으로 접수되었습니다.");
+												}else{
+													alert("신고 접수에 실패했습니다: " + response);
+												}
+												$('#reportModal').removeClass('show');
+												$('#reportForm')[0].reset(); // 폼 초기화
+											},
+						 error: function(){
+											alert("서버 오류로 신고를 접수하지 못했습니다.");
+											$('#reportModal').removeClass('show');
+										}
+		});
+	});
+
+	// 신고 모달 취소 버튼
+	$('#cancelReportBtn').on('click', function(){ $('#reportModal').removeClass('show'); });
+	// 모달 배경 클릭 시 닫기
+	$('#reportModal').on('click', function(e){ if($(e.target).is('#reportModal')){ $(this).removeClass('show'); }});
+	
 });
 
 //두번째 변수 생략시 1로 들어감
@@ -418,15 +472,31 @@ function loadComment(isbn, page = 1) {
                        </div>
                        <div id="contentContainer\${cvo.commentNo}" class="contentContainer">
                          <div class="reviewContent">\${cvo.commentContent}</div>`;
-			         if (canInteract) {
-			         html += `<div class="reviewOptions" data-review-box="\${cvo.commentNo}">⋯
-			                    <div id="optionsMenu\${cvo.commentNo}" class="optionsMenu">
-			                      <button class="editReviewButton" data-commentno="\${cvo.commentNo}">수정</button>
-			                      <button class="reportReviewButton" data-commentno="\${cvo.commentNo}">신고</button>
-			                      <button class="deleteReviewButton" data-commentno="\${cvo.commentNo}">삭제</button>
-			                    </div>
-			                  </div>`;
-			     }
+                         
+               const isAdmin = roles.includes("ROLE_ADMIN");
+               const isAuthor = cvo.userId && cvo.userId.trim() === userId.trim();
+               const isLoggedInUser = isLoggedIn && !isAdmin && !isAuthor;
+               
+               //로그인한 사용자만 "⋯" 아이콘을 표시
+               if(isLoggedIn){
+                 html += `<div class="reviewOptions" data-review-box="\${cvo.commentNo}">⋯
+                            <div id="optionsMenu\${cvo.commentNo}" class="optionsMenu">`;
+                 //관리자 (Admin)
+                 if(isAdmin){
+                   html += `<button class="reportReviewButton" data-commentno="\${cvo.commentNo}">신고</button>
+                            <button class="deleteReviewButton" data-commentno="\${cvo.commentNo}">삭제</button>`;
+                   } 
+                 //글 작성자 (Author)
+                 else if(isAuthor){
+                   html += `<button class="editReviewButton" data-commentno="\${cvo.commentNo}">수정</button>
+                            <button class="deleteReviewButton" data-commentno="\${cvo.commentNo}">삭제</button>`;
+                 }
+                 //일반 로그인 사용자
+                 else{
+                    html += `<button class="reportReviewButton" data-commentno="\${cvo.commentNo}">신고</button>`;
+                 }
+                 html += `</div></div>`;
+               }
             html += `</div></div>`;
           }
         } else {
@@ -574,7 +644,7 @@ function editReview(commentNo) {
     }
     
     const modifiedData = { commentNo: commentNo,
-    		                   BOOK_ISBN: isbn,
+    		                   BOOK_ISBN: BOOK_ISBN,
 							             commentContent: newText,
 							             commentRating: newRating,
 							             commentLiked: newLiked };
@@ -588,7 +658,7 @@ function editReview(commentNo) {
       success: function(res){
 				    	   if(res === "Success"){
 	             	   alert("댓글이 수정되었습니다.");
-	                 loadComment(isbn);  // 수정 후 목록 전체 새로고침
+	                 loadComment(BOOK_ISBN);  // 수정 후 목록 전체 새로고침
 	               }else{
 	                 alert("댓글 수정에 실패했습니다: " + res);  // 실패 시 수정 폼을 그대로 두어 다시 시도할 수 있게 함
 	               }
@@ -617,6 +687,16 @@ function deleteReview(commentNo){
 						alert("삭제 요청 중 오류 발생");
 					 }
 	});
+}
+
+function reportReview(commentNo) {
+	if(!isLoggedIn){
+    alert("리뷰를 신고하려면 로그인이 필요합니다.");
+    $('#loginModal').addClass('show');
+    return;
+  }
+  $('#reportCommentNo').val(commentNo);
+  $('#reportModal').addClass('show');
 }
 
 function toggleLove(commentNo, BOOK_ISBN, userId, checkbox){
