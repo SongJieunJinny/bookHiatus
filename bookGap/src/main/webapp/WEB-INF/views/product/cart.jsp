@@ -16,6 +16,7 @@
 <body>
 <sec:authorize access="isAuthenticated()">
   <div id="cart-data" data-json='${fn:escapeXml(cartItemsJson)}'></div>
+  <c:set var="userId" value="${pageContext.request.userPrincipal.name}" />
   <script>const isLoggedIn = true;</script>
 </sec:authorize>
 <sec:authorize access="isAnonymous()">
@@ -62,27 +63,26 @@
 	      <span class="close" id="closeFirstModal">&times;</span>
 	      <h2>ADDRESS</h2>
 	      <button id="addAddressBtn">+ 배송지 추가</button>
-	      <div id="addressList">
-	      </div>
+		  <div id="addressList"></div>
 	    </div>
 	  </div>
 	   <!-- 모달: 배송지 추가 -->
 	  <div id="secondModal" class="modal">
 	    <div class="modalContent">
 	      <span class="close" id="closeSecondModal">&times;</span>
-	      <!-- 배송지 입력 폼 -->
-	      <form>
-	        <div id="addressForm" style="display: none;">
-	          <input type="text" id="addressName" placeholder="배송지 이름">
-	          <input type="text" id="recipient" placeholder="받는 사람">
-	          <input type="text" id="phone" placeholder="연락처">
-	          <input type="text" id="zipcode" placeholder="우편번호">
-	          <input type="text" id="address" placeholder="주소">
-	          <input type="text" id="addressDetail" placeholder="상세 주소">
-	          <button id="searchAddress">주소 검색</button>
-	          <button id="saveAddress">저장</button>
+	      <h2>ADD NEW ADDRESS</h2>
+	      <form id="addressForm">
+	        <input type="text" id="addressName" placeholder="배송지 이름 (예: 집, 회사)">
+	        <input type="text" id="recipient" placeholder="받는 사람">
+	        <input type="text" id="userPhone" placeholder="연락처 ('-' 없이 입력)">
+	        <div style="display: flex; gap: 10px; width: 90%; margin-left: 10px;">
+		        <input type="text" id="zipcode" placeholder="우편번호" readonly>
+		        <button id="searchAddress" style="width: 35%; padding: 10px; margin: 6px 0;">주소 검색</button>
 	        </div>
-	      </form>  
+	        <input type="text" id="address" placeholder="주소" readonly>
+	        <input type="text" id="addressDetail" placeholder="상세 주소">
+	        <button id="saveAddress">저장</button>
+	      </form> 
 	    </div>
 	  </div>
 	  <jsp:include page="/WEB-INF/views/include/footer.jsp" />
@@ -99,9 +99,9 @@ try {
     const rawJson = cartDataEl ? cartDataEl.dataset.json : "[]";
     const parsed = JSON.parse(rawJson);
     dbCartItems = Array.isArray(parsed) ? parsed : Object.values(parsed);
-    console.log("[디버그] DB에서 받은 cartItems:", dbCartItems);
+    //console.log("[디버그] DB에서 받은 cartItems:", dbCartItems);
 } catch (e) {
-    console.error("[에러] JSON 파싱 실패:", e);
+   // console.error("[에러] JSON 파싱 실패:", e);
     dbCartItems = [];
 }
 
@@ -112,7 +112,7 @@ function getCartItemsFromLocalStorage() {
         const parsed = JSON.parse(raw);
         return Array.isArray(parsed) ? parsed : Object.values(parsed).filter(i => typeof i === 'object');
     } catch (e) {
-        console.error("localStorage 파싱 오류", e);
+       // console.error("localStorage 파싱 오류", e);
         return [];
     }
 }
@@ -143,7 +143,7 @@ function normalizeCartItems(items) {
       cartItems = Object.values(parsed).filter(item => typeof item === 'object');
     }
   } catch (e) {
-    console.error("localStorage 파싱 오류", e);
+    //console.error("localStorage 파싱 오류", e);
   }
   return cartItems;
 
@@ -209,16 +209,16 @@ function updateTotalPayment() {
 
 function renderCartItems() {
     let cartItems = isLoggedIn ? dbCartItems : getCartItemsFromLocalStorage();
-    console.log("[디버그] renderCartItems() 호출됨. isLoggedIn:", isLoggedIn, "cartItems:", cartItems);
+   // console.log("[디버그] renderCartItems() 호출됨. isLoggedIn:", isLoggedIn, "cartItems:", cartItems);
     cartItems = normalizeCartItems(cartItems); // 중복 항목 합쳐서 quantity 누적
-    console.log("[디버그] normalizeCartItems 결과:", cartItems);
+   // console.log("[디버그] normalizeCartItems 결과:", cartItems);
 
     if (!isLoggedIn) {
         // 비회원이면 합쳐진 결과를 다시 localStorage 저장
         localStorage.setItem("cartItems", JSON.stringify(cartItems));
     }
 
-    console.log("렌더링할 cartItems:", cartItems);
+  //  console.log("렌더링할 cartItems:", cartItems);
 
     const cartContainer = document.querySelector(".cartInfoCheck");
     const selectAllLabel = cartContainer.querySelector("label");
@@ -242,6 +242,7 @@ function renderCartItems() {
         itemWrapper.classList.add("cartItem");
         itemWrapper.setAttribute("dataPrice", price);
         itemWrapper.setAttribute("data-id", uniqueId);
+        itemWrapper.setAttribute("data-isbn", item.isbn || "");
 
         const checkbox = document.createElement("input");
         checkbox.type = "checkbox";
@@ -336,9 +337,28 @@ function bindCartEvents() {
                 quantity = 1;
                 numInput.value = quantity;
             }
+
             const total = bookPrice * quantity;
             totalPriceEl.textContent = total.toLocaleString() + "원";
             updateTotalPayment();
+
+            // 로그인한 사용자일 경우 서버에 수량 업데이트 요청
+            if (isLoggedIn) {
+                $.post(contextPath + "/product/updateCart.do", {
+                    cartNo: itemId,
+                    count: quantity
+                })
+                .done(res => {
+                    if (res === "DB_UPDATED") {
+                        console.log("장바구니 수량 서버 반영 완료");
+                    } else {
+                        console.warn("장바구니 수량 반영 실패:", res);
+                    }
+                })
+                .fail(err => {
+                    console.error("수량 변경 중 서버 통신 실패", err);
+                });
+            }
         }
 
         minusBtn?.addEventListener("click", () => {
@@ -375,7 +395,7 @@ function bindCartEvents() {
                 // DB 삭제 (cartNo 또는 bookNo 기준)
                 $.post(contextPath + "/product/deleteCart.do", { cartNo: itemId })
                     .done(response => {
-                        console.log("[디버그] DB 삭제 결과:", response);
+                        //console.log("[디버그] DB 삭제 결과:", response);
                         if (response === "DB_DELETED") {
                             cartItem.remove();
                             let localItems = getCartItemsFromLocalStorage();
@@ -387,7 +407,7 @@ function bindCartEvents() {
                         }
                     })
                     .fail(xhr => {
-                        console.error("[에러] 서버 삭제 실패", xhr.responseText);
+                        //console.error("[에러] 서버 삭제 실패", xhr.responseText);
                         alert("서버와의 통신 오류로 삭제할 수 없습니다.");
                     });
             } else {
@@ -436,27 +456,7 @@ $(document).ready(function () {
     updateCartCount();
     setTimeout(updateCartMessage, 100);
 
-    // 주문 버튼 클릭 이벤트
-    $("#orderBtn").on("click", function () {
-        const selectedCount = $(".cartItemCheckbox:checked").length;
-        if (selectedCount < 1) {
-            alert("주문할 상품을 선택해주세요.");
-            return;
-        }
 
-        if (typeof isLoggedIn !== "undefined" && isLoggedIn) {
-            const quantity = $(".num").val();
-            const isbn = "${bookDetail.isbn}"; 
-            window.location.href = `/controller/order/orderMain.do?isbn=${isbn}&quantity=${quantity}`;
-        } else {
-            const menuLogin = document.getElementById("menuLogin");
-            if (menuLogin) {
-                menuLogin.click();
-            } else {
-                alert("로그인 모달을 열 수 없습니다.");
-            }
-        }
-    });
 });
 
 	  // 장바구니 렌더링
@@ -465,79 +465,229 @@ $(document).ready(function () {
 
 	  // 장바구니 비어있는 경우 메시지 표시
 	  setTimeout(updateCartMessage, 100);
+	  
+		//주문하기 버튼 
+	 $("#orderBtn").on("click", function () {
+    const selectedItems = $(".cartItemCheckbox:checked");
 
-	  // 주문 버튼 클릭
-	  $("#orderBtn").on("click", function () {
-	    // selectedCount -> selectedItems로 변수명을 수정하고, 먼저 선언합니다.
-	    const selectedItems = $(".cartItemCheckbox:checked"); 
+    if (selectedItems.length < 1) {
+        alert("주문할 상품을 선택해주세요.");
+        return;
+    }
 
-	    if (selectedItems.length < 1) { // .length로 개수를 확인합니다.
-	      alert("주문할 상품을 선택해주세요.");
-	      return;
-	    }
+    if (typeof isLoggedIn !== "undefined" && isLoggedIn) {
+        const form = document.createElement("form");
+        form.method = "POST";
+        form.action = contextPath + "/order/orderMain.do";
 
-	    if (typeof isLoggedIn !== "undefined" && isLoggedIn) {
-        // --- 로그인 상태: 선택된 상품 정보를 URL로 만들기 ---
-        let params = []; 
+        // 총 결제 금액
+        const totalPriceText = $("#finalPrice").text().replace(/[^0-9]/g, "");
+        const inputTotal = document.createElement("input");
+        inputTotal.type = "hidden";
+        inputTotal.name = "totalPrice";
+        inputTotal.value = totalPriceText;
+        form.appendChild(inputTotal);
 
-        // 위에서 선언한 selectedItems 변수를 사용합니다.
-        selectedItems.each(function() {
-            const item = $(this).closest(".cartItem");
-            const isbn = item.data("id");
-            const quantity = item.find(".num").val();
-            
-            params.push("isbns=" + encodeURIComponent(isbn));
-            params.push("quantities=" + encodeURIComponent(quantity));
+        // userId (서버에서 세션으로도 처리 가능하나, 확실히 넘기려면 포함)
+        const inputUser = document.createElement("input");
+        inputUser.type = "hidden";
+        inputUser.name = "userId";
+        inputUser.value = "<c:out value='${userId}'/>";
+        form.appendChild(inputUser);
+
+        // 배송지 ID
+        const selectedAddress = $("input[name='address']:checked").val();
+        if (!selectedAddress) {
+            alert("배송지를 선택해주세요.");
+            return;
+        }
+        const inputAddr = document.createElement("input");
+        inputAddr.type = "hidden";
+        inputAddr.name = "userAddressId";
+        inputAddr.value = selectedAddress;
+        form.appendChild(inputAddr);
+
+        // 선택된 장바구니 항목들 추가
+        selectedItems.each(function () {
+            const cartItem = $(this).closest(".cartItem");
+            const isbn = cartItem.data("isbn");
+            const cartNo = cartItem.data("id");
+            const quantity = cartItem.find(".num").val();
+
+            if (isbn && quantity) {
+                form.appendChild($("<input>", { type: "hidden", name: "isbns", value: isbn })[0]);
+                form.appendChild($("<input>", { type: "hidden", name: "quantities", value: quantity })[0]);
+                form.appendChild($("<input>", { type: "hidden", name: "cartNos", value: cartNo })[0]);
+            }
         });
-        
-        const contextPath = '<%= request.getContextPath() %>';
-        const queryString = params.join('&');
-        const finalUrl = contextPath + "/order/orderMain.do?" + queryString;
-        
-        window.location.href = finalUrl;
 
-	    } else {
-	      // 비로그인 상태
-	      alert("로그인이 필요합니다.");
-	      const menuLogin = document.getElementById("menuLogin");
-	      if (menuLogin) {
-	        menuLogin.click();
-	      }
-	    }
-		});
+        document.body.appendChild(form);
+        form.submit();
+    } else {
+        alert("로그인이 필요합니다.");
+        $("#menuLogin").click();
+    }
+});
 
 </script>
 <script>		
-//========== 배송지 목록 불러오기 (회원 전용) ==========
-function loadAddressList() {
-    $.get(contextPath + "/address/list.do", function(addresses) {
-        const list = $("#addressList");
-        list.empty();
+//========== 모달 열기/닫기 ==========
+document.addEventListener("DOMContentLoaded", function () {
+    const firstModal = document.getElementById("firstModal");
+    const secondModal = document.getElementById("secondModal");
+    const cartInfoBtn = document.getElementById("cartInfoBtn");
+    const closeFirst = document.getElementById("closeFirstModal");
+    const closeSecond = document.getElementById("closeSecondModal");
 
-        if (!addresses || addresses.length === 0) {
-            list.append("<p>등록된 배송지가 없습니다.</p>");
-            return;
+    firstModal.style.display = "none";
+    secondModal.style.display = "none";
+
+    // 배송지 목록 모달 열기
+    cartInfoBtn.addEventListener("click", function () {
+        firstModal.style.display = "flex";
+        console.log("페이지 로딩 완료. loadAddressList() 직접 호출해봅니다.");
+        loadAddressList();
+    });
+
+    closeFirst.addEventListener("click", function () {
+        firstModal.style.display = "none";
+        updateDeliveryInfo();
+    });
+
+    // 배송지 추가 모달 열기
+    document.getElementById("addAddressBtn").addEventListener("click", function () {
+        secondModal.style.display = "flex";
+        $("#addressForm").show();
+    });
+
+    closeSecond.addEventListener("click", function () {
+        secondModal.style.display = "none";
+        $("#addressForm").hide();
+    });
+});
+//========== 배송지 목록 불러오기 (회원 전용) ==========
+let isAddressLoading = false; 
+
+function loadAddressList() {
+  if (isAddressLoading) {
+   // console.warn("이미 주소 리스트 로딩 중입니다.");
+    return;
+  }
+
+  const list = document.getElementById("addressList");
+  if (!list) {
+    //console.error(" addressList 요소를 찾을 수 없습니다.");
+    return;
+  }
+
+  isAddressLoading = true;
+  list.innerHTML = "";  
+ // console.log("배송지 정보 요청 시작...");
+
+  fetch("/controller/address/list.do")
+    .then(res => {
+      if (!res.ok) throw new Error(" 서버 응답 실패: " + res.status);
+      return res.json();
+    })
+    .then(addresses => {
+      console.log("서버 응답 데이터:", addresses);
+
+      if (!Array.isArray(addresses)) {
+        list.innerHTML = "<p>잘못된 형식의 데이터입니다.</p>";
+        return;
+      }
+
+      if (addresses.length === 0) {
+        list.innerHTML = "<p>등록된 배송지가 없습니다.</p>";
+        return;
+      }
+
+      let selectedAddressText = "";
+
+      addresses.forEach(addr => {
+
+        const isDefault = Number(addr.isDefault) === 1;
+        const wrapper = document.createElement("div");
+        wrapper.className = "addressItem";
+        wrapper.dataset.id = addr.userAddressId;
+
+        // 라벨과 라디오 버튼
+        const label = document.createElement("label");
+        const radio = document.createElement("input");
+        radio.type = "radio";
+        radio.name = "address";
+        radio.value = addr.userAddressId;
+        if (isDefault) radio.checked = true;
+
+        const nameSpan = document.createElement("span");
+        nameSpan.textContent = addr.addressName || "배송지";
+
+        label.appendChild(radio);
+        label.appendChild(nameSpan);
+
+        if (isDefault) {
+          const defaultTag = document.createElement("span");
+          defaultTag.className = "defaultTag";
+          defaultTag.textContent = "[기본배송지]";
+          label.appendChild(defaultTag);
         }
 
-        addresses.forEach(addr => {
-            const isDefaultTag = addr.isDefault ? '<span class="defaultTag">[기본배송지]</span>' : '';
-            list.append(`
-                <div class="addressItem" data-id="${addr.userAddressId}">
-                  <label>
-                    <input type="radio" name="address" ${addr.isDefault ? "checked" : ""}>
-                    <span>${addr.addressName || "배송지"}</span> ${isDefaultTag}
-                  </label>
-                  <p>${addr.userName} / ${addr.userPhone}</p>
-                  <p>[${addr.postCode}] ${addr.roadAddress} ${addr.detailAddress}</p>
-                  <button class="deleteAddress">삭제</button>
-                </div>
-            `);
+        // 수령인 정보
+        const userInfo = document.createElement("p");
+        userInfo.textContent = "수령인: " + [addr.userName, addr.userPhone].join(" / ");
+       
+
+        //  주소 정보
+        const addressInfo = document.createElement("p");
+        try {
+          const postCode = (addr.postCode ?? "").trim();
+          const road = (addr.roadAddress ?? "").trim();
+          const detail = (addr.detailAddress ?? "").trim();
+          const composedAddress = "[" + String(postCode).trim() + "] " + String(road).trim() + " " + String(detail).trim();
+          addressInfo.textContent = composedAddress;
+        } catch (err) {
+          console.error("주소 구성 중 오류 발생:", err);
+          addressInfo.textContent = "[주소 불러오기 실패]";
+        }
+
+        // 삭제 버튼
+        const deleteBtn = document.createElement("button");
+        deleteBtn.className = "deleteAddress";
+        deleteBtn.textContent = "삭제";
+        deleteBtn.addEventListener("click", () => {
+          deleteAddress(addr.userAddressId);
         });
 
-        updateDeliveryInfo();
+        // 조립 및 출력
+        wrapper.append(label, userInfo, addressInfo, deleteBtn);
+        list.appendChild(wrapper);
+      });
+
+      updateDeliveryInfoWithText(selectedAddressText);
+    })
+    .catch(err => {
+      console.error("배송지 로딩 중 오류 발생:", err);
+      list.innerHTML = "<p>배송지 정보를 불러오지 못했습니다.</p>";
+    })
+    .finally(() => {
+      isAddressLoading = false; 
     });
 }
 
+document.addEventListener("DOMContentLoaded", function () {
+    const cartInfoBtn = document.getElementById("cartInfoBtn");
+    if (!cartInfoBtn) {
+        console.error(" cartInfoBtn이 존재하지 않습니다!");
+        return;
+    }
+
+    cartInfoBtn.addEventListener("click", function () {
+        console.log("배송지 모달 버튼 클릭됨");
+        firstModal.style.display = "flex";
+        loadAddressList(); 
+        console.log("loadAddressList 호출됨")
+    });
+});
 // ========== 배송지 추가 (회원 전용) ==========
 $("#saveAddress").on("click", function (event) {
     event.preventDefault();
@@ -545,7 +695,7 @@ $("#saveAddress").on("click", function (event) {
     const payload = {
         addressName: $("#addressName").val(),
         userName: $("#recipient").val(),
-        userPhone: $("#phone").val(),
+        userPhone: $("#userPhone").val(),
         postCode: $("#zipcode").val(),
         roadAddress: $("#address").val(),
         detailAddress: $("#addressDetail").val(),
@@ -553,7 +703,7 @@ $("#saveAddress").on("click", function (event) {
     };
 
     $.ajax({
-        url: contextPath + "/address/add",
+        url: contextPath + "/address/add.do",
         type: "POST",
         contentType: "application/json",
         data: JSON.stringify(payload),
@@ -588,7 +738,7 @@ $(document).on("click", ".deleteAddress", function () {
     const addressId = $(this).closest(".addressItem").data("id");
     if (!confirm("이 배송지를 삭제하시겠습니까?")) return;
 
-    $.post(contextPath + "/address/delete", { addressId }, function (res) {
+    $.post(contextPath + "/address/delete.do", { addressId }, function (res) {
         if (res === "SUCCESS") {
             alert("삭제되었습니다.");
             loadAddressList();
@@ -618,39 +768,17 @@ function updateDeliveryInfo() {
         cartItem.insertBefore(clone, cartItem.querySelector(".removeBtn"));
     });
 }
-
-// ========== 모달 열기/닫기 ==========
-document.addEventListener("DOMContentLoaded", function () {
-    const firstModal = document.getElementById("firstModal");
-    const secondModal = document.getElementById("secondModal");
-    const cartInfoBtn = document.getElementById("cartInfoBtn");
-    const closeFirst = document.getElementById("closeFirstModal");
-    const closeSecond = document.getElementById("closeSecondModal");
-
-    firstModal.style.display = "none";
-    secondModal.style.display = "none";
-
-    // 배송지 목록 모달 열기
-    cartInfoBtn.addEventListener("click", function () {
-        firstModal.style.display = "flex";
-        loadAddressList();
+function updateDeliveryInfoWithText(addressText) {
+    const template = document.getElementById("deliveryInfoTemplate");
+    document.querySelectorAll(".cartItem").forEach(cartItem => {
+        const oldDelivery = cartItem.querySelector(".deliveryInfo");
+        if (oldDelivery) oldDelivery.remove();
+        const clone = template.content.cloneNode(true);
+        clone.querySelector(".deliveryStatus").textContent = addressText;
+        cartItem.insertBefore(clone, cartItem.querySelector(".removeBtn"));
     });
+}
 
-    closeFirst.addEventListener("click", function () {
-        firstModal.style.display = "none";
-    });
-
-    // 배송지 추가 모달 열기
-    document.getElementById("addAddressBtn").addEventListener("click", function () {
-        secondModal.style.display = "flex";
-        $("#addressForm").show();
-    });
-
-    closeSecond.addEventListener("click", function () {
-        secondModal.style.display = "none";
-        $("#addressForm").hide();
-    });
-});
 </script>
 <script>
 function syncLocalCartToDB() {
@@ -680,7 +808,7 @@ function syncLocalCartToDB() {
         contentType: "application/json",
         data: JSON.stringify(payload),
         success: function () {
-            console.log("[디버그] 동기화 성공 → DB 기준으로 덮어쓰기");
+           // console.log("[디버그] 동기화 성공 → DB 기준으로 덮어쓰기");
 
             // 중복 방지: 로컬스토리지 초기화 후 DB 데이터로만 채움
             localStorage.removeItem("cartItems");

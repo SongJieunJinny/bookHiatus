@@ -39,67 +39,75 @@ public class OrderController {
     return "order/orderDetails";
   }
 	
-	@GetMapping("/orderMain.do")
+	
+	
+  @PostMapping("/orderMain.do") //get으로 하면 오류나서 post로 변경했어
   public String orderMain(@RequestParam(value = "isbns", required = false) List<String> isbns,
                           @RequestParam(value = "quantities", required = false) List<Integer> quantities,
-                          @RequestParam(value = "isbn", required = false) String isbn,
-                          @RequestParam(value = "quantity", required = false) Integer quantity,
-                          Principal principal, Model model) {
+                          @RequestParam(value = "cartNos", required = false) List<Integer> cartNos,
+                          @RequestParam(value = "userId", required = false) String userIdParam,
+                          @RequestParam(value = "userAddressId", required = false) Integer userAddressId,
+                          @RequestParam(value = "totalPrice", required = false) Integer totalPrice,
+                          Principal principal,
+                          Model model) {
 
-    if(principal == null){ return "redirect:/login"; }
-    String userId = principal.getName();
-
-    List<Map<String, Object>> orderItems = new ArrayList<>();
-  
-    //장바구니를 통해 여러 상품을 주문하는 경우 (isbns 파라미터가 존재)
-    if(isbns != null && !isbns.isEmpty()){
-      if(quantities == null || isbns.size() != quantities.size()){
-        return "redirect:/product/cart.do?error=param_mismatch";
-      }
-      
-      // 서비스의 getBooksByIsbnList 메소드를 호출하여 여러 책 정보를 한 번에 가져옴
-      List<BookVO> books = orderService.getBooksByIsbnList(isbns);
-      
-      // 가져온 책 정보와 수량을 Map으로 묶어 orderItems 리스트에 추가
-      for(int i = 0; i < isbns.size(); i++){
-        String currentIsbn = isbns.get(i);
-        int currentQuantity = quantities.get(i);
-        
-        books.stream()
-             .filter(b -> b.getIsbn().equals(currentIsbn))
-             .findFirst()
-             .ifPresent(book -> {
-               Map<String, Object> item = new HashMap<>();
-               item.put("book", book);
-               item.put("quantity", currentQuantity);
-               orderItems.add(item);
-             });
+      // 로그인 여부 체크
+      if (principal == null) return "redirect:/login";
+      String sessionUserId = principal.getName();
+      //System.out.println("sessionUserId1"+sessionUserId);
+      // 보안 상 서버 세션의 userId와 form의 userId 비교 (불일치 시 거절 가능)
+      if (userIdParam != null && !userIdParam.equals(sessionUserId)) {
+    	 // System.out.println("userIdParam"+userIdParam);
+    	 //System.out.println("sessionUserId"+sessionUserId);
+          return "redirect:/?error=invalid_user";
       }
 
-    // 단일 상품을 바로 주문하는 경우 (isbn 파라미터가 존재)
-    }else if(isbn != null && !isbn.isEmpty()){
-      BookVO book = orderService.getBookByIsbn(isbn);
-      if(book != null){
-        Map<String, Object> item = new HashMap<>();
-        item.put("book", book);
-        item.put("quantity", (quantity != null) ? quantity : 1);
-        orderItems.add(item);
+      List<Map<String, Object>> orderItems = new ArrayList<>();
+
+      if (isbns != null && !isbns.isEmpty()) {
+          if (quantities == null || isbns.size() != quantities.size()) {
+              return "redirect:/product/cart.do?error=param_mismatch";
+          }
+
+          List<BookVO> books = orderService.getBooksByIsbnList(isbns);
+
+          for (int i = 0; i < isbns.size(); i++) {
+        	    final int index = i;
+
+        	    String currentIsbn = isbns.get(index);
+        	    int currentQuantity = quantities.get(index);
+
+        	    books.stream()
+        	        .filter(b -> b.getIsbn().equals(currentIsbn))
+        	        .findFirst()
+        	        .ifPresent(book -> {
+        	            Map<String, Object> item = new HashMap<>();
+        	            item.put("book", book);
+        	            item.put("quantity", currentQuantity);
+        	            item.put("cartNo", (cartNos != null && cartNos.size() > index) ? cartNos.get(index) : null);
+        	            orderItems.add(item);
+        	        });
+        	}
+
+      } else {
+          return "redirect:/?error=no_order_data";
       }
-    }
-    
-    // 처리할 상품이 없는 경우, 홈페이지나 장바구니로 리다이렉트
-    if(orderItems.isEmpty()){ return "redirect:/"; }
-  
-    // --- 공통 로직: 주소 정보 조회 및 모델에 데이터 추가 ---
-    UserAddressVO defaultAddress = orderService.getDefaultAddress(userId);
-    List<UserAddressVO> addressList = orderService.getAddressListByUserId(userId);
-  
-    model.addAttribute("orderItems", orderItems); // 주문 상품 리스트
-    model.addAttribute("defaultAddress", defaultAddress);
-    model.addAttribute("addressList", addressList);
-  
-    return "order/orderMain";
+
+      // 기본 배송지 정보 및 주소 리스트 조회
+      UserAddressVO defaultAddress = orderService.getDefaultAddress(sessionUserId);
+      List<UserAddressVO> addressList = orderService.getAddressListByUserId(sessionUserId);
+
+      model.addAttribute("orderItems", orderItems);
+      model.addAttribute("defaultAddress", defaultAddress);
+      model.addAttribute("addressList", addressList);
+      model.addAttribute("userAddressId", userAddressId);
+      model.addAttribute("totalPrice", totalPrice);
+
+      return "order/orderMain";
   }
+
+		
+	
 
 	@PostMapping("/addAddress.do")
 	@ResponseBody // 페이지 이동 없이 데이터만 반환

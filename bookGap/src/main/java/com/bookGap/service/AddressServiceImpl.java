@@ -16,7 +16,7 @@ public class AddressServiceImpl   implements  AddressService{
 	@Autowired
 	 private AddressDAO addressDAO;
 	
-	
+	 
 	 @Override
 	    public List<UserAddressVO> getUserAddresses(String userId) {
 	        return addressDAO.selectUserAddresses(userId);

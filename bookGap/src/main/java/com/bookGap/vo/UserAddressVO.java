@@ -65,4 +65,6 @@ public class UserAddressVO {
   public void setUserPhone(String userPhone) {
     this.userPhone = userPhone;
   }
+  
+  
 }
