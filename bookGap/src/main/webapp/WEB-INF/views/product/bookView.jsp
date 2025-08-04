@@ -191,7 +191,7 @@
   </div>
 </div>
 <script type="text/javascript">
-const BOOK_ISBN = "${bookDetail.isbn}";
+const isbn = "${bookDetail.isbn}";
 const userId = '<sec:authentication property="name" />';
 const userRole = '<sec:authentication property="authorities" htmlEscape="false" />';
 const contextPath = '<%= request.getContextPath() %>';
@@ -205,10 +205,10 @@ $(document).ready(function() {
   if (isLoggedIn) {
     syncLocalCartToDB();
   }
-  if(BOOK_ISBN){
-    loadComment(BOOK_ISBN);
+  if(isbn){
+    loadComment(isbn);
   } else {
-    console.error("🚨 BOOK_ISBN이 비어 있어 댓글을 불러올 수 없습니다.");
+    console.error("🚨 isbn이 비어 있어 댓글을 불러올 수 없습니다.");
   }
 
   // 댓글 관련 이벤트
@@ -219,7 +219,7 @@ $(document).ready(function() {
   $(document).on('click', '.editReviewButton', function () { editReview($(this).data("commentno")); });
   $(document).on('click', '.deleteReviewButton', function () { deleteReview($(this).data("commentno")); });
   $(document).on('click', '.reportReviewButton', function () { reportReview($(this).data("commentno")); });
-  $(document).on("change", "div.comment-list .reviewLikeInput", function () { const cmt = $(this).data("commentno"); if(cmt){ toggleLove(cmt, BOOK_ISBN, userId, this); }});
+  $(document).on("change", "div.comment-list .reviewLikeInput", function () { const cmt = $(this).data("commentno"); if(cmt){ toggleLove(cmt, isbn, userId, this); }});
   $(document).on("change", ".reviewLikeInput", function () { $(this).closest(".reviewLike").toggleClass("active", this.checked); });
   
   // 장바구니 버튼
@@ -237,7 +237,7 @@ $(document).ready(function() {
         if(!confirm("이미 장바구니에 있는 도서입니다. 수량을 추가하시겠습니까?")){ return; }
         existing.quantity += quantity;
       } else {
-        cartItems.push({ id: BOOK_ISBN, bookNo, title, price, image, quantity });
+        cartItems.push({ id: isbn, bookNo, title, price, image, quantity });
       }
       localStorage.setItem("cartItems", JSON.stringify(cartItems));
       updateCartCount();
@@ -268,19 +268,34 @@ $(document).ready(function() {
   $(document).on("click", "#bookOrderBtn", function (event) {
 	  console.log("✅ bookOrderBtn 클릭됨");
     event.preventDefault();
-    if(!userId || userId === 'anonymousUser'){
-      alert("로그인 후 이용 가능합니다.");
-      const loginModal = document.getElementById('loginModal');
-      if (loginModal) loginModal.classList.add('show');
+    
+    const quantity = parseInt($(".num").val()) || 1;
+    if(quantity < 1){
+      alert("구매 수량은 1권 이상이어야 합니다.");
       return false;
     }
-    const quantity = $(".num").val();
-    if(!BOOK_ISBN || !quantity || parseInt(quantity) < 1){
-      alert("오류: 상품 정보나 수량을 가져올 수 없습니다.");
+    
+    const maxStock = parseInt('${bookDetail.bookStock != null ? bookDetail.bookStock : 999}');
+    if(quantity > maxStock){
+      alert(`죄송합니다. 이 도서는 현재 재고가 ${maxStock}권이므로 최대 ${maxStock}권까지 구매 가능합니다.`);
       return false;
     }
-    const targetUrl = contextPath + "/order/orderMain.do?isbn=" + encodeURIComponent(BOOK_ISBN) + "&quantity=" + encodeURIComponent(quantity);
-    window.location.href = targetUrl;
+    
+    if(!isbn){
+      alert("오류: 도서 정보를 가져올 수 없습니다. 다시 시도해주세요.");
+      return false;
+    }
+    
+    //로그인 여부에 따라 분기
+	  if(isLoggedIn === false){ // 비회원 (isAnonymous가 true일 때)
+      console.log("🎯 비회원 바로구매 진행");
+      const targetUrl = contextPath + "/guest/guestOrder.do?isbn=" + encodeURIComponent(isbn) + "&quantity=" + encodeURIComponent(quantity);
+      window.location.href = targetUrl;
+	  }else{ // 회원일 경우 (기존 로직 유지)
+      console.log("회원 바로구매 진행");
+      const targetUrl = contextPath + "/order/orderMain.do?isbn=" + encodeURIComponent(isbn) + "&quantity=" + encodeURIComponent(quantity);
+      window.location.href = targetUrl;
+	  }
   });
   
   // 수량 계산기 로직: 변수를 먼저 선언하고, 그 다음에 if 문으로 존재하는지 확인합니다.
@@ -421,7 +436,7 @@ $(document).ready(function() {
 
 //두번째 변수 생략시 1로 들어감
 function loadComment(isbn, page = 1) {
-	if (!BOOK_ISBN) {
+	if (!isbn) {
     console.error("🚨 ISBN 값이 비어있어 댓글을 로드할 수 없습니다.");
     return; 
   }
@@ -560,7 +575,7 @@ function commentInsert() {
     return;
   }
   
-  const commentData = { BOOK_ISBN: isbn,
+  const commentData = { isbn: isbn,
 									      commentContent: content,
 									      commentRating: rating,
 									      commentLiked: liked };
@@ -644,7 +659,7 @@ function editReview(commentNo) {
     }
     
     const modifiedData = { commentNo: commentNo,
-    		                   BOOK_ISBN: BOOK_ISBN,
+    											 isbn: isbn,
 							             commentContent: newText,
 							             commentRating: newRating,
 							             commentLiked: newLiked };
@@ -658,7 +673,7 @@ function editReview(commentNo) {
       success: function(res){
 				    	   if(res === "Success"){
 	             	   alert("댓글이 수정되었습니다.");
-	                 loadComment(BOOK_ISBN);  // 수정 후 목록 전체 새로고침
+	                 loadComment(isbn);  // 수정 후 목록 전체 새로고침
 	               }else{
 	                 alert("댓글 수정에 실패했습니다: " + res);  // 실패 시 수정 폼을 그대로 두어 다시 시도할 수 있게 함
 	               }
@@ -699,8 +714,8 @@ function reportReview(commentNo) {
   $('#reportModal').addClass('show');
 }
 
-function toggleLove(commentNo, BOOK_ISBN, userId, checkbox){
-	console.log("💌 toggleLove 전송:", { commentNo, userId, BOOK_ISBN });
+function toggleLove(commentNo, isbn, userId, checkbox){
+	console.log("💌 toggleLove 전송:", { commentNo, userId, isbn });            
 
 	if(!userId || userId === 'anonymousUser'){
     alert("로그인 후 이용해주세요.");
@@ -712,7 +727,7 @@ function toggleLove(commentNo, BOOK_ISBN, userId, checkbox){
   $.ajax({
     url: "<%= request.getContextPath()%>/comment/toggleLove.do",
     method: "POST",
-    data: { commentNo, userId, BOOK_ISBN },
+    data: { commentNo, userId, isbn },
     success: function(result){
 				    	 if(result === "liked"){
 				       }else if(result === "unliked"){
