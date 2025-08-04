@@ -52,10 +52,12 @@ public class CommentController {
 
     try{
       vo.setUserId(principal.getName()); // 로그인된 사용자 ID를 VO에 설정
+      log.info("✅ 수신된 댓글 VO 데이터: {}", vo.toString());
       commentService.writeComment(vo, rating, liked);
       
-      return "성공";
+      return "Success";
     }catch(Exception e){
+      log.error("❌ 댓글 등록 서비스 실행 중 오류 발생", e); 
       e.printStackTrace(); // 서버 로그에 에러 기록
       return "Fail_Server"; // 서버 오류 발생 시
     }
@@ -77,7 +79,7 @@ public class CommentController {
       vo.setCommentNo(commentNo);
       commentService.modifyComment(vo, rating, liked);
       
-      return "성공";
+      return "Success";
     }catch (Exception e){
       e.printStackTrace();
       return "Fail_Server";
@@ -98,7 +100,7 @@ public class CommentController {
       boolean isAdmin = request.isUserInRole("ROLE_ADMIN");
       commentService.deleteComment(commentNo, loginUserId, isAdmin);
       
-      return "성공";
+      return "Success";
     }catch(IllegalAccessException e){
       return "Fail_Permission"; 
     }catch(Exception e){
@@ -126,7 +128,7 @@ public class CommentController {
 
       complainService.insertComplain(vo);
       
-      return "성공"; // 성공적으로 처리됨
+      return "Success"; // 성공적으로 처리됨
 
     }catch(Exception e){
       log.error("Error while processing report: " + vo, e); // 에러 발생 시 로그 기록
