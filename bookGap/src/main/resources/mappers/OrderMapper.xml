@@ -44,23 +44,58 @@
 	  <result property="totalPrice" column="TOTAL_PRICE"/>
 	  <result property="orderType" column="ORDER_TYPE"/>
 	  <result property="userId" column="USER_ID"/>
+	  <result property="guestId" column="GUEST_ID"/>
+	
+	  <result property="receiverName" column="RECEIVER_NAME"/>
+	  <result property="receiverPhone" column="RECEIVER_PHONE"/>
+	  <result property="receiverPostCode" column="RECEIVER_POST_CODE"/>
+	  <result property="receiverRoadAddress" column="RECEIVER_ROAD_ADDRESS"/>
+	  <result property="receiverDetailAddress" column="RECEIVER_DETAIL_ADDRESS"/>
+	  <result property="deliveryRequest" column="DELIVERY_REQUEST"/>
+	  
 	  <collection property="orderDetails" ofType="com.bookGap.vo.OrderDetailVO" resultMap="OrderDetailResultMap"/>
-  </resultMap>
+	</resultMap>
+	
+	<!-- orders 테이블에 주문 정보 저장 -->
+	<insert id="insertOrder" parameterType="com.bookGap.vo.OrderVO" useGeneratedKeys="true" keyProperty="orderId">
+	  INSERT INTO ORDERS (
+	    ORDER_DATE, ORDER_STATUS, TOTAL_PRICE, ORDER_TYPE, USER_ID, GUEST_ID,
+	    RECEIVER_NAME, RECEIVER_PHONE, RECEIVER_POST_CODE, RECEIVER_ROAD_ADDRESS, 
+	    RECEIVER_DETAIL_ADDRESS, DELIVERY_REQUEST, ORDER_PASSWORD
+	  ) VALUES (
+	    NOW(), #{orderStatus}, #{totalPrice}, #{orderType}, #{userId}, #{guestId},
+	    #{receiverName}, #{receiverPhone}, #{receiverPostCode}, #{receiverRoadAddress},
+	    #{receiverDetailAddress}, #{deliveryRequest}, #{orderPassword}
+	  )
+	</insert>
+	
+	<!-- order_details 테이블에 주문 상품 정보 저장 (단일) -->
+	<insert id="insertOrderDetail" parameterType="com.bookGap.vo.OrderDetailVO">
+	  INSERT INTO ORDER_DETAIL (ORDER_COUNT, 
+														  ORDER_PRICE, 
+														  REFUND_CHECK, 
+														  BOOK_NO, 
+														  ORDER_ID)
+	  VALUES (#{orderCount}, 
+					  #{orderPrice}, 
+					  #{refundCheck}, 
+					  #{bookNo}, 
+					  #{orderId})
+	</insert>
 
+  <!-- '주문 내역'을 조회 -->
   <select id="getOrdersByUserId" parameterType="string" resultMap="OrderResultMap">
-	  SELECT o.ORDER_ID, o.ORDER_DATE, o.ORDER_STATUS, o.TOTAL_PRICE, o.ORDER_TYPE, o.USER_ID,
-           od.ORDER_DETAIL_NO, od.ORDER_COUNT, od.ORDER_PRICE, od.REFUND_CHECK, od.BOOK_NO,
-           b.BOOK_NO, b.BOOK_RDATE, b.BOOK_TRANS, b.BOOK_STOCK, b.BOOK_STATE, b.BOOK_CATEGORY, b.BOOK_IMGURL, b.BOOK_INDEX, b.PUBLISHER_BOOK_REVIEW,
-           p.isbn, p.title, p.discount, p.pubdate, p.publisher, p.author, p.description, p.link, p.image
-			FROM ORDERS o
-			JOIN ORDER_DETAIL od
-				ON o.ORDER_ID = od.ORDER_ID
-			JOIN BOOK b
-				ON od.BOOK_NO = b.BOOK_NO
-			JOIN PRODUCT_API p
-				ON b.isbn = p.isbn
-		 WHERE o.USER_ID = #{userId}
-		 ORDER BY o.ORDER_DATE DESC
+  	SELECT o.ORDER_ID, o.ORDER_DATE, o.ORDER_STATUS, o.TOTAL_PRICE, o.ORDER_TYPE, o.USER_ID, o.GUEST_ID,
+			     o.RECEIVER_NAME, o.RECEIVER_PHONE, o.RECEIVER_POST_CODE, o.RECEIVER_ROAD_ADDRESS, o.RECEIVER_DETAIL_ADDRESS, o.DELIVERY_REQUEST,
+  			   od.ORDER_DETAIL_NO, od.ORDER_COUNT, od.ORDER_PRICE, od.REFUND_CHECK, od.BOOK_NO,
+			     b.BOOK_NO, b.BOOK_RDATE, b.BOOK_TRANS, b.BOOK_STOCK, b.BOOK_STATE, b.BOOK_CATEGORY, b.BOOK_IMGURL, b.BOOK_INDEX, b.PUBLISHER_BOOK_REVIEW,
+			     p.isbn, p.title, p.discount, p.pubdate, p.publisher, p.author, p.description, p.link, p.image
+	    FROM ORDERS o
+	    JOIN ORDER_DETAIL od ON o.ORDER_ID = od.ORDER_ID
+	    JOIN BOOK b ON od.BOOK_NO = b.BOOK_NO
+	    JOIN PRODUCT_API p ON b.isbn = p.isbn
+	   WHERE o.USER_ID = #{userId}
+	   ORDER BY o.ORDER_DATE DESC
 	</select>
 	
 	<!-- 여러 개의 isbn을 리스트로 받아 해당 도서 목록을 조회 -->
@@ -162,4 +197,21 @@
 	   DELETE FROM USER_ADDRESS 
 	   WHERE USER_ADDRESS_ID = #{userAddressId}
   </delete>
+  	
+	<!-- order_details 테이블에 여러 상품 한번에 저장 (장바구니 주문용) -->
+	<insert id="insertOrderDetailList" parameterType="java.util.List">
+	  INSERT INTO ORDER_DETAIL (ORDER_COUNT,
+														  ORDER_PRICE, 
+														  REFUND_CHECK, 
+														  BOOK_NO, 
+														  ORDER_ID)
+	  VALUES
+	  <foreach collection="list" item="detail" separator=",">
+	    (#{detail.orderCount}, 
+	    #{detail.orderPrice}, 
+	    #{detail.refundCheck}, 
+	    #{detail.bookNo}, 
+	    #{detail.orderId})
+	  </foreach>
+	</insert>
 </mapper>

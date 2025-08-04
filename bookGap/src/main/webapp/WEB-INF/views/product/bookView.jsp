@@ -288,13 +288,32 @@ $(document).ready(function() {
     
     //로그인 여부에 따라 분기
 	  if(isLoggedIn === false){ // 비회원 (isAnonymous가 true일 때)
-      console.log("🎯 비회원 바로구매 진행");
-      const targetUrl = contextPath + "/guest/guestOrder.do?isbn=" + encodeURIComponent(isbn) + "&quantity=" + encodeURIComponent(quantity);
+		  console.log("🎯 비회원 바로구매 진행 (GET)");
+		  const targetUrl = contextPath + "/guest/guestOrder.do?isbn=" + encodeURIComponent(isbn) + "&quantity=" + encodeURIComponent(quantity);
       window.location.href = targetUrl;
 	  }else{ // 회원일 경우 (기존 로직 유지)
-      console.log("회원 바로구매 진행");
-      const targetUrl = contextPath + "/order/orderMain.do?isbn=" + encodeURIComponent(isbn) + "&quantity=" + encodeURIComponent(quantity);
-      window.location.href = targetUrl;
+	  
+		  // 회원: 동적 form을 생성하여 POST 방식으로 orderMain.do로 이동
+	    console.log("🚀 회원 바로구매 진행 (POST)");
+	
+	    // 1. 동적으로 form 요소를 생성합니다.
+	    const form = $('<form></form>');
+	    form.attr('method', 'post'); // ★ 메서드를 'post'로 설정
+	    form.attr('action', contextPath + '/order/orderMain.do'); // ★ 보낼 위치(action) 설정
+	
+	    // 2. Controller가 받을 파라미터(isbns, quantities 등)를 hidden input으로 만들어 form에 추가
+	    // Controller는 List 형태로 받으므로, 'isbns'와 'quantities' 라는 이름을 사용
+	    form.append($('<input>', {type: 'hidden', name: 'isbns', value: isbn}));
+	    form.append($('<input>', {type: 'hidden', name: 'quantities', value: quantity}));
+	    
+	    // Controller는 로그인한 사용자 ID를 Principal에서 얻으므로 userId는 보낼 필요가 없다
+	    // 만약 총액 정보도 보낸다면 추가 가능
+	    // const totalPrice = parseInt($('#totalPrice').text().replace(/[^0-9]/g, ''));
+	    // form.append($('<input>', {type: 'hidden', name: 'totalPrice', value: totalPrice}));
+	
+	    // 3. 생성된 form을 현재 페이지에 보이지 않게 추가하고, 바로 전송(submit).
+	    form.appendTo('body');
+	    form.submit();
 	  }
   });
   
@@ -462,62 +481,52 @@ function loadComment(isbn, page = 1) {
         if (data.commentList && data.commentList.length > 0) {
           for (let cvo of data.commentList) {
         	  const isLiked = cvo.likeCount > 0;
-        	  const isCheckedByMe = cvo.lovedByLoginUser;
-        	  const canInteract = roles.includes("ROLE_ADMIN") || (cvo.userId && cvo.userId.trim() === userId.trim());
+            const isCheckedByMe = cvo.lovedByLoginUser;
+            const isAuthor = cvo.userId && cvo.userId.trim() === userId.trim();
+            const isAdmin = roles.includes("ROLE_ADMIN");
+            const canInteract = isAdmin || isAuthor;
         	  
-            html += `<div id="reviewBox\${cvo.commentNo}" class="reviewBox">
-                       <div class="reviewIdBox">
-                         <div class="reviewId">\${cvo.userId}</div>
-                         <div class="reviewIdRdate">|</div>
-                         <div class="reviewRdate">\${cvo.formattedCommentRdate}</div>
-                         <div class="reviewLikeStar">
-                           <div class="reviewLike \${isLiked ? 'active' : ''}">
-                             <label>
-                               <input type="checkbox" class="reviewLikeInput" data-commentno="\${cvo.commentNo}" \${isCheckedByMe ? 'checked' : ''} \${!canInteract ? 'disabled' : ''} />
-                               <span class="heartSymbol">♥</span>
-                             </label>
-                           </div>
-                           <div class="starBox">
-                             <label class="starLabel">
-                               <input type="range" class="reviewStar" min="0" max="5" step="1" value="\${cvo.commentRating || 0}" disabled />
-                               <div class="starsOverlay"></div>
-                             </label>
-                           </div>
-                         </div>
-                       </div>
-                       <div id="contentContainer\${cvo.commentNo}" class="contentContainer">
-                         <div class="reviewContent">\${cvo.commentContent}</div>`;
-                         
-               const isAdmin = roles.includes("ROLE_ADMIN");
-               const isAuthor = cvo.userId && cvo.userId.trim() === userId.trim();
-               const isLoggedInUser = isLoggedIn && !isAdmin && !isAuthor;
-               
-               //로그인한 사용자만 "⋯" 아이콘을 표시
-               if(isLoggedIn){
-                 html += `<div class="reviewOptions" data-review-box="\${cvo.commentNo}">⋯
-                            <div id="optionsMenu\${cvo.commentNo}" class="optionsMenu">`;
-                 //관리자 (Admin)
-                 if(isAdmin){
-                   html += `<button class="reportReviewButton" data-commentno="\${cvo.commentNo}">신고</button>
-                            <button class="deleteReviewButton" data-commentno="\${cvo.commentNo}">삭제</button>`;
-                   } 
-                 //글 작성자 (Author)
-                 else if(isAuthor){
-                   html += `<button class="editReviewButton" data-commentno="\${cvo.commentNo}">수정</button>
-                            <button class="deleteReviewButton" data-commentno="\${cvo.commentNo}">삭제</button>`;
-                 }
-                 //일반 로그인 사용자
-                 else{
-                    html += `<button class="reportReviewButton" data-commentno="\${cvo.commentNo}">신고</button>`;
-                 }
-                 html += `</div></div>`;
-               }
-            html += `</div></div>`;
+					 html += `<div id="reviewBox\${cvo.commentNo}" class="reviewBox">
+											<div class="reviewIdBox">`;
+					     html += `<div class="reviewId">\${cvo.userId}</div>`; 
+					     html += `  <div class="reviewIdRdate">|</div>
+					                  <div class="reviewRdate">\${cvo.formattedCommentRdate}</div>
+					                  <div class="reviewLikeStar">
+					                    <div class="reviewLike \${isLiked ? 'active' : ''}">
+					                      <label>
+					                        <input type="checkbox" class="reviewLikeInput" data-commentno="\${cvo.commentNo}" \${isCheckedByMe ? 'checked' : ''} \${!isLoggedIn ? 'disabled' : ''} />
+					                        <span class="heartSymbol">♥</span>
+					                      </label>
+					                    </div>
+					                    <div class="starBox">
+					                      <label class="starLabel">
+					                        <input type="range" class="reviewStar" min="0" max="5" step="1" value="\${cvo.commentRating || 0}" disabled />
+					                        <div class="starsOverlay"></div>
+					                      </label>
+					                    </div>
+					                  </div>
+					                </div>
+					                <div id="contentContainer\${cvo.commentNo}" class="contentContainer">
+					                  <div class="reviewContent">\${cvo.commentContent}</div>`;
+						    if(isLoggedIn){
+						      html += `<div class="reviewOptions" data-review-box="\${cvo.commentNo}">⋯
+						                 <div id="optionsMenu\${cvo.commentNo}" class="optionsMenu">`;
+						      if(isAdmin){ // 관리자
+						        html += `<button class="reportReviewButton" data-commentno="\${cvo.commentNo}">신고</button>
+						                 <button class="deleteReviewButton" data-commentno="\${cvo.commentNo}">삭제</button>`;
+						      }else if(isAuthor){ // 글 작성자
+						        html += `<button class="editReviewButton" data-commentno="\${cvo.commentNo}">수정</button>
+						                 <button class="deleteReviewButton" data-commentno="\${cvo.commentNo}">삭제</button>`;
+						      }else{ // 일반 로그인 사용자 (타인의 글)
+						         html += `<button class="reportReviewButton" data-commentno="\${cvo.commentNo}">신고</button>`;
+						      }
+						      html += ` </div></div>`;
+						    }
+								 html += `</div></div>`;
           }
-        } else {
-          html = "<div class='no-comments' style='text-align:center; padding: 20px; color: #888;'>작성된 리뷰가 없습니다.</div>";
-        }
-
+				}else{
+					html = "<div class='no-comments' style='text-align:center; padding: 20px; color: #888;'>작성된 리뷰가 없습니다.</div>";
+				}
         if (data.paging && data.commentList && data.commentList.length > 0) {
           let paging = data.paging;
           html += `<div class="pagination">`;

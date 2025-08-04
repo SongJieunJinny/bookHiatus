@@ -14,12 +14,14 @@ public class GuestDAO {
   
   private final String name_space = "com.bookGap.mapper.guestMapper.";
   
-  public void insertGuest(GuestVO guest) {
-    sqlSession.insert(name_space + "insertGuest", guest);
+  // 게스트 정보 저장
+  public void insertGuest(GuestVO guestVO) {
+      sqlSession.insert(name_space + "insertGuest", guestVO);
   }
 
-  public void insertGuestAddress(GuestVO guest) {
-    sqlSession.insert(name_space + "insertGuestAddress", guest);
+  // 이메일로 게스트 정보 조회
+  public GuestVO findGuestByEmail(String email) {
+      return sqlSession.selectOne(name_space + "findGuestByEmail", email);
   }
 
 }

@@ -1,40 +1,39 @@
 @charset "UTF-8";
 /* guestOrder */
-#guestOrder{
-	width: 100%;
-	height: 100%;
-  margin-bottom: 4%;
-  margin-left: 4%;
-  display: flex;
+section{
+  width: 90%;
+  height: auto;
+  margin: 2% 5% 0% 5%;
 }
 #guestOrderHead{
   width: 100%;
-  height: 10%;
-  display: flex;
-  justify-content: center;
+  margin: 0% 0% 2% 0%;
 }
 #Order{
-  width: 80%;
-	margin-top: 3%;
-	margin-bottom: 3%;
-	text-align: center;
-	font-size: 25px;
+  font-size: 28px;
+  text-align: center;
+}
+#guestOrderFormDiv{
+  width: 100%;
+  height: 100%;
+  display: flex;
 }
 #guestOrderNav{
   height: 100%;
-  margin-left: 2%;
+  width: 33.3%;
+  display: flex;
+  flex-direction: column;
 }
 .guestInfoTable{
-  width: 150%;
+  width: 100%;
 }
 #deliveryInfoTable{
-  width: 150%;
+  width: 100%;
 }
 .TableCategory{
   text-align: center;
-  font-size: 20px;
-  margin-bottom: 3%;
-  margin-right: 18%;
+  font-size: 22px;
+  margin-bottom: 4%;
 }
 .guestInfoTableContainer{
   display: flex;
@@ -48,14 +47,10 @@
   margin: 0.5%;
 }
 .guestInfoTableInput{
-  width: 70%;
-  border: 1px solid black;
   border-radius: 5px;
-  margin: 1%;
-  text-align: center;
-  align-items: center;
-  padding: 2.5%;
+  padding: 10px;
   font-size: 15px;
+  margin: 0;
 }
 .guestInfoTablePostInput{
   width: 50%;
@@ -104,13 +99,12 @@
 font-size: 13px;
 }
 #guestOrderSection{
-  width: 30%;
+  width: 33.3%;
   height: 100%;
-  margin-left: 8%;
 }
 #orderTable{
   width: 100%;
-  height: 50%;
+  height: auto;
   text-align: center;
 }
 #payMathodTable{
@@ -120,10 +114,9 @@ font-size: 13px;
   margin-bottom: 15%;
 }
 .SectionTitle{
-	text-align: center;
-	font-size: 20px;
+  text-align: center;
+  font-size: 22px;
   margin-bottom: 4%;
-  margin-right: 23%;
 }
 .layout{
   width: 70%;
@@ -131,7 +124,9 @@ font-size: 13px;
   border: 1px solid black;
   border-radius: 20px;
   margin-bottom: 5%;
-  padding: 3%
+  padding: 3%;
+  margin-left: auto;
+  margin-right: auto;
 }
 .orderDetail{
   width: 100%;
@@ -255,7 +250,6 @@ input[type="checkbox"] {
 }
 #agreeTable{
   width: 100%;
-  margin-left: -7%;
   margin-top: 10%;
 }
 .asideAgree{
@@ -273,8 +267,6 @@ input[type="checkbox"] {
   width: 8%;
   height: 8%;
   margin-bottom: 0.5%;
-  margin-left: 1%;
-  margin-right: 0%;
   cursor: pointer;
 }
 .agreeIcon2{
