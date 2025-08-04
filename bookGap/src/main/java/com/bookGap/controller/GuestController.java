@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.bookGap.service.GuestService;
 
+@RequestMapping(value="/guest")
 @Controller 
 public class GuestController {
 
