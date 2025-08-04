@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -48,17 +49,17 @@ public class AdminScheduleController {
 	        event.put("borderColor", vo.getColor());
 	        event.put("allDay", false);
 
-	        System.out.println("▶▶▶ [컨트롤러] FullCalendar에 보낼 데이터: " + event);
+	        //System.out.println("FullCalendar에 보낼 데이터: " + event);
 	        result.add(event);
 	    }
-	    System.out.println("▶▶▶ [컨트롤러] 최종 반환할 데이터: " + result);
+	    //System.out.println("최종 반환할 데이터: " + result);
 	    return result;
 	}
 
 	 @PostMapping("/insert")
 	    @ResponseBody
 	    public String insertSchedule(@RequestBody ScheduleVO scheduleVO) {
-		 	System.out.println("▶▶▶ [컨트롤러] 일정 등록 요청: " + scheduleVO);
+		 	//System.out.println("일정 등록 요청: " + scheduleVO);
 		    adminScheduleService.insertSchedule(scheduleVO);
 		    return "success";
 	    }
@@ -66,7 +67,7 @@ public class AdminScheduleController {
 	    @PostMapping("/update")
 	    @ResponseBody
 	    public String updateSchedule(@RequestBody ScheduleVO scheduleVO) {
-	    	 	System.out.println("▶▶▶ [컨트롤러] 일정 수정 요청: " + scheduleVO);
+	    	 	//System.out.println("일정 수정 요청: " + scheduleVO);
 	    	    adminScheduleService.updateSchedule(scheduleVO);
 	    	    return "success";
 	    }
@@ -76,6 +77,11 @@ public class AdminScheduleController {
 	    public String deleteSchedule(@RequestParam int scheduleId) {
 	        adminScheduleService.deleteSchedule(scheduleId);
 	        return "success";
+	    }
+	    
+	    @GetMapping("/adminSchedule.do")
+	    public String adminSchedule() {
+	        return "admin/adminSchedule";
 	    }
 
 }

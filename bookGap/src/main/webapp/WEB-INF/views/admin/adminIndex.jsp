@@ -70,7 +70,7 @@
 									<div class="card bg-secondary text-white mb-4">
 										<div class="card-body">비회원주문관리 </div>
 										<div class="card-footer d-flex align-items-center justify-content-between">
-											<a class="small text-white stretched-link" href="${pageContext.request.contextPath}/admin/adminGusetOrderInfo.do">View Details</a>
+											<a class="small text-white stretched-link" href="${pageContext.request.contextPath}/admin/adminGuestOrderInfo.do">View Details</a>
 											<div class="small text-white"><i class="fas fa-angle-right"></i></div>
 										</div>
 									</div>
@@ -78,6 +78,15 @@
 								<div class="col-xl-3 col-md-6">
 									<div class="card bg-secondary text-white mb-4">
 										<div class="card-body">회원주문관리 </div>
+										<div class="card-footer d-flex align-items-center justify-content-between">
+											<a class="small text-white stretched-link" href="${pageContext.request.contextPath}/admin/adminOrder.do">View Details</a>
+											<div class="small text-white"><i class="fas fa-angle-right"></i></div>
+										</div>
+									</div>
+								</div>
+								<div class="col-xl-3 col-md-6">
+									<div class="card bg-secondary text-white mb-4">
+										<div class="card-body">신고관리  </div>
 										<div class="card-footer d-flex align-items-center justify-content-between">
 											<a class="small text-white stretched-link" href="${pageContext.request.contextPath}/admin/adminOrder.do">View Details</a>
 											<div class="small text-white"><i class="fas fa-angle-right"></i></div>

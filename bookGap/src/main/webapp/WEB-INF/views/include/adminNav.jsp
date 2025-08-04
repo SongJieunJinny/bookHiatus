@@ -14,7 +14,8 @@
   </a>
   <div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
     <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
-      <a class="nav-link" href="${pageContext.request.contextPath}/admin/adminBook.do">Book</a>
+      <a class="nav-link" href="${pageContext.request.contextPath}/admin/books/adminBook.do">Book</a>
+      <a class="nav-link" href="${pageContext.request.contextPath}/admin/recommend/list">ChoicBook</a>
       <a class="nav-link"  href="${pageContext.request.contextPath}/admin/adminInventoryManagement.do">InventoryManagement</a>
       <a class="nav-link" href="${pageContext.request.contextPath}/admin/adminOrder.do">User  Order</a>
       <a class="nav-link" href="${pageContext.request.contextPath}/admin/adminGuestOrderInfo.do">Guset Order Info</a>
@@ -38,7 +39,7 @@
     <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
     Sales
   </a>
-  <a class="nav-link" href="${pageContext.request.contextPath}/admin/adminSchedule.do">
+  <a class="nav-link" href="${pageContext.request.contextPath}/admin/schedule/adminSchedule.do">
     <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
     Schedule
   </a>

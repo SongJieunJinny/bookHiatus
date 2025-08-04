@@ -33,37 +33,18 @@ public class AdminIndexController {
 		return "admin/adminIndex";
 	}
 	
-	@RequestMapping(value = "admin/adminBook.do", method = RequestMethod.GET)
-	public String adminBook(Model model) {
-		
-		List<BookVO> getAllBooks = adminBookService.getAllBooks();
-		
-		model.addAttribute("getAllBooks",getAllBooks);
-	
-		return "admin/adminBook";
-	}
 	@RequestMapping(value = "admin/adminOrder.do", method = RequestMethod.GET)
 	public String adminOrder() {
 	
 		return "admin/adminOrder";
 	}
-	@RequestMapping(value = "admin/adminSchedule.do", method = RequestMethod.GET)
-	public String adminSchedule() {
 	
-		return "admin/adminSchedule";
-	}
 	@RequestMapping(value = "admin/adminSales.do", method = RequestMethod.GET)
 	public String adminSales() {
 	
 		return "admin/adminSales";
 	}
-	@RequestMapping(value = "admin/adminUserInfo.do", method = RequestMethod.GET)
-	public String adminUserInfo(Model model) {
-		List<UserInfoVO> getAllUser = adminUserInfoService.getAllUser();
-		model.addAttribute("getAllUser",getAllUser);
 	
-		return "admin/adminUserInfo";
-	}
 	@RequestMapping(value = "admin/adminGuestOrderInfo.do", method = RequestMethod.GET)
 	public String adminGuestOrderInfo() {
 	
@@ -86,11 +67,5 @@ public class AdminIndexController {
 		return "admin/err500";
 	}
 	
-	@RequestMapping(value = "admin/adminInventoryManagement.do", method = RequestMethod.GET)
-	public String adminInventoryManagement(Model model) {
-		 List<BookVO> getInventoryManagementSelectAll = bookService.adminInventoryManagementSelectAll();
-		model.addAttribute("getInventoryManagementSelectAll",getInventoryManagementSelectAll);
-		return "admin/adminInventoryManagement";
-	}
 	
 } 
