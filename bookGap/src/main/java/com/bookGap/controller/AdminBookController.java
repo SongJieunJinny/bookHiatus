@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -64,5 +65,15 @@ public class AdminBookController {
     	adminBookService.deleteBook(bookNo);
         return "redirect:/admin/adminBook.do";
     }
+    
+    @RequestMapping(value = "/adminBook.do", method = RequestMethod.GET)
+	public String adminBook(Model model) {
+		
+		List<BookVO> getAllBooks = adminBookService.getAllBooks();
+		
+		model.addAttribute("getAllBooks",getAllBooks);
+	
+		return "admin/adminBook";
+	}
 	
 }

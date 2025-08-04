@@ -382,28 +382,39 @@
 		        document.getElementById('userInfoModal').style.display = 'flex';
 		      }
 		
-		      function applyChange() {
-		        if (!selectedRow) return;
-		
-		        const id = document.querySelector('.userInfoModalItemInput[data-field="id"]').value.trim();
-		        const name = document.querySelector('.userInfoModalItemInput[data-field="name"]').value.trim();
-		        const phone = document.querySelector('.userInfoModalItemInput[data-field="phone"]').value.trim();
-		        const email = document.querySelector('.userInfoModalItemInput[data-field="email"]').value.trim();
-		        const enabled = document.querySelector('#userInfoModalStateInput1').checked ? '활성화' : '비활성화';
-		        const joinDate = document.querySelector('.userInfoModalItemText[data-field="joindate"]');
-		        const note = document.querySelector('#userInfoModalNoteInput').value.trim();
-		
-		        const cells = selectedRow.querySelectorAll('td');
-		        cells[0].innerText = id;
-		        cells[1].innerText = name;
-		        cells[2].innerText = phone;
-		        cells[3].innerText = email;
-		        cells[4].innerText = enabled;
-		        cells[5].innerText = joinDate;
-		        cells[6].innerText = note;
-		
-		        closeModal(); // 모달 닫기
-      		}
+			function applyChange() {
+				  if (!selectedRow) return;
+
+				  const user = {
+				    userId: document.querySelector('.userInfoModalItemText[data-field="id"]').innerText.trim(),
+				    userName: document.querySelector('.userInfoModalItemText[data-field="name"]').innerText.trim(),
+				    userPhone: document.querySelector('.userInfoModalItemText[data-field="phone"]').innerText.trim(),
+				    userEmail: document.querySelector('.userInfoModalItemText[data-field="email"]').innerText.trim(),
+				    userEnabled: document.querySelector('#userInfoModalStateInput1').checked,
+				    userJoinDate: document.querySelector('.userInfoModalItemText[data-field="joindate"]').innerText.trim(),
+				    note: document.querySelector('#userInfoModalNoteInput').value.trim()
+				  };
+
+				  $.ajax({
+				    url: '<%=request.getContextPath()%>/admin/updateUser',
+				    type: 'POST',
+				    contentType: 'application/json',
+				    data: JSON.stringify(user),
+				    success: function(response) {
+				      alert("유저 정보가 성공적으로 수정되었습니다.");
+				      const cells = selectedRow.querySelectorAll('td');
+				      cells[1].innerText = user.userName;
+				      cells[2].innerText = user.userPhone;
+				      cells[3].innerText = user.userEmail;
+				      cells[4].innerText = user.userEnabled ? "활성화" : "비활성화";
+				      cells[6].innerText = user.note;
+				      closeModal();
+				    },
+				    error: function(xhr, status, error) {
+				      alert("업데이트 실패: " + xhr.responseText);
+				    }
+				  });
+				}
 
 			// 모달 닫기
 			function closeModal() {

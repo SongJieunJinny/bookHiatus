@@ -100,4 +100,17 @@
 	<select id="findById" parameterType="string" resultMap="userInfoResultMap">
 	  SELECT * FROM USER WHERE USER_ID = #{userId}
 	</select>
+	
+	
+	<update id="updateUser" parameterType="userInfoVO">
+		UPDATE USER
+		SET 
+			USER_NAME = #{userName},
+			USER_PHONE = #{userPhone},
+			USER_EMAIL = #{userEmail},
+			USER_ENABLED = #{userEnabled},
+			NOTE = #{note}
+		WHERE USER_ID = #{userId}
+	</update>
+	
 </mapper>

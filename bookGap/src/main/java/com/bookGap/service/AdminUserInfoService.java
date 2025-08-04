@@ -6,5 +6,7 @@ import com.bookGap.vo.UserInfoVO;
 
 public interface AdminUserInfoService {
 	List<UserInfoVO> getAllUser();
+	void updateUser(UserInfoVO user);
+	
 
 }

@@ -19,6 +19,11 @@ public class AdminUserInfoServiceImpl  implements  AdminUserInfoService {
 	 public List<UserInfoVO> getAllUser(){
 		  return userDAO.selectAllUser();
 	 }
+	 
+	 @Override
+		public void updateUser(UserInfoVO user) {
+		 userDAO.updateUser(user);  
+		}
 
 
 	

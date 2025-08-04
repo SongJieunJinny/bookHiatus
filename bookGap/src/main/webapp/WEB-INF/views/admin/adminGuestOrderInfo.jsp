@@ -15,99 +15,105 @@
 <link href="<%=request.getContextPath()%>/resources/css/styles.css" rel="stylesheet" />
 <script src="<%=request.getContextPath()%>/resources/js/jquery-3.7.1.js"></script>
 <style>
-			.orderModal {
-				border: 1px solid black;
-				display: none;
-				position: fixed;
-				z-index: 10;
-				left: 0;
-				top: 0;
-				width: 100%;
-				height: 100%;
-				overflow: auto;
-				background-color: rgba(0, 0, 0, 0.4);
-			}
-			.orderModalContent {
-				background-color: #fefefe;
-				margin: 8% auto;
-				border: 1px solid #888;
-				width: 80%;
-				max-width: 400px;
-				border-radius: 20px;
-				text-align: center;
-				padding: 30px 0;
-				font-family: 'Arial', sans-serif;
-			}
-			.orderModalHeadTitle {
-				font-size: 24px;
-				font-weight: bold;
-				margin-bottom: 25px;
-			}
-			.orderModalSection {
-				display: flex;
-				flex-direction: column;
-				align-items: flex-start;
-				padding-left: 15%;
-				width: 100%;
-			}
-			.orderModalItemContainer {
-				width: 85%;
-				display: flex;
-				justify-content: flex-start;
-				align-items: center;
-				margin: 12px 0;
-			}
-			.orderModalItemLabel {
-				width: 35%;
-				font-weight: bold;
-				font-size: 14px;
-			}
-			.orderModalItemValue,
-			.orderModalItemSelect {
-				flex: 1;
-				text-align: left;
-				font-size: 14px;
-				color: #333;
-			}
-			.orderModalItemSelect {
-				padding: 6px;
-				border: 1px solid #aaa;
-				border-radius: 6px;
-			}
-			.orderModalFooter {
-				display: flex;
-				justify-content: center;
-				gap: 15px;
-				margin-top: 25px;
-			}
-			.orderModalButton {
-				padding: 10px 20px;
-				background-color: black;
-				color: white;
-				font-size: 16px;
-				border-radius: 10px;
-				border: none;
-				cursor: pointer;
-			}
-			.orderModalButton:hover {
-				background-color: #444;
-			}
-			#deliveryAddressText{
-				margin-top:10px;
-			}
-	      .modalGuestOrder{
-	        display: flex;
-	        margin-bottom: -3%;
-	      }
-	      .modalGuestOrderContainer{
-	        width: 100%;
-	      }
-	      .modalGuestOrderInfo,
-	      .modalGuestOrderProductInfo,
-	      .modalGuestOrderPayment {
-	        padding: 3% 3% 0% 3%;
-	      }
-	      
+	.orderModal {
+		border: 1px solid black;
+		display: none;
+		position: fixed;
+		z-index: 10;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		overflow: auto;
+		background-color: rgba(0, 0, 0, 0.4);
+	}
+	.orderModalContent {
+		background-color: #fefefe;
+		margin: 8% auto;
+		border: 1px solid #888;
+		width: 80%;
+		max-width: 400px;
+		border-radius: 20px;
+		text-align: center;
+		padding: 30px 0;
+		font-family: 'Arial', sans-serif;
+	}
+	.orderModalHeadTitle {
+		font-size: 24px;
+		font-weight: bold;
+		margin-bottom: 25px;
+	}
+	.orderModalSection {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		padding-left: 15%;
+		width: 100%;
+	}
+	.orderModalItemContainer {
+		width: 85%;
+		display: flex;
+		justify-content: flex-start;
+		align-items: center;
+		margin: 12px 0;
+	}
+	.orderModalItemLabel {
+		width: 35%;
+		font-weight: bold;
+		font-size: 14px;
+	}
+	.orderModalItemValue,
+	.orderModalItemSelect {
+		flex: 1;
+		text-align: left;
+		font-size: 14px;
+		color: #333;
+	}
+	.orderModalItemSelect {
+		padding: 6px;
+		border: 1px solid #aaa;
+		border-radius: 6px;
+	}
+	.orderModalFooter {
+		display: flex;
+		justify-content: center;
+		gap: 15px;
+		margin-top: 25px;
+	}
+	.orderModalButton {
+		padding: 10px 20px;
+		background-color: black;
+		color: white;
+		font-size: 16px;
+		border-radius: 10px;
+		border: none;
+		cursor: pointer;
+	}
+	.orderModalButton:hover {
+		background-color: #444;
+	}
+	#deliveryAddressText{
+		margin-top:10px;
+	}
+	.modalGuestOrder{
+		display: flex;
+		margin-bottom: -3%;
+    }
+	.modalGuestOrderContainer{
+		width: 100%;
+    }
+	.modalGuestOrderInfo,
+	.modalGuestOrderProductInfo,
+	.modalGuestOrderPayment {
+		padding: 3% 3% 0% 3%;
+    }
+	.datatable-selector {
+		padding: 8px;
+		width: 170%;
+		margin-bottom:10px;
+		margin-right: 20px;
+	}
+	    
 </style>
 </head>
 <body class="sb-nav-fixed">
@@ -272,57 +278,71 @@
 				<jsp:include page="/WEB-INF/views/include/adminFooter.jsp" />
 			</div>
 		</div>
-		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-		<script src="<%=request.getContextPath()%>/resources/js/scripts.js"></script>
-		<script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
-		<script src="<%=request.getContextPath()%>/resources/js/datatables-simple-demo.js"></script>
-		<script>
-      $(document).ready(function () {
-        // 모달 관련 변수
-        let selectedRow = null;
-    
-        // 상세보기 버튼 클릭 시
-        $(document).on("click", ".viewBtn", function () {
-          selectedRow = $(this).closest("tr");
-    
-          const orderNum = selectedRow.find("td").eq(0).text();
-          const orderStatus = selectedRow.find("td").eq(2).text();
-          const deliveryStatus = selectedRow.find("td").eq(4).text();
-    
-          $("#orderNum").text(orderNum);
-          $("#orderStatus").val(orderStatus);
-          $("#deliveryStatus").val(deliveryStatus);
-    
-          // 모달 열기
-          const modal = new bootstrap.Modal($("#orderModal")[0]);
-          modal.show();
-        });
-    
-        // 저장 버튼 클릭 시
-        $("#saveOrder").on("click", function () {
-          const orderStatus = $("#orderStatus").val();
-          const deliveryStatus = $("#deliveryStatus").val();
-          const courier = $("#courier").val();
-          const invoice = $("#invoice").val();
-    
-          const orderNum = $("#orderNum").text();
-    
-          // 테이블에 반영
-          if (selectedRow) {
-            selectedRow.find("td").eq(2).text(orderStatus);   // 주문 상태
-            selectedRow.find("td").eq(4).text(deliveryStatus); // 배송 상태
-          }
-    
-          alert(`저장되었습니다.\n주문번호: ${orderNum}\n주문상태: ${orderStatus}\n배송상태: ${deliveryStatus}\n택배사: ${courier}\n송장번호: ${invoice}`);
-    
-          // 모달 닫기
-          const modalInstance = bootstrap.Modal.getInstance($("#orderModal")[0]);
-          modalInstance.hide();
-        });
-    
-        // simple-datatables 초기화 (선택사항)
-        // const dataTable = new simpleDatatables.DataTable("#datatablesSimple");
-      });
-    </script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+<script src="<%=request.getContextPath()%>/resources/js/scripts.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
+<script src="<%=request.getContextPath()%>/resources/js/datatables-simple-demo.js"></script>
+<script>
+	 $(document).ready(function () {
+		   // 모달 관련 변수
+		   let selectedRow = null;
+		
+		   // 상세보기 버튼 클릭 시
+		   $(document).on("click", ".viewBtn", function () {
+		     selectedRow = $(this).closest("tr");
+		
+		     const orderNum = selectedRow.find("td").eq(0).text();
+		     const orderStatus = selectedRow.find("td").eq(2).text();
+		     const deliveryStatus = selectedRow.find("td").eq(4).text();
+		
+		     $("#orderNum").text(orderNum);
+		     $("#orderStatus").val(orderStatus);
+		     $("#deliveryStatus").val(deliveryStatus);
+		
+		     // 모달 열기
+		     const modal = new bootstrap.Modal($("#orderModal")[0]);
+		     modal.show();
+		   });
+		
+		   // 저장 버튼 클릭 시
+		   $("#saveOrder").on("click", function () {
+		     const orderStatus = $("#orderStatus").val();
+		     const deliveryStatus = $("#deliveryStatus").val();
+		     const courier = $("#courier").val();
+		     const invoice = $("#invoice").val();
+		
+		     const orderNum = $("#orderNum").text();
+		
+		     // 테이블에 반영
+		     if (selectedRow) {
+		       selectedRow.find("td").eq(2).text(orderStatus);   // 주문 상태
+		       selectedRow.find("td").eq(4).text(deliveryStatus); // 배송 상태
+		     }
+		
+		     alert(`저장되었습니다.\n주문번호: ${orderNum}\n주문상태: ${orderStatus}\n배송상태: ${deliveryStatus}\n택배사: ${courier}\n송장번호: ${invoice}`);
+		
+		     // 모달 닫기
+		     const modalInstance = bootstrap.Modal.getInstance($("#orderModal")[0]);
+		     modalInstance.hide();
+		   });
+		
+		   // simple-datatables 초기화 (선택사항)
+		   // const dataTable = new simpleDatatables.DataTable("#datatablesSimple");
+	 });
+	 
+	 
+</script>
+<script>
+	document.addEventListener("DOMContentLoaded", function() {
+	    const table = new simpleDatatables.DataTable("#datatablesSimple", {
+	      labels: {
+	        perPage: "",  // 이 부분이 'entries per page' 문구를 담당
+	        placeholder: "검색어 입력...",
+	        noRows: "데이터가 없습니다.",
+	        info: ""
+	      }
+	    });
+	  });
+</script>
 </body>
 </html>

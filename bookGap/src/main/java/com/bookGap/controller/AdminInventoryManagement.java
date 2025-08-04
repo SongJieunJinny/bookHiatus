@@ -1,13 +1,20 @@
 package com.bookGap.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.bookGap.service.AdminBookService;
+import com.bookGap.service.BookService;
 import com.bookGap.vo.BookVO;
 
 @Controller
@@ -15,6 +22,8 @@ public class AdminInventoryManagement {
 	
 	@Autowired
     private AdminBookService adminBookService;
+	@Autowired
+	public BookService bookService;
 	
 	@PostMapping("/admin/books/updateInventory")
 	@ResponseBody
@@ -37,6 +46,14 @@ public class AdminInventoryManagement {
 
 	    adminBookService.updateInventory(vo);
 	    return ResponseEntity.ok("success");
+	}
+	
+	
+	@GetMapping("admin/adminInventoryManagement.do")
+	public String adminInventoryManagement(Model model) {
+	    List<BookVO> getInventoryManagementSelectAll = bookService.adminInventoryManagementSelectAll();
+	    model.addAttribute("getInventoryManagementSelectAll", getInventoryManagementSelectAll);
+	    return "admin/adminInventoryManagement";
 	}
 
 }

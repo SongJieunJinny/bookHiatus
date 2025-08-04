@@ -39,5 +39,9 @@ public class UserDAO {
 	public UserInfoVO findById(String userId) {
 		return sqlSession.selectOne(name_space + "findById", userId);
 	}
+	
+	public void updateUser(UserInfoVO user) {
+		sqlSession.update(name_space + "updateUser", user);
+	}
 
 }
