@@ -4,6 +4,8 @@ import com.bookGap.vo.GuestVO;
 
 public interface GuestService {
 
-  public void registerGuest(GuestVO guest);
+  public void registerGuest(GuestVO guestVO);
+  
+  public GuestVO getGuestByEmail(String email);
 
 }
