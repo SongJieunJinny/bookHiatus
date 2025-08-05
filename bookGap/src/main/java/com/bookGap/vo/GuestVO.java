@@ -8,9 +8,6 @@ public class GuestVO {
   private String guestPhone;  //비회원 번호
   private String guestEmail;  //비회원 이메일
   private LocalDateTime guestCreatedAt;  //비회원 생성일자
-  private String guestPostCode;  //비회원 우편번호
-  private String guestRoadAddress;  //비회원 도로명주소
-  private String guestDetailAddress;  //비회원 상세주소
   
   public String getGuestId() {
     return guestId;
@@ -41,24 +38,6 @@ public class GuestVO {
   }
   public void setGuestCreatedAt(LocalDateTime guestCreatedAt) {
     this.guestCreatedAt = guestCreatedAt;
-  }
-  public String getGuestPostCode() {
-    return guestPostCode;
-  }
-  public void setGuestPostCode(String guestPostCode) {
-    this.guestPostCode = guestPostCode;
-  }
-  public String getGuestRoadAddress() {
-    return guestRoadAddress;
-  }
-  public void setGuestRoadAddress(String guestRoadAddress) {
-    this.guestRoadAddress = guestRoadAddress;
-  }
-  public String getGuestDetailAddress() {
-    return guestDetailAddress;
-  }
-  public void setGuestDetailAddress(String guestDetailAddress) {
-    this.guestDetailAddress = guestDetailAddress;
   }
   
 }

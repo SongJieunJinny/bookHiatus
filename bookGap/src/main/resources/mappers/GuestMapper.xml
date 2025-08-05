@@ -18,18 +18,16 @@
 	    NOW()
 	  )
   </insert>
-    
-  <insert id="insertGuestAddress" parameterType="com.bookGap.vo.GuestVO">
-	  INSERT INTO GUEST_ADDRESS (
-	   GUEST_ID, 
-	   GUEST_POST_CODE,
-	   GUEST_ROAD_ADDRESS,
-	   GUEST_DETAIL_ADDRESS
-	  ) VALUES (
-	   #{guestId},        
-	   #{guestPostCode}, 
-	   #{guestRoadAddress},
-	   #{guestDetailAddress}
-	  )
-  </insert>
+  
+  <!-- 이메일로 기존 비회원 정보 찾기 -->
+	<select id="findGuestByEmail" parameterType="string" resultType="com.bookGap.vo.GuestVO">
+    SELECT GUEST_ID AS guestId, 
+           GUEST_NAME AS guestName, 
+           GUEST_PHONE AS guestPhone, 
+           GUEST_EMAIL AS guestEmail
+      FROM GUEST
+     WHERE GUEST_EMAIL = #{email}
+     LIMIT 1
+	</select>
+
 </mapper>

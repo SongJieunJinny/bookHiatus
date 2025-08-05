@@ -21,96 +21,87 @@ import com.bookGap.vo.BookVO;
 import com.bookGap.vo.OrderVO;
 import com.bookGap.vo.UserAddressVO;
 
-@RequestMapping(value="/order")
 @Controller
 public class OrderController {
   
   @Autowired
   private OrderService orderService;
 	
-  @GetMapping("/orderDetails.do")
+  @GetMapping("/order/orderDetails.do")
   public String orderDetails(Principal principal, Model model) {
     if(principal == null){
       return "redirect:/login"; // 비로그인 시 로그인 페이지로
     }
     String userId = principal.getName();
-    List<OrderVO> orderList = orderService.getOrdersByUserId(userId);
+    List<OrderVO> orderList = orderService.getOrdersByUser(userId);
     model.addAttribute("orderList", orderList);
     return "order/orderDetails";
   }
 	
-	
-	
-  @PostMapping("/orderMain.do") //get으로 하면 오류나서 post로 변경했어
+  /*  '회원'이 주문 페이지로 진입 */
+  @PostMapping("/order/orderMain.do") 
   public String orderMain(@RequestParam(value = "isbns", required = false) List<String> isbns,
                           @RequestParam(value = "quantities", required = false) List<Integer> quantities,
                           @RequestParam(value = "cartNos", required = false) List<Integer> cartNos,
                           @RequestParam(value = "userId", required = false) String userIdParam,
                           @RequestParam(value = "userAddressId", required = false) Integer userAddressId,
                           @RequestParam(value = "totalPrice", required = false) Integer totalPrice,
-                          Principal principal,
-                          Model model) {
+                          Principal principal, Model model) {
 
-      // 로그인 여부 체크
-      if (principal == null) return "redirect:/login";
-      String sessionUserId = principal.getName();
-      //System.out.println("sessionUserId1"+sessionUserId);
-      // 보안 상 서버 세션의 userId와 form의 userId 비교 (불일치 시 거절 가능)
-      if (userIdParam != null && !userIdParam.equals(sessionUserId)) {
-    	 // System.out.println("userIdParam"+userIdParam);
-    	 //System.out.println("sessionUserId"+sessionUserId);
-          return "redirect:/?error=invalid_user";
+    // 로그인 여부 체크
+    if (principal == null) return "redirect:/login";
+    String sessionUserId = principal.getName();
+
+    if(userIdParam != null && !userIdParam.equals(sessionUserId)){
+      return "redirect:/?error=invalid_user";
+    }
+
+    List<Map<String, Object>> orderItems = new ArrayList<>();
+
+    if(isbns != null && !isbns.isEmpty()){
+      if(quantities == null || isbns.size() != quantities.size()){
+        return "redirect:/product/cart.do?error=param_mismatch";
       }
+      
+      List<BookVO> books = orderService.getBooksByIsbnList(isbns);
 
-      List<Map<String, Object>> orderItems = new ArrayList<>();
+      for(int i = 0; i < isbns.size(); i++){
+    	  final int index = i;
 
-      if (isbns != null && !isbns.isEmpty()) {
-          if (quantities == null || isbns.size() != quantities.size()) {
-              return "redirect:/product/cart.do?error=param_mismatch";
-          }
+    	  String currentIsbn = isbns.get(index);
+        int currentQuantity = quantities.get(index);
+        books.stream()
+          .filter(b -> b.getIsbn().equals(currentIsbn))
+          .findFirst()
+          .ifPresent(book -> {
+            Map<String, Object> item = new HashMap<>();
+            item.put("book", book);
+            item.put("quantity", currentQuantity);
+            item.put("cartNo", (cartNos != null && cartNos.size() > index) ? cartNos.get(index) : null);
+            orderItems.add(item);
+        });
+    	}
 
-          List<BookVO> books = orderService.getBooksByIsbnList(isbns);
+    }else{
+      return "redirect:/?error=no_order_data";
+    }
 
-          for (int i = 0; i < isbns.size(); i++) {
-        	    final int index = i;
+    // 기본 배송지 정보 및 주소 리스트 조회
+    UserAddressVO defaultAddress = orderService.getDefaultAddress(sessionUserId);
+    List<UserAddressVO> addressList = orderService.getAddressList(sessionUserId);
 
-        	    String currentIsbn = isbns.get(index);
-        	    int currentQuantity = quantities.get(index);
+    model.addAttribute("orderItems", orderItems);
+    model.addAttribute("defaultAddress", defaultAddress);
+    model.addAttribute("addressList", addressList);
+    model.addAttribute("userAddressId", userAddressId);
+    model.addAttribute("totalPrice", totalPrice);
 
-        	    books.stream()
-        	        .filter(b -> b.getIsbn().equals(currentIsbn))
-        	        .findFirst()
-        	        .ifPresent(book -> {
-        	            Map<String, Object> item = new HashMap<>();
-        	            item.put("book", book);
-        	            item.put("quantity", currentQuantity);
-        	            item.put("cartNo", (cartNos != null && cartNos.size() > index) ? cartNos.get(index) : null);
-        	            orderItems.add(item);
-        	        });
-        	}
-
-      } else {
-          return "redirect:/?error=no_order_data";
-      }
-
-      // 기본 배송지 정보 및 주소 리스트 조회
-      UserAddressVO defaultAddress = orderService.getDefaultAddress(sessionUserId);
-      List<UserAddressVO> addressList = orderService.getAddressListByUserId(sessionUserId);
-
-      model.addAttribute("orderItems", orderItems);
-      model.addAttribute("defaultAddress", defaultAddress);
-      model.addAttribute("addressList", addressList);
-      model.addAttribute("userAddressId", userAddressId);
-      model.addAttribute("totalPrice", totalPrice);
-
-      return "order/orderMain";
+    return "order/orderMain";
   }
 
-		
-	
-
+  /*  회원 주문 페이지의 '주소록 추가' 팝업 */
 	@PostMapping("/addAddress.do")
-	@ResponseBody // 페이지 이동 없이 데이터만 반환
+	@ResponseBody 
 	public String addAddress(@RequestBody UserAddressVO addressVO, Principal principal) {
 	  if(principal != null){
       String loginId = principal.getName();
@@ -122,7 +113,7 @@ public class OrderController {
     }
 	  
 	  try{
-      orderService.addAddress(addressVO);
+	    orderService.registerAddress(addressVO);
       return "SUCCESS";
     }catch(Exception e){
       System.out.println("### 데이터베이스 저장 실패! 전달된 VO 정보: " + addressVO.toString()); 
@@ -131,15 +122,58 @@ public class OrderController {
     }
   }
 	
+	/* 주소 삭제 */
 	@PostMapping("/deleteAddress.do")
 	@ResponseBody
 	public String deleteAddress(@RequestParam("userAddressId") int userAddressId) {
     try{
-      orderService.deleteAddress(userAddressId);
+      orderService.removeAddress(userAddressId);
       return "SUCCESS";
     }catch(Exception e){
       return "FAIL: " + e.getMessage();
     }
 	}
 	
+	/* '비회원' 주문 처리 */
+	@PostMapping("/guest/processOrder.do")
+  @ResponseBody
+  public Map<String, Object> processGuestOrder(@RequestBody Map<String, Object> orderData) {
+    
+    Map<String, Object> response = new HashMap<>();
+    try {
+        orderService.createGuestOrder(orderData); 
+        response.put("status", "Success");
+        response.put("message", "주문이 성공적으로 접수되었습니다.");
+
+    } catch (Exception e) {
+        response.put("status", "Error");
+        response.put("message", "주문 처리 중 오류 발생: " + e.getMessage());
+        e.printStackTrace();
+    }
+    
+    return response; // 프론트엔드에 성공/실패 결과를 반환
+  }
+	
+	/* 비회원 주문 페이지 */
+	@GetMapping("/guest/guestOrder.do")
+  public String showGuestOrderPage(@RequestParam("isbn") String isbn, 
+                                   @RequestParam("quantity") int quantity, 
+                                   Model model) {
+      
+    // 1. ISBN으로 책 상세 정보를 조회합니다.
+    BookVO book = orderService.getBookByIsbn(isbn);
+    
+    // 2. 만약 책 정보가 없으면, 메인 페이지로 돌려보냅니다.
+    if (book == null) {
+        return "redirect:/?error=book_not_found";
+    }
+    
+    // 3. 조회한 책 정보와 수량을 Model에 담아서 JSP로 전달합니다.
+    model.addAttribute("book", book);
+    model.addAttribute("quantity", quantity);
+    
+    // 4. 비회원 주문 JSP 페이지를 반환합니다.
+    // WEB-INF/views/guest/guestOrder.jsp 파일을 찾아 렌더링합니다.
+    return "guest/guestOrder"; 
+  }
 }

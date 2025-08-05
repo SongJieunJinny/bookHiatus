@@ -298,6 +298,7 @@ const contextPath = '<%= request.getContextPath() %>';
 
 $(document).ready(function () {
   // --- 초기화 ---
+  initHeaderEvents();
   updateCartCount();
   calculateTotal(); // 페이지 로딩 시 JSP가 렌더링한 가격으로 최초 계산
   initializeToggleButtons();
