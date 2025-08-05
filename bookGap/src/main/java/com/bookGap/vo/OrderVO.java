@@ -12,13 +12,21 @@ public class OrderVO {
   private String userId; //아이디
   private String guestId;  //비회원아이디
   private Integer cartNo;   //장바구니번호
-  
-  /* JSP 출력용 */
+
+  private String receiverName;            // 수취인 이름
+  private String receiverPhone;           // 수취인 연락처
+  private String receiverPostCode;        // 수취인 우편번호
+  private String receiverRoadAddress;     // 수취인 도로명주소
+  private String receiverDetailAddress;   // 수취인 상세주소
+  private String deliveryRequest;         // 배송 요청사항
+  private String orderPassword;           // 비회원 주문 조회용 비밀번호
+
+  /* --- JSP 출력용 (기존 필드) --- */
   private int displayNo;
   private String formattedOrderDate;
   private List<OrderDetailVO> orderDetails;
   
-  public List<OrderDetailVO> getOrderDetails() {
+  List<OrderDetailVO> getOrderDetails() {
     return orderDetails;
   }
   public void setOrderDetails(List<OrderDetailVO> orderDetails) {
@@ -85,4 +93,47 @@ public class OrderVO {
     this.formattedOrderDate = formattedOrderDate;
   }
   
+  public String getReceiverName() {
+    return receiverName;
+  }
+  public void setReceiverName(String receiverName) {
+    this.receiverName = receiverName;
+  }
+  public String getReceiverPhone() {
+    return receiverPhone;
+  }
+  public void setReceiverPhone(String receiverPhone) {
+    this.receiverPhone = receiverPhone;
+  }
+  public String getReceiverPostCode() {
+    return receiverPostCode;
+  }
+  public void setReceiverPostCode(String receiverPostCode) {
+    this.receiverPostCode = receiverPostCode;
+  }
+  public String getReceiverRoadAddress() {
+    return receiverRoadAddress;
+  }
+  public void setReceiverRoadAddress(String receiverRoadAddress) {
+    this.receiverRoadAddress = receiverRoadAddress;
+  }
+  public String getReceiverDetailAddress() {
+    return receiverDetailAddress;
+  }
+  public void setReceiverDetailAddress(String receiverDetailAddress) {
+    this.receiverDetailAddress = receiverDetailAddress;
+  }
+  public String getDeliveryRequest() {
+    return deliveryRequest;
+  }
+  public void setDeliveryRequest(String deliveryRequest) {
+    this.deliveryRequest = deliveryRequest;
+  }
+  public String getOrderPassword() {
+    return orderPassword;
+  }
+  public void setOrderPassword(String orderPassword) {
+    this.orderPassword = orderPassword;
+  }
+
 }

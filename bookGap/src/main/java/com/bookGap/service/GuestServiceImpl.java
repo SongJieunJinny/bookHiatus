@@ -2,7 +2,6 @@ package com.bookGap.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.bookGap.dao.GuestDAO;
 import com.bookGap.vo.GuestVO;
@@ -14,9 +13,13 @@ public class GuestServiceImpl implements GuestService {
   public GuestDAO guestDAO;
 
   @Override
-  @Transactional
-  public void registerGuest(GuestVO guest) {
-    guestDAO.insertGuest(guest);
-    guestDAO.insertGuestAddress(guest);
+  public void registerGuest(GuestVO guestVO) {
+      guestDAO.insertGuest(guestVO);
   }
+
+  @Override
+  public GuestVO getGuestByEmail(String email) {
+      return guestDAO.findGuestByEmail(email);
+  }
+
 }
