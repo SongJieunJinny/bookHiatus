@@ -2,6 +2,29 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
 			"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.bookGap.mapper.complainMapper"> 
+<resultMap id="complainResultMap" type="com.bookGap.vo.ComplainVO">
+	<id property="complainNo" column="COMPLAIN_NO" />
+		<result property="commentNo" column="COMMENT_NO" />
+		<result property="userId" column="USER_ID" />
+		<result property="complainType" column="COMPLAIN_TYPE" />
+		<result property="reportDate" column="REPORT_DATE" />
+		<result property="status" column="STATUS" />
+		<result property="processNote" column="PROCESS_NOTE" />
+		<result property="commentState" column="COMMENT_STATE"/>
+		<result property="commentContent" column="COMMENT_CONTENT"/>
+		<result property="bookName" column="BOOK_NAME"/>
+</resultMap>
+<resultMap id="complainSummaryResultMap" type="com.bookGap.vo.ComplainSummaryVO">
+    <id property="commentNo" column="COMMENT_NO"/>
+    <result property="commentContent" column="COMMENT_CONTENT"/>
+    <result property="commentState" column="COMMENT_STATE"/>
+    <result property="reportCount" column="REPORT_COUNT"/>
+    <result property="lastReportDate" column="LAST_REPORT_DATE"/>
+    <result property="reportTypes" column="REPORT_TYPES"/>
+    <result property="status" column="STATUS"/>
+    <result property="bookName" column="BOOK_NAME"/>
+</resultMap>
+
   <!-- 특정 유저가 특정 댓글을 신고한 기록이 몇 개인지 조회/0이면 신고한 적 없음, 1 이상이면 이미 신고 -->
   <select id="countComplain" parameterType="com.bookGap.vo.ComplainVO" resultType="int">
 	  SELECT COUNT(*)
@@ -21,4 +44,107 @@
 	    #{complainType}
 	  )
   </insert>
+
+	<select id="selectComplainDetail" parameterType="int" resultMap="complainResultMap">
+		SELECT 
+			C.COMPLAIN_NO,
+			C.COMMENT_NO,
+			C.USER_ID,
+			C.COMPLAIN_TYPE,
+			C.REPORT_DATE,
+			C.STATUS,
+			C.PROCESS_NOTE,
+			CM.COMMENT_CONTENT AS COMMENT_CONTENT,
+			CM.COMMENT_STATE AS COMMENT_STATE,
+			PA.TITLE AS BOOK_NAME
+		FROM COMPLAIN C
+			JOIN COMMENT CM ON C.COMMENT_NO = CM.COMMENT_NO
+			JOIN PRODUCT_API PA ON CM.ISBN = PA.ISBN
+		WHERE C.COMPLAIN_NO = #{complainNo}
+	</select>
+
+	<update id="updateComplainStatus" parameterType="com.bookGap.vo.ComplainVO">
+		UPDATE COMPLAIN
+			SET STATUS = #{status}, PROCESS_NOTE = #{processNote}
+		WHERE COMPLAIN_NO = #{complainNo}
+	</update>
+	
+	<update id="updateCommentState" parameterType="com.bookGap.vo.ComplainVO">
+		UPDATE COMMENT
+			SET COMMENT_STATE = #{commentState}
+		WHERE COMMENT_NO = #{commentNo}
+	</update>
+	
+	<select id="selectReportSummary" resultMap="complainSummaryResultMap">
+		SELECT 
+			ct.COMMENT_NO,
+			PA.TITLE AS BOOK_NAME,
+			MAX(ct.COMMENT_CONTENT) AS commentContent,
+			MAX(ct.COMMENT_STATE) AS commentState,
+			COUNT(*) AS reportCount,
+			MAX(c.REPORT_DATE) AS lastReportDate,
+			GROUP_CONCAT(
+				CASE c.COMPLAIN_TYPE
+					WHEN 1 THEN '욕설/비방'
+					WHEN 2 THEN '스팸'
+					WHEN 3 THEN '음란물'
+					ELSE '기타'
+					END
+				) AS reportTypes,
+				(
+					SELECT STATUS
+					FROM COMPLAIN c2
+					WHERE c2.COMMENT_NO = c.COMMENT_NO
+					ORDER BY REPORT_DATE DESC
+					LIMIT 1
+				) AS status
+		FROM COMPLAIN c
+			JOIN COMMENT ct ON c.COMMENT_NO = ct.COMMENT_NO
+			JOIN PRODUCT_API PA ON  ct.ISBN = PA.ISBN
+		GROUP BY c.COMMENT_NO
+		ORDER BY lastReportDate DESC
+	</select>
+	
+	<select id="selectComplainListByCommentNo" resultMap="complainResultMap">
+		SELECT 
+			C.COMPLAIN_NO,
+			C.COMMENT_NO,
+			C.USER_ID,
+			C.COMPLAIN_TYPE,
+			C.REPORT_DATE,
+			C.STATUS,
+			C.PROCESS_NOTE,
+			CM.COMMENT_CONTENT AS COMMENT_CONTENT,
+			CM.COMMENT_STATE AS COMMENT_STATE,
+			PA.TITLE AS BOOK_NAME
+		FROM COMPLAIN C
+			JOIN COMMENT CM ON C.COMMENT_NO = CM.COMMENT_NO
+			JOIN PRODUCT_API PA ON CM.ISBN = PA.ISBN
+		WHERE C.COMMENT_NO = #{commentNo}
+		ORDER BY C.REPORT_DATE DESC
+	</select>
+
+	<select id="selectReportSummaryByStatus" parameterType="string" resultType="com.bookGap.vo.ComplainSummaryVO">
+		SELECT 
+			ct.COMMENT_NO,
+			MAX(ct.COMMENT_CONTENT) AS commentContent,
+			MAX(ct.COMMENT_STATE) AS commentState,
+			COUNT(*) AS reportCount,
+			MAX(c.REPORT_DATE) AS lastReportDate,
+			GROUP_CONCAT(
+				CASE c.COMPLAIN_TYPE
+					WHEN 1 THEN '욕설/비방'
+					WHEN 2 THEN '스팸'
+					WHEN 3 THEN '음란물'
+					ELSE '기타'
+				END
+			) AS reportTypes,
+			MAX(c.STATUS) AS status
+		FROM COMPLAIN c
+			JOIN COMMENT ct ON c.COMMENT_NO = ct.COMMENT_NO
+		WHERE c.STATUS = #{status}
+		GROUP BY c.COMMENT_NO
+		ORDER BY lastReportDate DESC
+	</select>
+ 
 </mapper>

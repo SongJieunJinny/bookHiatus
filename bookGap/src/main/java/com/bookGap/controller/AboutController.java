@@ -12,8 +12,8 @@ import com.bookGap.service.BookService;
 
 @Controller
 public class AboutController {
-	@Autowired
-	public BookService bookService;
+
+	
 	@RequestMapping(value = "/about.do", method = RequestMethod.GET)
 	public String about() {
 		

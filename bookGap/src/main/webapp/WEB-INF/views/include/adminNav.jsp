@@ -20,6 +20,7 @@
       <a class="nav-link" href="${pageContext.request.contextPath}/admin/adminOrder.do">User  Order</a>
       <a class="nav-link" href="${pageContext.request.contextPath}/admin/adminGuestOrderInfo.do">Guset Order Info</a>
       <a class="nav-link" href="${pageContext.request.contextPath}/admin/adminUserInfo.do">User Info</a>
+      <a class="nav-link" href="${pageContext.request.contextPath}/admin/adminReportManagement.do">Report Management </a>
       <div class="collapse" id="pagesCollapseAuth" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordionPages"></div>
       <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#pagesCollapseError" aria-expanded="false" aria-controls="pagesCollapseError">
         Error
