@@ -665,3 +665,178 @@ font-size: 13px;
 	gap: 4px;
 	margin: 0px 0px 5px 0px;
 }
+
+/* ============================================= */
+/* 💻 노트북 (1025px ~ 1440px)                   */
+/* ============================================= */
+@media (min-width: 1025px) and (max-width: 1440px) {
+  section {
+    width: 95%;
+    margin: 2% auto;
+  }
+
+  .orderDetailLayout,
+  .paymentMethodLayout,
+  .paymentTableLayout {
+    width: 80%;
+  }
+
+  .orderMainPayBtn {
+    width: 50%;
+    font-size: 22px;
+  }
+
+  .guideText {
+    width: 90%;
+  }
+}
+
+/* ============================================= */
+/* 📱 태블릿 (769px ~ 1024px)                    */
+/* ============================================= */
+@media (min-width: 769px) and (max-width: 1024px) {
+  #orderMain {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #orderMainNav,
+  #orderMainSection,
+  #orderMainAside {
+    width: 100%;
+    max-width: 700px;
+  }
+
+  .orderDetailLayout,
+  .paymentMethodLayout,
+  .paymentTableLayout {
+    width: 90%;
+  }
+
+  .deliveryContainer,
+  .requestContainer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    width: 90%;
+  }
+
+  .deliveryAddress1 {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .orderMainPayBtn {
+    width: 60%;
+    font-size: 20px;
+  }
+
+  .guideText {
+    width: 100%;
+  }
+}
+
+/* ============================================= */
+/* 📱 모바일 (1px ~ 768px)                       */
+/* ============================================= */
+@media (max-width: 768px) {
+  section {
+    width: 100%;
+    padding: 10px;
+    margin: 0;
+  }
+
+  #orderMain {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #orderMainNav,
+  #orderMainSection,
+  #orderMainAside {
+    width: 100%;
+  }
+
+  .deliveryContainer,
+  .requestContainer {
+    flex-direction: column;
+    align-items: stretch;
+    width: 90%;
+    margin: 10px auto;
+    gap: 10px;
+  }
+
+  .deliveryAddress1 {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .deliveryAddress2,
+  .deliveryAddress3 {
+    flex-direction: column;
+    text-align: left;
+    font-size: 14px;
+  }
+
+  .orderImg {
+    width: 60%;
+    max-width: 150px;
+    margin: 0 auto;
+  }
+
+  .orderDetails {
+    text-align: center;
+    font-size: 15px;
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .paymentMethodContainer {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .paymentMethodIcon {
+    width: 80%;
+    height: 60px;
+  }
+
+  .orderMainPayBtn {
+    width: 80%;
+    font-size: 18px;
+    padding: 12px;
+  }
+
+  .guideText {
+    width: 100%;
+    font-size: 13px;
+  }
+
+  .modalContent {
+    width: 95%;
+    padding: 15px;
+  }
+
+  #addressForm input {
+    width: 100%;
+  }
+
+  .agreeToggleBtn {
+    font-size: 13px;
+    height: auto;
+    padding: 5px;
+  }
+
+  .asideAgree > div {
+    width: 90%;
+  }
+
+  .orderMainTableTitle {
+    font-size: 18px;
+  }
+
+  #order {
+    font-size: 22px;
+  }
+}

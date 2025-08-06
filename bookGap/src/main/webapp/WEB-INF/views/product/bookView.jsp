@@ -31,7 +31,7 @@
 	</c:choose>
 	
 	<div id="bookView">
-		<div class="bookPart">   
+		<div class="bookPart">
 			<div class="bookItem">
 				<a href="#"><img src="${bookDetail.image}" alt="${bookDetail.title}"></a>
 			</div>
