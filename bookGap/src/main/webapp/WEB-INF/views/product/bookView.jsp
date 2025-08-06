@@ -32,12 +32,9 @@
 	  </c:otherwise>
 	</c:choose>
 	<div id="bookView">
-<<<<<<< HEAD
 		<div class="bookPart">
-=======
 		<input type="hidden" id="isbn" value="${bookDetail.isbn}" />
 		<div class="bookPart">   
->>>>>>> branch 'main' of https://github.com/SongJieunJinny/bookHiatus.git
 			<div class="bookItem">
 				<a href="#"><img src="${bookDetail.image}" alt="${bookDetail.title}"></a>
 			</div>
