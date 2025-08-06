@@ -178,4 +178,22 @@ INNER JOIN BOOK b ON p.isbn = b.isbn
 		LIMIT 9
 	</select>
 	
+	<!-- 제목 또는 저자명으로 도서 검색 -->
+	<select id="searchBooksByKeyword" parameterType="com.bookGap.vo.SearchVO" resultType="com.bookGap.vo.ProductApiVO">
+	  SELECT p.isbn, p.title, p.image, p.discount
+	    FROM BOOK b
+INNER JOIN PRODUCT_API p ON b.isbn = p.isbn
+	   WHERE (p.title LIKE CONCAT('%', #{searchValue}, '%') OR p.author LIKE CONCAT('%', #{searchValue}, '%'))
+	ORDER BY b.BOOK_RDATE DESC
+	   LIMIT #{start}, #{perPage}
+	</select>
+	
+	<!-- 제목 또는 저자명으로 검색된 도서의 전체 개수 조회 -->
+	<select id="getBookTotalCountByKeyword" parameterType="com.bookGap.vo.SearchVO" resultType="int">
+	  SELECT COUNT(*)
+	    FROM BOOK b
+INNER JOIN PRODUCT_API p ON b.isbn = p.isbn
+	  WHERE (p.title LIKE CONCAT('%', #{searchValue}, '%') OR p.author LIKE CONCAT('%', #{searchValue}, '%'))
+	</select>
+	
 </mapper>

@@ -331,7 +331,7 @@ $(document).ready(function () {
   //전체동의 로직 (주석 처리된 agree3Div 고려)
   $("#agreeAll").click(function () {
     const isChecked = $(this).prop("checked");
-    $(".agreeRadio2, .agreeRadio4").prop("checked", isChecked); // agreeRadio3 제외
+    $(".agreeRadio2, .agreeRadio4").prop("checked", isChecked);
   });
   $(".agreeRadio2, .agreeRadio4").click(function () {
     const allChecked = $(".agreeRadio2").prop("checked") && $(".agreeRadio4").prop("checked");
@@ -455,14 +455,6 @@ function initializeToggleButtons() {
     const target = document.getElementById(targetId);
     if (!target) return;
 
-    /*
-     * 이 부분을 주석 처리하여 '자동 숨김' 기능을 비활성화합니다.
-    if(target.scrollHeight <= 160){
-      btn.style.display = "none";
-      return;
-    }
-    */
-    
     setToggleButton(btn, false);
     btn.addEventListener("click", function (e) {
       e.preventDefault(); // button의 기본 동작 방지

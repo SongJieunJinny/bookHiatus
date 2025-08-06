@@ -225,13 +225,12 @@ section{
 }
 input[type="checkbox"] {
   accent-color: black;
-  margin-right: 8px; /* 체크박스와 라벨 사이 간격 */
+  margin-right: 8px;
 }
 .agree1Div, .agree2Div, .agree3Div, .agree4Div{
-  width: 80%;
-  padding: 8px 5%;
+  max-width: 450px;
   display: flex;
-  text-align: center;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
 }
@@ -266,9 +265,7 @@ input[type="checkbox"] {
   padding: 5px 10%;
 }
 .payBtnDiv{
-  margin-top :5%;
-  margin-bottom : 10%;
-  width: 100%;
+  margin-top : 8%;
   text-align: center;
 }
 .payBtn{
@@ -276,61 +273,57 @@ input[type="checkbox"] {
   border-radius: 10px;
   background-color: black;
   color: white;
-  width: 30%;
-  max-width: 400px;
-  min-width: 200px;
-  height: auto;
-  font-size: 25px;
+  width: 150px;
+  max-width: 300px;
+  font-size: 1.2em;
   padding: 10px;
   cursor: pointer;
-  transition: background-color 0.2s, color 0.2s;
+  transition: background-color 0.2s;
 }
 .payBtn:hover {
   background-color: #333;
 }
 .guideText {
   display: none;
-  margin-top: 10px;
-  width: 100%;
+  width: auto;
   background-color: #f9f9f9;
   border: 1px solid #ddd;
-  padding: 3%;
-  font-size: 14px;
+  padding: 10px;
+  font-size: 0.9em;
   color: #333;
   border-radius: 4px;
-  box-sizing: border-box;
-  text-align: left;
+}
+.guideText p{
+  font-size: 13px;
+  margin: 3px 0px 3px 0px;
 }
 .guideText.expanded {
   display: block;
 }
 #guidePrivacyText{
-  height: 200px;
-  overflow-y: scroll;
+  height: 150px;
+  overflow-y: auto;
 }
-
-/* --- [중요] 동의 항목 스타일링 수정 --- */
 .label-toggle-wrapper {
-  display: inline-flex;
-  align-items: baseline;
+  text-align: center;
+  align-items: center;
   border-bottom: 1px solid black;
   padding-bottom: 2px;
+  flex-grow: 1;
   gap: 5px;
-  justify-content: center;
 }
-
 .label-toggle-wrapper label {
   white-space: nowrap; /* 라벨 줄바꿈 방지 */
 }
-
-/* '전체동의'는 버튼이 없으므로 개별적으로 스타일링 */
 .agree1Div label {
-  display: inline-block;
   border-bottom: 1px solid black;
   padding-bottom: 2px;
 }
-/* --- 스타일링 수정 끝 --- */
-
+.setToggleButton{
+	border-radius: 5px;
+  border: solid 1px #ccc;
+}
+    
 
 /* ============================================= */
 /* 노트북 (1025px ~ 1440px)                      */

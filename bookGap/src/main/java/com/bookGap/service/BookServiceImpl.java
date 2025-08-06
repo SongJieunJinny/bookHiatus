@@ -70,4 +70,14 @@ public class BookServiceImpl implements BookService{
     return bookDAO.getNewBooks();
   }
 	
+  @Override
+  public List<ProductApiVO> searchBooksByKeyword(SearchVO searchVO) {
+    return bookDAO.searchBooksByKeyword(searchVO);
+  }
+
+  @Override
+  public int getBookTotalCountByKeyword(SearchVO searchVO) {
+    return bookDAO.getBookTotalCountByKeyword(searchVO);
+  }
+
 }
