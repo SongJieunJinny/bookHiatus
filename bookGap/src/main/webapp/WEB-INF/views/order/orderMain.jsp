@@ -238,7 +238,6 @@
 <!-- 카카오 주소 검색 API 추가 -->
 <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script>
-const contextPath = '<%= request.getContextPath() %>';
 
 $(document).ready(function () {
   // --- 초기화 ---
