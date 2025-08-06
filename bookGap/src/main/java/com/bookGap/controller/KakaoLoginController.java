@@ -21,6 +21,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 
 import com.bookGap.service.KakaoUserDetails;
 import com.bookGap.service.UserService;
@@ -39,6 +40,9 @@ public class KakaoLoginController {
 	    String nickname = payload.get("nickname");
 	    String userId = "kakao_" + kakaoId;
 	    String accessToken = payload.get("accessToken");
+	    //System.out.println("세션 ID: " + kakaoId);
+	    //System.out.println("userId: " + userId);
+	    //System.out.println("KAKAO_ACCESS_TOKEN: " + session.getAttribute("KAKAO_ACCESS_TOKEN"));
 
 	    // 1차 조회: 카카오 ID 기준
 	    UserInfoVO user = userService.findByKakaoId(kakaoId);
@@ -78,7 +82,16 @@ public class KakaoLoginController {
 	    );
 	    SecurityContextHolder.getContext().setAuthentication(auth);
 	    
+	    session.setAttribute(
+	    	    HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
+	    	    SecurityContextHolder.getContext()
+	    	);
+	    
 	    session.setAttribute("KAKAO_ACCESS_TOKEN", accessToken);
+	    //System.out.println("인증 여부: " + auth.isAuthenticated());
+	    //System.out.println("유저명: " + auth.getName());
+	    //System.out.println("타입: " + auth.getPrincipal().getClass());
+	    
 
 	    Map<String, Object> result = new HashMap<>();
 	    result.put("status", "success");

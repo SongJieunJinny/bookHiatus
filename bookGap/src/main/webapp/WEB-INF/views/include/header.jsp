@@ -104,7 +104,7 @@
 			<sec:authorize access="hasRole('ROLE_ADMIN')">
 			  <!-- 관리자일 경우: 설정 아이콘 -->
 			  <div id="menuMypage" class="menuItem">
-			    <a href="admin/adminIndex.do">
+			    <a href="<%=request.getContextPath()%>/admin/adminIndex.do">
 			      <img id="mypageImg" src="<%=request.getContextPath()%>/resources/img/icon/setting.png" alt="설정">
 			    </a>
 			  </div>
@@ -162,7 +162,7 @@
       </div>
       <div id="loginOption">
 	      <div id="kakaoLogin">카카오 간편 로그인</div>
-	      <div id="guestOrder"><a href="#" id="guestOrderLink">비회원 주문하기</a></div>
+	      <div id="guestOrder">비회원 주문하기</div>
       </div>
     </div>
     <div id="guestMain" class="tabContent" style="display:none;">
@@ -185,6 +185,9 @@
  	</div>
 </div>
 <script src="${pageContext.request.contextPath}/resources/js/jquery-3.7.1.js"></script>
+<script>
+  const contextPath = '<%=request.getContextPath()%>';
+</script>
   <script>
   function initHeaderEvents() {
 	  const menuBook = document.getElementById("menuBook");
@@ -319,9 +322,31 @@
 	        event.preventDefault();
 	        return;
 	      }
+	      
+	      const currentUrl = window.location.pathname + window.location.search;
+	      $.post(contextPath + "/auth/saveRedirect.do", { redirectUrl: currentUrl })
+	        .fail(function (xhr, status, error) {
+	          console.error("redirect 저장 실패:", status, error);
+	        });
+	      
 	    });
 	  }
 	}
+  
+  document.getElementById("guestOrder").addEventListener("click", function () {
+	  const isbnInput = document.getElementById("isbn"); // 숨겨진 input
+	  const isbn = isbnInput?.value;
+	  const quantity = document.querySelector(".num")?.value || 1;
+
+	  if (!isbn) {
+	    alert("상품 정보가 없습니다. 비회원 주문은 상품 상세 페이지에서만 가능합니다.");
+	    return;
+	  }
+	  
+	  const url = contextPath + "/order/orderMain.do?isbn=" + encodeURIComponent(isbn) + "&quantity=" + encodeURIComponent(quantity);
+	  window.location.href = url;
+
+	});
 
   </script>
   <script>
