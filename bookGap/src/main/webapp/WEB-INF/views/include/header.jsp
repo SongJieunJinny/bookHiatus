@@ -162,7 +162,7 @@
       </div>
       <div id="loginOption">
 	      <div id="kakaoLogin">카카오 간편 로그인</div>
-	      <div id="guestOrder"><a href="<%=request.getContextPath()%>/guest/guestOrder.do">비회원 주문하기</a></div>
+	      <div id="guestOrder"><a href="#" id="guestOrderLink">비회원 주문하기</a></div>
       </div>
     </div>
     <div id="guestMain" class="tabContent" style="display:none;">

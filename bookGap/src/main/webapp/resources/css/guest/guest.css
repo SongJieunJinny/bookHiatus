@@ -1,5 +1,11 @@
 @charset "UTF-8";
-/* guestOrder */
+/* --------------orderDetails-------------- */
+*{
+  box-sizing: border-box;   /* ✨ 전역 설정: 요소 크기 계산 안정화 */
+}
+body{
+  font-size: clamp(14px, 2vw, 18px); /* ✨ 글자 크기 유동적으로 */
+}
 section{
   width: 90%;
   height: auto;
@@ -9,7 +15,7 @@ section{
   width: 100%;
   margin: 0% 0% 2% 0%;
 }
-#Order{
+#order{
   font-size: 28px;
   text-align: center;
 }
@@ -27,40 +33,58 @@ section{
 .guestInfoTable{
   width: 100%;
 }
+#guestInfoTableDiv{
+  width: 100%;
+}
 #deliveryInfoTable{
   width: 100%;
 }
-.TableCategory{
+.tableCategory{
   text-align: center;
   font-size: 22px;
   margin-bottom: 4%;
 }
 .guestInfoTableContainer{
   display: flex;
-  justify-content: flex-end;
+  width: 80%;
+  margin: 5px 5px 5px 0px;
+  gap: 15px; 
   align-items: center;
-  margin: 1%;
-  width: 70%;
+  justify-content: flex-end;
+}
+.guestInfoTableAddressContainerDiv{
+  display: flex;
+  width: 80%;
+  margin: 5px 5px 5px 0px;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 15px; 
+}
+.guestInfoTableAddressContainer{
+	display: flex;
+  width: 80%;
+  margin: 5px 5px 5px 0px;
+  align-items: center;
 }
 .guestInfoCategory{
+  margin: 10px 0px 10px 0px;
   font-size: 17px;
-  margin: 0.5%;
 }
 .guestInfoTableInput{
+  border: 1px solid #ccc;
   border-radius: 5px;
   padding: 10px;
   font-size: 15px;
   margin: 0;
+  width: 70%;
 }
 .guestInfoTablePostInput{
-  width: 50%;
-  border: 1px solid black;
+  border: 1px solid #ccc;
   border-radius: 5px;
-  margin: 1%;
-  text-align: center;
-  align-items: center;
-  padding: 2.5%;
+  padding: 10px;
   font-size: 15px;
+  margin: 0;
+  width: 62%;
 }
 .guestInfoTablePostButton{
   width: 18%;
@@ -75,21 +99,30 @@ section{
   font-size: 17px;
   cursor: pointer;
 }
+.guestInfoCategoryAddress{
+	margin: 10px 0px 50px 0px;
+  font-size: 17px;
+}
+.guestInfoCategoryAddressDiv{
+	display: flex;
+	flex-direction: column;
+	width: 70%;
+}
 .guestInfoTableAddress1{
-  width: 70%;
-  border: 1px solid black;
+  width: 100%;
+  border: 1px solid #ccc;
   border-radius: 5px;
-  margin: 1%;
+  margin: 0% 0% 1% 0%;
   text-align: center;
   align-items: center;
   padding: 2.5%;
   font-size: 15px;
 }
 .guestInfoTableAddress2{
-  width: 70%;
-  border: 1px solid black;
+  width: 100%;
+  border: 1px solid #ccc;
   border-radius: 5px;
-  margin: 1%;
+  margin: 1% 0% 0% 0%;
   text-align: center;
   align-items: center;
   padding: 2.5%;
@@ -120,13 +153,12 @@ font-size: 13px;
 }
 .layout{
   width: 70%;
-  height: 100%;
+  height: 70%;
   border: 1px solid black;
   border-radius: 20px;
   margin-bottom: 5%;
-  padding: 3%;
-  margin-left: auto;
-  margin-right: auto;
+  padding: 2%;
+  margin: 0 auto 5% auto;
 }
 .orderDetail{
   width: 100%;
@@ -201,7 +233,7 @@ font-size: 13px;
   border-radius: 20px;
 }
 #guestOrderAside{
-  width: 25%;
+  width: 33.3%;
   height: 100%;
 }
 #paymentTable{
@@ -214,29 +246,21 @@ font-size: 13px;
   border-color: black;
 }
 .asideDiv{
-  padding: 3%;
+  padding: 2%;
   font-size: 17px;
 }
 .agree1Div{
   margin-left: 10%;
   margin-right: 5%;
 }
-.agree2Div{
-  margin-left: 25%;
-  margin-right: 30%;
-}
 input[type="checkbox"] {
   accent-color: black;
 }
-.agree3Div{
-  margin-left: 10%;
-  margin-right: 18%;
-}
-.agree4Div{
-  margin-left: 25%;
-  margin-right: 28%;
+.agree4Div, .agree2Div, .agree3Div{
+  text-align: center;
 }
 .asideText1{
+  text-align: center;
   padding: 3%;
 }
 .asideText2{
@@ -263,52 +287,42 @@ input[type="checkbox"] {
   align-items: center;
   justify-content: space-around;
 }
-.agreeIcon1{
-  width: 8%;
-  height: 8%;
-  margin-bottom: 0.5%;
-  cursor: pointer;
-}
-.agreeIcon2{
-  width: 5%;
-  height: 5%;
-  margin-bottom: 0.5%;
-  margin-left: 0.5%;
-  margin-right: 0%;
-  cursor: pointer;
-}
 .agreeLine{
   width: 100%;
   border-bottom: solid 2px;
   border-color: black;
 }
 .payBtnDiv{
-  display: flex;
-  justify-content: space-evenly;
-  margin-top: 10%;
+  margin-top :5%;
+  margin-bottom : 10%;
+  width: 100%;
+  text-align: center;
 }
 .payBtn{
   border: 1px solid black;
   border-radius: 10px;
   background-color: black;
   color: white;
-  width: 60%;
-  height: 40%;
+  width: 40%;
+  height: 30%;
   font-size: 25px;
   padding: 2%;
   cursor: pointer;
 }
 .guideText {
+  display: none;
   margin-top: 5%;
   width: 100%;
-  height: auto;
   background-color: #f9f9f9;
   border: 1px solid #ddd;
   padding: 3%;
   font-size: 14px;
   color: #333;
   border-radius: 4px;
-  display: none;
+  box-sizing: border-box; 
+}
+.guideText.expanded {
+  display: block;
 }
 #guidePrivacyText{
   margin-top: 5%;
@@ -320,6 +334,5 @@ input[type="checkbox"] {
   font-size: 14px;
   color: #333;
   border-radius: 4px;
-  display: none;
   overflow-y: scroll; 
 }

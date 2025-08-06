@@ -16,17 +16,16 @@
 <jsp:include page="/WEB-INF/views/include/header.jsp" />
 <section>
   <div id="guestOrderHead">
-    <div id="Order">ORDER</div>
+    <div id="order">ORDER</div>
   </div>
   <form id="guestOrderForm">
 	  <div id="guestOrderFormDiv">
 	    <div id="guestOrderNav">
 	      <div class="guestInfoTable">
-	        <div class="TableCategory">GUEST INFO</div>
+	        <div class="tableCategory">GUEST INFO</div>
           <div id="guestInfoTableDiv">
             <div class="guestInfoTableContainer">
               <div class="guestInfoCategory">NAME</div>
-              <input type="hidden" name="guestId">
               <input class="guestInfoTableInput" type="text" id="ordererName" placeholder="NAME">
             </div>
             <div class="guestInfoTableContainer">
@@ -46,30 +45,31 @@
               <input class="guestInfoTableInput" type="email" id="ordererEmail" placeholder="E MAIL">
             </div>
           </div>
-        </div><br><br>
+        </div><br>
         <div id="deliveryInfoTable">
-          <div class="TableCategory">DELIVERY INFO</div>
+          <div class="tableCategory">DELIVERY INFO</div>
           <div class="guestInfoTableDiv">
             <div class="guestInfoTableContainer">
               <div class="guestInfoCategory">NAME</div>
               <input class="guestInfoTableInput" type="text" id="receiverName" placeholder="NAME">
-              <input type="hidden" name="guestId">
             </div>
             <div class="guestInfoTableContainer">
               <div class="guestInfoCategory">PHONE</div>
               <input class="guestInfoTableInput" type="text" id="receiverPhone" placeholder="PHONE">
             </div>
-            <div class="guestInfoTableContainer">
-              <div class="guestInfoCategory">POST NO</div>
-              <input class="guestInfoTablePostInput" type="text" id="receiverPostCode" placeholder="POST NO">
+            <div class="guestInfoTableAddressContainer">
+            	<div class="guestInfoTableAddressContainerDiv">
+              	<div class="guestInfoCategory">POST NO</div>
+              	<input class="guestInfoTablePostInput" type="text" id="receiverPostCode" placeholder="POST NO">
+              </div>
               <input class="guestInfoTablePostButton" type="button" id="searchAddress" value="검색">
             </div>
             <div class="guestInfoTableContainer">
-              <div class="guestInfoCategory">ADDRESS</div>
-              <input class="guestInfoTableAddress1" type="text" id="receiverRoadAddress" placeholder="ADDRESS">
-            </div>
-            <div class="guestInfoTableContainer">
-              <input class="guestInfoTableAddress2" type="text" id="receiverDetailAddress" placeholder="ADDRESS">
+              <div class="guestInfoCategoryAddress">ADDRESS</div>
+              <div class="guestInfoCategoryAddressDiv">
+              	<input class="guestInfoTableAddress1" type="text" id="receiverRoadAddress" placeholder="ADDRESS">
+              	<input class="guestInfoTableAddress2" type="text" id="receiverDetailAddress" placeholder="ADDRESS">
+              </div>
             </div>
             <div class="guestInfoTableContainer">
               <div class="guestInfoCategory">REQUEST</div>
@@ -78,6 +78,7 @@
             <div class="guestInfoTableContainer">
               <div id="deliveryInfo">※ 제주 및 도서 산간 지역의 배송은 추가 배송비가 발생할 수 있습니다.</div>
             </div>
+            <br>
           </div>
         </div>
       </div>
@@ -106,17 +107,17 @@
 	        <div class="layout">
 	          <div class="payContainer">
 	            <div class="payIcon">
-	              <div class="kakao"><img class="kakaoimg" src="kakaopay.jpg"></div>
+	              <div class="kakao"><img class="kakaoimg" src="<%=request.getContextPath()%>/resources/img/kakaopay.jpg"></div>
 	            </div>
 	            <div class="payIcon">
-	              <div class="toss"><img class="tossimg" src="tosspay.png"></div>
+	              <div class="toss"><img class="tossimg" src="<%=request.getContextPath()%>/resources/img/tosspay.png"></div>
 	            </div>
 	          </div>
 	        </div>
 	      </div>
 	    </div>
 	    <div id="guestOrderAside">
-	      <div id="paymentTable">
+        <div id="paymentAside">
 	        <div class="SectionTitle">PAYMENT</div>
 	        <div class="layout">
 	          <c:set var="totalBookPrice" value="${book.discount * quantity}" />
@@ -130,16 +131,17 @@
 	              <div class="asideTextPrice">
 	                <div class="asideText1">배송비</div><div class="deliveryFee"><fmt:formatNumber value="${deliveryFee}" pattern="#,###"/>원</div>
 	              </div>
-	              <div class="asideDiv">
-	                <div class="asideLine"></div>
-	              </div>
-	              <div class="asideDiv">
-	                <div class="asideText2">최종결제금액</div>
-	                <div class="finalPrice" data-price="${finalPrice}"><fmt:formatNumber value="${finalPrice}" pattern="#,###"/>원</div>
-	              </div>
-	          	</div>
+	            </div>
+              <div class="asideDiv">
+                <div class="asideLine"></div>
+              </div>
+              <div class="asideDiv">
+                <div class="asideText2">최종결제금액</div>
+                <div class="finalPrice" data-price="${finalPrice}"><fmt:formatNumber value="${finalPrice}" pattern="#,###"/>원</div>
+              </div>
 	        	</div>
 	      	</div>
+	      </div>
 		      <div id="agreeTable">
 		        <div class="asideAgree">
 		          <div class="agree1Div">
@@ -150,10 +152,10 @@
 		            <br>
 		          </div>
 		          <div class="agree4Div">
-		            <input class="agreeRadio4" type="checkbox" id="agreeItem">
+		            <input class="agreeRadio4 req-agree" type="checkbox" id="agreeAge">
 		            <label for="agreeAge">만 14세이상입니다.</label>
-		            <img class="agreeIcon1" src="펼쳐보기.png">
-		            <div class="guideText">
+		            <button class="agreeToggleBtn" data-target="guideAgeText"></button>
+		            <div class="guideText" id="guideAgeText">
 		              <p>14세 미만의 어린이 회원은 비회원으로 주문이 불가합니다.</p>
 		              <p>회원 가입을 통해 법정대리인 동의를 진행 후, 주문해주세요.</p>
 		            </div>
@@ -162,10 +164,10 @@
 		            <br>
 		          </div>
 		          <div class="agree2Div">
-		            <input class="agreeRadio2" type="checkbox" id="agreeItem">
+		            <input class="agreeRadio2 req-agree" type="checkbox" id="agreeItem">
 		            <label for="agreeItem">주문상품 정보동의</label>
-		            <img class="agreeIcon1" src="펼쳐보기.png">
-		            <div class="guideText">
+		            <button class="agreeToggleBtn" data-target="guideOrderInfoText"></button>
+		            <div class="guideText" id="guideOrderInfoText">
 		              <p>주문할 상품의 상품명, 가격, 배송정보 등을 최종 확인하였으며, 구매에 동의하십니까?</p>
 		              <p>(전자상거래법 제 8조 2항)</p>
 		            </div>
@@ -174,9 +176,9 @@
 		            <br>
 		          </div>
 		          <div class="agree3Div">
-		            <input class="agreeRadio3" type="checkbox" id="agreePrivacy">
+		            <input class="agreeRadio3 req-agree" type="checkbox" id="agreePrivacy">
 		            <label for="agreePrivacy">비회원 개인정보 수집 및 이용동의</label>
-		            <img class="agreeIcon2" src="펼쳐보기.png">
+		            <button class="agreeToggleBtn" data-target="guideOrderPrivacyText"></button>
 		            <div class="guideText" id="guidePrivacyText">
 		              <p>
 		                수집하는 개인정보의 항목<br>
@@ -237,7 +239,7 @@
 		          <button type="button"  class="payBtn">결제하기</button>
 		        </div>
 			    </div>
-	      </div>
+
       </div>
 	  </div>
   </form>
@@ -248,10 +250,9 @@
 const contextPath = '<%= request.getContextPath() %>';
 
 $(document).ready(function() {
-  // 헤더의 메뉴(BOOK, COMMUNITY) 등이 동작하도록 초기화
-  if(typeof initHeaderEvents === "function"){
-    initHeaderEvents();
-  }
+  initHeaderEvents();
+  initializeToggleButtons();
+  calculateTotal();
 
   // '주소 검색' 버튼 클릭 이벤트
   $('#searchAddress').on('click', function(){
@@ -276,8 +277,16 @@ $(document).ready(function() {
   });
   
   // 약관 동의 체크박스 이벤트
-  $('#agreeAll').on('click', function(){
-    $('.req-agree').prop('checked', $(this).is(':checked'));
+  $('#agreeAll').on('click', function() {
+    const isChecked = $(this).prop('checked');
+    $('.req-agree').prop('checked', isChecked); // req-agree 클래스를 가진 모든 항목을 제어
+  });
+  
+  //개별 필수 동의 항목 클릭 시
+  $('.req-agree').on('click', function() {
+    const totalCount = $('.req-agree').length;
+    const checkedCount = $('.req-agree:checked').length;
+    $('#agreeAll').prop('checked', totalCount === checkedCount); // 모두 체크되면 '전체동의'도 체크
   });
   
   // '결제하기' 버튼 클릭 시 AJAX 전송
@@ -292,27 +301,29 @@ $(document).ready(function() {
     if (!$('#receiverPhone').val().trim()) { alert("받는 분 연락처를 입력해주세요."); $('#receiverPhone').focus(); return; }
     if (!$('#receiverPostCode').val().trim()) { alert("배송지 주소를 검색해주세요."); $('#searchAddress').focus(); return; }
     
-    let allAgreed = true;
-    $('.req-agree').each(function() { if (!$(this).is(':checked')) { allAgreed = false; } });
-    if (!allAgreed) { alert("모든 필수 약관에 동의해주세요."); return; }
+    // 동의 항목 체크 여부 검사 (개선된 버전)
+    if ($('.req-agree').length !== $('.req-agree:checked').length) {
+      alert("필수 동의 항목에 모두 체크해 주세요.");
+      return;
+    }
 
     const guestOrderData = { bookNo: parseInt('${book.bookNo}'),
-											       isbn: "${book.isbn}",
-											       quantity: parseInt('${quantity}'),
-											       priceAtPurchase: parseInt('${book.discount}'),
-											       totalPrice: parseInt($('.finalPrice').data('price')),
+									    	     isbn: "${book.isbn}",
+									    	     quantity: parseInt('${quantity}'),
+									    	     priceAtPurchase: parseInt('${book.discount}'),
+									    	     totalPrice: parseInt($('.finalPrice').data('price')),
 											        
-											       ordererName: $('#ordererName').val(),
-											       ordererPhone: $('#ordererPhone').val(),
-											       orderPassword: $('#orderPassword').val(),
-											       ordererEmail: $('#ordererEmail').val(),
-											        
-											       receiverName: $('#receiverName').val(),
-											       receiverPhone: $('#receiverPhone').val(),
-											       receiverPostCode: $('#receiverPostCode').val(),
-											       receiverRoadAddress: $('#receiverRoadAddress').val(),
-											       receiverDetailAddress: $('#receiverDetailAddress').val(),
-											       deliveryRequest: $('#deliveryRequest').val() };
+									    	     ordererName: $('#ordererName').val(),
+								    	       ordererPhone: $('#ordererPhone').val(),
+								    	       orderPassword: $('#orderPassword').val(),
+								    	       ordererEmail: $('#ordererEmail').val(),
+
+								    	       receiverName: $('#receiverName').val(),
+								    	       receiverPhone: $('#receiverPhone').val(),
+								    	       receiverPostCode: $('#receiverPostCode').val(),
+								    	       receiverRoadAddress: $('#receiverRoadAddress').val(),
+								    	       receiverDetailAddress: $('#receiverDetailAddress').val(),
+								    	       deliveryRequest: $('#deliveryRequest').val() };
     
     console.log("서버로 전송할 데이터:", guestOrderData);
 
@@ -323,12 +334,10 @@ $(document).ready(function() {
 			       data: JSON.stringify(guestOrderData),
 			       success: function(response){
 						            if(response.status === 'Success'){
-						                alert(response.message);
-						                // 주문이 성공하면 메인 페이지로 이동하거나, 주문 완료 페이지로 이동합니다.
-						                window.location.href = contextPath + "/";
+						              alert(response.message);
+						              window.location.href = contextPath + "/";
 						            }else{
-						                // Controller에서 보낸 실패 메시지를 사용자에게 보여줍니다.
-						                alert("주문 실패: " + response.message);
+						              alert("주문 실패: " + response.message);
 						            }
 						        	},
 			       error: function(xhr){
@@ -338,6 +347,55 @@ $(document).ready(function() {
     });
   });
 });
+
+//총 금액 계산 및 표시 함수
+function calculateTotal() {
+  let totalPrice = 0;
+  $('.orderPrice').each(function() {
+    totalPrice += parseInt($(this).text().replace(/[^0-9]/g, '')) || 0;
+  });
+  const deliveryFee = totalPrice >= 50000 ? 0 : 3000;
+  const finalPrice = totalPrice + deliveryFee;
+  
+  $('.orderTotalPrice').text('총 합계: ' + totalPrice.toLocaleString() + '원');
+  $('.Price').text(totalPrice.toLocaleString() + '원');
+  $('.deliveryFee').text(deliveryFee.toLocaleString() + '원');
+  $('.finalPrice').text(finalPrice.toLocaleString() + '원'); 
+  $('.finalPrice').data('price', finalPrice);
+}
+
+//약관 펼쳐보기/접기 버튼 초기화 함수
+function initializeToggleButtons() {
+  document.querySelectorAll(".agreeToggleBtn").forEach(function (btn) {
+    const targetId = btn.getAttribute("data-target");
+    if (!targetId) return;
+    const target = document.getElementById(targetId);
+    if (!target) return;
+    
+    setToggleButton(btn, false);
+    btn.addEventListener("click", function (e) {
+      e.preventDefault(); // button의 기본 동작 방지
+      const isExpanded = target.classList.contains("expanded");
+      target.classList.toggle("expanded");
+      setToggleButton(btn, !isExpanded);
+    });
+  });
+}
+
+//토글 버튼 내용 설정 함수
+function setToggleButton(button, isExpanded) {
+  //함수 내의 잘못된 JSP 코드 삭제
+  button.innerHTML = "";
+  const label = document.createElement("span");
+  label.textContent = isExpanded ? "접기" : "펼쳐보기";
+  label.style.cssText = "display:inline-block; text-align:center;";
+  button.appendChild(label);
+  const iconImg = document.createElement("img");
+  // 전역 변수 contextPath 사용
+  iconImg.src = contextPath + "/resources/img/icon/" + (isExpanded ? "collapse" : "expand") + ".png";
+  iconImg.style.cssText = "width:18px; height:10px; vertical-align:middle;";
+  button.appendChild(iconImg);
+}
 </script>
 </body>
 </html>
