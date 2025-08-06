@@ -343,7 +343,7 @@
 	    return;
 	  }
 	  
-	  const url = contextPath + "/order/orderMain.do?isbn=" + encodeURIComponent(isbn) + "&quantity=" + encodeURIComponent(quantity);
+	  const url = contextPath + "/guest/guestOrder.do?isbn=" + encodeURIComponent(isbn) + "&quantity=" + encodeURIComponent(quantity);
 	  window.location.href = url;
 
 	});
