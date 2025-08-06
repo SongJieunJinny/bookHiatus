@@ -230,11 +230,6 @@ section{
   display: flex;
   flex-direction: column;
 }
-.orderMainCategory{
-  font-size: 20px;
-  margin-bottom: 3%;
-  margin-left: 30%;
-}
 #deliveryInfoDiv{
   width: 100%;
 }
