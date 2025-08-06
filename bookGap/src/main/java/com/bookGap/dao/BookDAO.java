@@ -60,4 +60,15 @@ public class BookDAO {
 	public List<BookVO> getNewBooks(){
 		return sqlSession.selectList(namespace + "getNewBooks");
 	}
+	
+  //제목 또는 저자명으로 도서 검색
+  public List<ProductApiVO> searchBooksByKeyword(SearchVO searchVO) {
+    return sqlSession.selectList(namespace + "searchBooksByKeyword", searchVO);
+  }
+
+  // 제목 또는 저자명으로 검색된 도서의 전체 개수 조회
+  public int getBookTotalCountByKeyword(SearchVO searchVO) {
+    return sqlSession.selectOne(namespace + "getBookTotalCountByKeyword", searchVO);
+  }
+
 }

@@ -185,224 +185,247 @@
  	</div>
 </div>
 <script src="${pageContext.request.contextPath}/resources/js/jquery-3.7.1.js"></script>
+<script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
 <script>
-  const contextPath = '<%=request.getContextPath()%>';
-</script>
-  <script>
-  function initHeaderEvents() {
-	  const menuBook = document.getElementById("menuBook");
-	  const menuCommunity = document.getElementById("menuCommunity");
-	  const bookCategory = document.getElementById("bookCategory");
-	  const communityCategory = document.getElementById("communityCategory");
+const contextPath = '<%=request.getContextPath()%>';
+
+function initHeaderEvents() {
+  function performSearch() {
 	  const searchInput = document.getElementById("searchInput");
-	  const searchText = document.getElementById("searchText");
-	  const searchImgIcon = document.getElementById("searchImgIcon");
-	  const searchSwitchBtn = document.getElementById("searchSwitchBtn");
-	  const menuSearch = document.getElementById("menuSearch");
+	  const keyword = searchInput.value.trim();
 
-	  // BOOK 메뉴 클릭 이벤트
-	  if (menuBook && bookCategory && menuCommunity && communityCategory) {
-	    menuBook.addEventListener("click", function (event) {
-	      event.stopPropagation();
-	      bookCategory.style.display = bookCategory.style.display === "block" ? "none" : "block";
-	      menuBook.classList.toggle("active");
-	      communityCategory.style.display = "none";
-	      menuCommunity.classList.remove("active");
-	    });
-
-	    menuCommunity.addEventListener("click", function (event) {
-	      event.stopPropagation();
-	      communityCategory.style.display = communityCategory.style.display === "block" ? "none" : "block";
-	      menuCommunity.classList.toggle("active");
-	      bookCategory.style.display = "none";
-	      menuBook.classList.remove("active");
-	    });
-	  }
-
-	  // 검색 버튼 클릭 이벤트
-	  if (searchSwitchBtn && searchInput && searchText && searchImgIcon) {
-	    searchSwitchBtn.addEventListener("click", function (event) {
-	      event.stopPropagation();
-	      if (searchInput.style.display === "none" || searchInput.style.display === "") {
-	        searchText.style.display = "none";
-	        searchImgIcon.style.display = "inline";
-	        searchInput.style.display = "inline-block";
-	        searchInput.focus();
-	      } else {
-	        searchText.style.display = "inline";
-	        searchImgIcon.style.display = "none";
-	        searchInput.style.display = "none";
-	      }
-	    });
-	  }
-
-	  // 화면 클릭 시 메뉴와 검색창 닫기
-	  document.addEventListener("click", function (event) {
-	    if (bookCategory && menuBook &&
-	        !bookCategory.contains(event.target) && !menuBook.contains(event.target)) {
-	      bookCategory.style.display = "none";
-	      menuBook.classList.remove("active");
-	    }
-	    if (communityCategory && menuCommunity &&
-	        !communityCategory.contains(event.target) && !menuCommunity.contains(event.target)) {
-	      communityCategory.style.display = "none";
-	      menuCommunity.classList.remove("active");
-	    }
-	    if (searchInput && menuSearch &&
-	        !searchInput.contains(event.target) && !menuSearch.contains(event.target)) {
-	      searchText.style.display = "inline";
-	      searchImgIcon.style.display = "none";
-	      searchInput.style.display = "none";
-	    }
-	  });
-
-	  // 로그인 모달 열기
-	  const menuLogin = document.getElementById("menuLogin");
-	  const loginModal = document.getElementById("loginModal");
-	  if (menuLogin && loginModal) {
-	    menuLogin.onclick = function () {
-	      loginModal.classList.add("show");
-	    };
-	  }
-
-	  // 모달 닫기
-	  const closeLoginModal = document.getElementById("closeLoginModal");
-	  if (loginModal && closeLoginModal) {
-	    window.addEventListener("click", function (event) {
-	      if (event.target.id === "loginModal" || event.target.id === "closeLoginModal") {
-	        loginModal.classList.remove("show");
-	      }
-	    });
-	  }
-
-	  // 모달 탭 전환
-	  const loginTab = document.getElementById("login");
-	  const guestTab = document.getElementById("guest");
-	  const loginMain = document.getElementById("loginMain");
-	  const guestMain = document.getElementById("guestMain");
-
-	  if (loginTab && guestTab && loginMain && guestMain) {
-	    loginTab.addEventListener("click", function () {
-	      loginMain.style.display = "block";
-	      guestMain.style.display = "none";
-	      loginTab.classList.add("active");
-	      guestTab.classList.remove("active");
-	    });
-
-	    guestTab.addEventListener("click", function () {
-	      loginMain.style.display = "none";
-	      guestMain.style.display = "block";
-	      guestTab.classList.add("active");
-	      loginTab.classList.remove("active");
-	    });
-	  }
-
-	  // 로그인 입력값 검증
-	  const loginBtn = document.getElementById("loginBtn");
-	  if (loginBtn) {
-	    loginBtn.addEventListener("click", function (event) {
-	      const loginId = document.getElementById("loginId")?.value;
-	      const loginPw = document.getElementById("loginPw")?.value;
-
-	      if (!loginId || !loginPw) {
-	        alert("아이디와 비밀번호를 입력해주세요.");
-	        event.preventDefault();
-	        return;
-	      }
-
-	      const idPattern = /^[a-z0-9_.+-]+$/;
-	      if (!idPattern.test(loginId)) {
-	        alert("아이디는 소문자 영어, 특수문자(_ . + -), 숫자만 사용할 수 있습니다");
-	        event.preventDefault();
-	        return;
-	      }
-
-	      if (loginPw.length < 6) {
-	        alert("비밀번호는 6자 이상이어야 합니다.");
-	        event.preventDefault();
-	        return;
-	      }
-	      
-	      const currentUrl = window.location.pathname + window.location.search;
-	      $.post(contextPath + "/auth/saveRedirect.do", { redirectUrl: currentUrl })
-	        .fail(function (xhr, status, error) {
-	          console.error("redirect 저장 실패:", status, error);
-	        });
-	      
-	    });
-	  }
-	}
-  
-  document.getElementById("guestOrder").addEventListener("click", function () {
-	  const isbnInput = document.getElementById("isbn"); // 숨겨진 input
-	  const isbn = isbnInput?.value;
-	  const quantity = document.querySelector(".num")?.value || 1;
-
-	  if (!isbn) {
-	    alert("상품 정보가 없습니다. 비회원 주문은 상품 상세 페이지에서만 가능합니다.");
+	  if (!keyword) {
+	    alert("검색어를 입력해주세요.");
+	    searchInput.focus();
 	    return;
 	  }
-	  
-	  const url = contextPath + "/guest/guestOrder.do?isbn=" + encodeURIComponent(isbn) + "&quantity=" + encodeURIComponent(quantity);
+
+	  // [중요!] 아래 URL을 컨트롤러의 RequestMapping 경로와 똑같이 맞춰줍니다.
+	  const url = contextPath + "/product/bookSearch.do?searchValue=" + encodeURIComponent(keyword);
 	  window.location.href = url;
+	}
+  
+  const menuBook = document.getElementById("menuBook");
+  const menuCommunity = document.getElementById("menuCommunity");
+  const bookCategory = document.getElementById("bookCategory");
+  const communityCategory = document.getElementById("communityCategory");
+  const searchInput = document.getElementById("searchInput");
+  const searchText = document.getElementById("searchText");
+  const searchImgIcon = document.getElementById("searchImgIcon");
+  const searchSwitchBtn = document.getElementById("searchSwitchBtn");
 
-	});
+  // BOOK 메뉴 클릭 이벤트
+  if (menuBook && bookCategory && menuCommunity && communityCategory) {
+    menuBook.addEventListener("click", function (event) {
+      event.stopPropagation();
+      bookCategory.style.display = bookCategory.style.display === "block" ? "none" : "block";
+      menuBook.classList.toggle("active");
+      communityCategory.style.display = "none";
+      menuCommunity.classList.remove("active");
+    });
 
-  </script>
-  <script>
-  $('#menuLogoImg').on('click', function() {
-	    window.location.href = '<%=request.getContextPath()%>';
-	});
-  </script>
-  <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+    menuCommunity.addEventListener("click", function (event) {
+      event.stopPropagation();
+      communityCategory.style.display = communityCategory.style.display === "block" ? "none" : "block";
+      menuCommunity.classList.toggle("active");
+      bookCategory.style.display = "none";
+      menuBook.classList.remove("active");
+    });
+  }
+
+  // 검색 버튼 클릭 이벤트
+  if(searchSwitchBtn && searchInput && searchText && searchImgIcon){
+    searchSwitchBtn.addEventListener("click", function(event){
+      event.stopPropagation();
+      if(searchInput.style.display === "none" || searchInput.style.display === ""){
+        searchText.style.display = "none";
+        searchImgIcon.style.display = "inline";
+        searchInput.style.display = "inline-block";
+        searchInput.focus();
+      }else{
+        searchText.style.display = "inline";
+        searchImgIcon.style.display = "none";
+        searchInput.style.display = "none";
+      }
+    });
+    
+    searchImgIcon.addEventListener("click", performSearch);
+    
+    searchInput.addEventListener("keydown", function(event){
+      if(event.key === 'Enter'){
+        event.preventDefault(); // 폼의 기본 제출 동작 방지
+        performSearch();
+      }
+    });
+  }
+
+  // 화면 클릭 시 메뉴와 검색창 닫기
+  document.addEventListener("click", function (event) {
+    if (bookCategory && menuBook &&
+        !bookCategory.contains(event.target) && !menuBook.contains(event.target)) {
+      bookCategory.style.display = "none";
+      menuBook.classList.remove("active");
+    }
+    if (communityCategory && menuCommunity &&
+        !communityCategory.contains(event.target) && !menuCommunity.contains(event.target)) {
+      communityCategory.style.display = "none";
+      menuCommunity.classList.remove("active");
+    }
+    if (searchInput && menuSearch &&
+        !searchInput.contains(event.target) && !menuSearch.contains(event.target)) {
+      searchText.style.display = "inline";
+      searchImgIcon.style.display = "none";
+      searchInput.style.display = "none";
+    }
+  });
+
+  // 로그인 모달 열기
+  const menuLogin = document.getElementById("menuLogin");
+  const loginModal = document.getElementById("loginModal");
+  if (menuLogin && loginModal) {
+    menuLogin.onclick = function () {
+      loginModal.classList.add("show");
+    };
+  }
+
+  // 모달 닫기
+  const closeLoginModal = document.getElementById("closeLoginModal");
+  if (loginModal && closeLoginModal) {
+    window.addEventListener("click", function (event) {
+      if (event.target.id === "loginModal" || event.target.id === "closeLoginModal") {
+        loginModal.classList.remove("show");
+      }
+    });
+  }
+
+  // 모달 탭 전환
+  const loginTab = document.getElementById("login");
+  const guestTab = document.getElementById("guest");
+  const loginMain = document.getElementById("loginMain");
+  const guestMain = document.getElementById("guestMain");
+
+  if (loginTab && guestTab && loginMain && guestMain) {
+    loginTab.addEventListener("click", function () {
+      loginMain.style.display = "block";
+      guestMain.style.display = "none";
+      loginTab.classList.add("active");
+      guestTab.classList.remove("active");
+    });
+
+    guestTab.addEventListener("click", function () {
+      loginMain.style.display = "none";
+      guestMain.style.display = "block";
+      guestTab.classList.add("active");
+      loginTab.classList.remove("active");
+    });
+  }
+
+  // 로그인 입력값 검증
+  const loginBtn = document.getElementById("loginBtn");
+  if (loginBtn) {
+    loginBtn.addEventListener("click", function (event) {
+      const loginId = document.getElementById("loginId")?.value;
+      const loginPw = document.getElementById("loginPw")?.value;
+
+      if (!loginId || !loginPw) {
+        alert("아이디와 비밀번호를 입력해주세요.");
+        event.preventDefault();
+        return;
+      }
+
+      const idPattern = /^[a-z0-9_.+-]+$/;
+      if (!idPattern.test(loginId)) {
+        alert("아이디는 소문자 영어, 특수문자(_ . + -), 숫자만 사용할 수 있습니다");
+        event.preventDefault();
+        return;
+      }
+
+      if (loginPw.length < 6) {
+        alert("비밀번호는 6자 이상이어야 합니다.");
+        event.preventDefault();
+        return;
+      }
+      
+      const currentUrl = window.location.pathname + window.location.search;
+      $.post(contextPath + "/auth/saveRedirect.do", { redirectUrl: currentUrl })
+        .fail(function (xhr, status, error) {
+          console.error("redirect 저장 실패:", status, error);
+        });
+      
+    });
+  }
+}
+  
+document.getElementById("guestOrder").addEventListener("click", function () {
+  const isbnInput = document.getElementById("isbn"); // 숨겨진 input
+  const isbn = isbnInput?.value;
+  const quantity = document.querySelector(".num")?.value || 1;
+
+  if (!isbn) {
+    alert("상품 정보가 없습니다. 비회원 주문은 상품 상세 페이지에서만 가능합니다.");
+    return;
+  }
+  
+  const url = contextPath + "/guest/guestOrder.do?isbn=" + encodeURIComponent(isbn) + "&quantity=" + encodeURIComponent(quantity);
+  window.location.href = url;
+
+});
+
+</script>
+<script>
+$('#menuLogoImg').on('click', function() {
+    window.location.href = '<%=request.getContextPath()%>';
+});
+</script>
 <script>
 Kakao.init('56c7bb3d435c0c4f0d2b67bfa7d4407e');
 
 document.getElementById("kakaoLogin").addEventListener("click", function () {
-	  Kakao.Auth.setAccessToken(null); 
+  Kakao.Auth.setAccessToken(null); 
 
-	  Kakao.Auth.login({
-	    scope: 'profile_nickname',
-	    throughTalk: false,
-	    persistAccessToken: false,
-	    success: function (authObj) {
+  Kakao.Auth.login({
+    scope: 'profile_nickname',
+    throughTalk: false,
+    persistAccessToken: false,
+    success: function (authObj) {
 
-	      Kakao.API.request({
-	        url: '/v2/user/me',
-	        success: function (res) {
+      Kakao.API.request({
+        url: '/v2/user/me',
+        success: function (res) {
 
-	          const kakaoId = res.id;
-	          const nickname = res.kakao_account.profile.nickname;
-	          const accessToken = authObj.access_token;
+          const kakaoId = res.id;
+          const nickname = res.kakao_account.profile.nickname;
+          const accessToken = authObj.access_token;
 
-	          fetch('${pageContext.request.contextPath}/kakaoLoginCallback.do', {
-	            method: 'POST',
-	            headers: { 'Content-Type': 'application/json' },
-	            body: JSON.stringify({ kakaoId, nickname, accessToken })
-	          })
-	          .then(res => res.json())
-	          .then(result => {
-	            console.log("로그인  서버 응답:", result);
-	            if (result.status === 'success') {
-	              alert("로그인에 성공하셨습니다.");
-	              window.location.href = "<%=request.getContextPath()%>/";
-	            } else {
-	              alert("로그인에 실패하셨습니다.");
-	            }
-	          });
-	        },
-	        fail: function (error) {
-	          console.error("로그인 사용자 정보 요청 실패:", error);
-	          alert("사용자 정보 요청에  실패하셨습니다.");
-	        }
-	      });
-	    },
-	    fail: function (err) {
-	      console.error("로그인 카카오 로그인 실패:", err);
-	      alert("카카오 로그인에  실패하셨습니다.");
-	    }
-	  });
-	});
+          fetch('${pageContext.request.contextPath}/kakaoLoginCallback.do', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ kakaoId, nickname, accessToken })
+          })
+          .then(res => res.json())
+          .then(result => {
+            console.log("로그인  서버 응답:", result);
+            if (result.status === 'success') {
+              alert("로그인에 성공하셨습니다.");
+              window.location.href = "<%=request.getContextPath()%>/";
+            } else {
+              alert("로그인에 실패하셨습니다.");
+            }
+          });
+        },
+        fail: function (error) {
+          console.error("로그인 사용자 정보 요청 실패:", error);
+          alert("사용자 정보 요청에  실패하셨습니다.");
+        }
+      });
+    },
+    fail: function (err) {
+      console.error("로그인 카카오 로그인 실패:", err);
+      alert("카카오 로그인에  실패하셨습니다.");
+    }
+  });
+});
+
 function kakaoLogout() {
   fetch('<%=request.getContextPath()%>/kakaoServerLogout.do', {
     method: 'POST',
@@ -423,7 +446,7 @@ function kakaoLogout() {
     window.location.href = '<%=request.getContextPath()%>/';
   });
 }
-	
+
 document.addEventListener("DOMContentLoaded", function () {
   const logoutBtn = document.getElementById("kakaoLogoutBtn");
   if (logoutBtn) {

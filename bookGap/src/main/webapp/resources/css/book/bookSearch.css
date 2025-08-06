@@ -1,0 +1,91 @@
+@charset "UTF-8";
+body{
+	height: auto;
+}
+section {
+  width: 90%;
+  height: auto;
+  max-width: 1200px;
+  margin: 0 auto; /* 좌우 중앙 정렬 */
+	padding: 40px 20px;
+	text-align: center;
+	min-height: 60vh; /* 최소 높이를 지정하여 푸터가 딸려 올라오지 않게 함 */
+}
+.search-title {
+  font-size: 26px;
+  font-weight: 500;
+  margin-bottom: 40px;
+}
+.search-title .keyword {
+  color: #1e88e5; /* 원하는 강조 색상으로 변경 가능 */
+  font-weight: 700;
+}
+.book-grid {
+  display: flex;
+  flex-wrap: wrap; /* 창 크기에 따라 자동으로 줄바꿈 */
+	gap: 30px; /* 아이템 간의 간격 */
+	justify-content: center; /* 아이템들을 중앙에 배치 */
+}
+.book-item {
+  width: 200px; /* 아이템 너비 */
+	text-align: left; /* 텍스트 왼쪽 정렬 */
+}
+.book-item a {
+  text-decoration: none;
+  color: inherit; /* 부모 요소의 색상을 상속받음 */
+}
+.book-item img {
+  width: 100%;
+  aspect-ratio: 3 / 4; /* 이미지 비율 (세로로 긴 책 모양) */
+	object-fit: cover; /* 이미지가 영역에 꽉 차도록 설정 */
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease-in-out;
+}
+.book-item img:hover {
+  transform: translateY(-5px); /* 이미지에 마우스를 올리면 살짝 위로 이동 */
+}
+.book-title {
+  font-size: 16px;
+  font-weight: 500;
+  margin-top: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.book-price {
+	font-size: 15px;
+	font-weight: 700;
+	color: #333;
+	margin-top: 6px;
+}
+.no-results {
+  margin-top: 60px;
+  color: #777;
+  font-size: 18px;
+}
+/* 페이지네이션 */
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin: 60px 0 40px;
+  list-style: none;
+  padding: 0;
+}
+.pagination a {
+  margin: 0 5px;
+  text-decoration: none;
+  padding: 8px 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  color: white;
+  background-color: black;
+}
+.pagination a:hover {
+  background-color: #ccc;
+  color: white;
+}
+.pagination .active a {
+  background-color: #ccc;
+  color: white;
+}
