@@ -14,7 +14,9 @@
 </head>
 <body>
 <sec:authorize access="isAuthenticated()">
-  <script>const isLoggedIn = true;</script>
+  <script>
+    const isLoggedIn = true;
+  </script>
 </sec:authorize>
 <sec:authorize access="isAnonymous()">
   <script>const isLoggedIn = false;</script>
@@ -29,8 +31,8 @@
 	    <c:set var="bookPrice" value="0" />
 	  </c:otherwise>
 	</c:choose>
-	
 	<div id="bookView">
+		<input type="hidden" id="isbn" value="${bookDetail.isbn}" />
 		<div class="bookPart">   
 			<div class="bookItem">
 				<a href="#"><img src="${bookDetail.image}" alt="${bookDetail.title}"></a>
@@ -192,9 +194,9 @@
 </div>
 <script type="text/javascript">
 const isbn = "${bookDetail.isbn}";
-const userId = '<sec:authentication property="name" />';
+const userId = '<sec:authentication property="name" htmlEscape="false" />';
 const userRole = '<sec:authentication property="authorities" htmlEscape="false" />';
-const contextPath = '<%= request.getContextPath() %>';
+
 
 $(document).ready(function() {
 
@@ -208,7 +210,7 @@ $(document).ready(function() {
   if(isbn){
     loadComment(isbn);
   } else {
-    console.error("🚨 isbn이 비어 있어 댓글을 불러올 수 없습니다.");
+    console.error("isbn이 비어 있어 댓글을 불러올 수 없습니다.");
   }
 
   // 댓글 관련 이벤트
@@ -266,8 +268,21 @@ $(document).ready(function() {
 
   // 바로구매 버튼
   $(document).on("click", "#bookOrderBtn", function (event) {
-	  console.log("✅ bookOrderBtn 클릭됨");
+	  //console.log("bookOrderBtn 클릭됨");
     event.preventDefault();
+    
+    if (isLoggedIn === false) { // 비회원
+        if (!userId || userId === 'anonymousUser') {
+            alert("로그인 후 이용 가능합니다.");
+            const loginModal = document.getElementById('loginModal');
+            if (loginModal) loginModal.classList.add('show');
+            return;
+        }
+
+        // 기존 비회원 바로구매 GET 요청
+        const targetUrl = contextPath + "/order/orderMain.do?isbn=" + encodeURIComponent(isbn) + "&quantity=" + encodeURIComponent(quantity);
+        window.location.href = targetUrl;
+    }
     
     const quantity = parseInt($(".num").val()) || 1;
     if(quantity < 1){
@@ -288,13 +303,13 @@ $(document).ready(function() {
     
     //로그인 여부에 따라 분기
 	  if(isLoggedIn === false){ // 비회원 (isAnonymous가 true일 때)
-		  console.log("🎯 비회원 바로구매 진행 (GET)");
-		  const targetUrl = contextPath + "/guest/guestOrder.do?isbn=" + encodeURIComponent(isbn) + "&quantity=" + encodeURIComponent(quantity);
+		  //console.log("비회원 바로구매 진행 (GET)");
+		  const targetUrl = contextPath + "/order/orderMain.do?isbn=" + encodeURIComponent(isbn) + "&quantity=" + encodeURIComponent(quantity);
       window.location.href = targetUrl;
 	  }else{ // 회원일 경우 (기존 로직 유지)
 	  
 		  // 회원: 동적 form을 생성하여 POST 방식으로 orderMain.do로 이동
-	    console.log("🚀 회원 바로구매 진행 (POST)");
+	    //console.log("회원 바로구매 진행 (POST)");
 	
 	    // 1. 동적으로 form 요소를 생성합니다.
 	    const form = $('<form></form>');
@@ -367,9 +382,8 @@ $(document).ready(function() {
   }
 
   // 로그인 모달 및 펼쳐보기 버튼 로직
-  const openLoginModalLink = document.getElementById('openLoginModal');
-  const loginModal = document.getElementById('loginModal');
-  const closeButton = document.getElementById('closeLoginModal');
+  
+
   
   document.querySelectorAll(".toggle-btn").forEach(function (btn) {
     const targetId = btn.getAttribute("data-target");
@@ -399,20 +413,7 @@ $(document).ready(function() {
 	  });
   });
 
-  if (openLoginModalLink) {
-	  openLoginModalLink.addEventListener('click', (event) => {
-	    event.preventDefault();
-	    if (loginModal) loginModal.classList.add('show');
-	  });
-  }
-  if (closeButton) {
-	  closeButton.addEventListener('click', () => { if (loginModal) loginModal.classList.remove('show'); });
-  }
-  if (loginModal) {
-	  window.addEventListener('click', (event) => {
-	    if (event.target == loginModal) { loginModal.classList.remove('show'); }
-	  });
-  }
+
   
   $('#reportForm').on('submit', function(e) {
 		e.preventDefault();
@@ -456,7 +457,7 @@ $(document).ready(function() {
 //두번째 변수 생략시 1로 들어감
 function loadComment(isbn, page = 1) {
 	if (!isbn) {
-    console.error("🚨 ISBN 값이 비어있어 댓글을 로드할 수 없습니다.");
+    console.error("ISBN 값이 비어있어 댓글을 로드할 수 없습니다.");
     return; 
   }
 	
@@ -466,21 +467,21 @@ function loadComment(isbn, page = 1) {
     data: "isbn=" + encodeURIComponent(isbn) + "&cnowpage=" + page,
     dataType: "json",
     success : function(data) { 
-    	console.log("✅ loadComment 응답 성공:", data);
-    	console.log("📨 댓글 응답 전체:", data);            // 전체 응답 보기
-    	console.log("🧩 첫 댓글 lovedByLoginUser:", data.commentList[0]?.lovedByLoginUser);
-    	console.log("⭐ 첫 댓글 commentRating:", data.commentList[0]?.commentRating);
+    	//console.log("loadComment 응답 성공:", data);
+    	//console.log("댓글 응답 전체:", data);            // 전체 응답 보기
+    	//console.log("첫 댓글 lovedByLoginUser:", data.commentList[0]?.lovedByLoginUser);
+    	//console.log(" 첫 댓글 commentRating:", data.commentList[0]?.commentRating);
 
     	const commentList = $(".comment-list");
         commentList.empty();
         let html = "";
         const cleanedUserRole = userRole.replace(/[\[\]]/g, '');
         let roles = cleanedUserRole.split(',').map(s => s.trim());
-        console.log("Cleaned roles Array:", roles);
+       // console.log("Cleaned roles Array:", roles);
         
         if (data.commentList && data.commentList.length > 0) {
           for (let cvo of data.commentList) {
-        	  const isLiked = cvo.likeCount > 0;
+        	const isLiked = cvo.likeCount > 0;
             const isCheckedByMe = cvo.lovedByLoginUser;
             const isAuthor = cvo.userId && cvo.userId.trim() === userId.trim();
             const isAdmin = roles.includes("ROLE_ADMIN");
@@ -561,7 +562,7 @@ function loadComment(isbn, page = 1) {
 		error: function(xhr, status, error){
 						 console.error(`AJAX Error: Status ${xhr.status} - ${error}`);  // AJAX 오류 상태 및 에러 메시지 출력
 						 alert("댓글 로딩 중 오류가 발생했습니다. 개발자 도구(F12)의 콘솔을 확인해주세요.");
-						 console.error("🚨 서버 응답 내용:", xhr.responseText); 
+						 console.error("서버 응답 내용:", xhr.responseText); 
 					 }
 	});
 }
@@ -589,7 +590,7 @@ function commentInsert() {
 									      commentRating: rating,
 									      commentLiked: liked };
 
-  console.log("📝 댓글 작성 요청 데이터:", commentData); // 전송 전 데이터 확인
+  //console.log("댓글 작성 요청 데이터:", commentData); // 전송 전 데이터 확인
 
   $.ajax({
     url : "<%= request.getContextPath()%>/comment/write.do",
@@ -617,9 +618,9 @@ function commentInsert() {
 
 function editReview(commentNo) {
 	const commentElement = $("#reviewBox" + commentNo);
-  const contentElement = commentElement.find(".reviewContent");
-  const ratingValue = commentElement.find(".reviewStar").val() || 0;
-  const isLiked = commentElement.find(".reviewLikeInput").is(":checked");
+	const contentElement = commentElement.find(".reviewContent");
+	const ratingValue = commentElement.find(".reviewStar").val() || 0;
+	const isLiked = commentElement.find(".reviewLikeInput").is(":checked");
 
   const editFormHtml = `<div class="reviewEditBox">
 												  <div class="reviewIdEditBox">
@@ -658,22 +659,22 @@ function editReview(commentNo) {
 	
 	//'수정완료' 버튼 클릭
   inputElement.find(".saveEditBtn").on("click", function () {
-	  const newText = inputElement.find(".reviewCommentEdit").val().trim();
-    const newRating = inputElement.find(".reviewStar").val();
-    const newLiked = inputElement.find(".reviewLikeInput").is(":checked");
+	const newText = inputElement.find(".reviewCommentEdit").val().trim();
+	const newRating = inputElement.find(".reviewStar").val();
+	const newLiked = inputElement.find(".reviewLikeInput").is(":checked");
 
     if(!newText){
       alert("리뷰 내용을 입력해주세요.");
       return;
     }
     
-    const modifiedData = { commentNo: commentNo,
+	const modifiedData = { commentNo: commentNo,
     											 isbn: isbn,
 							             commentContent: newText,
 							             commentRating: newRating,
 							             commentLiked: newLiked };
     
-    console.log("📦 댓글 수정 요청 데이터:", modifiedData);
+    //console.log("댓글 수정 요청 데이터:", modifiedData);
   
     $.ajax({
       url: "<%= request.getContextPath()%>/comment/modify.do",
@@ -724,7 +725,7 @@ function reportReview(commentNo) {
 }
 
 function toggleLove(commentNo, isbn, userId, checkbox){
-	console.log("💌 toggleLove 전송:", { commentNo, userId, isbn });            
+	console.log("toggleLove 전송:", { commentNo, userId, isbn });            
 
 	if(!userId || userId === 'anonymousUser'){
     alert("로그인 후 이용해주세요.");
@@ -814,7 +815,7 @@ function syncLocalCartToDB() {
     contentType: "application/json",
     data: JSON.stringify(payload),
     success: function () {
-      console.log("장바구니 동기화 완료");
+      //console.log("장바구니 동기화 완료");
       localStorage.removeItem("cartItems");
       fetchCartCountFromDB(); // 동기화 후 DB 기준으로 다시 카운트 가져오기
     },
