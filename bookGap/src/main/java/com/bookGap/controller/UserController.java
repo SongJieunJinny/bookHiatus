@@ -1,10 +1,16 @@
 package com.bookGap.controller;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.bookGap.vo.UserAddressVO;
 import com.bookGap.vo.UserInfoVO;
@@ -49,5 +55,18 @@ public class UserController {
     }
 	  return "redirect:/";
 	}
+	
+	@PostMapping("/auth/saveRedirect.do")
+	@ResponseBody
+	public ResponseEntity<?> saveRedirect(@RequestParam("redirectUrl") String redirectUrl, HttpSession session) {
+	    session.setAttribute("redirectAfterLogin", redirectUrl);
+
+	    return ResponseEntity.ok().build();
+	}
+	
+	@RequestMapping("/login.do")
+    public String loginPage() {
+        return "user/login"; // 예: /WEB-INF/views/user/login.jsp
+    }
 
 }

@@ -30,7 +30,13 @@
 			<div class="cartInfoInnerList">
 				<div class="cartInfoInner">
 					<h3 id="cartCountTitle">장바구니 ()</h3>
-					<div class="cartInfoButton"><button type="button" id="cartInfoBtn"><img src="<%= request.getContextPath() %>/resources/img/icon/address.png"> 기본배송지</button></div>
+					<sec:authorize access="isAuthenticated()">
+					  <div class="cartInfoButton">
+					    <button type="button" id="cartInfoBtn">
+					      <img src="<%= request.getContextPath() %>/resources/img/icon/address.png"> 기본배송지
+					    </button>
+					  </div>
+					</sec:authorize>
 				</div>
 				<div><p class="emptyCartMessage">장바구니가 비어 있습니다.</p></div>
 				<div class="cartContainer">

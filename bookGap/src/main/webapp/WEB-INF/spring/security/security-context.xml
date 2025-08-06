@@ -10,11 +10,12 @@
 	<security:http auto-config="true" use-expressions="true" create-session="ifRequired">
 		<!-- permitAll태그는 모든 사용자에게 허용 -->
 		<security:intercept-url pattern="/" access="permitAll"/>
+		<security:intercept-url pattern="/order/orderMain.do" access="permitAll"/>
+		
 		
 		<!-- hasAnyRole 제시된 권한 중 하나라도 가지고 있으면 true 하나만 가지고 있으면 false -->
 		<security:intercept-url pattern="/user/**" access="hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_USER_KAKAO')"/>
 	    <security:intercept-url pattern="/mypage/**" access="hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_USER_KAKAO')"  />
-	    <security:intercept-url pattern="/order/**" access="hasRole('ROLE_USER')" />
 		<!-- hasRole 로그인한 사용자가 제시한 권한이 있으면 true, 없으면 false -->
 		<security:intercept-url pattern="/admin/**" access="hasRole('ROLE_ADMIN')"/>
 

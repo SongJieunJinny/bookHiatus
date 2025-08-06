@@ -28,7 +28,7 @@ public class AddressController {
 		    if (principal == null) return List.of();
 		    List<UserAddressVO> list = addressService.getUserAddresses(principal.getName());
 		    for (UserAddressVO vo : list) {
-		        System.out.println("[디버그] 반환되는 VO: " + vo);
+		        //System.out.println("[디버그] 반환되는 VO: " + vo);
 		    }
 		    return list;
 		}

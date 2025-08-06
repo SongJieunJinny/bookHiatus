@@ -175,4 +175,21 @@ public class OrderController {
     // WEB-INF/views/guest/guestOrder.jsp 파일을 찾아 렌더링합니다.
     return "guest/guestOrder"; 
   }
+	
+	@GetMapping("/order/orderMain.do")
+	public String orderMainForGuest(@RequestParam("isbn") String isbn,
+	                                @RequestParam("quantity") int quantity,
+	                                Model model) {
+
+	    BookVO book = orderService.getBookByIsbn(isbn);
+	    if (book == null) {
+	        model.addAttribute("errorMessage", "상품 정보를 찾을 수 없습니다.");
+	        return "error/404";
+	    }
+
+	    model.addAttribute("book", book);
+	    model.addAttribute("quantity", quantity);
+	    
+	    return "order/orderMain";  
+	}
 }
