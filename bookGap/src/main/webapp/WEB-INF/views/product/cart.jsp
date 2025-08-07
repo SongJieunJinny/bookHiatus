@@ -506,6 +506,7 @@ $(document).ready(function () {
         inputAddr.type = "hidden";
         inputAddr.name = "userAddressId";
         inputAddr.value = selectedAddress;
+        console.log("selectedAddress:", selectedAddress);
         form.appendChild(inputAddr);
 
         // 선택된 장바구니 항목들 추가
