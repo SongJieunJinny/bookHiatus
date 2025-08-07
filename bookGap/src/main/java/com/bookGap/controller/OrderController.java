@@ -155,26 +155,36 @@ public class OrderController {
 	
 	/* 비회원 주문 페이지 */
 	@GetMapping("/guest/guestOrder.do")
-  public String showGuestOrderPage(@RequestParam("isbn") String isbn, 
-                                   @RequestParam("quantity") int quantity, 
-                                   Model model) {
-      
-    // 1. ISBN으로 책 상세 정보를 조회합니다.
-    BookVO book = orderService.getBookByIsbn(isbn);
-    
-    // 2. 만약 책 정보가 없으면, 메인 페이지로 돌려보냅니다.
-    if (book == null) {
-        return "redirect:/?error=book_not_found";
-    }
-    
-    // 3. 조회한 책 정보와 수량을 Model에 담아서 JSP로 전달합니다.
-    model.addAttribute("book", book);
-    model.addAttribute("quantity", quantity);
-    
-    // 4. 비회원 주문 JSP 페이지를 반환합니다.
-    // WEB-INF/views/guest/guestOrder.jsp 파일을 찾아 렌더링합니다.
-    return "guest/guestOrder"; 
-  }
+	public String showGuestOrderPage(
+	    @RequestParam(value = "isbns", required = false) List<String> isbns,
+	    @RequestParam(value = "quantities", required = false) List<Integer> quantities,
+	    @RequestParam(value = "isbn", required = false) String isbn, 
+	    @RequestParam(value = "quantity", required = false) Integer quantity,
+	    @RequestParam(value = "totalPrice", required = false) Integer totalPrice,
+	    Model model) {
+
+	    List<BookVO> books = new ArrayList<>();
+	    List<Integer> qtys = new ArrayList<>();
+
+	    if (isbns != null && !isbns.isEmpty()) {
+	        books = orderService.getBooksByIsbnList(isbns);
+	        qtys = quantities;
+	    } else if (isbn != null && quantity != null) {
+	        BookVO book = orderService.getBookByIsbn(isbn);
+	        if (book != null) {
+	            books.add(book);
+	            qtys.add(quantity);
+	        } else {
+	            return "redirect:/?error=book_not_found";
+	        }
+	    } else {
+	        return "redirect:/?error=no_data";
+	    }
+
+	    model.addAttribute("bookList", books);
+	    model.addAttribute("quantityList", qtys);
+	    return "guest/guestOrder";  // guestOrder.jsp
+	}
 	
 	@GetMapping("/order/orderMain.do")
 	public String orderMainForGuest(@RequestParam("isbn") String isbn,

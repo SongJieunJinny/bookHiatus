@@ -17,11 +17,11 @@
 <sec:authorize access="isAuthenticated()">
   <div id="cart-data" data-json='${fn:escapeXml(cartItemsJson)}'></div>
   <c:set var="userId" value="${pageContext.request.userPrincipal.name}" />
-  <script>const isLoggedIn = true;</script>
+  <script>window.isLoggedIn = true;</script>
 </sec:authorize>
 <sec:authorize access="isAnonymous()">
   <div id="cart-data" data-json='[]'></div>
-  <script>const isLoggedIn = false;</script>
+  <script>window.isLoggedIn = false;</script>
 </sec:authorize>
 
 <div id="wrap">
@@ -30,13 +30,11 @@
 			<div class="cartInfoInnerList">
 				<div class="cartInfoInner">
 					<h3 id="cartCountTitle">장바구니 ()</h3>
-					<sec:authorize access="isAuthenticated()">
 					  <div class="cartInfoButton">
 					    <button type="button" id="cartInfoBtn">
 					      <img src="<%= request.getContextPath() %>/resources/img/icon/address.png"> 기본배송지
 					    </button>
 					  </div>
-					</sec:authorize>
 				</div>
 				<div><p class="emptyCartMessage">장바구니가 비어 있습니다.</p></div>
 				<div class="cartContainer">
@@ -94,9 +92,6 @@
 	  <jsp:include page="/WEB-INF/views/include/footer.jsp" />
 </div>
 <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script> 
-<script>
-  const contextPath = '<%= request.getContextPath() %>';
-</script>
 <script>
 
 const cartDataEl = document.getElementById("cart-data");
@@ -545,31 +540,55 @@ document.addEventListener("DOMContentLoaded", function () {
     const closeFirst = document.getElementById("closeFirstModal");
     const closeSecond = document.getElementById("closeSecondModal");
 
-    firstModal.style.display = "none";
-    secondModal.style.display = "none";
+    if (firstModal) firstModal.style.display = "none";
+    if (secondModal) secondModal.style.display = "none";
 
     // 배송지 목록 모달 열기
-    cartInfoBtn.addEventListener("click", function () {
-        firstModal.style.display = "flex";
-        console.log("페이지 로딩 완료. loadAddressList() 직접 호출해봅니다.");
-        loadAddressList();
-    });
+     if (cartInfoBtn) {
+        cartInfoBtn.addEventListener("click", function () {
+            if (!window.isLoggedIn) {
+                alert("로그인이 필요한 기능입니다.");
+                const loginBtn = document.getElementById("menuLogin");
+                if (loginBtn) {
+                    loginBtn.click(); // 로그인 버튼 강제 클릭
+                } else {
+                    location.href = contextPath + "/member/login.do"; // 로그인 페이지로 이동
+                }
+                return;
+            }
 
-    closeFirst.addEventListener("click", function () {
-        firstModal.style.display = "none";
-        updateDeliveryInfo();
-    });
+            if (firstModal) {
+                firstModal.style.display = "flex";
+                loadAddressList();
+            } else {
+                console.error("firstModal 요소를 찾을 수 없습니다.");
+            }
+        });
+    }
+
+     if (closeFirst) {
+         closeFirst.addEventListener("click", function () {
+             firstModal.style.display = "none";
+             updateDeliveryInfo();
+         });
+     }
 
     // 배송지 추가 모달 열기
-    document.getElementById("addAddressBtn").addEventListener("click", function () {
-        secondModal.style.display = "flex";
-        $("#addressForm").show();
-    });
+     if (document.getElementById("addAddressBtn")) {
+        document.getElementById("addAddressBtn").addEventListener("click", function () {
+            if (secondModal) {
+                secondModal.style.display = "flex";
+                $("#addressForm").show();
+            }
+        });
+    }
 
-    closeSecond.addEventListener("click", function () {
-        secondModal.style.display = "none";
-        $("#addressForm").hide();
-    });
+     if (closeSecond) {
+         closeSecond.addEventListener("click", function () {
+             secondModal.style.display = "none";
+             $("#addressForm").hide();
+         });
+     }
 });
 //========== 배송지 목록 불러오기 (회원 전용) ==========
 let isAddressLoading = false; 
