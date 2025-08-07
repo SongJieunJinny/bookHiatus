@@ -84,23 +84,36 @@
       </div>
 	    <div id="guestOrderSection">
 	      <div id="orderTable">
-	        <div class="SectionTitle">ORDER DETAILS</div>
-	        <div class="layout">
-	          <div class="orderDetail">
-	            <div class="orderDetailDiv">
-	                <img class="orderImg" src="${book.image}" alt="${book.title}">
-	                <div class="orderDetails">
-	                    <div class="orderDetailsTitle">${book.title}</div>
-	                    <div class="orderDetailsContainer">
-	                        <span class="orderCount">${quantity}개</span>
-	                        <span class="orderSlash">/</span>
-	                        <span class="orderPrice"><fmt:formatNumber value="${book.discount * quantity}" pattern="#,###"/>원</span>
-	                    </div>
-	                </div>
-	            </div>
-            </div>
-	          <div class="orderTotalPrice">총 합계: <fmt:formatNumber value="${book.discount * quantity}" pattern="#,###"/>원</div>
-	        </div>
+			  <div class="SectionTitle">ORDER DETAILS</div>
+			  <div class="layout">
+			    <c:set var="totalPrice" value="0" />
+			    <!-- bookList와 quantityList를 이용한 반복 출력 -->
+			    <c:forEach var="book" items="${bookList}" varStatus="status">
+			      <c:set var="quantity" value="${quantityList[status.index]}" />
+			      <c:set var="itemTotal" value="${book.discount * quantity}" />
+			      <c:set var="totalPrice" value="${totalPrice + itemTotal}" />
+			      <div class="orderDetail">
+			        <div class="orderDetailDiv">
+			          <img class="orderImg" src="${book.image}" alt="${book.title}">
+			          <div class="orderDetails">
+			            <div class="orderDetailsTitle">${book.title}</div>
+			            <div class="orderDetailsContainer">
+			              <span class="orderCount">${quantity}개</span>
+			              <span class="orderSlash">/</span>
+			              <span class="orderPrice">
+			                <fmt:formatNumber value="${itemTotal}" pattern="#,###"/>원
+			              </span>
+			            </div>
+			          </div>
+			        </div>
+			      </div>
+			    </c:forEach>
+			    <!-- 총 합계 출력 -->
+			    <div class="orderTotalPrice">
+			      총 합계: <fmt:formatNumber value="${totalPrice}" pattern="#,###"/>원
+			    </div>
+			  </div>
+			</div>
 	      </div>
 	      <div id="payMathodTable">
 	        <div class="SectionTitle">PAYMENT METHOD</div>
@@ -117,31 +130,39 @@
 	      </div>
 	    </div>
 	    <div id="guestOrderAside">
-        <div id="paymentAside">
-	        <div class="SectionTitle">PAYMENT</div>
-	        <div class="layout">
-	          <c:set var="totalBookPrice" value="${book.discount * quantity}" />
-	          <c:set var="deliveryFee" value="${totalBookPrice >= 50000 ? 0 : 3000}" />
-	          <c:set var="finalPrice" value="${totalBookPrice + deliveryFee}" />
-	          <div class="asideDivLayout">
-	            <div class="asideDiv">
-	              <div class="asideTextPrice">
-	                <div class="asideText1">상품금액</div><div class="Price"><fmt:formatNumber value="${totalBookPrice}" pattern="#,###"/>원</div>
-	              </div>
-	              <div class="asideTextPrice">
-	                <div class="asideText1">배송비</div><div class="deliveryFee"><fmt:formatNumber value="${deliveryFee}" pattern="#,###"/>원</div>
-	              </div>
-	            </div>
-              <div class="asideDiv">
-                <div class="asideLine"></div>
-              </div>
-              <div class="asideDiv">
-                <div class="asideText2">최종결제금액</div>
-                <div class="finalPrice" data-price="${finalPrice}"><fmt:formatNumber value="${finalPrice}" pattern="#,###"/>원</div>
-              </div>
-	        	</div>
-	      	</div>
-	      </div>
+		  <div id="paymentAside">
+		    <div class="SectionTitle">PAYMENT</div>
+		    <div class="layout">
+		      <!-- 다중 상품 대응용 총합 변수 사용 -->
+		      <c:set var="deliveryFee" value="${totalPrice >= 50000 ? 0 : 3000}" />
+		      <c:set var="finalPrice" value="${totalPrice + deliveryFee}" />
+		      <div class="asideDivLayout">
+		        <div class="asideDiv">
+		          <div class="asideTextPrice">
+		            <div class="asideText1">상품금액</div>
+		            <div class="Price">
+		              <fmt:formatNumber value="${totalPrice}" pattern="#,###"/>원
+		            </div>
+		          </div>
+		          <div class="asideTextPrice">
+		            <div class="asideText1">배송비</div>
+		            <div class="deliveryFee">
+		              <fmt:formatNumber value="${deliveryFee}" pattern="#,###"/>원
+		            </div>
+		          </div>
+		        </div>
+		        <div class="asideDiv">
+		          <div class="asideLine"></div>
+		        </div>
+		        <div class="asideDiv">
+		          <div class="asideText2">최종결제금액</div>
+		          <div class="finalPrice" data-price="${finalPrice}">
+		            <fmt:formatNumber value="${finalPrice}" pattern="#,###"/>원
+		          </div>
+		        </div>
+		      </div>
+		    </div>
+		  </div>
 	      <div id="agreeTable">
 	        <div class="asideAgree">
 	          <div class="agree1Div">
@@ -297,24 +318,33 @@ $(document).ready(function() {
       alert("필수 동의 항목에 모두 체크해 주세요.");
       return;
     }
+    
+    const items = [];
+	    <c:forEach var="book" items="${bookList}" varStatus="status">
+	      items.push({
+	        bookNo: ${book.bookNo},
+	        isbn: "${book.isbn}",
+	        quantity: ${quantityList[status.index]},
+	        priceAtPurchase: ${book.discount}
+	      });
+	    </c:forEach>
 
-    const guestOrderData = { bookNo: parseInt('${book.bookNo}'),
-									    	     isbn: "${book.isbn}",
-									    	     quantity: parseInt('${quantity}'),
-									    	     priceAtPurchase: parseInt('${book.discount}'),
-									    	     totalPrice: parseInt($('.finalPrice').data('price')),
-											        
-									    	     ordererName: $('#ordererName').val(),
-								    	       ordererPhone: $('#ordererPhone').val(),
-								    	       orderPassword: $('#orderPassword').val(),
-								    	       ordererEmail: $('#ordererEmail').val(),
+    const guestOrderData = {
+    	    items: items,
+    	    totalPrice: parseInt($('.finalPrice').data('price')),
 
-								    	       receiverName: $('#receiverName').val(),
-								    	       receiverPhone: $('#receiverPhone').val(),
-								    	       receiverPostCode: $('#receiverPostCode').val(),
-								    	       receiverRoadAddress: $('#receiverRoadAddress').val(),
-								    	       receiverDetailAddress: $('#receiverDetailAddress').val(),
-								    	       deliveryRequest: $('#deliveryRequest').val() };
+    	    ordererName: $('#ordererName').val(),
+    	    ordererPhone: $('#ordererPhone').val(),
+    	    orderPassword: $('#orderPassword').val(),
+    	    ordererEmail: $('#ordererEmail').val(),
+
+    	    receiverName: $('#receiverName').val(),
+    	    receiverPhone: $('#receiverPhone').val(),
+    	    receiverPostCode: $('#receiverPostCode').val(),
+    	    receiverRoadAddress: $('#receiverRoadAddress').val(),
+    	    receiverDetailAddress: $('#receiverDetailAddress').val(),
+    	    deliveryRequest: $('#deliveryRequest').val()
+    	};
     
     console.log("서버로 전송할 데이터:", guestOrderData);
 
