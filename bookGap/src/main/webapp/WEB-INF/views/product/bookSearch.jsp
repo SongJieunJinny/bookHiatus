@@ -41,29 +41,26 @@
   </c:choose>
 </section>
 	<div class="pagination">
+		<%-- 이전 페이지 링크 --%>
 		<c:if test="${paging.startPage > 1}">
-	  	<a href="bookList.do?nowpage=${paging.startPage - 1}
-	     	&searchType=${searchType}&searchValue=${searchValue}
-	     	&category=${category}">&lt;</a>
+			<a href="bookSearch.do?nowpage=${paging.startPage - 1}&searchValue=${searchKeyword}">&lt;</a>
 		</c:if>
 	
+		<%-- 페이지 번호 링크 --%>
 		<c:forEach begin="${paging.startPage}" end="${paging.endPage}" var="cnt">
 			<c:choose>
 				<c:when test="${paging.nowPage eq cnt}">
 					<a id="default" style="color:#FF5722; cursor:default;">${cnt}</a>
 				</c:when>
 				<c:otherwise>
-					<a href="bookList.do?nowpage=${cnt}
-						&searchType=${searchType}&searchValue=${searchValue}
-						&category=${category}">${cnt}</a>
+					<a href="bookSearch.do?nowpage=${cnt}&searchValue=${searchKeyword}">${cnt}</a>
 				</c:otherwise>
 			</c:choose>
 		</c:forEach>
 	
+		<%-- 다음 페이지 링크 --%>
 		<c:if test="${paging.endPage < paging.lastPage}">
-			<a href="bookList.do?nowpage=${paging.endPage + 1}
-				&searchType=${searchType}&searchValue=${searchValue}
-				&category=${category}">&gt;</a>
+			<a href="bookSearch.do?nowpage=${paging.endPage + 1}&searchValue=${searchKeyword}">&gt;</a>
 		</c:if>
 	</div>
 <jsp:include page="/WEB-INF/views/include/footer.jsp" />
