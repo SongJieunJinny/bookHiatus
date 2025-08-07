@@ -162,6 +162,10 @@ public class OrderController {
 	    @RequestParam(value = "quantity", required = false) Integer quantity,
 	    @RequestParam(value = "totalPrice", required = false) Integer totalPrice,
 	    Model model) {
+		
+		System.out.println("받은 isbns: " + isbns);
+		System.out.println("받은 quantities: " + quantities);
+		System.out.println("단일 isbn: " + isbn + ", quantity: " + quantity);
 
 	    List<BookVO> books = new ArrayList<>();
 	    List<Integer> qtys = new ArrayList<>();

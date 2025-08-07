@@ -390,14 +390,16 @@ document.getElementById("guestOrder").addEventListener("click", function () {
 	    const cartItem = item.closest(".cartItem");
 	    const isbn = cartItem.getAttribute("data-isbn");
 	    const quantity = cartItem.querySelector(".num")?.value || 1;
-
+	    console.log("추출된 ISBN:", isbn, "수량:", quantity);
+	    
 	    if (isbn) {
 	      url.searchParams.append("isbns", isbn);
 	      url.searchParams.append("quantities", quantity);
 	    }
 	  });
-
+		
 	  window.location.href = url.toString();
+	  console.log("비회원 주문 이동 URL:", url.toString());
 	});
 
 </script>
