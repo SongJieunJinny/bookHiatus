@@ -151,11 +151,16 @@ function normalizeCartItems(items) {
 }
 
 function updateCartCount() {
-    let cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
-    if (!Array.isArray(cartItems)) {
-        cartItems = Object.values(cartItems).filter(item => typeof item === 'object');
+    let cartItems = [];
+
+    if (typeof isLoggedIn !== "undefined" && isLoggedIn) {
+        cartItems = dbCartItems;
+    } else {
+        cartItems = getCartItemsFromLocalStorage();
     }
+
     const cartCount = cartItems.length;
+
     const cartCountElement = document.getElementById("cart-count");
     const cartCountTitle = document.getElementById("cartCountTitle");
 
@@ -808,13 +813,14 @@ function updateDeliveryInfoWithText(addressText) {
 </script>
 <script>
 function syncLocalCartToDB() {
-	if (sessionStorage.getItem("cartSynced")) {
-        return; // 이미 동기화한 경우 다시 실행 안 함
+    if (sessionStorage.getItem("cartSynced")) {
+        return;
     }
+
     const localItems = getCartItemsFromLocalStorage();
 
     if (!localItems.length) {
-        localStorage.setItem("cartItems", JSON.stringify(dbCartItems || []));
+        localStorage.removeItem("cartItems"); 
         updateCartCount();
         renderCartItems();
         return Promise.resolve();
@@ -834,14 +840,9 @@ function syncLocalCartToDB() {
         contentType: "application/json",
         data: JSON.stringify(payload),
         success: function () {
-           // console.log("[디버그] 동기화 성공 → DB 기준으로 덮어쓰기");
-
-            // 중복 방지: 로컬스토리지 초기화 후 DB 데이터로만 채움
-            localStorage.removeItem("cartItems");
-            localStorage.setItem("cartItems", JSON.stringify(dbCartItems || []));
-
-            updateCartCount();
-            renderCartItems();
+            sessionStorage.setItem("cartSynced", true); // 동기화된 상태 저장
+            localStorage.removeItem("cartItems"); // 동기화 후 삭제
+            fetchAndUpdateCart(); // 최신 DB 기준 렌더링
         },
         error: function (xhr) {
             console.error("[에러] 동기화 실패", xhr.responseText);

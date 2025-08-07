@@ -18,7 +18,7 @@ import com.bookGap.service.BookService;
 import com.bookGap.vo.BookVO;
 
 @Controller
-public class AdminInventoryManagement {
+public class AdminInventoryManagementController {
 	
 	@Autowired
     private AdminBookService adminBookService;
@@ -51,7 +51,7 @@ public class AdminInventoryManagement {
 	
 	@GetMapping("admin/adminInventoryManagement.do")
 	public String adminInventoryManagement(Model model) {
-	    List<BookVO> getInventoryManagementSelectAll = bookService.adminInventoryManagementSelectAll();
+	    List<BookVO> getInventoryManagementSelectAll = adminBookService.adminInventoryManagementSelectAll();
 	    model.addAttribute("getInventoryManagementSelectAll", getInventoryManagementSelectAll);
 	    return "admin/adminInventoryManagement";
 	}

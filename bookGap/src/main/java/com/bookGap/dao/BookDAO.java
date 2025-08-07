@@ -48,14 +48,11 @@ public class BookDAO {
 	public BookVO selectBookDetailByIsbn(String isbn) {
 	    return sqlSession.selectOne(namespace + "selectBookDetailByIsbn", isbn);
 	}
-	public List<BookVO> adminInventoryManagementSelectAll() {
-	    return sqlSession.selectList(namespace + "adminInventoryManagementSelectAll");
-	}
 	
 	public int getBookNoByIsbn(String isbn){
     Integer bookNo = sqlSession.selectOne(namespace + "getBookNoByIsbn", isbn);
     return bookNo != null ? bookNo.intValue() : 0;
-}
+	}
 	
 	public List<BookVO> getNewBooks(){
 		return sqlSession.selectList(namespace + "getNewBooks");
