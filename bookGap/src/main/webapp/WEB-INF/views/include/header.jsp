@@ -34,14 +34,18 @@
 			</div>
 			
 			<div id="menuSearch" class="menuItem">
-	      <span id="searchSwitchBtn">
-	        <span id="searchText">SEARCH</span>
-	      </span>
-	      <input type="text" id="searchInput" placeholder="검색어 입력">
-	      <span id="searchImgIcon">
-	        <img id="searchImg" src="<%=request.getContextPath()%>/resources/img/icon/search.png">
-	      </span>
-	    </div>
+			  <form id="searchForm" action="${pageContext.request.contextPath}/product/bookSearch.do" method="get">
+			    <span id="searchSwitchBtn">
+			      <span id="searchText">SEARCH</span>
+			    </span>
+			    <input type="text" id="searchInput" name="searchValue" placeholder="도서 검색" value="${searchKeyword}">
+			    <span id="searchImgIcon">
+			      <button type="submit" id="searchBtn" style="background:none; border:none; padding:0;">
+			        <img id="searchImg" src="<%=request.getContextPath()%>/resources/img/icon/search.png" alt="검색">
+			      </button>
+			    </span>
+			  </form>
+			</div>
 			<div id="menuLogin" class="menuItem">
 			  <img id="loginImg" src="<%=request.getContextPath()%>/resources/img/icon/login.png">
 			</div>
@@ -88,14 +92,18 @@
 			</div>
 			
 			<div id="menuSearch" class="menuItem">
-	      <span id="searchSwitchBtn">
-	        <span id="searchText">SEARCH</span>
-	      </span>
-	      <input type="text" id="searchInput" placeholder="검색어 입력...">
-	      <span id="searchImgIcon">
-	        <img id="searchImg" src="<%=request.getContextPath()%>/resources/img/icon/search.png">
-	      </span>
-	    </div>
+			  <form id="searchForm" action="${pageContext.request.contextPath}/product/bookSearch.do" method="get">
+			    <span id="searchSwitchBtn">
+			      <span id="searchText">SEARCH</span>
+			    </span>
+			    <input type="text" id="searchInput" name="searchValue" placeholder="도서 검색" value="${searchKeyword}">
+			    <span id="searchImgIcon">
+			      <button type="submit" id="searchBtn" style="background:none; border:none; padding:0;">
+			        <img id="searchImg" src="<%=request.getContextPath()%>/resources/img/icon/search.png" alt="검색">
+			      </button>
+			    </span>
+			  </form>
+			</div>
 			<div id="menuLogout" class="menuItem">
 			  <a href="#" id="kakaoLogoutBtn">
 			    <img id="loginImg" src="<%=request.getContextPath()%>/resources/img/icon/logout.png">
@@ -156,7 +164,7 @@
         </form>
       </div>
       <div id="joinNpw">
-        <div id="findPw"><a href="./findPw.html">비밀번호 찾기</a></div>
+        <div id="findPw"><a href="<%=request.getContextPath()%>/findPw.do">비밀번호 찾기</a></div>
         &nbsp;&nbsp;<div>|</div>&nbsp;&nbsp;
         <div id="join"><a href="<%=request.getContextPath()%>/join.do">회원가입</a></div>
       </div>
