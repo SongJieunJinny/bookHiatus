@@ -33,37 +33,37 @@ public class MypageController {
 	public JavaMailSenderImpl mailSender;
     
 	// 마이페이지 진입(GET)
-    @RequestMapping(value="/mypage.do", method = RequestMethod.GET)
-    public String mypage() {
-      //System.out.println("GET /mypage.do");
-      return "user/mypage";
-    }
+  @RequestMapping(value="/mypage.do", method = RequestMethod.GET)
+  public String mypage() {
+    //System.out.println("GET /mypage.do");
+    return "user/mypage";
+  }
     
- // 카카오 로그인 사용자 전용 마이페이지 (GET 접근)
-    @RequestMapping(value = "/user/mypageInfo.do", method = RequestMethod.GET)
-    public String mypageInfoForKakao(Principal principal, Model model, HttpSession session) {
-        // 로그인한 사용자 ID
-        String loggedInId = principal.getName();
+  // 카카오 로그인 사용자 전용 마이페이지 (GET 접근)
+  @RequestMapping(value = "/user/mypageInfo.do", method = RequestMethod.GET)
+  public String mypageInfoForKakao(Principal principal, Model model, HttpSession session) {
+    // 로그인한 사용자 ID
+    String loggedInId = principal.getName();
 
-        // DB에서 로그인한 사용자 정보 가져오기
-        MypageVO vo = mypageService.getUserById(loggedInId);
+    // DB에서 로그인한 사용자 정보 가져오기
+    MypageVO vo = mypageService.getUserById(loggedInId);
 
-        if (vo == null) {
-            model.addAttribute("error", "사용자 정보를 찾을 수 없습니다.");
-            return "redirect:/"; // 사용자 정보 없으면 홈으로 리다이렉트
-        }
-
-        // 세션에 사용자 정보 저장 (POST 로직과 동일)
-        session.setAttribute("LOGIN_USER", vo);
-        model.addAttribute("user", vo);
-
-        // 마이페이지 상세 JSP 바로 출력
-        return "user/mypageInfo";
+    if (vo == null) {
+        model.addAttribute("error", "사용자 정보를 찾을 수 없습니다.");
+        return "redirect:/"; // 사용자 정보 없으면 홈으로 리다이렉트
     }
 
-    // 본인확인 처리(POST)
-    @RequestMapping(value="/user/mypage.do", method = RequestMethod.POST)
-    public String mypage(@RequestParam("USER_ID") String inputId,
+    // 세션에 사용자 정보 저장 (POST 로직과 동일)
+    session.setAttribute("LOGIN_USER", vo);
+    model.addAttribute("user", vo);
+
+    // 마이페이지 상세 JSP 바로 출력
+    return "user/mypageInfo";
+  }
+
+  // 본인확인 처리(POST)
+  @RequestMapping(value="/user/mypage.do", method = RequestMethod.POST)
+  public String mypage(@RequestParam("USER_ID") String inputId,
                          @RequestParam("USER_PW") String inputPw,
                          Principal principal, HttpSession session, Model model) {	  
 	  String loggedInId = principal.getName();
@@ -103,45 +103,45 @@ public class MypageController {
 	  session.setAttribute("LOGIN_USER", vo);  // 세션에 저장
 	  model.addAttribute("user", vo); 
 	  return "user/mypageInfo";  // 다음 JSP로 이동
-    }
+  }
     
-    // 본인정보 변경(POST)
-    @RequestMapping(value="/user/mypageInfo.do", method = RequestMethod.POST) 
-    public String mypageInfo(MypageVO vo, Model model, HttpSession session) {
-    	System.out.println(" POST /user/mypageInfo.do 호출됨"); 
-    	MypageVO mypageUser = (MypageVO) session.getAttribute("LOGIN_USER");
-    	if (mypageUser == null) { 
-    		System.out.println(" 세션 정보 없음. 본인확인 필요"); 
-    		return "redirect:/mypage.do"; 
-    	}
-		vo.setUserId(mypageUser.getUserId()); // 보안상 세션에서 ID 설정 
-		int result = mypageService.userUpdate(vo); 
-		if (result > 0) { 
-			System.out.println("사용자 정보 수정 성공"); 
-			MypageVO updatedUser = mypageService.getUserById(vo.getUserId()); 
-			session.setAttribute("LOGIN_USER", updatedUser); 
-			model.addAttribute("user", updatedUser); // 성공 시도 새 정보 반영 
-			model.addAttribute("message", "정보가 성공적으로 수정되었습니다."); 
-			} else { 
-				System.out.println(" 사용자 정보 수정 실패"); 
-				model.addAttribute("error", "정보 수정에 실패했습니다."); 
-				model.addAttribute("user", vo); // 입력값 유지 
-			} 
-			return "redirect:/"; 
-    	}
+  // 본인정보 변경(POST)
+  @RequestMapping(value="/user/mypageInfo.do", method = RequestMethod.POST) 
+  public String mypageInfo(MypageVO vo, Model model, HttpSession session) {
+  	System.out.println(" POST /user/mypageInfo.do 호출됨"); 
+  	MypageVO mypageUser = (MypageVO) session.getAttribute("LOGIN_USER");
+  	if (mypageUser == null) { 
+  		System.out.println(" 세션 정보 없음. 본인확인 필요"); 
+  		return "redirect:/mypage.do"; 
+  	}
+	vo.setUserId(mypageUser.getUserId()); // 보안상 세션에서 ID 설정 
+	int result = mypageService.userUpdate(vo); 
+	if (result > 0) { 
+		System.out.println("사용자 정보 수정 성공"); 
+		MypageVO updatedUser = mypageService.getUserById(vo.getUserId()); 
+		session.setAttribute("LOGIN_USER", updatedUser); 
+		model.addAttribute("user", updatedUser); // 성공 시도 새 정보 반영 
+		model.addAttribute("message", "정보가 성공적으로 수정되었습니다."); 
+		} else { 
+			System.out.println(" 사용자 정보 수정 실패"); 
+			model.addAttribute("error", "정보 수정에 실패했습니다."); 
+			model.addAttribute("user", vo); // 입력값 유지 
+		} 
+		return "redirect:/"; 
+  	}
     	
     
 
     
    // 비밀번호변경 모달창OPEN(GET)
-    @ResponseBody
+  @ResponseBody
 	@RequestMapping(value="/user/mypageInfo/openPwChangeModal.do", method = RequestMethod.GET)
 	public String openPwChangeModal(String changePwModal) {
 		return "success";
 	}
     
-    // 비밀번호변경위한 이메일전송(POST)
-    @ResponseBody
+  // 비밀번호변경위한 이메일전송(POST)
+  @ResponseBody
 	@RequestMapping(value = "/user/mypageInfo/sendMail.do", method = RequestMethod.POST)
 	public String sendMail(String userEmail) {		
 	  Random random = new Random();

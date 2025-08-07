@@ -15,4 +15,8 @@ public interface UserService {
 	
 	public UserInfoVO findById(String userId);
 	
+	public int userPwUpdate(UserInfoVO user);
+	
+	public boolean checkUserExists(String userId, String userEmail);
+	
 }
