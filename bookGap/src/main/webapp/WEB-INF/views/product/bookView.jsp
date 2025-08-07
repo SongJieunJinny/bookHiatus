@@ -225,6 +225,54 @@ $(document).ready(function() {
   $(document).on("change", "div.comment-list .reviewLikeInput", function () { const cmt = $(this).data("commentno"); if(cmt){ toggleLove(cmt, isbn, userId, this); }});
   $(document).on("change", ".reviewLikeInput", function () { $(this).closest(".reviewLike").toggleClass("active", this.checked); });
   
+  
+  const minusBtn = document.querySelector(".minus");
+  const plusBtn = document.querySelector(".plus");
+  const numInput = document.querySelector(".num");
+  const totalPrice = document.getElementById("totalPrice");
+
+  if(minusBtn && plusBtn && numInput && totalPrice) {
+    const unitPrice = ${bookPrice};
+    const maxStock = ${bookDetail.bookStock != null && bookDetail.bookStock > 0 ? bookDetail.bookStock : 999};
+
+    const updateTotalPrice = () => {
+      let qty = parseInt(numInput.value) || 1;
+      if (qty < 1) qty = 1;
+      if (maxStock > 0 && qty > maxStock) qty = maxStock;
+      numInput.value = qty;
+      totalPrice.textContent = (unitPrice * qty).toLocaleString() + "원";
+    };
+
+    minusBtn.addEventListener("click", () => {
+      if (parseInt(numInput.value) > 1) {
+        numInput.value = parseInt(numInput.value) - 1;
+        updateTotalPrice();
+      }
+    });
+
+    plusBtn.addEventListener("click", () => {
+      const current = parseInt(numInput.value) || 1;
+      if (current < maxStock) {
+        numInput.value = current + 1;
+        updateTotalPrice();
+      } else {
+    	alert("도서는 최대 " + maxStock + "권까지 구매 가능합니다.");
+      }
+    });
+
+    numInput.addEventListener("input", () => {
+      numInput.value = numInput.value.replace(/[^0-9]/g, '');
+      let value = parseInt(numInput.value) || 1;
+      if (value < 1) value = 1;
+      if (value > maxStock) {
+    	alert("도서는 최대 " + maxStock + "권까지 구매 가능합니다.");
+        value = maxStock;
+      }
+      numInput.value = value;
+      updateTotalPrice();
+    });
+    updateTotalPrice();
+  }
   // 장바구니 버튼
   $(document).on("click", "#bookChartBtn", function () {
     const quantity = parseInt($(".num").val()) || 1;
@@ -334,54 +382,6 @@ $(document).ready(function() {
 	  }
   });
   
-  // 수량 계산기 로직: 변수를 먼저 선언하고, 그 다음에 if 문으로 존재하는지 확인합니다.
-  const minusBtn = document.querySelector(".minus");
-  const plusBtn = document.querySelector(".plus");
-  const numInput = document.querySelector(".num");
-  const totalPrice = document.getElementById("totalPrice");
-
-  if(minusBtn && plusBtn && numInput && totalPrice) {
-    const unitPrice = ${bookPrice};
-    const maxStock = ${bookDetail.bookStock != null && bookDetail.bookStock > 0 ? bookDetail.bookStock : 999};
-
-    const updateTotalPrice = () => {
-      let qty = parseInt(numInput.value) || 1;
-      if (qty < 1) qty = 1;
-      if (maxStock > 0 && qty > maxStock) qty = maxStock;
-      numInput.value = qty;
-      totalPrice.textContent = (unitPrice * qty).toLocaleString() + "원";
-    };
-
-    minusBtn.addEventListener("click", () => {
-      if (parseInt(numInput.value) > 1) {
-        numInput.value = parseInt(numInput.value) - 1;
-        updateTotalPrice();
-      }
-    });
-
-    plusBtn.addEventListener("click", () => {
-      const current = parseInt(numInput.value) || 1;
-      if (current < maxStock) {
-        numInput.value = current + 1;
-        updateTotalPrice();
-      } else {
-    	alert("도서는 최대 " + maxStock + "권까지 구매 가능합니다.");
-      }
-    });
-
-    numInput.addEventListener("input", () => {
-      numInput.value = numInput.value.replace(/[^0-9]/g, '');
-      let value = parseInt(numInput.value) || 1;
-      if (value < 1) value = 1;
-      if (value > maxStock) {
-    	alert("도서는 최대 " + maxStock + "권까지 구매 가능합니다.");
-        value = maxStock;
-      }
-      numInput.value = value;
-      updateTotalPrice();
-    });
-    updateTotalPrice();
-  }
 
   // 로그인 모달 및 펼쳐보기 버튼 로직
   

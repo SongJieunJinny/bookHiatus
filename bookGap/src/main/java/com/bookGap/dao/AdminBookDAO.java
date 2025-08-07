@@ -44,5 +44,9 @@ public class AdminBookDAO {
 	    public int updateInventory(BookVO bookVO) {
 	        return sqlSession.update(namespace +"updateInventory", bookVO);
 	    }
+	    
+		public List<BookVO> adminInventoryManagementSelectAll() {
+		    return sqlSession.selectList(namespace + "adminInventoryManagementSelectAll");
+		}
 
 }

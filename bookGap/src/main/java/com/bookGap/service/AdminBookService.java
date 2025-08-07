@@ -12,7 +12,7 @@ public interface AdminBookService {
 	    
 	    boolean isIsbnExists(String isbn);
 	    List<BookVO> getAllBooks();
-	    
+	    List<BookVO> adminInventoryManagementSelectAll();
 	    int updateInventory(BookVO bookVO);
 
 }
