@@ -26,35 +26,38 @@
             <div class="orderMainDelivery">DELIVERY</div>
             <div class="deliveryAddress">
               <!-- 컨트롤러에서 받은 기본 배송지 정보를 동적으로 출력 -->
-              <c:choose>
-                <c:when test="${not empty defaultAddress}">
-		              <div class="deliveryAddress1">
-		                <div class="deliveryAddressName">
-		                  <img id="addressImg" src="<%=request.getContextPath()%>/resources/img/icon/marker.png"> 
-		                  <span class="deliveryInfoAddressNickname">${defaultAddress.addressName}</span>
-		                </div>
-		                <button id="deliveryAddressBtn">변경</button>  
-		              </div>
-		              <div class="deliveryAddress2">
-		                ${defaultAddress.userName} / ${defaultAddress.userPhone}
-		              </div>
-		              <div class="deliveryAddress3">
-		                [${defaultAddress.postCode}] ${defaultAddress.roadAddress} ${defaultAddress.detailAddress}
-		              </div>
-                </c:when>
-                <c:otherwise>
-                <%-- 기본 배송지가 없을 경우 --%>
-                  <div class="deliveryAddress1">
-                    <div class="deliveryAddressName">
-                      <img id="addressImg" src="<%=request.getContextPath()%>/resources/img/icon/marker.png">
-                      <span class="deliveryInfoAddressNickname">배송지를 등록해주세요.</span>
-                    </div>
-                    <button id="deliveryAddressBtn">배송지 관리</button>
-                  </div>
-                  <div class="deliveryAddress2"></div>
-                  <div class="deliveryAddress3"></div>
-                </c:otherwise>
-              </c:choose>
+				<c:choose>
+				  <c:when test="${not empty userAddressId}">
+				    <c:forEach var="addr" items="${addressList}">
+				      <c:if test="${addr.userAddressId == userAddressId}">
+				        <div class="deliveryAddress1">
+				          <div class="deliveryAddressName">
+				            <img id="addressImg" src="<%=request.getContextPath()%>/resources/img/icon/marker.png"> 
+				            <span class="deliveryInfoAddressNickname">${addr.addressName}</span>
+				          </div>
+				          <button id="deliveryAddressBtn">변경</button>  
+				        </div>
+				        <div class="deliveryAddress2">
+				          ${addr.userName} / ${addr.userPhone}
+				        </div>
+				        <div class="deliveryAddress3">
+				          [${addr.postCode}] ${addr.roadAddress} ${addr.detailAddress}
+				        </div>
+				      </c:if>
+				    </c:forEach>
+				  </c:when>
+				  <c:otherwise>
+				    <div class="deliveryAddress1">
+				      <div class="deliveryAddressName">
+				        <img id="addressImg" src="<%=request.getContextPath()%>/resources/img/icon/marker.png">
+				        <span class="deliveryInfoAddressNickname">배송지를 등록해주세요.</span>
+				      </div>
+				      <button id="deliveryAddressBtn">배송지 관리</button>
+				    </div>
+				    <div class="deliveryAddress2"></div>
+				    <div class="deliveryAddress3"></div>
+				  </c:otherwise>
+				</c:choose>
             </div>
           </div>
           <div class="requestContainer">
@@ -193,15 +196,16 @@
         <c:forEach var="addr" items="${addressList}">
 	        <div class="addressItem">
 	          <label>
-	            <input type="radio" name="address" 
-	                   ${addr.isDefault == 1 ? 'checked' : ''}
-	                   data-address-id="${addr.userAddressId}"
-	                   data-address-name="${addr.addressName}"
-	                   data-user-name="${addr.userName}"
-	                   data-user-phone="${addr.userPhone}"
-	                   data-post-code="${addr.postCode}"
-	                   data-road-address="${addr.roadAddress}"
-	                   data-detail-address="${addr.detailAddress}">
+	             <input type="radio" name="address"
+			               value="${addr.userAddressId}"
+			               <c:if test="${addr.userAddressId == userAddressId}">checked</c:if>
+			               data-address-id="${addr.userAddressId}"
+			               data-address-name="${addr.addressName}"
+			               data-user-name="${addr.userName}"
+			               data-user-phone="${addr.userPhone}"
+			               data-post-code="${addr.postCode}"
+			               data-road-address="${addr.roadAddress}"
+			               data-detail-address="${addr.detailAddress}">
 	            <span>${addr.addressName}</span>
 	            <c:if test="${addr.isDefault == 1}">
 	              <span class="defaultTag">[기본배송지]</span>

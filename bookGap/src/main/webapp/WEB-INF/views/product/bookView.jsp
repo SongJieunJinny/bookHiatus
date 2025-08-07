@@ -232,6 +232,7 @@ $(document).ready(function() {
     const price = ${bookPrice};
     const image = "${bookDetail.image}";
     const bookNo = ${bookDetail.bookNo};
+    const isbn = "${bookDetail.isbn}";
 
     if(!userId || userId === 'anonymousUser'){
       let cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
@@ -240,7 +241,7 @@ $(document).ready(function() {
         if(!confirm("이미 장바구니에 있는 도서입니다. 수량을 추가하시겠습니까?")){ return; }
         existing.quantity += quantity;
       } else {
-        cartItems.push({ id: isbn, bookNo, title, price, image, quantity });
+        cartItems.push({ id: isbn, bookNo, title, price, image, quantity, isbn });
       }
       localStorage.setItem("cartItems", JSON.stringify(cartItems));
       updateCartCount();
