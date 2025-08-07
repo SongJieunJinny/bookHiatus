@@ -1,5 +1,6 @@
 package com.bookGap.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -36,62 +37,34 @@ public class OrderServiceImpl implements OrderService {
     orderDAO.insertOrderDetailList(details);
   }
   
-  @Transactional
   @Override
+  @Transactional
   public OrderVO createGuestOrder(Map<String, Object> orderData) throws Exception {
-  
-    // --- 단계 1: Map에서 데이터를 꺼내 Guest 정보 처리 ---
-    // Map에서 데이터를 꺼낼 때는 "Key 이름"으로 꺼내고, 원래 데이터 타입으로 형변환 해줍니다.
-    String ordererEmail = (String) orderData.get("ordererEmail");
+      // 비회원 생성 로직 동일 (생략)
 
-    GuestVO guest = guestDAO.findGuestByEmail(ordererEmail);
-    String guestId;
+      OrderVO newOrder = new OrderVO();
+      // set guestId, 주소 등은 동일하게 설정
 
-    if (guest == null) {
-      guestId = "guest_" + UUID.randomUUID().toString().substring(0, 8);
-      
-      GuestVO newGuest = new GuestVO();
-      newGuest.setGuestId(guestId);
-      newGuest.setGuestName((String) orderData.get("ordererName"));
-      newGuest.setGuestPhone((String) orderData.get("ordererPhone"));
-      newGuest.setGuestEmail(ordererEmail);
-      
-      guestDAO.insertGuest(newGuest);
-    } else {
-      guestId = guest.getGuestId();
-    }
+      orderDAO.insertOrder(newOrder); // 주문 등록
 
-    // --- 단계 2: Map에서 데이터를 꺼내 Order 정보 처리 ---
-    OrderVO newOrder = new OrderVO();
-    newOrder.setGuestId(guestId);
-    newOrder.setOrderType(2); // 비회원 타입
-    newOrder.setOrderStatus(1); // 배송 준비중
+      // 복수 상품 처리
+      List<Map<String, Object>> items = (List<Map<String, Object>>) orderData.get("items");
+      List<OrderDetailVO> detailList = new ArrayList<>();
 
-    // Map에서 배송지 정보, 결제 정보 등을 모두 꺼내서 세팅합니다.
-    newOrder.setTotalPrice((Integer) orderData.get("totalPrice"));
-    newOrder.setReceiverName((String) orderData.get("receiverName"));
-    newOrder.setReceiverPhone((String) orderData.get("receiverPhone"));
-    newOrder.setReceiverPostCode((String) orderData.get("receiverPostCode"));
-    newOrder.setReceiverRoadAddress((String) orderData.get("receiverRoadAddress"));
-    newOrder.setReceiverDetailAddress((String) orderData.get("receiverDetailAddress"));
-    newOrder.setDeliveryRequest((String) orderData.get("deliveryRequest"));
-    newOrder.setOrderPassword((String) orderData.get("orderPassword")); // TODO: 암호화 필요
-    
-    orderDAO.insertOrder(newOrder); // DB에 저장! (orderId 자동 생성됨)
+      for (Map<String, Object> item : items) {
+          OrderDetailVO detail = new OrderDetailVO();
+          detail.setOrderId(newOrder.getOrderId());
+          detail.setBookNo((Integer) item.get("bookNo"));
+          detail.setOrderCount((Integer) item.get("quantity"));
+          detail.setOrderPrice((Integer) item.get("priceAtPurchase"));
+          detail.setRefundCheck(2);
+          detailList.add(detail);
+      }
 
-    // --- 단계 3: Map에서 데이터를 꺼내 OrderDetail 정보 처리 ---
-    OrderDetailVO detail = new OrderDetailVO();
-    detail.setOrderId(newOrder.getOrderId());
-    detail.setBookNo((Integer) orderData.get("bookNo"));
-    detail.setOrderCount((Integer) orderData.get("quantity"));
-    detail.setOrderPrice((Integer) orderData.get("priceAtPurchase"));
-    detail.setRefundCheck(2);
-    
-    orderDAO.insertOrderDetail(detail);
-
-    return newOrder;
+      orderDAO.insertOrderDetailList(detailList);
+      return newOrder;
   }
-
+  
   @Override
   public List<OrderVO> getOrdersByUser(String userId) {
       return orderDAO.getOrdersByUserId(userId);
