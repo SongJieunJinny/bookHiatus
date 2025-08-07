@@ -357,19 +357,48 @@ function initHeaderEvents() {
 }
   
 document.getElementById("guestOrder").addEventListener("click", function () {
-  const isbnInput = document.getElementById("isbn"); // 숨겨진 input
-  const isbn = isbnInput?.value;
-  const quantity = document.querySelector(".num")?.value || 1;
+	  const isbnInput = document.getElementById("isbn");
+	  const quantityInput = document.querySelector(".num");
 
-  if (!isbn) {
-    alert("상품 정보가 없습니다. 비회원 주문은 상품 상세 페이지에서만 가능합니다.");
-    return;
-  }
-  
-  const url = contextPath + "/guest/guestOrder.do?isbn=" + encodeURIComponent(isbn) + "&quantity=" + encodeURIComponent(quantity);
-  window.location.href = url;
+	  // ① 상품 상세 페이지인 경우: isbn input 존재
+	  if (isbnInput) {
+	    const isbn = isbnInput.value;
+	    const quantity = quantityInput?.value || 1;
 
-});
+	    if (!isbn) {
+	      alert("상품 정보가 없습니다. 비회원 주문은 상품 상세 페이지와 장바구니에서만 가능합니다.");
+	      return;
+	    }
+
+	    const url = contextPath + "/guest/guestOrder.do?isbn=" + encodeURIComponent(isbn)
+	                + "&quantity=" + encodeURIComponent(quantity);
+	    window.location.href = url;
+	    return;
+	  }
+
+	  // ② 장바구니 페이지인 경우: 체크된 상품 목록 처리
+	  const selectedItems = document.querySelectorAll(".cartItemCheckbox:checked");
+
+	  if (selectedItems.length === 0) {
+	    alert("주문할 상품을 선택해주세요.");
+	    return;
+	  }
+
+	  const url = new URL(contextPath + "/guest/guestOrder.do", window.location.origin);
+
+	  selectedItems.forEach(item => {
+	    const cartItem = item.closest(".cartItem");
+	    const isbn = cartItem.getAttribute("data-isbn");
+	    const quantity = cartItem.querySelector(".num")?.value || 1;
+
+	    if (isbn) {
+	      url.searchParams.append("isbns", isbn);
+	      url.searchParams.append("quantities", quantity);
+	    }
+	  });
+
+	  window.location.href = url.toString();
+	});
 
 </script>
 <script>
