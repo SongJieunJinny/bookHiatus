@@ -25,7 +25,15 @@ public class SearchController {
         model.addAttribute("error", "검색어를 입력해주세요.");
         return "search/bookSearch";
     }
-    
+
+    int perPage = 10;
+    int nowPage = searchVO.getNowPage() == 0 ? 1 : searchVO.getNowPage();
+    int start = (nowPage - 1) * perPage;
+
+    searchVO.setPerPage(perPage);
+    searchVO.setNowPage(nowPage);
+    searchVO.setStart(start);
+
     int total = bookService.getBookTotalCountByKeyword(searchVO);
     searchVO.setTotal(total);
     
