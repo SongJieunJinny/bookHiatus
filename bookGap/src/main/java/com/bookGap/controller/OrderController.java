@@ -56,6 +56,7 @@ public class OrderController {
     }
 
     List<Map<String, Object>> orderItems = new ArrayList<>();
+   System.out.println("orderItems"+orderItems);
 
     if(isbns != null && !isbns.isEmpty()){
       if(quantities == null || isbns.size() != quantities.size()){
@@ -88,11 +89,12 @@ public class OrderController {
     // 기본 배송지 정보 및 주소 리스트 조회
     UserAddressVO defaultAddress = orderService.getDefaultAddress(sessionUserId);
     List<UserAddressVO> addressList = orderService.getAddressList(sessionUserId);
-
+    System.out.println("orderItems"+orderItems);
     model.addAttribute("orderItems", orderItems);
     model.addAttribute("defaultAddress", defaultAddress);
     model.addAttribute("addressList", addressList);
     model.addAttribute("userAddressId", userAddressId);
+    System.out.println("userAddressId"+userAddressId);
     model.addAttribute("totalPrice", totalPrice);
 
     return "order/orderMain";
