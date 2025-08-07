@@ -15,8 +15,7 @@ import com.bookGap.vo.ProductApiVO;
 @Controller
 public class SearchController {
   
-  @Autowired
-  public BookService bookService; 
+  @Autowired public BookService bookService; 
 
   @RequestMapping("/product/bookSearch.do")
   public String searchBooks(@ModelAttribute("searchVO") SearchVO searchVO, Model model) {
@@ -45,4 +44,5 @@ public class SearchController {
 
     return "product/bookSearch";
   }
+
 }

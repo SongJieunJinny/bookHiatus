@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.bookGap.dao.UserDAO;
+import com.bookGap.vo.MypageVO;
 import com.bookGap.vo.UserAddressVO;
 import com.bookGap.vo.UserInfoVO;
 
@@ -60,5 +61,15 @@ public class UserServiceImpl implements UserService {
       
       throw new RuntimeException(e);
     }
+  }
+  
+  @Override
+  public int userPwUpdate(UserInfoVO user) {
+    return userDAO.userPwUpdate(user);
+  }
+  
+  @Override
+  public boolean checkUserExists(String userId, String userEmail) {
+      return userDAO.checkUserExists(userId, userEmail);
   }
 }
