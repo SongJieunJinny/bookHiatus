@@ -10,5 +10,6 @@ public interface CartService {
     boolean updateCartCount(int cartNo, int count);        // 수량 수정
     boolean deleteCartItem(int cartNo);                    // 삭제
     String  addOrUpdateCartItem(CartVO vo);                // 중복 ISBN 자동 합산 + 삽입 
+    Integer getCartCountByUserAndBook(String userId, int bookNo);
     
 }

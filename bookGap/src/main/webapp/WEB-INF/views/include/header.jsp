@@ -1,7 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec" %>
-<sec:authorize access="isAnonymous()"> <!-- 로그인 전 -->
+<sec:authorize access="isAnonymous()"> 
+<!-- 로그인 전 -->
 <header>
 	<div id="menuDiv">
 	  <!-- 로고 -->
@@ -59,7 +60,8 @@
 </header>
 </sec:authorize>
 
-<sec:authorize access="isAuthenticated()"> <!-- 로그인 후 -->
+<sec:authorize access="isAuthenticated()">
+ <!-- 로그인 후 -->
 <header>
 	<div id="menuDiv">
 	  <!-- 로고 -->
@@ -495,4 +497,44 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 });
+function updateCartCount() {
+	  const cartCountElement = document.getElementById("cart-count");
+	  const cartCountTitle = document.getElementById("cartCountTitle");
+
+	  if (!cartCountElement && !cartCountTitle) return;
+
+	  if (typeof isLoggedIn !== "undefined" && isLoggedIn) {
+	    $.get(contextPath + "/product/getCartCount.do", function(count) {
+	      console.log("서버에서 받은 장바구니 개수:", count);
+	      const cartCount = parseInt(count, 10) || 0;
+
+	      if (cartCountElement) {
+	        cartCountElement.textContent = cartCount;
+	        cartCountElement.style.visibility = cartCount > 0 ? "visible" : "hidden";
+	      }
+
+	      if (cartCountTitle) {
+	        cartCountTitle.textContent = "장바구니(" + cartCount + ")";
+	      }
+	    }).fail(function(err) {
+	      console.error("장바구니 개수 불러오기 실패", err);
+	    });
+	  } else {
+	    let cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
+	    if (!Array.isArray(cartItems)) {
+	      cartItems = Object.values(cartItems).filter(item => typeof item === 'object');
+	    }
+	    const cartCount = cartItems.length;
+
+	    if (cartCountElement) {
+	      cartCountElement.textContent = cartCount;
+	      cartCountElement.style.visibility = cartCount > 0 ? "visible" : "hidden";
+	    }
+
+	    if (cartCountTitle) {
+	      cartCountTitle.textContent = "장바구니(" + cartCount + ")";
+	    }
+	  }
+	}
+
 </script>

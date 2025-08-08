@@ -31,7 +31,14 @@
 </style>
 </head>
 <body>
-	<body>
+<sec:authorize access="isAuthenticated()">
+  <script>
+    const isLoggedIn = true;
+  </script>
+</sec:authorize>
+<sec:authorize access="isAnonymous()">
+  <script>const isLoggedIn = false;</script>
+</sec:authorize>
     <jsp:include page="/WEB-INF/views/include/header.jsp" />
 
     <!-- 추천 도서 영역 -->
@@ -117,15 +124,6 @@ $(document).ready(function() {
     });
 });
 
-function updateCartCount() {
-    let cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
-    let cartCount = cartItems.length;
-    let cartCountElement = document.getElementById("cart-count");
-    if (cartCountElement) {
-        cartCountElement.textContent = cartCount;
-        cartCountElement.style.visibility = cartCount > 0 ? "visible" : "hidden";
-    }
-}
 </script>
 </body>
 </html>

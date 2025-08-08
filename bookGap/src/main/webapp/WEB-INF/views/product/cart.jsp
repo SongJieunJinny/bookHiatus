@@ -150,30 +150,6 @@ function normalizeCartItems(items) {
 
 }
 
-function updateCartCount() {
-    let cartItems = [];
-
-    if (typeof isLoggedIn !== "undefined" && isLoggedIn) {
-        cartItems = dbCartItems;
-    } else {
-        cartItems = getCartItemsFromLocalStorage();
-    }
-
-    const cartCount = cartItems.length;
-
-    const cartCountElement = document.getElementById("cart-count");
-    const cartCountTitle = document.getElementById("cartCountTitle");
-
-    if (cartCountTitle) {
-        cartCountTitle.textContent = "장바구니(" + cartCount + ")";
-    }
-
-    if (cartCountElement) {
-        cartCountElement.textContent = cartCount;
-        cartCountElement.style.visibility = cartCount > 0 ? "visible" : "hidden";
-    }
-}
-
 function updateCartMessage() {
     const cartItemCount = document.querySelectorAll(".cartItem").length;
     const emptyMessages = document.querySelectorAll(".emptyCartMessage");
@@ -540,61 +516,96 @@ $(document).ready(function () {
 <script>		
 //========== 모달 열기/닫기 ==========
 document.addEventListener("DOMContentLoaded", function () {
-    const firstModal = document.getElementById("firstModal");
-    const secondModal = document.getElementById("secondModal");
-    const cartInfoBtn = document.getElementById("cartInfoBtn");
-    const closeFirst = document.getElementById("closeFirstModal");
-    const closeSecond = document.getElementById("closeSecondModal");
+  const firstModal    = document.getElementById("firstModal");
+  const secondModal   = document.getElementById("secondModal");
+  const cartInfoBtn   = document.getElementById("cartInfoBtn");
+  const closeFirst    = document.getElementById("closeFirstModal");
+  const closeSecond   = document.getElementById("closeSecondModal");
+  const addAddressBtn = document.getElementById("addAddressBtn");
+  const loginModal    = document.getElementById("loginModal"); // 로그인 모달
+  const menuLogin     = document.getElementById("menuLogin");  // 헤더 로그인 버튼(모달 트리거)
 
-    if (firstModal) firstModal.style.display = "none";
+  // 초기엔 항상 닫기
+  if (firstModal)  firstModal.style.display  = "none";
+  if (secondModal) secondModal.style.display = "none";
+
+  // 공통: 모든 배송지 모달 강제 닫기
+  function forceCloseAddressModals() {
+    if (firstModal)  firstModal.style.display  = "none";
     if (secondModal) secondModal.style.display = "none";
+  }
 
-    // 배송지 목록 모달 열기
-     if (cartInfoBtn) {
-        cartInfoBtn.addEventListener("click", function () {
-            if (!window.isLoggedIn) {
-                alert("로그인이 필요한 기능입니다.");
-                const loginBtn = document.getElementById("menuLogin");
-                if (loginBtn) {
-                    loginBtn.click(); // 로그인 버튼 강제 클릭
-                } else {
-                    location.href = contextPath + "/member/login.do"; // 로그인 페이지로 이동
-                }
-                return;
-            }
+  // 로그인 모달만 띄우는 유틸 (리다이렉트 X)
+  function openLoginModalOnly() {
+    alert("로그인이 필요한 기능입니다.");
+    forceCloseAddressModals();        // 혹시 열려있어도 무조건 닫아버림
 
-            if (firstModal) {
-                firstModal.style.display = "flex";
-                loadAddressList();
-            } else {
-                console.error("firstModal 요소를 찾을 수 없습니다.");
-            }
-        });
+    // 헤더 버튼이 모달을 띄우도록 이미 연결돼 있다면 그걸 트리거
+    if (menuLogin) {
+      menuLogin.click();
+    } else if (loginModal) {
+      // 직접 띄우기 (show 클래스는 header.jsp CSS 기준)
+      loginModal.classList.add("show");
     }
 
-     if (closeFirst) {
-         closeFirst.addEventListener("click", function () {
-             firstModal.style.display = "none";
-             updateDeliveryInfo();
-         });
-     }
+    // 포커스 주기(선택)
+    const idInput = document.getElementById("loginId");
+    if (idInput) setTimeout(() => idInput.focus(), 0);
+  }
 
-    // 배송지 추가 모달 열기
-     if (document.getElementById("addAddressBtn")) {
-        document.getElementById("addAddressBtn").addEventListener("click", function () {
-            if (secondModal) {
-                secondModal.style.display = "flex";
-                $("#addressForm").show();
-            }
-        });
-    }
+  // 배송지 목록 모달 열기 버튼
+  if (cartInfoBtn) {
+    cartInfoBtn.addEventListener("click", function (e) {
+      e.preventDefault();
 
-     if (closeSecond) {
-         closeSecond.addEventListener("click", function () {
-             secondModal.style.display = "none";
-             $("#addressForm").hide();
-         });
-     }
+      // 로그인 안 되어 있으면: 로그인 모달만 열고 즉시 종료
+      if (window.isLoggedIn !== true) {
+        openLoginModalOnly();
+        return; // 아래 firstModal 열리는 코드 절대 실행 안 함
+      }
+
+      // 로그인된 경우에만 열기
+      if (firstModal) {
+        firstModal.style.display = "flex";
+        loadAddressList();
+      }
+    });
+  }
+
+  // 첫 번째 모달 닫기
+  if (closeFirst) {
+    closeFirst.addEventListener("click", function () {
+      if (firstModal) firstModal.style.display = "none";
+      updateDeliveryInfo();
+    });
+  }
+
+  // 배송지 추가 모달 열기 (여기도 로그인 체크 한 번 더!)
+  if (addAddressBtn) {
+    addAddressBtn.addEventListener("click", function () {
+      if (window.isLoggedIn !== true) {
+        openLoginModalOnly();
+        return;
+      }
+      if (secondModal) {
+        secondModal.style.display = "flex";
+        $("#addressForm").show();
+      }
+    });
+  }
+
+  // 두 번째 모달 닫기
+  if (closeSecond) {
+    closeSecond.addEventListener("click", function () {
+      if (secondModal) secondModal.style.display = "none";
+      $("#addressForm").hide();
+    });
+  }
+
+  // 안전장치: 페이지 로드 시 비로그인이라면 주소 모달이 열려있지 않도록 보장
+  if (window.isLoggedIn !== true) {
+    forceCloseAddressModals();
+  }
 });
 //========== 배송지 목록 불러오기 (회원 전용) ==========
 let isAddressLoading = false; 
@@ -711,13 +722,6 @@ document.addEventListener("DOMContentLoaded", function () {
         console.error(" cartInfoBtn이 존재하지 않습니다!");
         return;
     }
-
-    cartInfoBtn.addEventListener("click", function () {
-        console.log("배송지 모달 버튼 클릭됨");
-        firstModal.style.display = "flex";
-        loadAddressList(); 
-        console.log("loadAddressList 호출됨")
-    });
 });
 // ========== 배송지 추가 (회원 전용) ==========
 $("#saveAddress").on("click", function (event) {
@@ -845,7 +849,7 @@ function syncLocalCartToDB() {
             fetchAndUpdateCart(); // 최신 DB 기준 렌더링
         },
         error: function (xhr) {
-            console.error("[에러] 동기화 실패", xhr.responseText);
+            console.error("동기화 실패", xhr.responseText);
         }
     });
 }

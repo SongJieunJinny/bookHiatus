@@ -201,10 +201,9 @@ const userRole = '<sec:authentication property="authorities" htmlEscape="false" 
 
 $(document).ready(function() {
 
-  updateCartCount(); 
-  if (typeof initHeaderEvents === "function") {
+   updateCartCount(); 
     initHeaderEvents(); // 헤더 버튼들이 이제 정상적으로 동작.
-  }
+  
   if (isLoggedIn) {
     syncLocalCartToDB();
   }
@@ -225,7 +224,7 @@ $(document).ready(function() {
   $(document).on("change", "div.comment-list .reviewLikeInput", function () { const cmt = $(this).data("commentno"); if(cmt){ toggleLove(cmt, isbn, userId, this); }});
   $(document).on("change", ".reviewLikeInput", function () { $(this).closest(".reviewLike").toggleClass("active", this.checked); });
   
-  
+
   const minusBtn = document.querySelector(".minus");
   const plusBtn = document.querySelector(".plus");
   const numInput = document.querySelector(".num");
@@ -273,6 +272,7 @@ $(document).ready(function() {
     });
     updateTotalPrice();
   }
+  
   // 장바구니 버튼
   $(document).on("click", "#bookChartBtn", function () {
     const quantity = parseInt($(".num").val()) || 1;
@@ -298,7 +298,7 @@ $(document).ready(function() {
       return;
     }
 
-    $.get(contextPath + "/product/getCartCount.do", { bookNo: bookNo, userId: userId }, function(existingCount) {
+    $.get(contextPath + "/product/getCartCountByBook.do", { bookNo: bookNo, userId: userId }, function(existingCount) {
       const finalCount = (parseInt(existingCount) || 0) + quantity;
       $.ajax({ url: contextPath + "/product/addOrUpdateCart.do",
 			type: "POST",
@@ -382,7 +382,8 @@ $(document).ready(function() {
 	  }
   });
   
-
+  
+ 
   // 로그인 모달 및 펼쳐보기 버튼 로직
   
 
@@ -781,20 +782,6 @@ function getCartItemsFromLocalStorage() {
   }
 }
 
-// 장바구니 개수 업데이트 (bookView.jsp에서는 카운트만 갱신)
-function updateCartCount() {
-  let cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
-  if (!Array.isArray(cartItems)) {
-    cartItems = Object.values(cartItems).filter(item => typeof item === 'object');
-  }
-  const cartCount = cartItems.length;
-  const cartCountElement = document.getElementById("cart-count");
-
-  if (cartCountElement) {
-    cartCountElement.textContent = cartCount;
-    cartCountElement.style.visibility = cartCount > 0 ? "visible" : "hidden";
-  }
-}
 
 // 로그인 시 로컬 장바구니를 DB로 동기화 (bookView에서는 카운트만 업데이트)
 function syncLocalCartToDB() {

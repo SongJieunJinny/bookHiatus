@@ -36,5 +36,10 @@ public class CartServiceImpl implements CartService {
     public String addOrUpdateCartItem(CartVO vo) {
         return cartDAO.addOrUpdateCart(vo);  // DB_OK 또는 EXISTING_UPDATED 반환
     }
+    
+    @Override
+    public Integer getCartCountByUserAndBook(String userId, int bookNo) {
+        return cartDAO.getCartCountByUserAndBook(userId, bookNo);
+    }
 
 }

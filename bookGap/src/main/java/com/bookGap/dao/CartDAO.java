@@ -60,7 +60,10 @@ public class CartDAO {
 	        }
 	    }
 	    
-	    
+	    public Integer getCartCountByUserAndBook(String userId, int bookNo) {
+	        return sqlSession.selectOne(namespace + "getCartCountByUserAndBook", 
+	            Map.of("userId", userId, "bookNo", bookNo));
+	    }
 	    
 	
 }
