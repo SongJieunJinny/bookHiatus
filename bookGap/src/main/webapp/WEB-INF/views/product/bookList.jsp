@@ -13,6 +13,14 @@
 	<link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/resources/css/book/bookList.css?v=2"/>
 </head>
 <body>
+<sec:authorize access="isAuthenticated()">
+  <script>
+    const isLoggedIn = true;
+  </script>
+</sec:authorize>
+<sec:authorize access="isAnonymous()">
+  <script>const isLoggedIn = false;</script>
+</sec:authorize>
 	<jsp:include page="/WEB-INF/views/include/header.jsp" />
 	<!-- 책 목록 -->
 	<section class="bookList">
@@ -73,17 +81,7 @@
 	updateCartCount(); // 장바구니 개수 업데이트
 	initHeaderEvents();
   });
-  
-	function updateCartCount() {
-		let cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
-		let cartCount = cartItems.length;
-		let cartCountElement = document.getElementById("cart-count");
 
-		if (cartCountElement) {
-				cartCountElement.textContent = cartCount;
-				cartCountElement.style.visibility = cartCount > 0 ? "visible" : "hidden";
-		}
-	}
 </script>
 </body>
 </html>

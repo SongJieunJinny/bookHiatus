@@ -51,6 +51,14 @@ section {
 </style>
 </head>
 <body>
+<sec:authorize access="isAuthenticated()">
+  <script>
+    const isLoggedIn = true;
+  </script>
+</sec:authorize>
+<sec:authorize access="isAnonymous()">
+  <script>const isLoggedIn = false;</script>
+</sec:authorize>
 <jsp:include page="/WEB-INF/views/include/header.jsp" />
 <section>
 <div class="BookStoreName">북틈 소개</div>
@@ -70,20 +78,11 @@ section {
 <script>
  // 장바구니 개수 업데이트 함수
  $(document).ready(function() {
-  updateCartCount(); // 장바구니 개수 업데이트
+   updateCartCount(); // 장바구니 개수 업데이트
    initHeaderEvents();
  });
  
-function updateCartCount() {
-	let cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
-	let cartCount = cartItems.length;
-	let cartCountElement = document.getElementById("cart-count");
 
-	if (cartCountElement) {
-			cartCountElement.textContent = cartCount;
-			cartCountElement.style.visibility = cartCount > 0 ? "visible" : "hidden";
-	}
-}
 </script>
 <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=56c7bb3d435c0c4f0d2b67bfa7d4407e&libraries=services"></script>
 <script>

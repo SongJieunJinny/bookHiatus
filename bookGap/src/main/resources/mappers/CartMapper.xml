@@ -21,6 +21,10 @@
     WHERE c.USER_ID = #{userId}
 </select>
 
+	<select id="getCartCountByUserAndBook" resultType="int">
+	  SELECT COUNT FROM CART WHERE USER_ID = #{userId} AND BOOK_NO = #{bookNo}
+	</select>
+
  <!-- 장바구니 아이템 추가 -->
   <insert id="insertCartItem">
     INSERT INTO CART (USER_ID, BOOK_NO, COUNT)

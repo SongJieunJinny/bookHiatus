@@ -123,7 +123,12 @@ public class CartController {
     }
     
     
-    
+    @ResponseBody
+    @RequestMapping(value = "/product/getCartCountByBook.do", method = RequestMethod.GET)
+    public int getCartCountByBook(@RequestParam String userId, @RequestParam int bookNo) {
+        Integer count = cartService.getCartCountByUserAndBook(userId, bookNo);
+        return (count != null) ? count : 0;
+    }
     
     
 }

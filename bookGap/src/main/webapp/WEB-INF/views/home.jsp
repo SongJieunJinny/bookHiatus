@@ -110,6 +110,14 @@
 </style>
 </head>
 <body>
+<sec:authorize access="isAuthenticated()">
+  <script>
+    const isLoggedIn = true;
+  </script>
+</sec:authorize>
+<sec:authorize access="isAnonymous()">
+  <script>const isLoggedIn = false;</script>
+</sec:authorize>
 	<jsp:include page="/WEB-INF/views/include/header.jsp" />
 	<nav>
 		<div id="navMenu">
@@ -171,10 +179,9 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   // 장바구니 수량 갱신
-  updateCartCount();
-  if (typeof initHeaderEvents === "function") {
+   updateCartCount();
     initHeaderEvents();
-  }
+  
 
   // ▶ 제목에서 괄호 시작 후 삭제
   document.querySelectorAll(".bookName").forEach(el => {
@@ -186,15 +193,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
-function updateCartCount() {
-  let cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
-  let cartCount = cartItems.length;
-  let cartCountElement = document.getElementById("cart-count");
-  if (cartCountElement) {
-    cartCountElement.textContent = cartCount;
-    cartCountElement.style.visibility = cartCount > 0 ? "visible" : "hidden";
-  }
-}
+
 </script>
 </body>
 </html>
