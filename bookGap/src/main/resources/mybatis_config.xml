@@ -28,6 +28,7 @@
 		<typeAlias type="com.bookGap.vo.RecommendBookVO" alias="RecommendBookVO"/>
 		<typeAlias type="com.bookGap.vo.GuestVO" alias="GuestVO"/>
 		<typeAlias type="com.bookGap.vo.ComplainVO" alias="ComplainVO"/>
+		<typeAlias type="com.bookGap.vo.RefundVO" alias="RefundVO"/>
 	</typeAliases>
 
 </configuration>

@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.bookGap.dao.UserDAO;
-import com.bookGap.vo.MypageVO;
 import com.bookGap.vo.UserAddressVO;
 import com.bookGap.vo.UserInfoVO;
 

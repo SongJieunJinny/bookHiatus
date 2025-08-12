@@ -84,38 +84,37 @@
       </div>
 	    <div id="guestOrderSection">
 	      <div id="orderTable">
-			  <div class="SectionTitle">ORDER DETAILS</div>
-			  <div class="layout">
-			    <c:set var="totalPrice" value="0" />
-			    <!-- bookList와 quantityList를 이용한 반복 출력 -->
-			    <c:forEach var="book" items="${bookList}" varStatus="status">
-			      <c:set var="quantity" value="${quantityList[status.index]}" />
-			      <c:set var="itemTotal" value="${book.discount * quantity}" />
-			      <c:set var="totalPrice" value="${totalPrice + itemTotal}" />
-			      <div class="orderDetail">
-			        <div class="orderDetailDiv">
-			          <img class="orderImg" src="${book.image}" alt="${book.title}">
-			          <div class="orderDetails">
-			            <div class="orderDetailsTitle">${book.title}</div>
-			            <div class="orderDetailsContainer">
-			              <span class="orderCount">${quantity}개</span>
-			              <span class="orderSlash">/</span>
-			              <span class="orderPrice">
-			                <fmt:formatNumber value="${itemTotal}" pattern="#,###"/>원
-			              </span>
-			            </div>
-			          </div>
-			        </div>
-			      </div>
-			    </c:forEach>
-			    <!-- 총 합계 출력 -->
-			    <div class="orderTotalPrice">
-			      총 합계: <fmt:formatNumber value="${totalPrice}" pattern="#,###"/>원
-			    </div>
-			  </div>
-			</div>
-	      </div>
-	      <div id="payMathodTable">
+			  	<div class="SectionTitle">ORDER DETAILS</div>
+			  	<div class="layout">
+			    	<c:set var="totalPrice" value="0" />
+				    <!-- bookList와 quantityList를 이용한 반복 출력 -->
+				    <c:forEach var="book" items="${bookList}" varStatus="status">
+				      <c:set var="quantity" value="${quantityList[status.index]}" />
+				      <c:set var="itemTotal" value="${book.discount * quantity}" />
+				      <c:set var="totalPrice" value="${totalPrice + itemTotal}" />
+				      <div class="orderDetail">
+				        <div class="orderDetailDiv">
+				          <img class="orderImg" src="${book.image}" alt="${book.title}">
+				          <div class="orderDetails">
+				            <div class="orderDetailsTitle">${book.title}</div>
+				            <div class="orderDetailsContainer">
+				              <span class="orderCount">${quantity}개</span>
+				              <span class="orderSlash">/</span>
+				              <span class="orderPrice">
+				                <fmt:formatNumber value="${itemTotal}" pattern="#,###"/>원
+				              </span>
+				            </div>
+				          </div>
+				        </div>
+				      </div>
+				    </c:forEach>
+				    <!-- 총 합계 출력 -->
+				    <div class="orderTotalPrice">
+				      총 합계: <fmt:formatNumber value="${totalPrice}" pattern="#,###"/>원
+				    </div>
+				  </div>
+				</div>
+				<div id="payMathodTable">
 	        <div class="SectionTitle">PAYMENT METHOD</div>
 	        <div class="layout">
 	          <div class="payContainer">
@@ -129,40 +128,40 @@
 	        </div>
 	      </div>
 	    </div>
-	    <div id="guestOrderAside">
-		  <div id="paymentAside">
-		    <div class="SectionTitle">PAYMENT</div>
-		    <div class="layout">
-		      <!-- 다중 상품 대응용 총합 변수 사용 -->
-		      <c:set var="deliveryFee" value="${totalPrice >= 50000 ? 0 : 3000}" />
-		      <c:set var="finalPrice" value="${totalPrice + deliveryFee}" />
-		      <div class="asideDivLayout">
-		        <div class="asideDiv">
-		          <div class="asideTextPrice">
-		            <div class="asideText1">상품금액</div>
-		            <div class="Price">
-		              <fmt:formatNumber value="${totalPrice}" pattern="#,###"/>원
-		            </div>
-		          </div>
-		          <div class="asideTextPrice">
-		            <div class="asideText1">배송비</div>
-		            <div class="deliveryFee">
-		              <fmt:formatNumber value="${deliveryFee}" pattern="#,###"/>원
-		            </div>
-		          </div>
-		        </div>
-		        <div class="asideDiv">
-		          <div class="asideLine"></div>
-		        </div>
-		        <div class="asideDiv">
-		          <div class="asideText2">최종결제금액</div>
-		          <div class="finalPrice" data-price="${finalPrice}">
-		            <fmt:formatNumber value="${finalPrice}" pattern="#,###"/>원
-		          </div>
-		        </div>
-		      </div>
-		    </div>
-		  </div>
+      <div id="guestOrderAside">
+			  <div id="paymentAside">
+			    <div class="SectionTitle">PAYMENT</div>
+			    <div class="layout">
+			      <!-- 다중 상품 대응용 총합 변수 사용 -->
+			      <c:set var="deliveryFee" value="${totalPrice >= 50000 ? 0 : 3000}" />
+			      <c:set var="finalPrice" value="${totalPrice + deliveryFee}" />
+			      <div class="asideDivLayout">
+			        <div class="asideDiv">
+			          <div class="asideTextPrice">
+			            <div class="asideText1">상품금액</div>
+			            <div class="Price">
+			              <fmt:formatNumber value="${totalPrice}" pattern="#,###"/>원
+			            </div>
+			          </div>
+			          <div class="asideTextPrice">
+			            <div class="asideText1">배송비</div>
+			            <div class="deliveryFee">
+			              <fmt:formatNumber value="${deliveryFee}" pattern="#,###"/>원
+			            </div>
+			          </div>
+			        </div>
+			        <div class="asideDiv">
+			          <div class="asideLine"></div>
+			        </div>
+			        <div class="asideDiv">
+			          <div class="asideText2">최종결제금액</div>
+			          <div class="finalPrice" data-price="${finalPrice}">
+			            <fmt:formatNumber value="${finalPrice}" pattern="#,###"/>원
+			          </div>
+			        </div>
+			      </div>
+			    </div>
+			  </div>
 	      <div id="agreeTable">
 	        <div class="asideAgree">
 	          <div class="agree1Div">

@@ -12,6 +12,7 @@ public class OrderVO {
   private String userId; //아이디
   private String guestId;  //비회원아이디
   private Integer cartNo;   //장바구니번호
+  private int userAddressId; 
 
   private String receiverName;            // 수취인 이름
   private String receiverPhone;           // 수취인 연락처
@@ -28,6 +29,13 @@ public class OrderVO {
   
   List<OrderDetailVO> getOrderDetails() {
     return orderDetails;
+  }
+  
+  public int getUserAddressId() {
+    return userAddressId;
+  }
+  public void setUserAddressId(int userAddressId) {
+    this.userAddressId = userAddressId;
   }
   public void setOrderDetails(List<OrderDetailVO> orderDetails) {
     this.orderDetails = orderDetails;

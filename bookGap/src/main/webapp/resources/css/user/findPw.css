@@ -1,83 +1,96 @@
 @charset "UTF-8";
+
 #findPwNav{
   width: 100%;
-  height: 70%;
+  height: auto; /* 내용에 맞게 높이 자동 조절 */
+  min-height: 500px; /* 최소 높이 지정 */
+  margin-bottom: 50px;
 }
 #findPwHead{
   width: 100%;
-  height: 20%;
+  padding-top: 3%;
+  padding-bottom: 3%;
 }
 #findPwHeadDiv{
-  margin-top: 3%;
-  margin-bottom: 3%;
   text-align: center;
   font-size: 25px;
-  display: flex;
-  justify-items: center;
-  justify-content: center;
 }
-#findPwMid{
-  width: 100%;
-  height: 50%;
-  display:inline-block;
-  justify-items: center;
-  justify-content: center;
-}
-#findPwMidDiv{
+.findPwMidDiv{
   width: 620px;
-  height: 200px;
-  border: 1px solid lightgrey;
-  border-radius: 30px;
-  background-color: lightgrey;
+  height: auto; /* 높이 자동 조절 */
+  padding: 40px;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  background-color: #f9f9f9;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin: 0 auto; /* 가운데 정렬 */
+  box-sizing: border-box; /* 패딩 포함 크기 계산 */
 }
-#findPwInput{
+.findPwInput{
   display:flex;
   flex-direction: column;
-  align-items: center; 
-  margin-left: 10%;
+  align-items: center;
+  margin-right: 20px; /* 버튼과의 간격 */
+  margin-top: 35px;
 }
-#findPwId{
-  border: 1px solid lightgrey;
+.findPwInput.column input {
+  margin-bottom: 10px; /* 입력창 사이의 간격 */
+  width: 300px; /* 너비 통일 */
+}
+.findPwInput.column input:last-child {
+  margin-bottom: 0;
+}
+.findPwInput input{
+  border: 1px solid #ccc;
   border-radius: 10px;
-  padding: 6%;
-  padding-right: 70%;
-  font-size: medium;
+  padding: 15px;
+  font-size: 17px;
+  width: 300px; /* 너비 조절 */
 }
-#findPwEmail{
-  border: 1px solid lightgrey;
-  border-radius: 10px;
-  padding: 6%;
-  padding-right: 70%;
-  font-size: medium;
+.findPwInput input:focus {
+  outline: none;
+  border-color: black;
 }
-#findPwBtn{
-  border: 1px solid black;
+.findPwInput #findPwEmail {
+  margin-top: 10px;
+}
+#findPwBtn {
+  border: none;
   border-radius: 10px;
   background-color: black;
   color: white;
-  margin-left: 15%;
-  padding-top: 5%;
-  padding-bottom: 5%;
-  padding-left: 4%;
-  padding-right: 4%;
-  font-size: medium;
+  padding: 15px 30px;
+  font-size: 17px;
   cursor: pointer;
+  height: fit-content;
+  white-space: nowrap; /* 버튼 글자 깨짐 방지 */
 }
-#findPwEnd{
-  width: 100%;
-  height: 30%;
-  margin-top: 2%;
-  margin-bottom: 2%;
+ #resetPwBtn {
+  border: none;
+  border-radius: 10px;
+  background-color: black;
+  color: white;
+  padding: 12px 40px 30px 40px;
+  font-size: 16px;
+  cursor: pointer;
+  height: 50px;
+  text-align: center;
+  white-space: nowrap; /* 버튼 글자 깨짐 방지 */
 }
-#findPwInfoDiv{
+.findPwEndDiv{
   width: 100%;
-  height: 30%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 1%;
-  margin-bottom: 3%;
+  margin-top: 15px;
+  text-align: center;
+}
+.findPwInfo1{
+  font-size: 14px;
+  color: #888;
+}
+#password-feedback {
+  height: 20px;
+  font-size: 13px;
+  color: red;
+  margin-top: 5px;
 }

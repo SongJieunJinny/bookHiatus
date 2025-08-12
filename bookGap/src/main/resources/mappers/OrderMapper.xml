@@ -59,11 +59,11 @@
 	<!-- orders 테이블에 주문 정보 저장 -->
 	<insert id="insertOrder" parameterType="com.bookGap.vo.OrderVO" useGeneratedKeys="true" keyProperty="orderId">
 	  INSERT INTO ORDERS (
-	    ORDER_DATE, ORDER_STATUS, TOTAL_PRICE, ORDER_TYPE, USER_ID, GUEST_ID,
+	    ORDER_DATE, ORDER_STATUS, TOTAL_PRICE, ORDER_TYPE, USER_ID, GUEST_ID, USER_ADDRESS_ID,
 	    RECEIVER_NAME, RECEIVER_PHONE, RECEIVER_POST_CODE, RECEIVER_ROAD_ADDRESS, 
 	    RECEIVER_DETAIL_ADDRESS, DELIVERY_REQUEST, ORDER_PASSWORD
 	  ) VALUES (
-	    NOW(), #{orderStatus}, #{totalPrice}, #{orderType}, #{userId}, #{guestId},
+	    NOW(), #{orderStatus}, #{totalPrice}, #{orderType}, #{userId}, #{guestId}, #{userAddressId},
 	    #{receiverName}, #{receiverPhone}, #{receiverPostCode}, #{receiverRoadAddress},
 	    #{receiverDetailAddress}, #{deliveryRequest}, #{orderPassword}
 	  )
@@ -214,4 +214,28 @@
 	    #{detail.orderId})
 	  </foreach>
 	</insert>
+	
+	<!-- 주문 생성 시, '어디로 보낼지'에 대한 상세 정보를 얻기 위해 필요 -->
+	<select id="findAddressByUserAddressId" parameterType="int" resultType="com.bookGap.vo.UserAddressVO">
+	  SELECT ua.USER_ADDRESS_ID   AS userAddressId,
+	         ua.ADDRESS_NAME      AS addressName,
+	         ua.POST_CODE         AS postCode,
+	         ua.ROAD_ADDRESS      AS roadAddress,
+	         ua.DETAIL_ADDRESS    AS detailAddress,
+	         ua.USER_ID           AS userId,
+	         u.USER_NAME          AS userName,
+	         u.USER_PHONE         AS userPhone
+	    FROM USER_ADDRESS ua
+	    JOIN USER u 
+	      ON ua.USER_ID = u.USER_ID
+	   WHERE ua.USER_ADDRESS_ID = #{userAddressId}
+	</select>
+
+	<!-- 주문이 최종 확정될 때, 판매된 상품의 재고를 차감하기 위해 반드시 필요 -->
+	<update id="updateBookStock" parameterType="java.util.Map">
+	  UPDATE BOOK
+	     SET BOOK_STOCK = BOOK_STOCK - #{quantity} <!-- 'quantity' 또는 'count' 등 서비스 로직에서 넘겨주는 이름과 일치시켜야 함 -->
+	   WHERE isbn = #{isbn} <!-- ISBN을 기준으로 재고를 업데이트하는 것이 더 명확할 수 있습니다. bookNo를 사용해도 무방합니다. -->
+	     AND BOOK_STOCK >= #{quantity} <!-- 재고가 부족할 경우 업데이트되지 않도록 막는 안전장치 -->
+	</update>
 </mapper>
