@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+			"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bookGap.mapper.paymentMapper">
+
+  <!-- ========== 공통 결제 로직 ========== -->
+  <insert id="insertPayment" parameterType="com.bookGap.vo.PaymentVO" useGeneratedKeys="true" keyProperty="paymentNo">
+    INSERT INTO PAYMENTS (amount, payment_method, status, created_at, ORDER_ID, USER_ID, GUEST_ID)
+    VALUES (#{amount}, #{paymentMethod}, 1, NOW(), #{orderId}, #{userId}, #{guestId})
+  </insert>
+
+  <update id="updatePaymentStatus" parameterType="map">
+	  UPDATE PAYMENTS
+	  SET status = #{status}
+	  WHERE PAYMENT_NO = #{paymentNo}
+  </update>
+
+  <!-- ========== 카카오페이 관련 로직 ========== -->
+  <insert id="insertKakaoRequest" parameterType="com.bookGap.vo.KakaoPayRequestVO">
+	  INSERT INTO KAKAOPAY_REQUESTS (
+      PAYMENT_NO, cid, partner_order_id, partner_user_id, item_name, quantity, 
+      total_amount, tax_free_amount, approval_url, cancel_url, fail_url
+	  ) VALUES (
+      #{paymentNo}, #{cid}, #{partnerOrderId}, #{partnerUserId}, #{itemName}, #{quantity},
+      #{totalAmount}, #{taxFreeAmount}, #{approvalUrl}, #{cancelUrl}, #{failUrl}
+	  )
+  </insert>
+
+  <update id="updateKakaoTid" parameterType="com.bookGap.vo.KakaoPayRequestVO">
+	  UPDATE KAKAOPAY_REQUESTS
+	  SET tid = #{tid}
+	  WHERE PAYMENT_NO = #{paymentNo}
+  </update>
+  
+   <select id="findKakaoRequestByPaymentNo" parameterType="int" resultType="com.bookGap.vo.KakaoPayRequestVO">
+	  SELECT * 
+	  FROM KAKAOPAY_REQUESTS 
+	  WHERE PAYMENT_NO = #{paymentNo}
+  </select>
+  
+  <insert id="insertKakaoCancel" parameterType="com.bookGap.vo.KakaoPayCancelVO">
+	  INSERT INTO KAKAOPAY_CANCEL (PAYMENT_NO, cid, tid, cancel_amount, cancel_tax_free, cancel_reason)
+	  VALUES (#{paymentNo}, #{cid}, #{tid}, #{cancelAmount}, #{cancelTaxFree}, #{cancelReason})
+  </insert>
+  
+
+  <!-- ========== 토스페이먼츠 관련 로직 ========== -->
+  <insert id="insertTossRequest" parameterType="com.bookGap.vo.TossRequestVO">
+	  INSERT INTO TOSS_REQUESTS (PAYMENT_NO, customer_key, order_name, success_url, fail_url)
+	  VALUES (#{paymentNo}, #{customerKey}, #{orderName}, #{successUrl}, #{failUrl})
+  </insert>
+  
+  <update id="updateTossPaymentKey" parameterType="com.bookGap.vo.TossRequestVO">
+	  UPDATE TOSS_REQUESTS
+	  SET payment_key = #{paymentKey}
+	  WHERE PAYMENT_NO = #{paymentNo}
+  </update>
+  
+   <select id="findTossRequestByPaymentNo" parameterType="int" resultType="com.bookGap.vo.TossRequestVO">
+	  SELECT * 
+	  FROM TOSS_REQUESTS 
+	  WHERE PAYMENT_NO = #{paymentNo}
+  </select>
+
+  <insert id="insertTossCancel" parameterType="com.bookGap.vo.TossCancelVO">
+	  INSERT INTO TOSS_CANCEL (PAYMENT_NO, payment_key, cancel_reason)
+	  VALUES (#{paymentNo}, #{paymentKey}, #{cancelReason})
+  </insert>
+  
+</mapper>

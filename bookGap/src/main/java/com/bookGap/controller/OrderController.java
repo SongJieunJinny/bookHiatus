@@ -6,7 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,9 +23,12 @@ import com.bookGap.service.OrderService;
 import com.bookGap.vo.BookVO;
 import com.bookGap.vo.OrderVO;
 import com.bookGap.vo.UserAddressVO;
+import com.bookGap.vo.UserInfoVO;
 
 @Controller
 public class OrderController {
+  
+  private static final Logger log = LoggerFactory.getLogger(OrderController.class);
   
   @Autowired
   private OrderService orderService;
@@ -47,16 +54,34 @@ public class OrderController {
                           @RequestParam(value = "totalPrice", required = false) Integer totalPrice,
                           Principal principal, Model model) {
 
+    log.info("========== POST /order/orderMain.do 진입 ==========");
+    log.info("수신 파라미터 isbns: {}, quantities: {}", isbns, quantities);
+    
     // 로그인 여부 체크
     if (principal == null) return "redirect:/login";
     String sessionUserId = principal.getName();
-
+    
     if(userIdParam != null && !userIdParam.equals(sessionUserId)){
       return "redirect:/?error=invalid_user";
     }
+    
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    Object principalObj = authentication.getPrincipal();
+
+    // Principal 객체가 UserInfoVO 타입인지 확인
+    if (principalObj instanceof UserInfoVO) {
+        UserInfoVO userInfo = (UserInfoVO) principalObj;
+        model.addAttribute("currentUserId", userInfo.getUserId());
+        // UserInfoVO에 정의된 'userName' 필드 사용
+        model.addAttribute("currentUserName", userInfo.getUserName()); 
+    } else {
+        // 기본 Principal만 있는 경우 (username만 사용 가능)
+        model.addAttribute("currentUserId", sessionUserId);
+        model.addAttribute("currentUserName", "고객"); // 또는 sessionUserId를 그대로 사용
+    }
 
     List<Map<String, Object>> orderItems = new ArrayList<>();
-   System.out.println("orderItems"+orderItems);
+    System.out.println("orderItems"+orderItems);
 
     if(isbns != null && !isbns.isEmpty()){
       if(quantities == null || isbns.size() != quantities.size()){
@@ -98,6 +123,43 @@ public class OrderController {
     model.addAttribute("totalPrice", totalPrice);
 
     return "order/orderMain";
+  }
+  
+  @PostMapping("/order/create")
+  @ResponseBody
+  public Map<String, Object> createOrder(@RequestBody Map<String, Object> orderData, Principal principal) {
+
+    Map<String, Object> response = new HashMap<>();
+
+    String requestUserId = (String) orderData.get("userId");
+    if(principal == null || !principal.getName().equals(requestUserId)){
+      response.put("status", "FAIL");
+      response.put("message", "사용자 인증 정보가 올바르지 않습니다.");
+      return response;
+    }
+
+    // --- 실제 비즈니스 로직은 Service 계층에 위임 ---
+    try {
+      // @Transactional이 적용된 서비스 메서드를 호출. 모든 DB 작업(주문 생성, 재고 차감 등)
+      int newOrderId = orderService.createOrderWithDetails(orderData);
+
+      // 성공 시, 응답 Map에 성공 상태와 새로 생성된 주문 ID를 담습니다.
+      response.put("status", "SUCCESS");
+      response.put("orderId", newOrderId);
+
+    } catch (IllegalStateException e) {
+      // OrderService에서 재고 부족 등 예측된 오류를 보냈을 경우
+      response.put("status", "FAIL");
+      response.put("message", e.getMessage());
+
+    } catch (Exception e) {
+      // 그 외 데이터베이스 연결 문제 등 예측하지 못한 심각한 서버 오류가 발생했을 경우
+      response.put("status", "FAIL");
+      response.put("message", "주문 처리 중 알 수 없는 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+      e.printStackTrace(); 
+    }
+
+    return response;
   }
 
   /*  회원 주문 페이지의 '주소록 추가' 팝업 */
@@ -208,4 +270,5 @@ public class OrderController {
 	    
 	    return "order/orderMain";  
 	}
+
 }

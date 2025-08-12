@@ -26,4 +26,9 @@ public interface OrderService {
   public void registerAddress(UserAddressVO address);
   public void removeAddress(int userAddressId);
 
+  public UserAddressVO findAddressByUserAddressId(int userAddressId);
+  public boolean updateBookStock(String isbn, int quantity);
+  
+  public int createOrderWithDetails(Map<String, Object> orderData) throws IllegalStateException;
+
 }

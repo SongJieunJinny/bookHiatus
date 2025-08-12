@@ -11,13 +11,15 @@
 <script src="<%=request.getContextPath()%>/resources/js/jquery-3.7.1.js"></script>
 <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/resources/css/index.css"/>
 <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/resources/css/book/order.css"/>
+<script src="https://js.tosspayments.com/v1/payment-widget"></script>
 </head>
 <body>
   <jsp:include page="/WEB-INF/views/include/header.jsp" />
-    <section>
+  <section>
     <div id="orderMainHead">
       <div id="order">ORDER</div>
     </div>
+
     <div id="orderMain">
       <div id="orderMainNav">
         <div class="orderMainTableTitle">DELIVERY INFO</div>
@@ -25,39 +27,40 @@
           <div class="deliveryContainer">
             <div class="orderMainDelivery">DELIVERY</div>
             <div class="deliveryAddress">
-              <!-- 컨트롤러에서 받은 기본 배송지 정보를 동적으로 출력 -->
-				<c:choose>
-				  <c:when test="${not empty userAddressId}">
-				    <c:forEach var="addr" items="${addressList}">
-				      <c:if test="${addr.userAddressId == userAddressId}">
-				        <div class="deliveryAddress1">
-				          <div class="deliveryAddressName">
-				            <img id="addressImg" src="<%=request.getContextPath()%>/resources/img/icon/marker.png"> 
-				            <span class="deliveryInfoAddressNickname">${addr.addressName}</span>
-				          </div>
-				          <button id="deliveryAddressBtn">변경</button>  
-				        </div>
-				        <div class="deliveryAddress2">
-				          ${addr.userName} / ${addr.userPhone}
-				        </div>
-				        <div class="deliveryAddress3">
-				          [${addr.postCode}] ${addr.roadAddress} ${addr.detailAddress}
-				        </div>
-				      </c:if>
-				    </c:forEach>
-				  </c:when>
-				  <c:otherwise>
-				    <div class="deliveryAddress1">
-				      <div class="deliveryAddressName">
-				        <img id="addressImg" src="<%=request.getContextPath()%>/resources/img/icon/marker.png">
-				        <span class="deliveryInfoAddressNickname">배송지를 등록해주세요.</span>
-				      </div>
-				      <button id="deliveryAddressBtn">배송지 관리</button>
-				    </div>
-				    <div class="deliveryAddress2"></div>
-				    <div class="deliveryAddress3"></div>
-				  </c:otherwise>
-				</c:choose>
+
+							<c:choose>    <%-- 컨트롤러에서 받은 기본 배송지 정보를 동적으로 출력 --%>
+							  <c:when test="${not empty userAddressId}">
+							    <c:forEach var="addr" items="${addressList}">
+							      <c:if test="${addr.userAddressId == userAddressId}">
+							        <div class="deliveryAddress1">
+							          <div class="deliveryAddressName">
+							            <img id="addressImg" src="<%=request.getContextPath()%>/resources/img/icon/marker.png"> 
+							            <span class="deliveryInfoAddressNickname">${addr.addressName}</span>
+							          </div>
+							          <button id="deliveryAddressBtn">변경</button>  
+							        </div>
+							        <div class="deliveryAddress2">
+							          ${addr.userName} / ${addr.userPhone}
+							        </div>
+							        <div class="deliveryAddress3">
+							          [${addr.postCode}] ${addr.roadAddress} ${addr.detailAddress}
+							        </div>
+							      </c:if>
+							    </c:forEach>
+							  </c:when>
+							  <c:otherwise>    <%-- 기본 배송지가 없는 경우 --%>
+							    <div class="deliveryAddress1">
+							      <div class="deliveryAddressName">
+							        <img id="addressImg" src="<%=request.getContextPath()%>/resources/img/icon/marker.png">
+							        <span class="deliveryInfoAddressNickname">배송지를 등록해주세요.</span>
+							      </div>
+							      <button id="deliveryAddressBtn">배송지 관리</button>
+							    </div>
+							    <div class="deliveryAddress2"></div>
+							    <div class="deliveryAddress3"></div>
+							  </c:otherwise>
+							</c:choose>
+
             </div>
           </div>
           <div class="requestContainer">
@@ -69,10 +72,12 @@
           </div>
         </div>
       </div>
+      
 			<div id="orderMainSection">
 			  <div id="orderDetailSection">
 			    <div class="orderMainTableTitle">ORDER DETAILS</div>
 			    <div class="orderDetailLayout">
+			    
 			      <c:choose>
 			        <c:when test="${not empty orderItems}"><%-- orderItems 리스트가 비어있지 않은 경우 (장바구니 또는 단일 주문 성공) --%>
 			          <c:forEach var="item" items="${orderItems}"><%-- forEach를 사용하여 리스트의 모든 상품을 반복 출력 --%>
@@ -102,6 +107,7 @@
 			          </div>
 			        </c:otherwise>
 			      </c:choose>
+			      
 			      <div class="orderTotalPrice">총 합계: 0원</div>
 			    </div>
 			  </div>
@@ -109,13 +115,14 @@
           <div class="orderMainTableTitle">PAYMENT METHOD</div>
           <div class="paymentMethodLayout">
             <div class="paymentMethodContainer">
-              <div class="paymentMethodIcon">
+              <div class="paymentMethodIcon" data-pay="kakaopay">
                 <div class="paymentMethodKakao"><img class="paymentMethodKakaoimg" src="<%=request.getContextPath()%>/resources/img/kakaopay.jpg"></div>
               </div>
-              <div class="paymentMethodIcon">
+              <div class="paymentMethodIcon" data-pay="tosspay">
                 <div class="paymentMethodToss"><img class="paymentMethodTossimg" src="<%=request.getContextPath()%>/resources/img/tosspay.png"></div>
               </div>
             </div>
+            <div id="paymentMethodSelected">결제 수단을 선택해주세요.</div>
           </div>
         </div>
 			</div>
@@ -242,12 +249,16 @@
 <!-- 카카오 주소 검색 API 추가 -->
 <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script>
+let selectedPaymentMethod;
+
+const currentUserId = "<c:out value='${currentUserId}' />";
+const currentUserName = "<c:out value='${currentUserName}' />";
 
 $(document).ready(function () {
   // --- 초기화 ---
   initHeaderEvents();
   updateCartCount();
-  calculateTotal(); // 페이지 로딩 시 JSP가 렌더링한 가격으로 최초 계산
+  calculateTotal();
   initializeToggleButtons();
   
   // '변경' 버튼 -> 주소 목록 모달 열기
@@ -272,66 +283,82 @@ $(document).ready(function () {
     }).open();
   });
   
-  //'결제하기' 버튼 클릭
-  $(".orderMainPayBtn").on("click", function(){
-    let selectedAddress = $("input[name='address']:checked");
+  //결제 수단 아이콘 클릭
+  $(".paymentMethodIcon").on("click", function() {
+    $(".paymentMethodIcon").removeClass("selected");
+    $(this).addClass("selected");
 
-    // 동의 항목 체크 여부 검사
-    if(!$(".agreeRadio2").is(":checked") || !$(".agreeRadio4").is(":checked")){ // agreeRadio3에 해당하는 #agreePrivacyInfo는 주석처리됨
+    selectedPaymentMethod = $(this).data("pay");
+    
+    let paymentMethodText = selectedPaymentMethod === 'kakaopay' ? '카카오페이' : '토스페이';
+    $("#paymentMethodSelected")
+      .text(paymentMethodText + "로 결제합니다.")
+      .css({'color':'blue', 'font-weight':'bold'});
+  });
+  
+  // '결제하기' 버튼 클릭
+  $(".orderMainPayBtn").on("click", function() {
+
+    const selectedAddress = $("input[name='address']:checked");
+    
+    if(selectedAddress.length === 0){
+      alert("배송지를 선택해주세요.");
+      return;
+    }
+    
+    if(!$(".agreeRadio2").is(":checked") || !$(".agreeRadio4").is(":checked")){
       alert("필수 동의 항목에 체크해 주세요.");
       return;
     }
     
-  	if(selectedAddress.length === 0){
-      alert("배송지를 선택해주세요.");
+    if(!selectedPaymentMethod){ 
+      alert("결제 수단을 선택해주세요.");
       return;
     }
-  	
-  	let orderItems = [];
-    $("#orderDetailSection .orderDetail").each(function() {
-	    let isbn = $(this).find(".orderItemIsbn").val();
-	    let quantity = $(this).find(".orderItemQuantity").val();
-	    if(isbn && quantity){
-	      orderItems.push({ 
-	        isbn: isbn, 
-	        quantity: parseInt(quantity) 
-	      });
-	    }
+
+    const orderItems = [];
+    $("#orderDetailSection .orderDetail").each(function(){
+      orderItems.push({
+        isbn: $(this).find(".orderItemIsbn").val(),
+        quantity: parseInt($(this).find(".orderItemQuantity").val())
+      });
     });
-    
-    if (orderItems.length === 0) {
-	    alert("주문할 상품 정보가 없습니다. 페이지를 새로고침 해주세요.");
-	    return;
+
+    if(orderItems.length === 0){
+      alert("주문할 상품이 없습니다.");
+      return;
     }
 
-    let orderData = { userAddressId: selectedAddress.data("address-id"),
-					            orderPrice: parseInt($('.finalPaymentPrice').text().replace(/[^0-9]/g, '')),
-					            deliveryFee: parseInt($('.deliveryFee').text().replace(/[^0-9]/g, '')),
-					            items: orderItems };
-    
-    console.log("결제 요청 데이터:", orderData);
-    alert("이제 이 데이터를 가지고 실제 결제 API 연동을 진행하거나, 서버에 주문 정보를 저장합니다.");
+    const orderData = { userId: currentUserId, 
+								        userAddressId: selectedAddress.data("address-id"),
+								        
+								        orderPrice: parseInt($('.Price').text().replace(/[^0-9]/g, ''), 10),
+								        deliveryFee: parseInt($('.deliveryFee').text().replace(/[^0-9]/g, ''), 10),
+								        totalPrice: parseInt($('.finalPaymentPrice').text().replace(/[^0-9]/g, ''), 10),
+								        
+								        paymentMethod: selectedPaymentMethod,
+								        orderItems: orderItems // 방금 위에서 만든 상품 배열을 여기에 담습니다.
+    };
 
-    // 예시: 서버에 주문 정보 저장 AJAX
-    $.ajax({
-      type: "POST",
-      url: "<%=request.getContextPath()%>/order/processOrder.do",
-      contentType: "application/json",
-      data: JSON.stringify(orderData),
-      success: function(response){
-				         if(response.status === 'SUCCESS'){
-				           alert("주문이 성공적으로 완료되었습니다. 주문번호: " + response.orderId); // 결제 완료 페이지로 이동
-				           window.location.href = "<%=request.getContextPath()%>/order/orderComplete.do?orderId=" + response.orderId;  
-				         }else{
-				           alert("주문 처리 중 오류가 발생했습니다: " + response.message);
-				         }
-               },
-      error: function(){
-			         alert("주문 요청에 실패했습니다. 네트워크를 확인해주세요.");
-			       }
+    $.ajax({ type: "POST",
+		         url: contextPath + "/order/create",
+		         contentType: "application/json",
+		         data: JSON.stringify(orderData),
+		         success: function(response){
+							      	  if(response.status === 'SUCCESS'){
+					                orderData.orderId = response.orderId;  // 주문 생성 성공 시, 받은 orderId를 orderData에 추가
+					                proceedToRealPayment(orderData);  // 실제 결제 함수 호출
+							          } else {
+							            alert("주문 실패: " + response.message);
+							          }
+					            },
+		         error: function(xhr) {
+				              alert("서버 통신 오류가 발생했습니다.");
+				              console.error("Error:", xhr.responseText);
+				            }
     });
-	});
-  
+  });
+
   //전체동의 로직 (주석 처리된 agree3Div 고려)
   $("#agreeAll").click(function () {
     const isChecked = $(this).prop("checked");
@@ -345,14 +372,12 @@ $(document).ready(function () {
   // '저장' 버튼 -> 새 주소 추가
   $("#saveAddress").on("click", function(event){
     event.preventDefault();
-
-		// 서버로 보낼 데이터를 객체로 만듭니다.
 		const newAddressData = { addressName: $("#addressName").val(),
-										       userName: $("#recipient").val(), // 서버 VO의 필드명과 일치
-										       userPhone: $("#userPhone").val(),
-										       postCode: $("#zipcode").val(),
-										       roadAddress: $("#address").val(),
-										       detailAddress: $("#addressDetail").val() };
+											       userName: $("#recipient").val(), // 서버 VO의 필드명과 일치
+											       userPhone: $("#userPhone").val(),
+											       postCode: $("#zipcode").val(),
+											       roadAddress: $("#address").val(),
+											       detailAddress: $("#addressDetail").val() };
 		
 		if(!newAddressData.addressName || !newAddressData.userName || !newAddressData.userPhone || !newAddressData.postCode){
 	    alert("배송지 이름, 받는 사람, 연락처, 주소는 필수 항목입니다.");
@@ -365,14 +390,14 @@ $(document).ready(function () {
 	    contentType: "application/json; charset=utf-8", // 보내는 데이터 타입
 	    data: JSON.stringify(newAddressData), // 데이터를 JSON 문자열로 변환
 	    success: function (response) {
-	    	 if (response === "SUCCESS") {
-	         alert("새 배송지가 추가되었습니다.");  // 성공 시, 페이지를 새로고침하여 목록을 갱신합니다.
-	         location.reload(); 
-	    	 }else{
-	         alert("주소 추가에 실패했습니다.");
-	         console.log("주소 추가에 실패했습니다. 오류: " + response);
-	       }
-			},
+					    	 if (response === "SUCCESS") {
+					         alert("새 배송지가 추가되었습니다.");  // 성공 시, 페이지를 새로고침하여 목록을 갱신합니다.
+					         location.reload(); 
+					    	 }else{
+					         alert("주소 추가에 실패했습니다.");
+					         console.log("주소 추가에 실패했습니다. 오류: " + response);
+					       }
+							},
 	    error: function (xhr) {
 		           alert("서버 통신 오류가 발생했습니다.");
 		         }
@@ -385,21 +410,20 @@ $(document).ready(function () {
 	  const addressItem = $(this).closest(".addressItem"); // 삭제할 DOM 요소
 	
 	  if (confirm("이 배송지를 정말 삭제하시겠습니까?")) {
-	    $.ajax({
-	      type: "POST",
-	      url: "<%=request.getContextPath()%>/order/deleteAddress.do",
-	      data: { userAddressId: addressId }, // 폼 데이터 형식으로 전송
-	      success: function(response){
-				           if(response === "SUCCESS"){
-				             alert("배송지가 삭제되었습니다.");
-				             addressItem.fadeOut(function() { $(this).remove(); }); // 부드럽게 제거
-				           }else{
-				             alert("삭제에 실패했습니다: " + response);
-				           }
-				         },
-	      error: function(){
-	               alert("서버 통신 중 오류가 발생했습니다.");
-	             }
+	    $.ajax({ type: "POST",
+					     url: "<%=request.getContextPath()%>/order/deleteAddress.do",
+					     data: { userAddressId: addressId }, // 폼 데이터 형식으로 전송
+					     success: function(response){
+								          if(response === "SUCCESS"){
+								            alert("배송지가 삭제되었습니다.");
+								            addressItem.fadeOut(function() { $(this).remove(); }); // 부드럽게 제거
+								          }else{
+								            alert("삭제에 실패했습니다: " + response);
+								          }
+								        },
+					     error: function(){
+					              alert("서버 통신 중 오류가 발생했습니다.");
+					            }
 	    });
 	  }
 	});
@@ -412,6 +436,53 @@ $(document).ready(function () {
   $(window).on("keydown", (e) => { if (e.key === "Escape") $(".modal").hide(); });
   $(window).on("click", (e) => { if ($(e.target).is(".modal")) $(e.target).hide(); });
 });
+
+function proceedToRealPayment(orderData) {
+  const paymentMethod = orderData.paymentMethod;
+  let orderName = $(".orderDetailsTitle").first().text();
+  const remainingItems = $(".orderDetail").length - 1;
+  if (remainingItems > 0) {
+    orderName += " 외 " + remainingItems + "건";
+  }
+
+  if (paymentMethod === 'kakaopay') {
+    $.ajax({
+        type: "POST",
+        url: contextPath + "/payment/ready/kakaopay", // Controller에 만든 API 주소
+        contentType: "application/json",
+        data: JSON.stringify({
+        	  partner_order_id: String(orderData.orderId),  // Controller와 VO에 맞게 파라미터 전달
+            partner_user_id: orderData.userId,
+            item_name: orderName,
+            quantity: orderData.orderItems.reduce((acc, item) => acc + item.quantity, 0),
+            total_amount: orderData.totalPrice
+        }),
+        success: function(response) {
+            // 2. 성공 시, 응답으로 받은 URL로 리다이렉트하여 결제창 열기
+            window.location.href = response.next_redirect_pc_url;
+        },
+        error: function() {
+            alert("카카오페이 결제 준비에 실패했습니다.");
+        }
+    });
+
+  } else if (paymentMethod === 'tosspay') {
+    const tossPayments = TossPayments('test_ck_D5GePWvyJnrK0W0k6q8gLzN97EAb'); // 본인의 테스트 클라이언트 키
+
+    tossPayments.requestPayment('카드', { // '카드' 외 '계좌이체' 등 다른 수단 가능
+        amount: orderData.totalPrice,
+        orderId: "bookGap_" + orderData.orderId + "_" + new Date().getTime(), // 주문번호는 매번 고유해야 함
+        orderName: orderName,
+        customerName: currentUserName,
+        successUrl: window.location.origin + contextPath + "/payment/success/tosspay",
+        failUrl: window.location.origin + contextPath + "/payment/fail"
+    }).catch(function (error) {
+  	    if (error.code !== 'USER_CANCEL') {
+  	      alert('결제에 실패하였습니다. 오류: ' + error.message);
+  	    }
+    });
+  }
+}
 
 // 장바구니 수량 업데이트
 function updateCartCount() {

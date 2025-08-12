@@ -1,20 +1,47 @@
 package com.bookGap.vo;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class KakaoPayRequestVO {
-  private int paymentNo;  //결제ID
-  private String cid;  //가맹점코드
-  private String partnerOrderId;  //가맹점주문번호
-  private String partnerUserId;  //가맹점회원ID
-  private String itemName;  //상품명
-  private int quantity;  //수량
-  private int totalAmount;  //총결제금액
-  private int taxFreeAmount;  //비과세금액
-  private String approvalUrl;  //결제승인URL
-  private String cancelUrl;  //결제취소URL
-  private String failUrl;  //결제실패URL
-  private String tid;  //결제고유번호
-  private String pgToken;  //승인요청시필요
   
+  // JSON 데이터와 관련 없는 필드는 그대로 둡니다.
+  private int paymentNo;
+  private String cid;
+  private String approvalUrl;
+  private String cancelUrl;
+  private String failUrl;
+  private String tid;
+  private String pgToken;
+  
+  // --- JSON으로 받는 필드들에 @JsonProperty 어노테이션 추가 ---
+
+  // JSON의 "partner_order_id" 값을 이 필드(partnerOrderId)에 매핑
+  @JsonProperty("partner_order_id")
+  private String partnerOrderId;
+
+  // JSON의 "partner_user_id" 값을 이 필드(partnerUserId)에 매핑
+  @JsonProperty("partner_user_id")
+  private String partnerUserId;
+
+  // JSON의 "item_name" 값을 이 필드(itemName)에 매핑
+  @JsonProperty("item_name")
+  private String itemName;
+
+  // JSON의 "quantity" 값을 이 필드(quantity)에 매핑
+  @JsonProperty("quantity")
+  private int quantity;
+
+  // JSON의 "total_amount" 값을 이 필드(totalAmount)에 매핑
+  @JsonProperty("total_amount")
+  private int totalAmount;
+
+  // JSON의 "tax_free_amount" 값을 이 필드(taxFreeAmount)에 매핑
+  @JsonProperty("tax_free_amount")
+  private int taxFreeAmount;
+
+  
+  // --- 이하 Getter & Setter (기존과 동일) ---
+
   public int getPaymentNo() {
     return paymentNo;
   }
@@ -93,5 +120,4 @@ public class KakaoPayRequestVO {
   public void setPgToken(String pgToken) {
     this.pgToken = pgToken;
   }
-  
 }

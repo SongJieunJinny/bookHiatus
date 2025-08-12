@@ -196,7 +196,7 @@
 </div>
 <script src="${pageContext.request.contextPath}/resources/js/jquery-3.7.1.js"></script>
 <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
-<script>
+<script type="text/javascript">
 const contextPath = '<%=request.getContextPath()%>';
 
 function initHeaderEvents() {
@@ -411,14 +411,13 @@ document.getElementById("guestOrder").addEventListener("click", function () {
 	  window.location.href = url.toString();
 	  console.log("비회원 주문 이동 URL:", url.toString());
 	});
-
 </script>
-<script>
+<script type="text/javascript">
 $('#menuLogoImg').on('click', function() {
     window.location.href = '<%=request.getContextPath()%>';
 });
 </script>
-<script>
+<script type="text/javascript">
 Kakao.init('56c7bb3d435c0c4f0d2b67bfa7d4407e');
 
 document.getElementById("kakaoLogin").addEventListener("click", function () {
