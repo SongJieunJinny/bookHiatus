@@ -82,11 +82,6 @@ public class KakaoLoginController {
 	    );
 	    SecurityContextHolder.getContext().setAuthentication(auth);
 	    
-	    session.setAttribute(
-	    	    HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
-	    	    SecurityContextHolder.getContext()
-	    	);
-	    
 	    session.setAttribute("KAKAO_ACCESS_TOKEN", accessToken);
 	    //System.out.println("인증 여부: " + auth.isAuthenticated());
 	    //System.out.println("유저명: " + auth.getName());
