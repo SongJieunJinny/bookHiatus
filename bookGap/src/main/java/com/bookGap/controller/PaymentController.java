@@ -1,6 +1,7 @@
 package com.bookGap.controller;
 
 import java.math.BigDecimal;
+import java.security.Principal;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,6 +29,8 @@ import com.bookGap.vo.KakaoPayRequestVO;
 import com.bookGap.vo.PaymentVO;
 import com.bookGap.vo.TossRequestVO;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Controller
 @RequestMapping("/payment")
@@ -36,6 +39,7 @@ public class PaymentController {
   @Autowired private PaymentService paymentService;
 
   @Autowired private RestTemplate restTemplate;
+  @Autowired private ObjectMapper objectMapper;
   
   //카카오페이 서버와 통신하기 위한 고정 값들
   private static final String KAKAO_HOST = "https://kapi.kakao.com";
@@ -166,30 +170,23 @@ public class PaymentController {
           @RequestParam String paymentKey,
           @RequestParam String orderId,
           @RequestParam Long amount,
-          HttpSession session) throws Exception {
+          Principal principal) throws Exception { // HttpSession은 이제 필요 없습니다.
 
-    // 1. 주문번호(orderId)를 이용해서 우리 DB에 저장된 주문 정보를 가져옵니다.
-    //    (예: orderService.findOrderById(orderId) )
-    //    여기서는 실제 결제해야 할 금액을 DB에서 가져오는 것이 가장 안전합니다.
-    //    이 예제에서는 프론트에서 넘어온 amount를 그대로 사용하지만, 실제로는 DB 금액과 비교해야 합니다.
-    
-    // 2. 토스페이먼츠 승인 API 호출
+    // 1. 토스페이먼츠 승인 API 호출 준비
     HttpHeaders headers = new HttpHeaders();
-    // [핵심] 시크릿 키를 Base64로 인코딩해서 Authorization 헤더에 담아야 합니다.
     String encodedAuth = Base64.getEncoder().encodeToString((TOSS_SECRET_KEY + ":").getBytes("UTF-8"));
     headers.set("Authorization", "Basic " + encodedAuth);
     headers.setContentType(MediaType.APPLICATION_JSON);
 
-    // 승인 요청에 필요한 파라미터
-    Map<String, Object> parameters = new HashMap<>();
-    parameters.put("paymentKey", paymentKey);
-    parameters.put("orderId", orderId);
-    parameters.put("amount", amount);
+    Map<String, Object> params = new HashMap<>();
+    params.put("paymentKey", paymentKey);
+    params.put("orderId", orderId);
+    params.put("amount", amount);
 
-    HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(parameters, headers);
+    HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(params, headers);
     
     try {
-      // API 호출
+      // 2. API 호출
       ResponseEntity<String> response = restTemplate.postForEntity(
           TOSS_API_HOST + "/v1/payments/confirm",
           requestEntity,
@@ -197,38 +194,50 @@ public class PaymentController {
       );
 
       if (response.getStatusCode().is2xxSuccessful()) {
-          // 최종 결제 성공
+          // --- 최종 결제 성공 처리 ---
           
-          // [DB 작업] 
-          // 1. orders 테이블의 주문 ID(PK)를 orderId를 이용해 찾아냅니다.
-          // 2. 그 주문 ID를 가지고 payments 테이블을 생성합니다. (결제수단: 1(Toss))
+          // 3. 응답받은 JSON에서 필요한 정보 추출
+          JsonNode responseNode = objectMapper.readTree(response.getBody());
+          String orderNameFromResponse = responseNode.get("orderName").asText();
+
+          // 4. DB에 결제(PAYMENTS) 정보 저장
           PaymentVO payment = new PaymentVO();
-          payment.setOrderId(Integer.parseInt(orderId.split("_")[1])); // "order_123"에서 123 추출
+          // "bookgap_123_timestamp"에서 실제 주문번호인 123을 추출
+          int realOrderId = Integer.parseInt(orderId.split("_")[1]);
+          payment.setOrderId(realOrderId);
           payment.setAmount(new BigDecimal(amount));
           payment.setPaymentMethod(1); // 1: Toss
+          payment.setUserId(principal.getName()); // 현재 로그인한 사용자 ID 설정
+          payment.setStatus(2); // 2: 결제완료
+          
           paymentService.insertPayment(payment);
           int paymentNo = payment.getPaymentNo();
           
-          // 3. toss_requests 테이블에 정보를 기록하고, paymentKey를 업데이트합니다.
+          // 5. DB에 토스 결제 요청(TOSS_REQUESTS) 정보 저장
           TossRequestVO tossRequest = new TossRequestVO();
           tossRequest.setPaymentNo(paymentNo);
           tossRequest.setPaymentKey(paymentKey);
-          // ... 필요 시 다른 정보도 추가
-          paymentService.insertTossRequest(tossRequest); 
-          paymentService.updateTossPaymentKey(tossRequest);
+          tossRequest.setCustomerKey(principal.getName()); // customerKey 설정
+          tossRequest.setOrderName(orderNameFromResponse); // API 응답에서 받은 orderName 설정
+          // ... 기타 필요한 정보(successUrl, failUrl 등)가 있다면 VO에 추가하고 여기서 설정
+          String baseUrl = "http://localhost:8080/ROOT"; // 본인 프로젝트의 기본 URL로 변경
+          tossRequest.setSuccessUrl(baseUrl + "/payment/success/tosspay");
+          tossRequest.setFailUrl(baseUrl + "/payment/fail");
           
-          // 4. payments 테이블 상태를 '결제완료(2)'로 최종 업데이트
-          paymentService.updatePaymentStatus(paymentNo, 2);
+          paymentService.insertTossRequest(tossRequest); 
+          
+          // 성공 페이지로 리다이렉트
+          return "redirect:/order/orderComplete.do?orderId=" + realOrderId;
 
-          return "redirect:/order/orderComplete.do?orderId=" + orderId; // 최종 완료 페이지로 이동
       } else {
-          // TODO: 승인 실패 (카드 한도 초과 등)
-          return "redirect:/order/fail";
-        }
+          // 승인 실패 (카드 한도 초과 등)
+          // TODO: 실패 정보 로깅
+          return "redirect:/order/fail?message=" + response.getBody();
+      }
     } catch (Exception e) {
-      // TODO: API 통신 자체에 실패
+      // API 통신 자체에 실패
       e.printStackTrace();
-      return "redirect:/order/fail";
+      return "redirect:/order/fail?message=api_error";
     }
   }
 
