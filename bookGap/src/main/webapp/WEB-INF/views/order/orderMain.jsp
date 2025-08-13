@@ -467,13 +467,14 @@ function proceedToRealPayment(orderData) {
     });
 
   } else if (paymentMethod === 'tosspay') {
-    const tossPayments = TossPayments('test_ck_D5GePWvyJnrK0W0k6q8gLzN97EAb'); // 본인의 테스트 클라이언트 키
+    const tossPayments = TossPayments('test_ck_ZLKGPx4M3MG0eMKOzG94rBaWypv1'); // 본인의 테스트 클라이언트 키
 
     tossPayments.requestPayment('카드', { // '카드' 외 '계좌이체' 등 다른 수단 가능
         amount: orderData.totalPrice,
         orderId: "bookGap_" + orderData.orderId + "_" + new Date().getTime(), // 주문번호는 매번 고유해야 함
         orderName: orderName,
         customerName: currentUserName,
+        customerKey: orderData.userId, 
         successUrl: window.location.origin + contextPath + "/payment/success/tosspay",
         failUrl: window.location.origin + contextPath + "/payment/fail"
     }).catch(function (error) {
