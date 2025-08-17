@@ -43,46 +43,53 @@
         <div class="orderMsg">조회할 기간을 선택해주세요.</div>
       </div><br>
       <div id="orderDetailsEnd">
-        <c:choose>
-	        <c:when test="${empty orderList}"><%-- orderList가 비어있거나, "주문 내역이 없습니다" 메시지를 여기에 직접 표시할 수 있다. --%>
-	        </c:when>
-          <c:otherwise>
-            <c:forEach var="order" items="${orderList}">  <%-- orderList에 데이터가 있는 경우, 반복문 실행 --%>
-							<c:forEach var="detail" items="${order.orderDetails}">  <%-- MyBatis의 resultMap 덕분에 OrderVO 안에 OrderDetailVO 리스트가 들어있다. --%>
-				        <!--주문내용-->
-				        <div class="orderPayComplDiv">
-				          <img class="orderPayComplImg" src="${detail.book.image}" alt="${detail.book.title}">
-				          <div class="orderPayCompl">
-				            <div class="orderPayComplInfoDiv1">
-				              <div class="orderPayDate">
-				              	<%-- 날짜 포맷팅 --%>
-				                <fmt:formatDate value="${order.orderDate}" pattern="yyyy-MM-dd" />
-				                (주문번호: ${order.orderId})
-				              </div>
-				              <div class="orderPayComplInfo">[${detail.book.bookCategory}] ${detail.book.title}</div>
-				              <div class="orderPayComplInfo">${detail.book.author} 저자 | ${detail.book.bookTrans} 번역 | ${detail.book.publisher} 출판</div>
-				              <div class="orderPayComplInfo"> <fmt:formatNumber value="${detail.orderPrice}" pattern="#,###" />원 (수량: ${detail.orderCount}개)</div>
-				            </div>
-				            <div class="orderPayComplInfoDiv2">
-				              <div class="orderPayComplInfo2">
-				              	<%-- 주문 상태 표시 --%>
-				                <c:choose>
-					                <c:when test="${order.orderStatus == 1}">배송준비중</c:when>
-					                <c:when test="${order.orderStatus == 2}">배송중</c:when>
-					                <c:when test="${order.orderStatus == 3}">배송완료</c:when>
-					                <c:when test="${order.orderStatus == 4}">주문취소</c:when>
-					                <c:when test="${order.orderStatus == 5}">교환/반품</c:when>
-					                <c:otherwise>상태미정</c:otherwise>
-				                </c:choose>
-				              </div>
-				            </div>
-				          </div>                        
-				        </div>
-							</c:forEach>
+      	<c:if test="${empty orderList}">
+            <div class="orderMsg" style="display:block;">주문내역이 없습니다.</div>
+        </c:if>
+        
+
+
+        <c:forEach var="order" items="${orderList}">
+          <!-- 하나의 주문을 감싸는 컨테이너 -->
+          <div class="orderContainer" data-order-date="<fmt:formatDate value='${order.orderDate}' pattern='yyyy-MM-dd'/>">
+            
+            <!-- 주문 정보 헤더 (주문일, 주문번호, 배송상태) -->
+            <div class="orderHeader">
+              <div class="orderPayDate">
+                <fmt:formatDate value="${order.orderDate}" pattern="yyyy-MM-dd" />
+                (주문번호: ${order.orderId})
+              </div>
+              <div class="orderStatus">
+                <c:choose>
+                  <c:when test="${order.orderStatus == 1}">배송준비중</c:when>
+                  <c:when test="${order.orderStatus == 2}">배송중</c:when>
+                  <c:when test="${order.orderStatus == 3}">배송완료</c:when>
+                  <c:when test="${order.orderStatus == 4}">주문취소</c:when>
+                  <c:when test="${order.orderStatus == 5}">교환/반품</c:when>
+                  <c:otherwise>상태미정</c:otherwise>
+                </c:choose>
+              </div>
+            </div>
+            
+            <!-- 주문에 포함된 상품 목록 -->
+            <c:forEach var="detail" items="${order.orderDetails}">
+              <div class="orderPayComplDiv">
+                <img class="orderPayComplImg" src="${detail.book.image}" alt="${detail.book.title}">
+                <div class="orderPayCompl">
+                  <div class="orderPayComplInfoDiv1">
+                    <div class="orderPayComplInfo">[${detail.book.bookCategory}] ${detail.book.title}</div>
+                    <div class="orderPayComplInfo">${detail.book.author} 저자 | ${detail.book.publisher} 출판</div>
+                    <div class="orderPayComplInfo">
+                        <fmt:formatNumber value="${detail.orderPrice}" pattern="#,###" />원 (수량: ${detail.orderCount}개)
+                    </div>
+                  </div>
+                </div>
+              </div>
             </c:forEach>
-          </c:otherwise>
-        </c:choose>
+          </div>
+        </c:forEach>
       </div>
+
       <!--페이징-->
       <c:if test="${not empty orderList and fn:length(orderList) > 3}">
 	      <div class="paging">
@@ -104,6 +111,58 @@
    $(document).ready(function () {
 		updateCartCount(); // 장바구니 개수 업데이트
 		initHeaderEvents();		
+		
+		function filterAndDisplayOrders() {
+	        let startDateString = $("#orderDateStart").val();
+	        let endDateString = $("#orderDateLast").val();
+
+	        if(!startDateString || !endDateString) {
+	            $(".orderContainer").show(); // 날짜 선택 안했으면 모든 주문 컨테이너를 보여줌
+	            $(".orderMsg").hide();
+	            return;
+	        }
+
+	        let startDate = new Date(startDateString);
+	        let endDate = new Date(endDateString);
+	        endDate.setHours(23, 59, 59, 999);
+
+	        let foundOrders = 0;
+	        $(".orderContainer").hide(); // 모든 주문 컨테이너를 숨김
+
+	        $(".orderContainer").each(function () {
+	            // ▼▼▼ [수정] data-order-date 속성에서 날짜를 읽어옴 ▼▼▼
+	            let dateText = $(this).data("order-date");
+	            if(dateText) {
+	                let orderDate = new Date(dateText);
+	                if(orderDate >= startDate && orderDate <= endDate){
+	                    $(this).show();
+	                    foundOrders++;
+	                }
+	            }
+	        });
+
+	        if(foundOrders > 0){
+	            $(".orderMsg").hide();
+	        } else {
+	            $(".orderMsg").text("해당 기간의 주문내역이 없습니다.").show();
+	        }
+	    }
+
+	    // 날짜 범위 설정 함수 (수정 없음)
+	    function updateDateRange(value) { /* ... */ }
+	    
+	    // 페이지 로드 시 초기 상태 설정 (개선된 버전)
+	    if ($(".orderContainer").length > 0) {
+	        // 주문 내역이 있으면 '1개월' 버튼을 기본으로 클릭하고 조회
+	        $(".orderWeekButton[value='1개월']").click(); 
+	        filterAndDisplayOrders();
+	    } else {
+	        // 주문 내역이 없으면 메시지 표시
+	        $(".orderMsg").text("주문내역이 없습니다.").show();
+	        $("#orderDetailsMid .orderDetailsDiv").hide(); // 날짜 필터 자체를 숨김
+	    }
+		
+	    // ... (이벤트 핸들러는 기존과 동일) ...
 	});
 	// 장바구니 개수 업데이트 함수
 	function updateCartCount() {

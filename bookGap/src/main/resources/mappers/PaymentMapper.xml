@@ -5,9 +5,27 @@
 
   <!-- ========== 공통 결제 로직 ========== -->
   <insert id="insertPayment" parameterType="com.bookGap.vo.PaymentVO" useGeneratedKeys="true" keyProperty="paymentNo">
-    INSERT INTO PAYMENTS (amount, payment_method, status, created_at, ORDER_ID, USER_ID, GUEST_ID)
-    VALUES (#{amount}, #{paymentMethod}, 1, NOW(), #{orderId}, #{userId}, #{guestId})
-  </insert>
+	  INSERT INTO PAYMENTS
+	  <trim prefix="(" suffix=")" suffixOverrides=",">
+	    amount,
+	    payment_method,
+	    status,
+	    created_at,
+	    ORDER_ID,
+	    <if test="userId != null">USER_ID,</if>
+	    <if test="guestId != null">GUEST_ID,</if>
+	  </trim>
+	  VALUES
+	  <trim prefix="(" suffix=")" suffixOverrides=",">
+	    #{amount},
+	    #{paymentMethod},
+	    1,
+	    NOW(),
+	    #{orderId},
+	    <if test="userId != null">#{userId},</if>
+	    <if test="guestId != null">#{guestId},</if>
+	  </trim>
+	</insert>
 
   <update id="updatePaymentStatus" parameterType="map">
 	  UPDATE PAYMENTS

@@ -53,53 +53,62 @@ public class PaymentController {
   @PostMapping("/ready/kakaopay")
   @ResponseBody
   public KakaoReadyResponse kakaopayReady(@RequestBody KakaoPayRequestVO requestVO, HttpSession session) {
-      
-      // 1. payments 테이블에 '결제중' 상태로 데이터 INSERT
-      PaymentVO payment = new PaymentVO();
-      payment.setAmount(BigDecimal.valueOf(requestVO.getTotalAmount()));
-      payment.setPaymentMethod(2); // 2: kakaopay
-      payment.setOrderId(Integer.parseInt(requestVO.getPartnerOrderId())); // 실제 주문번호로 변경 필요
-      payment.setUserId(requestVO.getPartnerUserId());
-      
-      paymentService.insertPayment(payment);
-      int paymentNo = payment.getPaymentNo(); // [핵심] useGeneratedKeys로 받아온 PK
+    
+    // 1. payments 테이블에 '결제중' 상태로 데이터 INSERT
+    PaymentVO payment = new PaymentVO();
+    payment.setAmount(BigDecimal.valueOf(requestVO.getTotalAmount()));
+    payment.setPaymentMethod(2); // 2: kakaopay
+    payment.setOrderId(Integer.parseInt(requestVO.getPartnerOrderId())); // 실제 주문번호로 변경 필요
+    
+    String partnerUserId = requestVO.getPartnerUserId();
+    
+    if (partnerUserId != null && partnerUserId.startsWith("G-")) {
+      payment.setGuestId(partnerUserId);
+      payment.setUserId(null);
+    } else {
+      payment.setUserId(partnerUserId);
+      payment.setGuestId(null);
+    }
+    
+    paymentService.insertPayment(payment);
+    int paymentNo = payment.getPaymentNo(); // [핵심] useGeneratedKeys로 받아온 PK
 
-      // 2. 카카오페이 API에 보낼 파라미터 준비
-      MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
-      parameters.add("cid", CID);
-      parameters.add("partner_order_id", String.valueOf(paymentNo)); // 우리 시스템의 고유한 주문/결제 번호를 보내야 함
-      parameters.add("partner_user_id", requestVO.getPartnerUserId());
-      parameters.add("item_name", requestVO.getItemName());
-      parameters.add("quantity", String.valueOf(requestVO.getQuantity()));
-      parameters.add("total_amount", String.valueOf(requestVO.getTotalAmount()));
-      parameters.add("tax_free_amount", "0");
-      parameters.add("approval_url", "http://localhost:8080/ROOT/payment/success/kakaopay"); // [중요] 본인 환경에 맞게 수정
-      parameters.add("cancel_url", "http://localhost:8080/ROOT/payment/cancel");
-      parameters.add("fail_url", "http://localhost:8080/ROOT/payment/fail");
+    // 2. 카카오페이 API에 보낼 파라미터 준비
+    MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
+    parameters.add("cid", CID);
+    parameters.add("partner_order_id", String.valueOf(paymentNo)); // 우리 시스템의 고유한 주문/결제 번호를 보내야 함
+    parameters.add("partner_user_id", requestVO.getPartnerUserId());
+    parameters.add("item_name", requestVO.getItemName());
+    parameters.add("quantity", String.valueOf(requestVO.getQuantity()));
+    parameters.add("total_amount", String.valueOf(requestVO.getTotalAmount()));
+    parameters.add("tax_free_amount", "0");
+    parameters.add("approval_url", "http://localhost:8080/ROOT/payment/success/kakaopay"); // [중요] 본인 환경에 맞게 수정
+    parameters.add("cancel_url", "http://localhost:8080/ROOT/payment/cancel");
+    parameters.add("fail_url", "http://localhost:8080/ROOT/payment/fail");
 
-      // 3. 카카오페이 API 호출
-      HttpHeaders headers = new HttpHeaders();
-      headers.set("Authorization", "KakaoAK " + KAKAO_ADMIN_KEY);
-      headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+    // 3. 카카오페이 API 호출
+    HttpHeaders headers = new HttpHeaders();
+    headers.set("Authorization", "KakaoAK " + KAKAO_ADMIN_KEY);
+    headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-      HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(parameters, headers);
-      
-      KakaoReadyResponse readyResponse = restTemplate.postForObject(
-          KAKAO_HOST + "/v1/payment/ready",
-          requestEntity,
-          KakaoReadyResponse.class
-      );
-      
-      // 4. 응답으로 받은 tid를 DB와 세션에 저장
-      String tid = readyResponse.getTid();
-      requestVO.setTid(tid);
-      requestVO.setPaymentNo(paymentNo);
-      paymentService.updateKakaoTid(requestVO); // DB에 tid 업데이트
+    HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(parameters, headers);
+    
+    KakaoReadyResponse readyResponse = restTemplate.postForObject(
+        KAKAO_HOST + "/v1/payment/ready",
+        requestEntity,
+        KakaoReadyResponse.class
+    );
+    
+    // 4. 응답으로 받은 tid를 DB와 세션에 저장
+    String tid = readyResponse.getTid();
+    requestVO.setTid(tid);
+    requestVO.setPaymentNo(paymentNo);
+    paymentService.updateKakaoTid(requestVO); // DB에 tid 업데이트
 
-      session.setAttribute("paymentNo", paymentNo); // 승인 단계에서 필요
-      session.setAttribute("tid", tid);
+    session.setAttribute("paymentNo", paymentNo); // 승인 단계에서 필요
+    session.setAttribute("tid", tid);
 
-      return readyResponse;
+    return readyResponse;
   }
   
   /**
@@ -108,46 +117,46 @@ public class PaymentController {
   @GetMapping("/success/kakaopay")
   public String kakaopaySuccess(@RequestParam("pg_token") String pgToken, HttpSession session) {
 
-      Integer paymentNo = (Integer) session.getAttribute("paymentNo");
-      String tid = (String) session.getAttribute("tid");
+    Integer paymentNo = (Integer) session.getAttribute("paymentNo");
+    String tid = (String) session.getAttribute("tid");
 
-      if (paymentNo == null || tid == null) {
-          // TODO: 세션 만료 또는 비정상 접근에 대한 예외 처리
-          return "redirect:/order/error"; 
-      }
+    if (paymentNo == null || tid == null) {
+      // TODO: 세션 만료 또는 비정상 접근에 대한 예외 처리
+      return "redirect:/order/error"; 
+    }
 
-      MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
-      parameters.add("cid", CID);
-      parameters.add("tid", tid);
-      parameters.add("partner_order_id", String.valueOf(paymentNo));
-      parameters.add("pg_token", pgToken);
-      
-      HttpHeaders headers = new HttpHeaders();
-      headers.set("Authorization", "KakaoAK " + KAKAO_ADMIN_KEY);
-      headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-      
-      HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(parameters, headers);
+    MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
+    parameters.add("cid", CID);
+    parameters.add("tid", tid);
+    parameters.add("partner_order_id", String.valueOf(paymentNo));
+    parameters.add("pg_token", pgToken);
+    
+    HttpHeaders headers = new HttpHeaders();
+    headers.set("Authorization", "KakaoAK " + KAKAO_ADMIN_KEY);
+    headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+    
+    HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(parameters, headers);
 
-      // 최종 승인 요청
-      ResponseEntity<String> response = restTemplate.postForEntity(
-          KAKAO_HOST + "/v1/payment/approve", 
-          requestEntity, 
-          String.class
-      );
-      
-      if (response.getStatusCode().is2xxSuccessful()) {
-          // DB의 결제 상태를 '결제완료(2)'로 업데이트
-        PaymentVO paymentUpdate = new PaymentVO();
-        paymentUpdate.setPaymentNo(paymentNo);
-        paymentUpdate.setStatus(2); // 2: 결제완료
-        paymentService.updatePaymentStatus(paymentNo, 2);
-        session.removeAttribute("paymentNo");
-        session.removeAttribute("tid");
-        return "redirect:/order/orderComplete.do?paymentNo=" + paymentNo; // 최종 완료 페이지로
-      } else {
-          // TODO: 실패 처리
-          return "redirect:/payment/fail";
-      }
+    // 최종 승인 요청
+    ResponseEntity<String> response = restTemplate.postForEntity(
+      KAKAO_HOST + "/v1/payment/approve", 
+      requestEntity, 
+      String.class
+    );
+    
+    if (response.getStatusCode().is2xxSuccessful()) {
+        // DB의 결제 상태를 '결제완료(2)'로 업데이트
+      PaymentVO paymentUpdate = new PaymentVO();
+      paymentUpdate.setPaymentNo(paymentNo);
+      paymentUpdate.setStatus(2); // 2: 결제완료
+      paymentService.updatePaymentStatus(paymentNo, 2);
+      session.removeAttribute("paymentNo");
+      session.removeAttribute("tid");
+      return "redirect:/order/orderComplete.do?paymentNo=" + paymentNo; // 최종 완료 페이지로
+    } else {
+      // TODO: 실패 처리
+      return "redirect:/payment/fail";
+    }
   }
   
   // 임시 데이터 전달 클래스들
@@ -166,11 +175,10 @@ public class PaymentController {
    * 토스페이 결제 성공 시, 최종 승인을 요청하는 메소드
    */
   @GetMapping("/success/tosspay")
-  public String tossPaySuccess(
-          @RequestParam String paymentKey,
-          @RequestParam String orderId,
-          @RequestParam Long amount,
-          Principal principal) throws Exception { // HttpSession은 이제 필요 없습니다.
+  public String tossPaySuccess( @RequestParam String paymentKey,
+                                @RequestParam String orderId,
+                                @RequestParam Long amount,
+                                Principal principal) throws Exception {
 
     // 1. 토스페이먼츠 승인 API 호출 준비
     HttpHeaders headers = new HttpHeaders();
@@ -188,54 +196,56 @@ public class PaymentController {
     try {
       // 2. API 호출
       ResponseEntity<String> response = restTemplate.postForEntity(
-          TOSS_API_HOST + "/v1/payments/confirm",
-          requestEntity,
-          String.class
-      );
+      TOSS_API_HOST + "/v1/payments/confirm", requestEntity, String.class);
 
       if (response.getStatusCode().is2xxSuccessful()) {
-          // --- 최종 결제 성공 처리 ---
+        // --- 최종 결제 성공 처리 ---
+        JsonNode resNode = objectMapper.readTree(response.getBody());
+        
+        // --- 3. 회원/비회원 구분 및 정보 설정 ---
+        PaymentVO payment = new PaymentVO();
+        TossRequestVO tossRequest = new TossRequestVO();
+  
+        int realOrderId;
+        String customerKeyFromResponse = resNode.get("customerKey").asText();
+        
+        if (orderId.contains("_guest_")) {
+            // 비회원 결제인 경우
+            realOrderId = Integer.parseInt(orderId.split("_")[2]);
+            payment.setGuestId(customerKeyFromResponse); // API 응답의 customerKey 사용
+            tossRequest.setCustomerKey(customerKeyFromResponse);
+          } else {
+            // 회원 결제인 경우
+            realOrderId = Integer.parseInt(orderId.split("_")[1]);
+            payment.setUserId(principal.getName());
+            tossRequest.setCustomerKey(principal.getName());
+          }
           
-          // 3. 응답받은 JSON에서 필요한 정보 추출
-          JsonNode responseNode = objectMapper.readTree(response.getBody());
-          String orderNameFromResponse = responseNode.get("orderName").asText();
-
-          // 4. DB에 결제(PAYMENTS) 정보 저장
-          PaymentVO payment = new PaymentVO();
-          // "bookgap_123_timestamp"에서 실제 주문번호인 123을 추출
-          int realOrderId = Integer.parseInt(orderId.split("_")[1]);
+          // --- 4. 공통 정보 설정 및 DB 저장 ---
           payment.setOrderId(realOrderId);
           payment.setAmount(new BigDecimal(amount));
-          payment.setPaymentMethod(1); // 1: Toss
-          payment.setUserId(principal.getName()); // 현재 로그인한 사용자 ID 설정
-          payment.setStatus(2); // 2: 결제완료
+          payment.setPaymentMethod(1); // Toss
+          payment.setStatus(2); // 결제완료
           
           paymentService.insertPayment(payment);
           int paymentNo = payment.getPaymentNo();
           
-          // 5. DB에 토스 결제 요청(TOSS_REQUESTS) 정보 저장
-          TossRequestVO tossRequest = new TossRequestVO();
           tossRequest.setPaymentNo(paymentNo);
           tossRequest.setPaymentKey(paymentKey);
-          tossRequest.setCustomerKey(principal.getName()); // customerKey 설정
-          tossRequest.setOrderName(orderNameFromResponse); // API 응답에서 받은 orderName 설정
-          // ... 기타 필요한 정보(successUrl, failUrl 등)가 있다면 VO에 추가하고 여기서 설정
-          String baseUrl = "http://localhost:8080/ROOT"; // 본인 프로젝트의 기본 URL로 변경
+          tossRequest.setOrderName(resNode.get("orderName").asText());
+          
+          String baseUrl = "http://localhost:8080/ROOT";
           tossRequest.setSuccessUrl(baseUrl + "/payment/success/tosspay");
           tossRequest.setFailUrl(baseUrl + "/payment/fail");
           
           paymentService.insertTossRequest(tossRequest); 
           
-          // 성공 페이지로 리다이렉트
           return "redirect:/order/orderComplete.do?orderId=" + realOrderId;
 
       } else {
-          // 승인 실패 (카드 한도 초과 등)
-          // TODO: 실패 정보 로깅
-          return "redirect:/order/fail?message=" + response.getBody();
+          return "redirect:/order/fail?message=approval_failed";
       }
     } catch (Exception e) {
-      // API 통신 자체에 실패
       e.printStackTrace();
       return "redirect:/order/fail?message=api_error";
     }

@@ -57,16 +57,60 @@
 	</resultMap>
 	
 	<!-- orders 테이블에 주문 정보 저장 -->
-	<insert id="insertOrder" parameterType="com.bookGap.vo.OrderVO" useGeneratedKeys="true" keyProperty="orderId">
-	  INSERT INTO ORDERS (
-	    ORDER_DATE, ORDER_STATUS, TOTAL_PRICE, ORDER_TYPE, USER_ID, GUEST_ID, USER_ADDRESS_ID,
-	    RECEIVER_NAME, RECEIVER_PHONE, RECEIVER_POST_CODE, RECEIVER_ROAD_ADDRESS, 
-	    RECEIVER_DETAIL_ADDRESS, DELIVERY_REQUEST, ORDER_PASSWORD
-	  ) VALUES (
-	    NOW(), #{orderStatus}, #{totalPrice}, #{orderType}, #{userId}, #{guestId}, #{userAddressId},
-	    #{receiverName}, #{receiverPhone}, #{receiverPostCode}, #{receiverRoadAddress},
-	    #{receiverDetailAddress}, #{deliveryRequest}, #{orderPassword}
-	  )
+  <insert id="insertOrder" parameterType="com.bookGap.vo.OrderVO" useGeneratedKeys="true" keyProperty="orderId">
+    INSERT INTO ORDERS
+  
+    <!-- <trim> 태그를 사용해 괄호 '('를 열고, 맨 앞에 불필요한 쉼표(,)를 자동으로 제거합니다. -->
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+	    <!-- 공통 필드들 -->
+	    ORDER_DATE,
+	    ORDER_STATUS,
+	    TOTAL_PRICE,
+	    RECEIVER_NAME,
+	    RECEIVER_PHONE,
+	    RECEIVER_POST_CODE,
+	    RECEIVER_ROAD_ADDRESS,
+	    RECEIVER_DETAIL_ADDRESS,
+	    DELIVERY_REQUEST,
+	    ORDER_TYPE,
+	
+	    <!-- 조건부 필드들 -->
+	    <if test="userId != null and userId != ''">
+	      USER_ID,
+	      USER_ADDRESS_ID,
+	    </if>
+	    <if test="guestId != null and guestId != ''">
+	      GUEST_ID,
+	      ORDER_PASSWORD,
+	    </if>
+	  </trim>
+	  
+	  VALUES
+	
+	  <!-- <trim> 태그를 사용해 괄호 '('를 열고, 맨 앞에 불필요한 쉼표(,)를 자동으로 제거합니다. -->
+	  <trim prefix="(" suffix=")" suffixOverrides=",">
+	    <!-- 공통 값들 -->
+	    NOW(),
+	    #{orderStatus},
+	    #{totalPrice},
+	    #{receiverName},
+	    #{receiverPhone},
+	    #{receiverPostCode},
+	    #{receiverRoadAddress},
+	    #{receiverDetailAddress},
+	    #{deliveryRequest},
+	    #{orderType},
+	
+	    <!-- 조건부 값들 -->
+	    <if test="userId != null and userId != ''">
+	      #{userId},
+	      #{userAddressId},
+	    </if>
+	    <if test="guestId != null and guestId != ''">
+	      #{guestId},
+	      #{orderPassword},
+	    </if>
+	  </trim>
 	</insert>
 	
 	<!-- order_details 테이블에 주문 상품 정보 저장 (단일) -->
@@ -226,9 +270,8 @@
 	         u.USER_NAME          AS userName,
 	         u.USER_PHONE         AS userPhone
 	    FROM USER_ADDRESS ua
-	    JOIN USER u 
-	      ON ua.USER_ID = u.USER_ID
-	   WHERE ua.USER_ADDRESS_ID = #{userAddressId}
+      LEFT JOIN USER u ON ua.USER_ID = u.USER_ID
+     WHERE ua.USER_ADDRESS_ID = #{userAddressId}
 	</select>
 
 	<!-- 주문이 최종 확정될 때, 판매된 상품의 재고를 차감하기 위해 반드시 필요 -->
