@@ -171,6 +171,41 @@ section{
   width: 100%;
   margin-bottom: 25%;
 }
+.orderContainer {
+  border: 1px solid #ccc;  /* 전체를 감싸는 연한 테두리 */
+  border-radius: 8px;      /* 부드러운 모서리 */
+  margin-bottom: 25px;     /* 각 주문 박스 사이의 간격 */
+  overflow: hidden;        /* 내부 요소가 모서리를 삐져나가지 않도록 */
+  background-color: #fdfdfd; /* 약간의 배경색으로 구분감 부여 */
+}
+.orderHeader {
+  display: flex;
+  justify-content: space-between; /* 양쪽 끝으로 정렬 */
+  align-items: center;            /* 세로 중앙 정렬 */
+  padding: 15px 20px;             /* 내부 여백 */
+  background-color: #f7f7f7;    /* 헤더 배경색 */
+  border-bottom: 1px solid #eee; /* 상품 목록과의 구분선 */
+  font-weight: bold;
+}
+.orderStatus {
+  color: #007bff; /* 파란색으로 강조 */
+  font-size: 18px;
+}
+.orderPayComplDiv {
+   width: 100%;
+  display: flex;
+  align-items: center; /* 세로 중앙 정렬 */
+  padding: 15px 20px; /* 내부 여백 통일 */
+  font-size: 17px;
+  
+  /* 이제 상품 아이템은 컨테이너 안에 있으므로, 강한 테두리 대신 구분선을 사용합니다. */
+  border: none;
+  border-top: 1px solid #f0f0f0; 
+  margin-bottom: 0;
+}
+.orderContainer .orderPayComplDiv:first-of-type {
+  border-top: none;
+}
 .pagination {
   display: flex;
   justify-content: center;

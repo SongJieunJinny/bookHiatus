@@ -9,17 +9,16 @@ import com.bookGap.vo.GuestVO;
 @Service
 public class GuestServiceImpl implements GuestService {
 
-  @Autowired
-  public GuestDAO guestDAO;
+  @Autowired public GuestDAO guestDAO;
 
   @Override
   public void registerGuest(GuestVO guestVO) {
-      guestDAO.insertGuest(guestVO);
+    guestDAO.insertGuest(guestVO);
   }
 
   @Override
   public GuestVO getGuestByEmail(String email) {
-      return guestDAO.findGuestByEmail(email);
+    return guestDAO.findGuestByEmail(email);
   }
 
 }

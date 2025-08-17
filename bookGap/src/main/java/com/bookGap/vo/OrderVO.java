@@ -27,7 +27,7 @@ public class OrderVO {
   private String formattedOrderDate;
   private List<OrderDetailVO> orderDetails;
   
-  List<OrderDetailVO> getOrderDetails() {
+  public List<OrderDetailVO> getOrderDetails() {
     return orderDetails;
   }
   
