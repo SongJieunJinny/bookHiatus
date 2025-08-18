@@ -2,6 +2,7 @@ package com.bookGap.service;
 
 import java.util.List;
 
+import com.bookGap.vo.BookVO;
 import com.bookGap.vo.CartVO;
 
 public interface CartService {
@@ -11,5 +12,6 @@ public interface CartService {
     boolean deleteCartItem(int cartNo);                    // 삭제
     String  addOrUpdateCartItem(CartVO vo);                // 중복 ISBN 자동 합산 + 삽입 
     Integer getCartCountByUserAndBook(String userId, int bookNo);
+    BookVO findByIsbn(String isbn);//도서 재고 확인 
     
 }

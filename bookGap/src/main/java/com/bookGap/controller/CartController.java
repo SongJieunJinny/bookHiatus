@@ -3,12 +3,13 @@ package com.bookGap.controller;
 
 import java.security.Principal;
 import java.util.List;
-
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -25,6 +26,7 @@ import com.bookGap.service.BookService;
 import com.bookGap.service.CartService;
 import com.bookGap.vo.BookVO;
 import com.bookGap.vo.CartVO;
+import com.bookGap.vo.OrderItemVO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -40,7 +42,7 @@ public class CartController {
 	public BookService bookService;
 	
 	// 장바구니 페이지
-	@RequestMapping(value = "/product/cart.do", method = RequestMethod.GET)
+	@GetMapping("/product/cart.do")
 	public String cartPage(Model model, Principal principal) {
 	    if (principal != null) {
 	        String userId = principal.getName();
@@ -79,24 +81,24 @@ public class CartController {
     }
 
     // 회원 장바구니 수량 업데이트
+    @PostMapping("/product/updateCart.do")
     @ResponseBody
-    @RequestMapping(value = "/product/updateCart.do", method = RequestMethod.POST)
     public String updateCart(@RequestParam int cartNo, @RequestParam int count) {
         boolean result = cartService.updateCartCount(cartNo, count);
         return result ? "DB_UPDATED" : "DB_FAIL";
     }
 
     // 회원 장바구니 삭제
+    @PostMapping("/product/deleteCart.do")
     @ResponseBody
-    @RequestMapping(value = "/product/deleteCart.do", method = RequestMethod.POST)
     public String deleteCart(@RequestParam int cartNo) {
         boolean result = cartService.deleteCartItem(cartNo);
         return result ? "DB_DELETED" : "DB_FAIL";
     }
 
     // 로그인한 유저의 장바구니 개수 반환
+    @GetMapping("/product/getCartCount.do")
     @ResponseBody
-    @RequestMapping(value = "/product/getCartCount.do", method = RequestMethod.GET)
     public int getCartCount(Principal principal) {
         if (principal == null) {
             return 0;
@@ -105,8 +107,8 @@ public class CartController {
     }
 
     // 최신 DB 장바구니 조회 (cartNo 포함)
+    @GetMapping("/product/getCartByUser.do")
     @ResponseBody
-    @RequestMapping(value = "/product/getCartByUser.do", method = RequestMethod.GET)
     public List<CartVO> getCartByUserAjax(Principal principal) {
         if (principal == null) {
             return List.of();
@@ -123,12 +125,57 @@ public class CartController {
     }
     
     
+    
+    @GetMapping("/product/getCartCountByBook.do")
     @ResponseBody
-    @RequestMapping(value = "/product/getCartCountByBook.do", method = RequestMethod.GET)
     public int getCartCountByBook(@RequestParam String userId, @RequestParam int bookNo) {
         Integer count = cartService.getCartCountByUserAndBook(userId, bookNo);
         return (count != null) ? count : 0;
     }
+    
+    @PostMapping("/product/checkStockBeforeOrder.do")
+    @ResponseBody
+    public Map<String, Object> checkStock(@RequestBody List<OrderItemVO> items) {
+        for (OrderItemVO item : items) {
+            BookVO book = cartService.findByIsbn(item.getIsbn());
+            
+            //System.out.println(">>> 재고 부족 도서: " + (book != null ? book.getIsbn() : "null"));
+            //System.out.println(">>> 제목: " + (book != null ? book.getTitle() : "null"));
+            //System.out.println(">>> 남은 재고: " + (book != null ? book.getBookStock() : "null"));
+            //System.out.println(">>> 주문 수량: " + item.getQuantity());
+
+            if (book == null) {
+                return Map.of(
+                    "status", "FAIL",
+                    "reason", "NOT_FOUND",
+                    "bookTitle", "알 수 없음",
+                    "remaining", 0
+                );
+            }
+
+            if (book.getBookState() == 0) { // 품절
+                return Map.of(
+                    "status", "FAIL",
+                    "reason", "OUT_OF_STOCK",
+                    "bookTitle", book.getTitle(),
+                    "remaining", book.getBookStock()
+                );
+            }
+
+            if (book.getBookStock() < item.getQuantity()) {
+                return Map.of(
+                    "status", "FAIL",
+                    "reason", "NOT_ENOUGH_STOCK",
+                    "bookTitle", book.getTitle(),
+                    "remaining", book.getBookStock()
+                );
+            }
+        }
+        
+        return Map.of("status", "OK");
+    }
+    
+    
     
     
 }

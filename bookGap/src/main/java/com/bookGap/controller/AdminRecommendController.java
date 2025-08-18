@@ -16,15 +16,14 @@ import com.bookGap.vo.RecommendBookVO;
 import com.bookGap.vo.SearchVO;
 
 @Controller
-@RequestMapping("/admin/recommend")
 public class AdminRecommendController {
 
     @Autowired
     private RecommendBookService recommendBookService;
 
     // 추천 도서 리스트 (필터링 포함)
-    @GetMapping("/list")
-    public String list(@RequestParam(value = "recommendType", required = false, defaultValue = "") String recommendType,
+    @GetMapping("/admin/adminRecommendBooks.do")
+    public String adminRecommendBooks(@RequestParam(value = "recommendType", required = false, defaultValue = "") String recommendType,
                        @RequestParam(value = "nowpage", required = false, defaultValue = "1") int nowpage,
                        SearchVO searchVO,
                        Model model) {
@@ -51,7 +50,7 @@ public class AdminRecommendController {
     }
 
     // 추천 도서 등록 (Upsert)
-    @PostMapping("/add")
+    @PostMapping("/admin/recommend/add")
     @ResponseBody
     public String add(@RequestParam int bookNo,
 			                      @RequestParam(defaultValue = "BASIC") String recommendType,
@@ -71,14 +70,14 @@ public class AdminRecommendController {
     }
 
     // 추천 도서 삭제
-    @PostMapping("/delete")
+    @PostMapping("/admin/recommend/delete")
     @ResponseBody
     public String delete(@RequestParam int bookNo, @RequestParam String recommendType) {
         recommendBookService.removeRecommendBook(bookNo, recommendType);
         return "success";
     }
 
-    @PostMapping("/update")
+    @PostMapping("/admin/recommend/update")
     @ResponseBody
     public String update(@RequestParam int bookNo,
                          @RequestParam String oldRecommendType,

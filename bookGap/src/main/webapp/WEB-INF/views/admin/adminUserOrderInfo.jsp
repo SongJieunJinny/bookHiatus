@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>adminOrder</title>
+<title>adminUserOrderInfo</title>
 <link href="<%=request.getContextPath()%>/resources/css/styles.css" rel="stylesheet" />
 <script src="<%=request.getContextPath()%>/resources/js/jquery-3.7.1.js"></script>
 <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
@@ -125,7 +125,7 @@
 		<div id="layoutSidenav_content">
 			<main>
 				<div class="container-fluid px-4">
-					<h1 class="mt-4">Order Management System</h1>
+					<h1 class="mt-4">User Order Info Management System</h1>
 					<br>
 					<div class="card mb-4">
 						<div class="card-body">
@@ -135,7 +135,7 @@
 					<div class="card mb-4">
 						<div class="card-header">
 							<i class="fas fa-table me-1"></i>
-							Order Management Table
+							회원 전용 주문 목록 
 						</div>
 						<div class="card-body">
 							<table id="datatablesSimple">
@@ -150,14 +150,18 @@
 									</tr>
 								</thead>
 								<tbody>
-									<tr>
-										<td>20250407001</td>
-										<td>2025-04-07</td>
-										<td>결제완료</td>
-										<td>58,000원</td>
-										<td>배송 중</td>
-										<td><button class="btn btn-sm btn-dark viewBtn">상세보기</button></td>
-									</tr>
+									<c:forEach var="order" items="${orderList}">
+										<tr>
+											<td>${order.orderId}</td>
+											<td>${order.orderDate}</td>
+											<td>${order.orderStatus}</td>
+											<td>${order.totalPrice}</td>
+											<td>${order.userId}</td>
+											<td>
+											<button class="btn btn-sm btn-dark viewBtn" data-order-id="${order.orderId}">상세보기</button>
+											</td>
+										</tr>
+									</c:forEach>
 								</tbody>
 							</table>
 							 <!-- 주문 상세 모달 -->
@@ -267,20 +271,57 @@
 		
 		  // 상세보기 버튼 클릭 시
 		  $(document).on("click", ".viewBtn", function () {
-		    selectedRow = $(this).closest("tr");
-		
-		    const orderNum = selectedRow.find("td").eq(0).text();
-		    const orderStatus = selectedRow.find("td").eq(2).text();
-		    const deliveryStatus = selectedRow.find("td").eq(4).text();
-		
-		    $("#orderNum").text(orderNum);
-		    $("#orderStatus").val(orderStatus);
-		    $("#deliveryStatus").val(deliveryStatus);
-		
-		    // 모달 열기
-		    const modal = new bootstrap.Modal($("#orderModal")[0]);
-		    modal.show();
-		  });
+			  const orderId = $(this).data("order-id");
+			
+			  $.ajax({
+			    url: "/admin/adminUserOrderInfo/getOrderDetail.do",
+			    method: "GET",
+			    data: { orderId: orderId },
+			    success: function (result) {
+			      // 주문 정보
+			      $("#orderNum").text(result.orderId);
+			      $("#orderStatus").val(result.orderStatus);
+			      $("#deliveryStatus").val(result.deliveryStatus);
+			      $("#courier").val(result.courier);
+			      $("#invoice").val(result.invoice);
+			      
+			      // 수령인 정보
+			      $(".modal-body li:contains('수령인')").html("수령인 : " + result.receiverName + " / " + result.receiverPhone);
+			      $(".modal-body li:contains('주소')").html("주소 : " + result.receiverRoadAddress + " " + result.receiverDetailAddress);
+			      $(".modal-body li:contains('요청사항')").html("요청사항 : " + (result.deliveryRequest || "-"));
+			
+			      // 상품 정보 테이블 바인딩
+			      const productTable = $(".modalOrderContainer table tbody");
+			      productTable.empty();
+			      result.orderDetails.forEach(function (item) {
+			        const row = `
+			          <tr>
+			            <td>${item.book.title}</td>
+			            <td>${item.orderCount}</td>
+			            <td>${item.orderPrice.toLocaleString()}원</td>
+			            <td>${item.book.bookCategory}</td>
+			          </tr>
+			        `;
+			        productTable.append(row);
+			      });
+			
+			      // 결제 정보 (예시)
+			      const total = result.totalPrice.toLocaleString();
+			      $(".modalOrderContainer ul:contains('총 결제')").html(`
+			        <li class="list-group-item">상품 합계 : ${total}원</li>
+			        <li class="list-group-item">배송비 : 3,000원</li>
+			        <li class="list-group-item">할인 : -0원</li>
+			        <li class="list-group-item">최종 결제 금액 : ${total}원</li>
+			      `);
+			
+			      const modal = new bootstrap.Modal($("#orderModal")[0]);
+			      modal.show();
+			    },
+			    error: function () {
+			      alert("주문 상세 정보를 불러오는 데 실패했습니다.");
+			    }
+			  });
+			});
 		
 		  // 저장 버튼 클릭 시
 		  $("#saveOrder").on("click", function () {

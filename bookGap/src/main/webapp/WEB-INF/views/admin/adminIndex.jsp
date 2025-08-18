@@ -43,7 +43,7 @@
 								    <div class="card bg-secondary text-white mb-4">
 								        <div class="card-body">추천 도서 관리</div>
 								        <div class="card-footer d-flex align-items-center justify-content-between">
-								            <a class="small text-white stretched-link" href="${pageContext.request.contextPath}/admin/recommend/list">View Details</a>
+								            <a class="small text-white stretched-link" href="${pageContext.request.contextPath}/admin/adminRecommendBooks.do">View Details</a>
 								            <div class="small text-white"><i class="fas fa-angle-right"></i></div>
 								        </div>
 								    </div>
@@ -79,7 +79,7 @@
 									<div class="card bg-secondary text-white mb-4">
 										<div class="card-body">회원주문관리 </div>
 										<div class="card-footer d-flex align-items-center justify-content-between">
-											<a class="small text-white stretched-link" href="${pageContext.request.contextPath}/admin/adminOrder.do">View Details</a>
+											<a class="small text-white stretched-link" href="${pageContext.request.contextPath}/admin/adminUserOrderInfo.do">View Details</a>
 											<div class="small text-white"><i class="fas fa-angle-right"></i></div>
 										</div>
 									</div>

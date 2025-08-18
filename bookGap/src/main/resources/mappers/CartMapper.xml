@@ -50,4 +50,16 @@
   <delete id="deleteCartItem">
     DELETE FROM CART WHERE CART_NO = #{cartNo}
   </delete>
+  
+  <select id="findByIsbn" resultType="com.bookGap.vo.BookVO">
+	SELECT 
+	    b.BOOK_NO       AS bookNo,
+	    b.BOOK_STOCK    AS bookStock,
+	    b.BOOK_STATE    AS bookState,  
+	    b.ISBN          AS isbn,
+	    pa.TITLE        AS title
+	FROM BOOK b
+	LEFT JOIN PRODUCT_API pa ON b.ISBN = pa.ISBN
+	WHERE b.ISBN = #{isbn}
+  </select>
 </mapper>
