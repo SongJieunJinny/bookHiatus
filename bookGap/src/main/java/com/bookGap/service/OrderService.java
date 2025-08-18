@@ -30,5 +30,7 @@ public interface OrderService {
   public boolean updateBookStock(String isbn, int quantity);
   
   public int createOrderWithDetails(Map<String, Object> orderData) throws IllegalStateException;
+  
+  public Map<String, Object> createGuestOrderWithDetails(Map<String, Object> orderData) throws Exception;
 
 }

@@ -197,78 +197,63 @@ public class OrderController {
     }
 	}
 	
-	/* '비회원' 주문 처리 */
-	@PostMapping("/guest/processOrder.do")
-  @ResponseBody
-  public Map<String, Object> processGuestOrder(@RequestBody Map<String, Object> orderData) {
+	/* 비회원 주문 페이지로 이동 */
+	@GetMapping("/guest/guestOrder.do")
+	public String showGuestOrderPage(@RequestParam(value = "isbns", required = false) List<String> isbns,
+                              	   @RequestParam(value = "quantities", required = false) List<Integer> quantities,
+                              	   @RequestParam(value = "isbn", required = false) String isbn, 
+                              	   @RequestParam(value = "quantity", required = false) Integer quantity,
+                              	   Model model) {
+	    
+    // 이 메소드는 단일 상품 구매와 여러 상품 구매를 모두 처리
+    List<BookVO> books = new ArrayList<>();
+    List<Integer> qtys = new ArrayList<>();
+
+    if (isbns != null && !isbns.isEmpty()) {
+      // 여러 상품을 장바구니 등에서 주문할 경우
+      books = orderService.getBooksByIsbnList(isbns);
+      qtys = quantities;
+    } else if (isbn != null && quantity != null) {
+      // 상품 상세 페이지에서 단일 상품을 바로 주문할 경우
+      BookVO book = orderService.getBookByIsbn(isbn);
+      if (book != null) {
+          books.add(book);
+          qtys.add(quantity);
+      } else {
+        return "redirect:/?error=book_not_found";
+      }
+    } else {
+      // 주문할 상품 정보가 전혀 없는 경우
+      return "redirect:/?error=no_data";
+    }
+
+    // 조회된 상품 정보와 수량을 모델에 담아서 JSP로 전달
+    model.addAttribute("bookList", books);
+    model.addAttribute("quantityList", qtys);
     
+    return "guest/guestOrder";
+	}
+	
+	/* 비회원 주문 */
+	@PostMapping("/order/guest/create")
+  @ResponseBody
+  public Map<String, Object> createGuestOrder(@RequestBody Map<String, Object> orderData) {
     Map<String, Object> response = new HashMap<>();
     try {
-        orderService.createGuestOrder(orderData); 
-        response.put("status", "Success");
-        response.put("message", "주문이 성공적으로 접수되었습니다.");
+      Map<String, Object> serviceResult = orderService.createGuestOrderWithDetails(orderData);
+      Integer newOrderId = (Integer) serviceResult.get("orderId");
+      String guestId = (String) serviceResult.get("guestId");
 
+      response.put("status", "SUCCESS");
+      response.put("orderId", newOrderId);
+      response.put("guestId", guestId);
+      
     } catch (Exception e) {
-        response.put("status", "Error");
-        response.put("message", "주문 처리 중 오류 발생: " + e.getMessage());
-        e.printStackTrace();
+      response.put("status", "FAIL");
+      response.put("message", "비회원 주문 처리 중 오류가 발생했습니다.");
+      e.printStackTrace(); 
     }
-    
-    return response; // 프론트엔드에 성공/실패 결과를 반환
+    return response;
   }
-	
-	/* 비회원 주문 페이지 */
-	@GetMapping("/guest/guestOrder.do")
-	public String showGuestOrderPage(
-	    @RequestParam(value = "isbns", required = false) List<String> isbns,
-	    @RequestParam(value = "quantities", required = false) List<Integer> quantities,
-	    @RequestParam(value = "isbn", required = false) String isbn, 
-	    @RequestParam(value = "quantity", required = false) Integer quantity,
-	    @RequestParam(value = "totalPrice", required = false) Integer totalPrice,
-	    Model model) {
-		
-		System.out.println("받은 isbns: " + isbns);
-		System.out.println("받은 quantities: " + quantities);
-		System.out.println("단일 isbn: " + isbn + ", quantity: " + quantity);
-
-	    List<BookVO> books = new ArrayList<>();
-	    List<Integer> qtys = new ArrayList<>();
-
-	    if (isbns != null && !isbns.isEmpty()) {
-	        books = orderService.getBooksByIsbnList(isbns);
-	        qtys = quantities;
-	    } else if (isbn != null && quantity != null) {
-	        BookVO book = orderService.getBookByIsbn(isbn);
-	        if (book != null) {
-	            books.add(book);
-	            qtys.add(quantity);
-	        } else {
-	            return "redirect:/?error=book_not_found";
-	        }
-	    } else {
-	        return "redirect:/?error=no_data";
-	    }
-
-	    model.addAttribute("bookList", books);
-	    model.addAttribute("quantityList", qtys);
-	    return "guest/guestOrder";  // guestOrder.jsp
-	}
-	
-	@GetMapping("/order/orderMain.do")
-	public String orderMainForGuest(@RequestParam("isbn") String isbn,
-	                                @RequestParam("quantity") int quantity,
-	                                Model model) {
-
-	    BookVO book = orderService.getBookByIsbn(isbn);
-	    if (book == null) {
-	        model.addAttribute("errorMessage", "상품 정보를 찾을 수 없습니다.");
-	        return "error/404";
-	    }
-
-	    model.addAttribute("book", book);
-	    model.addAttribute("quantity", quantity);
-	    
-	    return "order/orderMain";  
-	}
 
 }
