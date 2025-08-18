@@ -105,7 +105,7 @@
                   <h1 class="mt-4">도서 관리</h1>
                   <ol class="breadcrumb mb-4">
                       <li class="breadcrumb-item"><a class="adminIndexStyle"  href="${pageContext.request.contextPath}/admin/adminIndex.do">Dashboard</a></li>
-                      <li class="breadcrumb-item active">도서 관리</li>
+                      <li class="breadcrumb-item active">도서 관리 페이지 </li>
                   </ol>
                   <div class="card mb-4">
                       <div class="card-body">
@@ -187,7 +187,7 @@
                   <div class="card mb-4">
                       <div class="card-header">
                           <i class="fas fa-table me-1"></i>
-                         도서 리스트
+                         도서 목록 
                       </div>
                       <div class="card-body">
                           <table id="datatablesSimple">

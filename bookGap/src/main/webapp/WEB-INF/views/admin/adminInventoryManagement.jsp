@@ -51,8 +51,8 @@
 		<div id="layoutSidenav_content">
 			<main>
 				<div class="container-fluid px-4">
-					<h1 class="mt-4">InventoryManagement</h1>
-	          <br>
+					<h1 class="mt-4">Inventory Management System</h1>
+	          		<br>
 					<div class="card mb-4">
 						<div class="card-body">
 							재고관리 페이지 
@@ -61,7 +61,7 @@
 					<div class="card mb-4">
 						<div class="card-header">
 							<i class="fas fa-table me-1"></i>
-							InventoryManagement
+							재고 목록 
 						</div>
 						<div class="card-body">
 							<table id="datatablesSimple">
