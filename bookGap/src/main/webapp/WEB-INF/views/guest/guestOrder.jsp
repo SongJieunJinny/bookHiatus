@@ -9,6 +9,7 @@
 	<meta charset="UTF-8">
 	<title>guestOrder</title>
 	<script src="<%=request.getContextPath()%>/resources/js/jquery-3.7.1.js"></script>
+	<script src="https://js.tosspayments.com/v1/payment-widget"></script> 
 	<link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/resources/css/index.css"/>
 	<link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/resources/css/guest/guest.css"/>
 </head>
@@ -118,13 +119,14 @@
 	        <div class="SectionTitle">PAYMENT METHOD</div>
 	        <div class="layout">
 	          <div class="payContainer">
-	            <div class="payIcon">
-	              <div class="kakao"><img class="kakaoimg" src="<%=request.getContextPath()%>/resources/img/kakaopay.jpg"></div>
-	            </div>
-	            <div class="payIcon">
-	              <div class="toss"><img class="tossimg" src="<%=request.getContextPath()%>/resources/img/tosspay.png"></div>
-	            </div>
-	          </div>
+		          <div class="payIcon" data-pay="kakaopay">
+		            <div class="kakao"><img class="kakaoimg" src="<%=request.getContextPath()%>/resources/img/kakaopay.jpg"></div>
+		          </div>
+		          <div class="payIcon" data-pay="tosspay">
+		            <div class="toss"><img class="tossimg" src="<%=request.getContextPath()%>/resources/img/tosspay.png"></div>
+		          </div>
+		        </div>
+		        <div id="paymentMethodSelected">결제 수단을 선택해주세요.</div>
 	        </div>
 	      </div>
 	    </div>
@@ -260,10 +262,23 @@
 <jsp:include page="/WEB-INF/views/include/footer.jsp" />
 <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script>
+let selectedPaymentMethod;
+
 $(document).ready(function() {
   initHeaderEvents();
   initializeToggleButtons();
   calculateTotal();
+  
+  $(".payIcon").on("click", function() {
+    $(".payIcon").removeClass("selected");
+    $(this).addClass("selected");
+    selectedPaymentMethod = $(this).data("pay");
+    
+    let paymentMethodText = selectedPaymentMethod === 'kakaopay' ? '카카오페이' : '토스페이';
+    $("#paymentMethodSelected")
+      .text(paymentMethodText + "로 결제합니다.")
+      .css({'color':'blue', 'font-weight':'bold'});
+  });
 
   // '주소 검색' 버튼 클릭 이벤트
   $('#searchAddress').on('click', function(){
@@ -318,6 +333,8 @@ $(document).ready(function() {
       return;
     }
     
+    if(!selectedPaymentMethod){ alert("결제 수단을 선택해주세요."); return; }
+    
     const items = [];
 	    <c:forEach var="book" items="${bookList}" varStatus="status">
 	      items.push({
@@ -329,33 +346,33 @@ $(document).ready(function() {
 	    </c:forEach>
 
     const guestOrderData = {
-    	    items: items,
-    	    totalPrice: parseInt($('.finalPrice').data('price')),
-
-    	    ordererName: $('#ordererName').val(),
-    	    ordererPhone: $('#ordererPhone').val(),
-    	    orderPassword: $('#orderPassword').val(),
-    	    ordererEmail: $('#ordererEmail').val(),
-
-    	    receiverName: $('#receiverName').val(),
-    	    receiverPhone: $('#receiverPhone').val(),
-    	    receiverPostCode: $('#receiverPostCode').val(),
-    	    receiverRoadAddress: $('#receiverRoadAddress').val(),
-    	    receiverDetailAddress: $('#receiverDetailAddress').val(),
-    	    deliveryRequest: $('#deliveryRequest').val()
+    		    orderItems: items,
+		  	    totalPrice: parseInt($('.finalPrice').data('price')),
+		
+		  	    ordererName: $('#ordererName').val(),
+		  	    ordererPhone: $('#ordererPhone').val(),
+		  	    orderPassword: $('#orderPassword').val(),
+		  	    ordererEmail: $('#ordererEmail').val(),
+		
+		  	    receiverName: $('#receiverName').val(),
+		  	    receiverPhone: $('#receiverPhone').val(),
+		  	    receiverPostCode: $('#receiverPostCode').val(),
+		  	    receiverRoadAddress: $('#receiverRoadAddress').val(),
+		  	    receiverDetailAddress: $('#receiverDetailAddress').val(),
+		  	    deliveryRequest: $('#deliveryRequest').val()
     	};
     
     console.log("서버로 전송할 데이터:", guestOrderData);
 
     // --- 3. AJAX로 서버에 주문 요청 전송 ---
     $.ajax({ type: "POST",
-			       url: contextPath + "/order/guest/processOrder.do",
+			       url: contextPath + "/order/guest/create",
 			       contentType: "application/json",
 			       data: JSON.stringify(guestOrderData),
 			       success: function(response){
-						            if(response.status === 'Success'){
-						              alert(response.message);
-						              window.location.href = contextPath + "/";
+						            if(response.status === 'SUCCESS'){
+						            	guestOrderData.orderId = response.orderId;
+						            	proceedToRealPayment(guestOrderData, response.guestId);
 						            }else{
 						              alert("주문 실패: " + response.message);
 						            }
@@ -367,6 +384,50 @@ $(document).ready(function() {
     });
   });
 });
+
+function proceedToRealPayment(guestOrderData, realGuestId) {
+	const paymentMethod = selectedPaymentMethod;
+	const items = guestOrderData.items;  
+  
+  //비회원 주문명 생성
+  let orderName = items[0].isbn;
+  if (items.length > 1) {
+    orderName += " 외 " + (items.length - 1) + "건";
+  }
+
+  if (paymentMethod === 'kakaopay') {
+    $.ajax({
+      type: "POST",
+      url: contextPath + "/payment/ready/kakaopay",
+      contentType: "application/json",
+      data: JSON.stringify({
+    	  partner_order_id: String(guestOrderData.orderId),
+        partner_user_id: realGuestId, // (완벽) 파라미터로 받은 '진짜' guestId
+        item_name: orderName,
+        quantity: items.reduce((sum, item) => sum + item.quantity, 0),
+        total_amount: guestOrderData.totalPrice
+      }),
+      success: (res) => window.location.href = res.next_redirect_pc_url,
+      error: () => alert("카카오페이 결제 준비에 실패했습니다.")
+    });
+
+  } else if (paymentMethod === 'tosspay') {
+    const tossPayments = TossPayments('test_ck_ZLKGPx4M3MG0eMKOzG94rBaWypv1');
+    tossPayments.requestPayment('카드', {
+    	amount: guestOrderData.totalPrice,
+      orderId: "bookGap_guest_" + guestOrderData.orderId + "_" + new Date().getTime(),
+      orderName: orderName,
+      customerName: guestOrderData.ordererName,
+      customerKey: realGuestId, 
+      successUrl: window.location.origin + contextPath + "/payment/success/tosspay",
+      failUrl: window.location.origin + contextPath + "/payment/fail"
+    }).catch(function (error) {
+      if (error.code !== 'USER_CANCEL') {
+        alert('결제에 실패하였습니다. 오류: ' + error.message);
+      }
+    });
+  }
+}
 
 //총 금액 계산 및 표시 함수
 function calculateTotal() {
