@@ -12,8 +12,16 @@ public class BookVO extends ProductApiVO {
 	private String bookIndex;
 	private String publisherBookReview;
 	private String commentCount; 
-	
-  public String getCommentCount() {
+	 private String title;
+	 
+	 
+  public String getTitle() {
+		return title;
+	}
+	public void setTitle(String title) {
+		this.title = title;
+	}
+public String getCommentCount() {
     return commentCount;
   }
   public void setCommentCount(String commentCount) {
