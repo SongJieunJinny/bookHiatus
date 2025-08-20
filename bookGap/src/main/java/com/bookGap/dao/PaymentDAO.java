@@ -62,4 +62,8 @@ public class PaymentDAO {
   public void insertTossCancel(TossCancelVO tossCancelVO) {
     sqlSession.insert(namespace + "insertTossCancel", tossCancelVO);
   }
+  
+  public PaymentVO getPaymentByNo(int paymentNo) {
+	    return sqlSession.selectOne(namespace + "getPaymentByNo", paymentNo);
+	}
 }

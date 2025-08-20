@@ -26,6 +26,7 @@ public class OrderVO {
   private List<OrderDetailVO> orderDetails;
   private PaymentVO payment; 
   
+  
   public PaymentVO getPayment() {
   	return payment;
   }

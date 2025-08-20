@@ -21,9 +21,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.bookGap.service.OrderService;
+import com.bookGap.service.PaymentService;
 import com.bookGap.util.PagingUtil;
 import com.bookGap.vo.BookVO;
 import com.bookGap.vo.OrderVO;
+import com.bookGap.vo.PaymentVO;
 import com.bookGap.vo.UserAddressVO;
 import com.bookGap.vo.UserInfoVO;
 
@@ -34,6 +36,7 @@ public class OrderController {
   
   @Autowired
   private OrderService orderService;
+  @Autowired private PaymentService paymentService;
 	
   //===================== 공통: 주문내역 페이지 =====================
   @GetMapping("/order/orderDetails.do")
@@ -226,6 +229,22 @@ public class OrderController {
       resp.put("message", "비회원 주문 처리 중 오류가 발생했습니다.");
     }
     return resp;
+  }
+  
+  @GetMapping("/order/orderComplete.do")
+  public String orderComplete(@RequestParam("paymentNo") int paymentNo, Model model) {
+	  PaymentVO payment = paymentService.getPaymentByNo(paymentNo);
+	    
+	    // 예: 주문번호로 주문상세 및 배송지 조회
+	    OrderVO order = orderService.getOrderById(payment.getOrderId());
+	    UserAddressVO address = orderService.getAddressByOrderId(payment.getOrderId());
+
+	    model.addAttribute("payment", payment);
+	    model.addAttribute("order", order);
+	    model.addAttribute("address", address);
+
+      model.addAttribute("paymentNo", paymentNo);
+      return "order/orderComplete";  // --> /WEB-INF/views/order/orderComplete.jsp
   }
 
 }

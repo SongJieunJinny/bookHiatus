@@ -84,5 +84,13 @@ public class OrderDAO {
     int updated = sqlSession.update(NS + "updateBookStock", p);
     return updated > 0;
   }
+  
+  public OrderVO getOrderById(int orderId) {
+      return sqlSession.selectOne(NS + "getOrderById", orderId);
+  }
+
+  public UserAddressVO getAddressByOrderId(int orderId) {
+      return sqlSession.selectOne(NS+ "getAddressByOrderId", orderId);
+  }
 
 }

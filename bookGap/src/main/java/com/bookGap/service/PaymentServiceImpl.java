@@ -73,4 +73,9 @@ public class PaymentServiceImpl  implements PaymentService{
     paymentDAO.insertTossCancel(tossCancelVO);
   }
   
+  @Override
+  public PaymentVO getPaymentByNo(int paymentNo) {
+      return paymentDAO.getPaymentByNo(paymentNo);
+  }
+  
 }

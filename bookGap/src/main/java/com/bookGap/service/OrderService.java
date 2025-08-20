@@ -35,5 +35,8 @@ public interface OrderService {
   
   public int getTotalOrderCount(String userId);
   public List<OrderVO> getOrdersPaging(String userId, int start, int perPage);
+  
+  public OrderVO getOrderById(int orderId);
+  public UserAddressVO getAddressByOrderId(int orderId);
 
 }
