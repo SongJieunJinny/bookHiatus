@@ -165,48 +165,60 @@
 								</tbody>
 							</table>
 
-							<!-- 아래는 바인딩된 상세 정보를 보여줄 div -->
-							<div class="card mb-4" id="orderDetailSection" style="display: none;">
-								<div class="card-header">
-									<h5 class="fw-bold">주문 상세 정보</h5>
-								</div>
-								<div class="card-body">
-									<div id="orderDetailContent">
-										<!-- 주문 정보 -->
-										<div class="modalOrderInfoContainer">
-											<h6 class="fw-bold">주문 정보</h6>
-											<ul class="list-group mb-3" id="orderInfoList"></ul>
-										</div>
-								
-										<!-- 배송 정보 -->
-										<div class="modalOrderContainer">
-											<h6 class="fw-bold">배송 정보</h6>
-											<ul class="list-group mb-3" id="deliveryInfo"></ul>
-										</div>
-								
-										<!-- 상품 정보 -->
-										<div class="modalOrderContainer">
-											<h6 class="fw-bold">상품 정보</h6>
-											<table class="table" style="border: 1px solid lightgrey; border-radius: 10px;">
-												<thead>
-													<tr>
-														<th>상품명</th>
-														<th>수량</th>
-														<th>가격</th>
-														<th>옵션</th>
-													</tr>
-												</thead>
-												<tbody id="productTable"></tbody>
-											</table>
-										</div>
-								
-										<!-- 결제 내역 -->
-										<div class="modalOrderContainer">
-											<h6 class="fw-bold">총 결제 내역</h6>
-											<ul class="list-group mb-3" id="paymentSummaryList"></ul>
-										</div>
-									</div>
-								</div>
+							<!-- 주문 상세 모달 -->
+							<div class="modal fade" id="orderModal" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
+							  <div class="modal-dialog modal-dialog-centered modal-lg">
+							    <div class="modal-content">
+							      <!-- 모달 헤더 -->
+							      <div class="modal-header">
+							        <h5 class="modal-title fw-bold" id="orderModalLabel">주문 상세 정보</h5>
+							        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+							      </div>
+							
+							      <!-- 모달 본문 -->
+							      <div class="modal-body">
+							        <!-- 주문 정보 -->
+							        <h6 class="fw-bold">주문 정보</h6>
+							        <ul class="list-group mb-3" id="orderInfoList">
+							          <!-- Ajax로 동적 바인딩됨 -->
+							        </ul>
+							
+							        <!-- 배송 정보 -->
+							        <h6 class="fw-bold">배송 정보</h6>
+							        <ul class="list-group mb-3" id="deliveryInfo">
+							          <!-- Ajax로 동적 바인딩됨 -->
+							        </ul>
+							
+							        <!-- 상품 정보 -->
+							        <h6 class="fw-bold">상품 정보</h6>
+							        <table class="table mb-3" style="border: 1px solid lightgrey; border-radius: 10px;">
+							          <thead>
+							            <tr>
+							              <th>상품명</th>
+							              <th>수량</th>
+							              <th>가격</th>
+							              <th>옵션</th>
+							            </tr>
+							          </thead>
+							          <tbody id="productTable">
+							            <!-- Ajax로 동적 바인딩됨 -->
+							          </tbody>
+							        </table>
+							
+							        <!-- 결제 내역 -->
+							        <h6 class="fw-bold">총 결제 내역</h6>
+							        <ul class="list-group mb-3" id="paymentSummaryList">
+							          <!-- Ajax로 동적 바인딩됨 -->
+							        </ul>
+							      </div>
+							
+							      <!-- 모달 푸터 -->
+							      <div class="modal-footer">
+							        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+							        <button type="button" class="btn btn-dark" id="saveOrder">저장</button>
+							      </div>
+							    </div>
+							  </div>
 							</div>
 							
 						</div>
@@ -226,70 +238,70 @@
 		  // 모달 관련 변수
 		  let selectedRow = null;
 		
-		  // 상세보기 버튼 클릭 시
-		  $(document).on("click", ".viewBtn", function () {
+		$(document).on("click", ".viewBtn", function () {
 			  const orderId = $(this).data("order-id");
-			
 			  $.ajax({
-			    url: "<%=request.getContextPath()%>/admin/adminUserOrderInfo/getOrderDetail.do",
-			    method: "GET",
-			    data: { orderId: orderId },
-			    success: function (result) {
-			    	console.log("Ajax 응답:", result);
-			    	
-			    	const orderInfo = `
-			    		<li class="list-group-item">주문 번호: ${result.orderId}</li>
-			    		<li class="list-group-item">주문일자: ${result.formattedOrderDate || "-"}</li>
-			    		<li class="list-group-item">결제 수단: 카드</li>
-			    		<li class="list-group-item">결제 상태: 정상</li>
-			    		<li class="list-group-item">주문 상태: ${result.orderStatusText || "-"}</li>
-			    		`;
-			    		$("#orderInfoList").html(orderInfo);
+			  url: "<%=request.getContextPath()%>/admin/adminUserOrderInfo/getOrderDetail.do",
+			  method: "GET",
+			  data: { orderId },
+			  success: function (result) {
+			  const paymentMethodMap = { 1: 'Toss', 2: 'KakaoPay' };
+			  const paymentStatusMap = { 1: '결제 중', 2: '결제 승인', 3: '결제 취소' };
+			  const paymentMethodText = paymentMethodMap[result.payment?.paymentMethod] || '기타';
+			  const paymentStatusText = paymentStatusMap[result.payment?.status] || '알 수 없음';
+			  const total = result.totalPrice || 0;
+			  const shippingFee = 3000;
+			  const discount = 0;
+			  const finalPrice = total + shippingFee - discount;
 
-			    		const deliveryInfo = `
-			    		<li class="list-group-item">수령인: ${result.receiverName || "-"} / ${result.receiverPhone || "-"}</li>
-			    		<li class="list-group-item">주소: ${result.receiverRoadAddress || "-"} ${result.receiverDetailAddress || ""}</li>
-			    		<li class="list-group-item">요청사항: ${result.deliveryRequest || "-"}</li>
-			    		`;
-			    		$("#deliveryInfo").html(deliveryInfo);
+			  const orderInfo =
+				    '<li class="list-group-item">주문 번호: ' + (result.orderId ?? '-') + '</li>' +
+				    '<li class="list-group-item">주문일자: ' + (result.formattedOrderDate || '-') + '</li>' +
+				    '<li class="list-group-item">결제 수단: ' + paymentMethodText + '</li>' +
+				    '<li class="list-group-item">결제 상태: ' + paymentStatusText + '</li>' +
+				    '<li class="list-group-item">주문 상태: ' + (result.orderStatusText || '-') + '</li>';
 
-			    		const productTable = $("#productTable");
-			    		productTable.empty();
-			    		if (result.orderDetails && result.orderDetails.length > 0) {
-			    		result.orderDetails.forEach(function (item) {
-			    		const row = `
-			    		<tr>
-			    		<td>${item.book.title}</td>
-			    		<td>${item.orderCount}</td>
-			    		<td>${item.orderPrice.toLocaleString()}원</td>
-			    		<td>${item.book.bookCategory || '-'}</td>
-			    		</tr>`;
-			    		productTable.append(row);
-			    		});
-			    		} else {
-			    		productTable.append(`<tr><td colspan='4'>상품 정보 없음</td></tr>`);
-			    		}
+				  const deliveryInfo =
+				    '<li class="list-group-item">수령인: ' + (result.receiverName || '-') + ' / ' + (result.receiverPhone || '-') + '</li>' +
+				    '<li class="list-group-item">주소: ' + (result.receiverRoadAddress || '-') + ' ' + (result.receiverDetailAddress || '') + '</li>' +
+				    '<li class="list-group-item">요청사항: ' + (result.deliveryRequest || '-') + '</li>';
 
-			    		const total = result.totalPrice || 0;
-			    		const shippingFee = 3000;
-			    		const discount = 0;
-			    		const paymentSummaryList = `
-			    		<li class="list-group-item">상품 합계 : ${total.toLocaleString()}원</li>
-			    		<li class="list-group-item">배송비 : ${shippingFee.toLocaleString()}원</li>
-			    		<li class="list-group-item">할인 : -${discount.toLocaleString()}원</li>
-			    		<li class="list-group-item">최종 결제 금액 : ${(total + shippingFee - discount).toLocaleString()}원</li>
-			    		`;
-			    		$("#paymentSummaryList").html(paymentSummaryList);
-			
-			      const modal = new bootstrap.Modal($("#orderModal")[0]);
-			      modal.show();
-			    },
-			    error: function () {
-			      alert("주문 상세 정보를 불러오는 데 실패했습니다.");
-			    }
+				  const productTable = $("#productTable");
+				  productTable.empty();
+
+				  if (result.orderDetails && result.orderDetails.length > 0) {
+				    result.orderDetails.forEach(function (item) {
+				      const price = Number(item.orderPrice || 0);
+				      const row =
+				        '<tr>' +
+				          '<td>' + (item.book?.title || '-') + '</td>' +
+				          '<td>' + (item.orderCount ?? 0) + '</td>' +
+				          '<td>' + price.toLocaleString() + '원</td>' +
+				          '<td>' + (item.book?.bookCategory || '-') + '</td>' +
+				        '</tr>';
+				      productTable.append(row);
+				    });
+				  } else {
+				    productTable.append('<tr><td colspan="4">상품 정보 없음</td></tr>');
+				  }
+
+				  const paymentSummaryList =
+				    '<li class="list-group-item">상품 합계 : ' + total.toLocaleString() + '원</li>' +
+				    '<li class="list-group-item">배송비 : ' + shippingFee.toLocaleString() + '원</li>' +
+				    '<li class="list-group-item">할인 : -' + discount.toLocaleString() + '원</li>' +
+				    '<li class="list-group-item">최종 결제 금액 : ' + finalPrice.toLocaleString() + '원</li>';
+
+				  $("#orderInfoList").html(orderInfo);
+				  $("#deliveryInfo").html(deliveryInfo);
+				  $("#paymentSummaryList").html(paymentSummaryList);
+
+				  new bootstrap.Modal($("#orderModal")[0]).show();
+				},
+			  error: function () {
+			  alert("주문 상세 정보를 불러오는 데 실패했습니다.");
+			  }
 			  });
-			});
-		
+		});
 		  // 저장 버튼 클릭 시
 		  $("#saveOrder").on("click", function () {
 		    const orderStatus = $("#orderStatus").val();

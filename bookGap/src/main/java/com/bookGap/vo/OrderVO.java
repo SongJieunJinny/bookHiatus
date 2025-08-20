@@ -26,8 +26,18 @@ public class OrderVO {
   private int displayNo;
   private String formattedOrderDate;
   private List<OrderDetailVO> orderDetails;
+  private PaymentVO payment; 
   
-  public List<OrderDetailVO> getOrderDetails() {
+  
+  public PaymentVO getPayment() {
+	return payment;
+}
+
+public void setPayment(PaymentVO payment) {
+	this.payment = payment;
+}
+
+public List<OrderDetailVO> getOrderDetails() {
     return orderDetails;
   }
   
@@ -94,12 +104,11 @@ public class OrderVO {
   public void setDisplayNo(int displayNo) {
     this.displayNo = displayNo;
   }
+  
   public String getFormattedOrderDate() {
-    return formattedOrderDate;
-  }
-  public void setFormattedOrderDate(String formattedOrderDate) {
-    this.formattedOrderDate = formattedOrderDate;
-  }
+	    if (orderDate == null) return "-";
+	    return new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm").format(orderDate);
+	}
   
   public String getReceiverName() {
     return receiverName;
@@ -143,5 +152,16 @@ public class OrderVO {
   public void setOrderPassword(String orderPassword) {
     this.orderPassword = orderPassword;
   }
+  
+  public String getOrderStatusText() {
+	    switch (orderStatus) {
+	        case 1: return "배송 준비중";
+	        case 2: return "배송 중";
+	        case 3: return "배송 완료";
+	        case 4: return "주문 취소";
+	        case 5: return "교환/반품";
+	        default: return "-";
+	    }
+	}
 
 }
