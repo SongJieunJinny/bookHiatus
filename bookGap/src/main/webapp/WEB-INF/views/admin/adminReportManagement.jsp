@@ -139,13 +139,13 @@
 						<br>
 						<div class="card mb-4">
 							<div class="card-body">
-								신고 관리 
+								신고 관리 페이지 
 							</div>
 						</div>
 						<div class="card mb-4">
 							<div class="card-header">
 								<i class="fas fa-table me-1"></i>
-								Report Management System Table
+								신고 목록 
 							</div>
 							<div class="card-body">
 								<form method="get" action="${pageContext.request.contextPath}/admin/adminReportManagement.do" class="mb-3">

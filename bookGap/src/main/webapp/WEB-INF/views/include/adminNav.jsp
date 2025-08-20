@@ -14,10 +14,10 @@
   </a>
   <div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
     <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
-      <a class="nav-link" href="${pageContext.request.contextPath}/admin/books/adminBook.do">Book</a>
-      <a class="nav-link" href="${pageContext.request.contextPath}/admin/recommend/list">ChoicBook</a>
+      <a class="nav-link" href="${pageContext.request.contextPath}/admin/adminBook.do">Book</a>
+      <a class="nav-link" href="${pageContext.request.contextPath}/admin/adminRecommendBooks.do">ChoiceBook</a>
       <a class="nav-link"  href="${pageContext.request.contextPath}/admin/adminInventoryManagement.do">InventoryManagement</a>
-      <a class="nav-link" href="${pageContext.request.contextPath}/admin/adminOrder.do">User  Order</a>
+      <a class="nav-link" href="${pageContext.request.contextPath}/admin/adminUserOrderInfo.do">User Order Info</a>
       <a class="nav-link" href="${pageContext.request.contextPath}/admin/adminGuestOrderInfo.do">Guset Order Info</a>
       <a class="nav-link" href="${pageContext.request.contextPath}/admin/adminUserInfo.do">User Info</a>
       <a class="nav-link" href="${pageContext.request.contextPath}/admin/adminReportManagement.do">Report Management </a>
