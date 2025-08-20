@@ -153,7 +153,7 @@ public class CartController {
                 );
             }
 
-            if (book.getBookState() == 0) { // 품절
+            if ("0".equals(book.getBookState())) { // 품절
                 return Map.of(
                     "status", "FAIL",
                     "reason", "OUT_OF_STOCK",

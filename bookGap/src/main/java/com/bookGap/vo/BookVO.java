@@ -14,8 +14,8 @@ public class BookVO {
   private String bookImgUrl;
   private String bookIndex;
   private String publisherBookReview;
-
   private int commentCount;
+  private String title;
 
   // 외부 API 응답 포함
   private ProductApiVO productInfo;
@@ -23,97 +23,77 @@ public class BookVO {
   public int getBookNo() {
     return bookNo;
   }
-
   public void setBookNo(int bookNo) {
     this.bookNo = bookNo;
   }
-
   public String getBookRdate() {
     return bookRdate;
   }
-
   public void setBookRdate(String bookRdate) {
     this.bookRdate = bookRdate;
   }
-
   public String getBookTrans() {
     return bookTrans;
   }
-
   public void setBookTrans(String bookTrans) {
     this.bookTrans = bookTrans;
   }
-
   public int getBookStock() {
     return bookStock;
   }
-
   public void setBookStock(int bookStock) {
     this.bookStock = bookStock;
   }
-
   public String getBookState() {
     return bookState;
   }
-
   public void setBookState(String bookState) {
     this.bookState = bookState;
   }
-
   public String getBookCategory() {
     return bookCategory;
   }
-
   public void setBookCategory(String bookCategory) {
     this.bookCategory = bookCategory;
   }
-
   public String getIsbn() {
     return isbn;
   }
-
   public void setIsbn(String isbn) {
     this.isbn = isbn;
   }
-
   public String getBookImgUrl() {
     return bookImgUrl;
   }
-
   public void setBookImgUrl(String bookImgUrl) {
     this.bookImgUrl = bookImgUrl;
   }
-
   public String getBookIndex() {
     return bookIndex;
   }
-
   public void setBookIndex(String bookIndex) {
     this.bookIndex = bookIndex;
   }
-
   public String getPublisherBookReview() {
     return publisherBookReview;
   }
-
   public void setPublisherBookReview(String publisherBookReview) {
     this.publisherBookReview = publisherBookReview;
   }
-
   public int getCommentCount() {
     return commentCount;
   }
-
   public void setCommentCount(int commentCount) {
     this.commentCount = commentCount;
   }
-
   public ProductApiVO getProductInfo() {
     return productInfo;
   }
-
   public void setProductInfo(ProductApiVO productInfo) {
     this.productInfo = productInfo;
+  }
+  public void setTitle(String title) {
+    this.title = title;
   }
   
   public String  getImage()     { return productInfo != null ? productInfo.getImage() : null; }
@@ -130,7 +110,7 @@ public class BookVO {
     return "BookVO [bookNo=" + bookNo + ", bookRdate=" + bookRdate + ", bookTrans=" + bookTrans + ", bookStock="
         + bookStock + ", bookState=" + bookState + ", bookCategory=" + bookCategory + ", isbn=" + isbn + ", bookImgUrl="
         + bookImgUrl + ", bookIndex=" + bookIndex + ", publisherBookReview=" + publisherBookReview + ", commentCount="
-        + commentCount + ", productInfo=" + productInfo + "]";
+        + commentCount + ", title=" + title + ", productInfo=" + productInfo + "]";
   }
 
 }
