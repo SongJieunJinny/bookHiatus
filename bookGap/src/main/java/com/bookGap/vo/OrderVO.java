@@ -3,43 +3,28 @@ package com.bookGap.vo;
 import java.sql.Timestamp;
 import java.util.List;
 
+import lombok.Data;
+
+@Data
 public class OrderVO {
-  private int orderId; //주문 번호
-  private Timestamp orderDate; //주문 내용
-  private int orderStatus;  //주문상태(1 배송준비중,2 배송중,3 배송완료, 4 배송취소, 5 교환/반품)
-  private int totalPrice;  //총주문금액
-  private int orderType;  //주문타입(1 회원, 2비회원)
-  private String userId; //아이디
-  private String guestId;  //비회원아이디
-  private Integer cartNo;   //장바구니번호
-  private int userAddressId; 
-
-  private String receiverName;            // 수취인 이름
-  private String receiverPhone;           // 수취인 연락처
-  private String receiverPostCode;        // 수취인 우편번호
-  private String receiverRoadAddress;     // 수취인 도로명주소
-  private String receiverDetailAddress;   // 수취인 상세주소
-  private String deliveryRequest;         // 배송 요청사항
-  private String orderPassword;           // 비회원 주문 조회용 비밀번호
-
-  /* --- JSP 출력용 (기존 필드) --- */
-  private int displayNo;
-  private String formattedOrderDate;
+  private int orderId;
+  private Timestamp orderDate;
+  private int orderStatus;
+  private int totalPrice;
+  private int orderType;
+  private String userId;
+  private String guestId;
+  private int cartNo;
+  private int userAddressId;
+  private String receiverName;
+  private String receiverPhone;
+  private String receiverPostCode;
+  private String receiverRoadAddress;
+  private String receiverDetailAddress;
+  private String deliveryRequest;
+  private String orderPassword;
   private List<OrderDetailVO> orderDetails;
   
-  public List<OrderDetailVO> getOrderDetails() {
-    return orderDetails;
-  }
-  
-  public int getUserAddressId() {
-    return userAddressId;
-  }
-  public void setUserAddressId(int userAddressId) {
-    this.userAddressId = userAddressId;
-  }
-  public void setOrderDetails(List<OrderDetailVO> orderDetails) {
-    this.orderDetails = orderDetails;
-  }
   public int getOrderId() {
     return orderId;
   }
@@ -82,25 +67,18 @@ public class OrderVO {
   public void setGuestId(String guestId) {
     this.guestId = guestId;
   }
-  public Integer getCartNo() {
+  public int getCartNo() {
     return cartNo;
   }
-  public void setCartNo(Integer cartNo) {
+  public void setCartNo(int cartNo) {
     this.cartNo = cartNo;
   }
-  public int getDisplayNo() {
-    return displayNo;
+  public int getUserAddressId() {
+    return userAddressId;
   }
-  public void setDisplayNo(int displayNo) {
-    this.displayNo = displayNo;
+  public void setUserAddressId(int userAddressId) {
+    this.userAddressId = userAddressId;
   }
-  public String getFormattedOrderDate() {
-    return formattedOrderDate;
-  }
-  public void setFormattedOrderDate(String formattedOrderDate) {
-    this.formattedOrderDate = formattedOrderDate;
-  }
-  
   public String getReceiverName() {
     return receiverName;
   }
@@ -143,5 +121,11 @@ public class OrderVO {
   public void setOrderPassword(String orderPassword) {
     this.orderPassword = orderPassword;
   }
-
+  public List<OrderDetailVO> getOrderDetails() {
+    return orderDetails;
+  }
+  public void setOrderDetails(List<OrderDetailVO> orderDetails) {
+    this.orderDetails = orderDetails;
+  }
+  
 }

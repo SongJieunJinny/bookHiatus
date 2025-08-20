@@ -42,7 +42,7 @@ public class AdminInventoryManagementController {
 	    BookVO vo = new BookVO();
 	    vo.setBookNo(bookNo);
 	    if (bookStock != null) vo.setBookStock(bookStock);
-	    if (bookState != null) vo.setBookState(bookState);
+	    if (bookState != null) vo.setBookState(String.valueOf(bookState));
 
 	    adminBookService.updateInventory(vo);
 	    return ResponseEntity.ok("success");
