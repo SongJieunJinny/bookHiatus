@@ -154,7 +154,16 @@
 										<tr>
 											<td>${order.orderId}</td>
 											<td>${order.orderDate}</td>
-											<td>${order.orderStatus}</td>
+											<td>
+												 <c:choose>
+										          <c:when test="${order.orderStatus == 1}">배송 준비중</c:when>
+										          <c:when test="${order.orderStatus == 2}">배송중</c:when>
+										          <c:when test="${order.orderStatus == 3}">배송완료</c:when>
+										          <c:when test="${order.orderStatus == 4}">주문취소</c:when>
+										          <c:when test="${order.orderStatus == 5}">교환/반품</c:when>
+										          <c:otherwise>알 수 없음</c:otherwise>
+										        </c:choose>
+											</td>
 											<td>${order.totalPrice}</td>
 											<td>${order.userId}</td>
 											<td>

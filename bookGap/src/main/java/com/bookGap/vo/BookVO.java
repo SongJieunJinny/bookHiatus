@@ -97,7 +97,7 @@ public class BookVO {
   }
   
   public String  getImage()     { return productInfo != null ? productInfo.getImage() : null; }
-  public String  getTitle()     { return productInfo != null ? productInfo.getTitle() : null; }
+  public String getTitle()         { return title != null ? title : (productInfo != null ? productInfo.getTitle() : null);}
   public String  getAuthor()    { return productInfo != null ? productInfo.getAuthor() : null; }
   public String  getPublisher() { return productInfo != null ? productInfo.getPublisher() : null; }
   public Integer getDiscount()  { return productInfo != null ? productInfo.getDiscount() : null; }

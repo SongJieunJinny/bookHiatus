@@ -261,4 +261,14 @@ public class OrderServiceImpl implements OrderService {
     return orderDAO.getOrdersPaging(userId, start, perPage);
   }
   
+  @Override
+  public OrderVO getOrderById(int orderId) {
+      return orderDAO.getOrderById(orderId);
+  }
+
+  @Override
+  public UserAddressVO getAddressByOrderId(int orderId) {
+      return orderDAO.getAddressByOrderId(orderId);
+  }
+  
 }

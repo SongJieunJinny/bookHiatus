@@ -85,4 +85,8 @@
 	  VALUES (#{paymentNo}, #{paymentKey}, #{cancelReason})
   </insert>
   
+  <select id="getPaymentByNo" parameterType="int" resultType="com.bookGap.vo.PaymentVO">
+    SELECT * FROM PAYMENTS WHERE PAYMENT_NO = #{paymentNo}
+</select>
+  
 </mapper>
