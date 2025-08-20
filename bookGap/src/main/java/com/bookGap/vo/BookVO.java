@@ -8,7 +8,7 @@ public class BookVO {
   private String bookRdate;
   private String bookTrans;
   private int bookStock;
-  private String bookState;         // 프로젝트 현행 타입 유지
+  private int bookState;         // 프로젝트 현행 타입 유지
   private String bookCategory;
   private String isbn;
   private String bookImgUrl;
@@ -44,10 +44,10 @@ public class BookVO {
   public void setBookStock(int bookStock) {
     this.bookStock = bookStock;
   }
-  public String getBookState() {
+  public int getBookState() {
     return bookState;
   }
-  public void setBookState(String bookState) {
+  public void setBookState(int bookState) {
     this.bookState = bookState;
   }
   public String getBookCategory() {
