@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.bookGap.dao.CartDAO;
+import com.bookGap.vo.BookVO;
 import com.bookGap.vo.CartVO;
 @Service
 public class CartServiceImpl implements CartService {
@@ -40,6 +41,11 @@ public class CartServiceImpl implements CartService {
     @Override
     public Integer getCartCountByUserAndBook(String userId, int bookNo) {
         return cartDAO.getCartCountByUserAndBook(userId, bookNo);
+    }
+    
+    @Override
+   public   BookVO findByIsbn(String isbn) {
+    	 return cartDAO.findByIsbn(isbn);
     }
 
 }
