@@ -91,13 +91,13 @@
 				    <!-- bookList와 quantityList를 이용한 반복 출력 -->
 				    <c:forEach var="book" items="${bookList}" varStatus="status">
 				      <c:set var="quantity" value="${quantityList[status.index]}" />
-				      <c:set var="itemTotal" value="${book.discount * quantity}" />
+				      <c:set var="itemTotal" value="${book.productInfo.discount * quantity}" />
 				      <c:set var="totalPrice" value="${totalPrice + itemTotal}" />
 				      <div class="orderDetail">
 				        <div class="orderDetailDiv">
-				          <img class="orderImg" src="${book.image}" alt="${book.title}">
+				          <img class="orderImg" src="${book.productInfo.image}" alt="${book.productInfo.title}">
 				          <div class="orderDetails">
-				            <div class="orderDetailsTitle">${book.title}</div>
+				            <div class="orderDetailsTitle">${book.productInfo.title}</div>
 				            <div class="orderDetailsContainer">
 				              <span class="orderCount">${quantity}개</span>
 				              <span class="orderSlash">/</span>
@@ -341,7 +341,7 @@ $(document).ready(function() {
 	        bookNo: ${book.bookNo},
 	        isbn: "${book.isbn}",
 	        quantity: ${quantityList[status.index]},
-	        priceAtPurchase: ${book.discount}
+	        priceAtPurchase: ${book.productInfo.discount}
 	      });
 	    </c:forEach>
 
@@ -387,13 +387,11 @@ $(document).ready(function() {
 
 function proceedToRealPayment(guestOrderData, realGuestId) {
 	const paymentMethod = selectedPaymentMethod;
-	const items = guestOrderData.items;  
+	const items = guestOrderData.orderItems; 
   
   //비회원 주문명 생성
   let orderName = items[0].isbn;
-  if (items.length > 1) {
-    orderName += " 외 " + (items.length - 1) + "건";
-  }
+  if (items.length > 1) orderName += " 외 " + (items.length - 1) + "건";
 
   if (paymentMethod === 'kakaopay') {
     $.ajax({

@@ -19,59 +19,70 @@ public class OrderDAO {
   @Autowired
   private SqlSession sqlSession;
   
-  private final String name_space = "com.bookGap.mapper.orderMapper.";
-  
-  public void insertOrder(OrderVO orderVO) {
-    sqlSession.insert(name_space + "insertOrder", orderVO);
+  private static final String NS = "com.bookGap.mapper.orderMapper.";
+
+  public void insertOrder(OrderVO vo) {
+    sqlSession.insert(NS + "insertOrder", vo);
   }
-  
-  public void insertOrderDetail(OrderDetailVO orderDetailVO) {
-    sqlSession.insert(name_space + "insertOrderDetail", orderDetailVO);
+
+  public void insertOrderDetail(OrderDetailVO vo) {
+    sqlSession.insert(NS + "insertOrderDetail", vo);
   }
-  
-  public void insertOrderDetailList(List<OrderDetailVO> orderDetailVOList) {
-    sqlSession.insert(name_space + "insertOrderDetailList", orderDetailVOList);
+
+  public void insertOrderDetailList(List<OrderDetailVO> list) {
+    sqlSession.insert(NS + "insertOrderDetailList", list);
   }
-  
+
   public List<OrderVO> getOrdersByUserId(String userId) {
-    return sqlSession.selectList(name_space + "getOrdersByUserId", userId);
+    return sqlSession.selectList(NS + "getOrdersByUserId", userId);
   }
   
+  public int getTotalOrderCount(String userId) {
+    return sqlSession.selectOne(NS + "getTotalOrderCount", userId);
+  }
+
+  public List<OrderVO> getOrdersPaging(String userId, int start, int perPage) {
+    Map<String, Object> p = new HashMap<>();
+    p.put("userId", userId);
+    p.put("start", start);     // OFFSET
+    p.put("perPage", perPage); // LIMIT
+    return sqlSession.selectList(NS + "getOrdersPaging", p);
+  }
+
   public BookVO findBookByIsbn(String isbn) {
-    return sqlSession.selectOne(name_space + "findBookByIsbn", isbn);
+    return sqlSession.selectOne(NS + "findBookByIsbn", isbn);
   }
-  
+
   public List<BookVO> selectBooksByIsbnList(List<String> isbnList) {
-    return sqlSession.selectList(name_space + "selectBooksByIsbnList", isbnList);
+    return sqlSession.selectList(NS + "selectBooksByIsbnList", isbnList);
   }
-  
+
   public UserAddressVO findDefaultAddressByUserId(String userId) {
-    return sqlSession.selectOne(name_space + "findDefaultAddressByUserId", userId);
+    return sqlSession.selectOne(NS + "findDefaultAddressByUserId", userId);
   }
-  
+
   public List<UserAddressVO> findAddressListByUserId(String userId) {
-    return sqlSession.selectList(name_space + "findAddressListByUserId", userId);
+    return sqlSession.selectList(NS + "findAddressListByUserId", userId);
   }
-  
+
   public void addAddress(UserAddressVO address) {
-    sqlSession.insert(name_space + "addAddress", address);
+    sqlSession.insert(NS + "addAddress", address);
   }
-  
+
   public void deleteAddress(int userAddressId) {
-    sqlSession.delete(name_space + "deleteAddress", userAddressId);
+    sqlSession.delete(NS + "deleteAddress", userAddressId);
   }
 
   public UserAddressVO findAddressByUserAddressId(int userAddressId) {
-    return sqlSession.selectOne(name_space + "findAddressByUserAddressId", userAddressId);
+    return sqlSession.selectOne(NS + "findAddressByUserAddressId", userAddressId);
   }
 
   public boolean updateBookStock(String isbn, int quantity) {
-    Map<String, Object> paramMap = new HashMap<>();
-    paramMap.put("isbn", isbn);
-    paramMap.put("quantity", quantity);
-
-    int updatedRows = sqlSession.update(name_space + "updateBookStock", paramMap);
-
-    return updatedRows > 0;
+    Map<String, Object> p = new HashMap<>();
+    p.put("isbn", isbn);
+    p.put("quantity", quantity);
+    int updated = sqlSession.update(NS + "updateBookStock", p);
+    return updated > 0;
   }
+
 }
