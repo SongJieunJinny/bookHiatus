@@ -27,7 +27,7 @@ public class GuestController {
   
   
   /* 비회원 주문 페이지로 이동 */
-  @GetMapping("/guest/guestOrder.do")
+ /* @GetMapping("/guest/guestOrder.do")
   public String showGuestOrderPage(@RequestParam(value="isbns",     required=false) List<String> isbns,
                                    @RequestParam(value="quantities",required=false) List<Integer> quantities,
                                    @RequestParam(value="isbn",      required=false) String isbn,
@@ -52,7 +52,7 @@ public class GuestController {
     model.addAttribute("bookList", books);
     model.addAttribute("quantityList", qtys);
     return "guest/guestOrder";
-  }
+  }*/
 
   //===================== 비회원 주문 조회 처리 =====================
   @PostMapping("/guestOrderInfo.do")
@@ -83,7 +83,7 @@ public class GuestController {
   }
   
   // ===================== 비회원 주문 생성(API) =====================
-  @PostMapping("/order/guest/create")
+  /*@PostMapping("/order/guest/create")
   @ResponseBody
   public Map<String, Object> createGuestOrder(@RequestBody Map<String, Object> orderData) {
     Map<String, Object> resp = new HashMap<>();
@@ -100,6 +100,6 @@ public class GuestController {
       resp.put("message", "비회원 주문 처리 중 오류가 발생했습니다.");
     }
     return resp;
-  }
+  }*/
 
 }

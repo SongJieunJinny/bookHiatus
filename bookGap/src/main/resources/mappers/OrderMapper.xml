@@ -64,7 +64,7 @@
     </collection>
   </resultMap>
 
-  <!-- ================= INSERT / UPDATE ================= -->
+  <!-- ================= INSERT / UPDATE / DELETE ================= -->
 
   <insert id="insertOrder" parameterType="com.bookGap.vo.OrderVO" 
           useGeneratedKeys="true" keyProperty="orderId">
@@ -138,10 +138,205 @@
      WHERE ISBN = #{isbn}
        AND BOOK_STOCK >= #{quantity}
   </update>
+  
+  <insert id="addAddress" parameterType="com.bookGap.vo.UserAddressVO">
+    INSERT INTO USER_ADDRESS
+      (USER_ID, ADDRESS_NAME, USER_NAME, USER_PHONE,
+       POST_CODE, ROAD_ADDRESS, DETAIL_ADDRESS, IS_DEFAULT)
+    VALUES
+      (#{userId}, #{addressName}, #{userName}, #{userPhone},
+       #{postCode}, #{roadAddress}, #{detailAddress}, 0)
+  </insert>
+
+  <delete id="deleteAddress" parameterType="int">
+    DELETE FROM USER_ADDRESS
+     WHERE USER_ADDRESS_ID = #{userAddressId}
+  </delete>
 
   <!-- ================= SELECTS ================= -->
 
-  <!-- (생략: 주소/책 관련 SELECT는 그대로 유지) -->
+  <select id="findAddressByUserAddressId" parameterType="int" resultType="com.bookGap.vo.UserAddressVO">
+    SELECT USER_ADDRESS_ID   AS userAddressId,
+           ADDRESS_NAME      AS addressName,
+           POST_CODE         AS postCode,
+           ROAD_ADDRESS      AS roadAddress,
+           DETAIL_ADDRESS    AS detailAddress,
+           USER_ID           AS userId,
+           USER_NAME         AS userName,
+           USER_PHONE        AS userPhone,
+           IS_DEFAULT        AS isDefault
+      FROM USER_ADDRESS
+     WHERE USER_ADDRESS_ID = #{userAddressId}
+  </select>
+
+  <select id="findDefaultAddressByUserId" parameterType="string" resultType="com.bookGap.vo.UserAddressVO">
+    SELECT USER_ADDRESS_ID   AS userAddressId,
+           ADDRESS_NAME      AS addressName,
+           POST_CODE         AS postCode,
+           ROAD_ADDRESS      AS roadAddress,
+           DETAIL_ADDRESS    AS detailAddress,
+           USER_ID           AS userId,
+           USER_NAME         AS userName,
+           USER_PHONE        AS userPhone,
+           IS_DEFAULT        AS isDefault
+      FROM USER_ADDRESS
+     WHERE USER_ID = #{userId}
+       AND IS_DEFAULT = 1
+  </select>
+
+  <select id="findAddressListByUserId" parameterType="string" resultType="com.bookGap.vo.UserAddressVO">
+    SELECT USER_ADDRESS_ID   AS userAddressId,
+           ADDRESS_NAME      AS addressName,
+           POST_CODE         AS postCode,
+           ROAD_ADDRESS      AS roadAddress,
+           DETAIL_ADDRESS    AS detailAddress,
+           USER_ID           AS userId,
+           USER_NAME         AS userName,
+           USER_PHONE        AS userPhone,
+           IS_DEFAULT        AS isDefault
+      FROM USER_ADDRESS
+     WHERE USER_ID = #{userId}
+  ORDER BY IS_DEFAULT DESC, USER_ADDRESS_ID ASC
+  </select>
+
+  <select id="findBookByIsbn" parameterType="string" resultMap="BookWithApiMap">
+    SELECT
+      b.BOOK_NO, b.BOOK_RDATE, b.BOOK_TRANS, b.BOOK_STOCK, b.BOOK_STATE,
+      b.BOOK_CATEGORY, b.isbn AS ISBN, b.BOOK_IMGURL, b.BOOK_INDEX, b.PUBLISHER_BOOK_REVIEW,
+      pa.isbn AS API_ISBN, pa.title AS TITLE, pa.author AS AUTHOR, pa.publisher AS PUBLISHER,
+      pa.pubdate AS PUBDATE, pa.discount AS DISCOUNT, pa.description AS DESCRIPTION,
+      pa.link AS LINK, pa.image AS IMAGE,
+      (SELECT COUNT(*) FROM COMMENT c WHERE c.isbn = b.isbn) AS COMMENT_COUNT
+    FROM BOOK b
+    JOIN PRODUCT_API pa ON b.isbn = pa.isbn
+    WHERE b.isbn = #{isbn}
+  </select>
+
+  <select id="selectBooksByIsbnList" parameterType="java.util.List" resultMap="BookWithApiMap">
+    SELECT
+      b.BOOK_NO, b.BOOK_RDATE, b.BOOK_TRANS, b.BOOK_STOCK, b.BOOK_STATE,
+      b.BOOK_CATEGORY, b.isbn AS ISBN, b.BOOK_IMGURL, b.BOOK_INDEX, b.PUBLISHER_BOOK_REVIEW,
+      pa.isbn AS API_ISBN, pa.title AS TITLE, pa.author AS AUTHOR, pa.publisher AS PUBLISHER,
+      pa.pubdate AS PUBDATE, pa.discount AS DISCOUNT, pa.description AS DESCRIPTION,
+      pa.link AS LINK, pa.image AS IMAGE,
+      (SELECT COUNT(*) FROM COMMENT c WHERE c.isbn = b.isbn) AS COMMENT_COUNT
+    FROM BOOK b
+    JOIN PRODUCT_API pa ON b.isbn = pa.isbn
+    WHERE b.isbn IN
+    <foreach item="isbnItem" collection="list" open="(" separator="," close=")">
+      #{isbnItem}
+    </foreach>
+  </select>
+
+  <select id="getOrdersByUserId" parameterType="string" resultMap="OrderResultMap">
+    SELECT
+      o.ORDER_ID         AS O_ORDER_ID,
+      o.ORDER_DATE,
+      o.ORDER_STATUS,
+      o.TOTAL_PRICE,
+      o.ORDER_TYPE,
+      o.USER_ID,
+      o.GUEST_ID,
+      o.CART_NO,
+      o.USER_ADDRESS_ID,
+      o.RECEIVER_NAME,
+      o.RECEIVER_PHONE,
+      o.RECEIVER_POST_CODE,
+      o.RECEIVER_ROAD_ADDRESS,
+      o.RECEIVER_DETAIL_ADDRESS,
+      o.DELIVERY_REQUEST,
+      o.ORDER_PASSWORD,
+      od.ORDER_DETAIL_NO,
+      od.ORDER_COUNT,
+      od.ORDER_PRICE     AS OD_ORDER_PRICE,
+      od.REFUND_CHECK,
+      od.BOOK_NO,
+      od.ORDER_ID        AS OD_ORDER_ID,
+      b.BOOK_NO,
+      b.BOOK_RDATE,
+      b.BOOK_TRANS,
+      b.BOOK_STOCK,
+      b.BOOK_STATE,
+      b.BOOK_CATEGORY,
+      b.isbn             AS BOOK_ISBN,
+      b.BOOK_IMGURL,
+      b.BOOK_INDEX,
+      b.PUBLISHER_BOOK_REVIEW,
+      p.isbn             AS API_ISBN,
+      p.title            AS TITLE,
+      p.author           AS AUTHOR,
+      p.publisher        AS PUBLISHER,
+      p.pubdate          AS PUBDATE,
+      p.discount         AS DISCOUNT,
+      p.description      AS DESCRIPTION,
+      p.link             AS LINK,
+      p.image            AS IMAGE,
+      (SELECT COUNT(1) FROM COMMENT c WHERE c.isbn = b.isbn) AS COMMENT_COUNT
+    FROM ORDERS o
+    LEFT JOIN ORDER_DETAIL od ON o.ORDER_ID = od.ORDER_ID
+    LEFT JOIN BOOK         b  ON od.BOOK_NO  = b.BOOK_NO
+    LEFT JOIN PRODUCT_API  p  ON b.isbn      = p.isbn
+    WHERE o.USER_ID = #{userId}
+    ORDER BY o.ORDER_DATE DESC, od.ORDER_DETAIL_NO ASC
+  </select>
+  
+	<select id="getOrdersPaging" parameterType="map" resultMap="OrderResultMap">
+    SELECT
+      o.ORDER_ID         AS O_ORDER_ID,
+      o.ORDER_DATE,
+      o.ORDER_STATUS,
+      o.TOTAL_PRICE,
+      o.ORDER_TYPE,
+      o.USER_ID,
+      o.GUEST_ID,
+      o.CART_NO,
+      o.USER_ADDRESS_ID,
+      o.RECEIVER_NAME,
+      o.RECEIVER_PHONE,
+      o.RECEIVER_POST_CODE,
+      o.RECEIVER_ROAD_ADDRESS,
+      o.RECEIVER_DETAIL_ADDRESS,
+      o.DELIVERY_REQUEST,
+      o.ORDER_PASSWORD,
+      od.ORDER_DETAIL_NO,
+      od.ORDER_COUNT,
+      od.ORDER_PRICE     AS OD_ORDER_PRICE,
+      od.REFUND_CHECK,
+      od.BOOK_NO,
+      od.ORDER_ID        AS OD_ORDER_ID,
+      b.BOOK_NO,
+      b.BOOK_RDATE,
+      b.BOOK_TRANS,
+      b.BOOK_STOCK,
+      b.BOOK_STATE,
+      b.BOOK_CATEGORY,
+      b.isbn             AS BOOK_ISBN,
+      b.BOOK_IMGURL,
+      b.BOOK_INDEX,
+      b.PUBLISHER_BOOK_REVIEW,
+      p.isbn             AS API_ISBN,
+      p.title            AS TITLE,
+      p.author           AS AUTHOR,
+      p.publisher        AS PUBLISHER,
+      p.pubdate          AS PUBDATE,
+      p.discount         AS DISCOUNT,
+      p.description      AS DESCRIPTION,
+      p.link             AS LINK,
+      p.image            AS IMAGE,
+      (SELECT COUNT(1) FROM COMMENT c WHERE c.isbn = b.isbn) AS COMMENT_COUNT
+    FROM (
+      SELECT o.ORDER_ID
+      FROM ORDERS o
+      WHERE o.USER_ID = #{userId}
+      ORDER BY o.ORDER_DATE DESC, o.ORDER_ID DESC
+      LIMIT #{perPage} OFFSET #{start}
+    ) pg
+    JOIN ORDERS o        ON o.ORDER_ID = pg.ORDER_ID
+    LEFT JOIN ORDER_DETAIL od ON o.ORDER_ID = od.ORDER_ID
+    LEFT JOIN BOOK         b  ON od.BOOK_NO  = b.BOOK_NO
+    LEFT JOIN PRODUCT_API  p  ON b.isbn      = p.isbn
+    ORDER BY o.ORDER_DATE DESC, od.ORDER_DETAIL_NO ASC
+  </select>
 
   <!-- 비회원 주문 조회 -->
   <select id="findGuestOrderInfo" parameterType="map" resultMap="OrderResultMap">
