@@ -34,24 +34,24 @@ public class AdminOrderController {
 	public OrderVO getOrderDetail(@RequestParam("orderId") int orderId) {
 		OrderVO order = adminUserOrderInfoService.getOrderDetail(orderId);
 
-	    System.out.println("== 주문 상세 요청 ==");
-	    System.out.println("orderId: " + orderId);
+	   // System.out.println("== 주문 상세 요청 ==");
+	    //System.out.println("orderId: " + orderId);
 	    
 	    if (order != null) {
-	        System.out.println("주문 정보: " + order);
+	        //System.out.println("주문 정보: " + order);
 	        if (order.getOrderDetails() != null) {
-	            System.out.println("주문 상세 항목 수: " + order.getOrderDetails().size());
+	            //System.out.println("주문 상세 항목 수: " + order.getOrderDetails().size());
 	            for (OrderDetailVO detail : order.getOrderDetails()) {
-	                System.out.println("상세 항목: " + detail);
+	                //System.out.println("상세 항목: " + detail);
 	                if (detail.getBook() != null) {
-	                    System.out.println("도서 정보: " + detail.getBook().getTitle());
+	                    //System.out.println("도서 정보: " + detail.getBook().getTitle());
 	                }
 	            }
 	        } else {
-	            System.out.println("주문 상세 항목이 null입니다.");
+	            //System.out.println("주문 상세 항목이 null입니다.");
 	        }
 	    } else {
-	        System.out.println("해당 주문이 존재하지 않습니다.");
+	        //System.out.println("해당 주문이 존재하지 않습니다.");
 	    }
 
 	    return order;

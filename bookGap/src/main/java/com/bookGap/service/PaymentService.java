@@ -22,5 +22,5 @@ public interface PaymentService {
   public void updateTossPaymentKey(TossRequestVO tossRequestVO);
   public TossRequestVO findTossRequestByPaymentNo(int paymentNo);
   public void insertTossCancel(TossCancelVO tossCancelVO);
-
+  PaymentVO getPaymentByNo(int paymentNo);
 }

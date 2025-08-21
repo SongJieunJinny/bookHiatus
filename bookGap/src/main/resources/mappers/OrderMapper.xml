@@ -175,6 +175,7 @@
 	    AND g.GUEST_EMAIL = #{guestEmail}
 	</select>
 	
+<<<<<<< HEAD
 	<select id="findGuestOrdersByPasswordAndEmail" parameterType="map" resultMap="OrderResultMap">
 	  SELECT
 	    o.ORDER_ID,
@@ -206,5 +207,24 @@
 	    AND g.GUEST_EMAIL = #{guestEmail}
 	  ORDER BY o.ORDER_DATE DESC
 	</select>
+=======
+	<select id="getTotalOrderCount" parameterType="string" resultType="int">
+    SELECT COUNT(*) FROM ORDERS WHERE USER_ID = #{userId}
+  </select>
+  
+  <!-- 주문 정보 -->
+  <select id="getOrderById" parameterType="int" resultType="com.bookGap.vo.OrderVO">
+    SELECT * FROM ORDERS WHERE ORDER_ID = #{orderId}
+  </select>
+
+  <!-- 배송지 정보 -->
+  <select id="getAddressByOrderId" parameterType="int" resultType="com.bookGap.vo.UserAddressVO">
+    SELECT ua.*
+    FROM USER_ADDRESS ua
+    JOIN ORDERS o ON ua.USER_ADDRESS_ID = o.USER_ADDRESS_ID
+    WHERE o.ORDER_ID = #{orderId}
+  </select>
+  
+>>>>>>> branch 'main' of https://github.com/SongJieunJinny/bookHiatus.git
 
 </mapper>

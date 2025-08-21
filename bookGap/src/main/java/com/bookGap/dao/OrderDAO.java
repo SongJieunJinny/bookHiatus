@@ -88,6 +88,7 @@ public class OrderDAO {
     return updated > 0;
   }
   
+<<<<<<< HEAD
   //비회원 주문 조회
   public List<OrderVO> findGuestOrdersByPasswordAndEmail(String orderPassword, String guestEmail) {
     Map<String, Object> p = new HashMap<>();
@@ -95,5 +96,14 @@ public class OrderDAO {
     p.put("guestEmail", guestEmail);
     return sqlSession.selectList(NS + "findGuestOrdersByPasswordAndEmail", p);
 }
+=======
+  public OrderVO getOrderById(int orderId) {
+      return sqlSession.selectOne(NS + "getOrderById", orderId);
+  }
+
+  public UserAddressVO getAddressByOrderId(int orderId) {
+      return sqlSession.selectOne(NS+ "getAddressByOrderId", orderId);
+  }
+>>>>>>> branch 'main' of https://github.com/SongJieunJinny/bookHiatus.git
 
 }

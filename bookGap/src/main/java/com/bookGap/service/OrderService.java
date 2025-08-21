@@ -35,6 +35,15 @@ public interface OrderService {
   public int createOrderWithDetails(Map<String, Object> orderData) throws IllegalStateException;
   
   public Map<String, Object> createGuestOrderWithDetails(Map<String, Object> orderData) throws Exception;
+<<<<<<< HEAD
+=======
+  
+  public int getTotalOrderCount(String userId);
+  public List<OrderVO> getOrdersPaging(String userId, int start, int perPage);
+  
+  public OrderVO getOrderById(int orderId);
+  public UserAddressVO getAddressByOrderId(int orderId);
+>>>>>>> branch 'main' of https://github.com/SongJieunJinny/bookHiatus.git
 
   //비회원 주문 조회
   public List<OrderVO> findGuestOrdersByPasswordAndEmail(String orderPassword, String guestEmail);
