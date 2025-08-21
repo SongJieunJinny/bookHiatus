@@ -2,7 +2,6 @@ package com.bookGap.controller;
 
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -182,54 +181,6 @@ public class OrderController {
       return "FAIL: " + e.getMessage();
     }
   }
-	
-	/* 비회원 주문 페이지로 이동 */
-  @GetMapping("/guest/guestOrder.do")
-  public String showGuestOrderPage(@RequestParam(value="isbns",     required=false) List<String> isbns,
-                                   @RequestParam(value="quantities",required=false) List<Integer> quantities,
-                                   @RequestParam(value="isbn",      required=false) String isbn,
-                                   @RequestParam(value="quantity",  required=false) Integer quantity,
-                                   Model model) {
-
-    List<BookVO> books = new ArrayList<>();
-    List<Integer> qtys = new ArrayList<>();
-
-    if(isbns != null && !isbns.isEmpty()){
-      books = orderService.getBooksByIsbnList(isbns);
-      qtys  = (quantities != null) ? quantities : Collections.emptyList();
-    }else if (isbn != null && quantity != null){
-      BookVO book = orderService.getBookByIsbn(isbn);
-      if (book == null) return "redirect:/?error=book_not_found";
-      books.add(book);
-      qtys.add(quantity);
-    }else{
-      return "redirect:/?error=no_data";
-    }
-
-    model.addAttribute("bookList", books);
-    model.addAttribute("quantityList", qtys);
-    return "guest/guestOrder";
-  }
-	
-  // ===================== 비회원 주문 생성(API) =====================
-  @PostMapping("/order/guest/create")
-  @ResponseBody
-  public Map<String, Object> createGuestOrder(@RequestBody Map<String, Object> orderData) {
-    Map<String, Object> resp = new HashMap<>();
-    try{
-      Map<String, Object> result = orderService.createGuestOrderWithDetails(orderData);
-      resp.put("status", "SUCCESS");
-      resp.put("orderId", result.get("orderId"));
-      resp.put("guestId", result.get("guestId"));
-    }catch (IllegalStateException e){
-      resp.put("status", "FAIL");
-      resp.put("message", e.getMessage());
-    }catch (Exception e){
-      resp.put("status", "FAIL");
-      resp.put("message", "비회원 주문 처리 중 오류가 발생했습니다.");
-    }
-    return resp;
-  }
   
   @GetMapping("/order/orderComplete.do")
   public String orderComplete(@RequestParam("paymentNo") int paymentNo, Model model) {
@@ -248,6 +199,5 @@ public class OrderController {
         model.addAttribute("paymentNo", paymentNo);
       return "order/orderComplete";  // --> /WEB-INF/views/order/orderComplete.jsp
   }
-
 
 }

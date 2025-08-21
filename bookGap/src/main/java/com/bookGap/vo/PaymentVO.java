@@ -13,6 +13,25 @@ public class PaymentVO {
   private String userId;  //회원아이디
   private String guestId;  //비회원아이디
   
+  /** 결제상태 한글 변환 */
+  public String getStatusText() {
+    switch (status) {
+      case 1: return "결제중";
+      case 2: return "결제승인";
+      case 3: return "결제취소";
+      default: return "알수없음";
+    }
+  }
+  
+  /** 결제수단 한글 변환 */
+  public String getPaymentMethodText() {
+    switch (paymentMethod) {
+      case 1: return "토스";
+      case 2: return "카카오페이";
+      default: return "기타";
+    }
+  }
+  
   public int getPaymentNo() {
     return paymentNo;
   }

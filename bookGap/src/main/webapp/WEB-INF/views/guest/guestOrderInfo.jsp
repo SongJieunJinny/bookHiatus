@@ -19,8 +19,9 @@
     <div id="guestDeliveryInfoHeadDiv">
       <div id="guestDeliveryInfo">GUEST DELIVERY INFO</div>
     </div>
-    <c:forEach var="order" items="${guestOrders}">
+    <c:forEach var="order" items="${guestOrders}" varStatus="status">
 	    <div id="guestDeliveryInfoMid">
+	      <!-- 주문자 정보 -->
 	      <div class="guestDeliveryInfoDiv1">
 	        <div class="guestDeliveryInfoDivLine"></div>
 	        <div class="guestDeliveryInfoDiv2">
@@ -31,6 +32,7 @@
 	          </div>                        
 	        </div>
 	      </div>
+	      <!-- 배송 정보 -->
 	      <div class="guestDeliveryInfoDiv1">
 	        <div class="guestDeliveryInfoDivLine"></div>
 	        <div class="guestDeliveryInfoDiv2">
@@ -41,12 +43,13 @@
 	          </div>                        
 	        </div>
 	      </div>
+	      <!-- 주문 정보 -->
 	      <div class="guestDeliveryInfoDiv1">
 	        <div class="guestDeliveryInfoDivLine"></div>
 	        <div class="guestDeliveryInfoDiv2">
 	          <div class="guestOrderNum">[주문번호: ${order.orderId}]
+	            <div class="guestOrderInfo2">주문일시 : <fmt:formatDate value="${order.orderDate}" pattern="yyyy-MM-dd"/></div>
 	            <div class="guestOrderNumInfo">
-	              <span class="orderQuantity"><fmt:formatDate value="${order.orderDate}" pattern="yyyy-MM-dd"/></span>
 	              <span class="orderStatus">
 									<c:choose>
 				            <c:when test="${order.orderStatus == 1}">배송준비중</c:when>
@@ -57,24 +60,30 @@
 				          </c:choose>
 								</span>
 	            </div>
-	          </div>                        
+	          </div>
 	        </div>
 	      </div>
 	    </div>
 	    <div id="guestDeliveryInfoEnd">
+	      <!-- 주문 상품 목록 -->
 	      <div class="guestOrderPayComplDiv1">
-	        <div class="guestOrderPayComplDiv2">
-	        <c:forEach var="item" items="${order.orderDetails}">
-	          <img id="guestOrderPayComplImg" src="${item.bookImg}">
-	          <div class="guestOrderPayCompl">
-	            <div class="guestOrderPayComplInfoDiv1">
-	              <div class="guestOrderPayComplInfo"><fmt:formatDate value="${order.orderDate}" pattern="yyyy-MM-dd"/></div>
-	              <div class="guestOrderPayComplInfo"> ${item.title} | ${item.orderCount} </div>
-	              <div class="guestOrderPayComplInfo"> ${item.author} 저자 | ${item.publisher} 출판 </div>
-	              <div class="guestOrderPayComplInfo"><fmt:formatNumber value="${order.totalPrice}" type="currency"/></div>
-	            </div>
-	          </div> 
-	          </c:forEach>                       
+	        <div class="guestOrderPayComplDiv2" data-order-idx="${status.index}">
+		        <c:forEach var="item" items="${order.orderDetails}" varStatus="s">
+		          <div class="orderItem" data-price="${item.orderPrice}" 
+													           data-qty="${item.orderCount}" 
+													           data-order-idx="${status.index}" 
+													           data-idx="${s.index}">
+			          <img id="guestOrderPayComplImg" src="${item.book.productInfo.image}" alt="${item.book.productInfo.title} 표지">
+			          <div class="guestOrderPayCompl">
+			            <div class="guestOrderPayComplInfoDiv1">
+			              <div class="guestOrderPayComplInfo"> ${item.book.productInfo.title} | ${item.orderCount}권 </div>
+			              <div class="guestOrderPayComplInfo"> ${item.book.productInfo.author} 저자 | ${item.book.productInfo.publisher} 출판 </div>
+			              <div class="guestOrderPayComplInfo orderLineTotal" id="orderLineTotal-${status.index}-${s.index}"></div>
+			              <div class="guestOrderPayComplInfo orderTotal" id="orderTotal-${status.index}"  style="margin-top:15px; font-weight:bold;"></div>
+			            </div>
+			          </div> 
+	            </div> 
+	          </c:forEach>
 	        </div>
 	      </div>
 	    </div>
@@ -82,5 +91,42 @@
   </div>
 </section>
 <jsp:include page="/WEB-INF/views/include/footer.jsp" />
+<script>
+// 장바구니 개수 업데이트 함수
+$(document).ready(function() {
+  updateCartCount();
+  initHeaderEvents();
+
+  $(".guestOrderPayComplDiv2").each(function() {
+    let orderIdx = $(this).data("order-idx");
+    let productTotal = 0;
+
+    $(this).find(".orderItem").each(function() {
+      let price = parseInt($(this).data("price"));
+      let qty = parseInt($(this).data("qty"));
+      let idx = $(this).data("idx");
+
+      let lineTotal = price * qty;
+      productTotal += lineTotal;
+
+      // ✅ 상품별 합계 표시
+      $("#orderLineTotal-" + orderIdx + "-" + idx).html(
+        new Intl.NumberFormat('ko-KR').format(price) + "원 × " + qty + " = " +
+        "<strong>" + new Intl.NumberFormat('ko-KR').format(lineTotal) + "원</strong>"
+      );
+    });
+
+    // ✅ 주문별 배송비/총액 계산
+    let deliveryFee = (productTotal >= 50000) ? 0 : 3000;
+    let finalTotal = productTotal + deliveryFee;
+
+    $("#orderTotal-" + orderIdx).html(
+      "주문합계: " + new Intl.NumberFormat('ko-KR').format(productTotal) + "원" +
+      " + 배송비 " + new Intl.NumberFormat('ko-KR').format(deliveryFee) + "원" +
+      " = <strong>" + new Intl.NumberFormat('ko-KR').format(finalTotal) + "원</strong>"
+    );
+  });
+});
+</script>
 </body>
 </html>
