@@ -99,8 +99,4 @@ public class OrderDAO {
       return sqlSession.selectOne(NS + "getOrderById", orderId);
   }
 
-  public UserAddressVO getAddressByOrderId(int orderId) {
-      return sqlSession.selectOne(NS+ "getAddressByOrderId", orderId);
-  }
-
 }

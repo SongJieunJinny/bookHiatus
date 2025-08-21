@@ -407,8 +407,41 @@
   </select>
   
   <!-- 주문 정보 -->
-  <select id="getOrderById" parameterType="int" resultType="com.bookGap.vo.OrderVO">
-    SELECT * FROM ORDERS WHERE ORDER_ID = #{orderId}
+  <select id="getOrderById" parameterType="int" resultMap="OrderResultMap">
+	     SELECT
+	    o.ORDER_ID         AS O_ORDER_ID,
+	    o.TOTAL_PRICE,
+	    o.USER_ID,
+	    o.GUEST_ID,
+	    o.RECEIVER_NAME,
+	    o.RECEIVER_PHONE,
+	    o.RECEIVER_POST_CODE,
+	    o.RECEIVER_ROAD_ADDRESS,
+	    o.RECEIVER_DETAIL_ADDRESS,
+	    o.DELIVERY_REQUEST,
+	    o.ORDER_PASSWORD,
+	
+	    od.ORDER_DETAIL_NO,
+	    od.ORDER_COUNT,
+	    od.ORDER_PRICE     AS OD_ORDER_PRICE,
+	    od.REFUND_CHECK,
+	    od.BOOK_NO,
+	    od.ORDER_ID        AS OD_ORDER_ID,
+	
+	    b.BOOK_NO,
+	    b.ISBN             AS  ISBN ,
+	
+	    pa.ISBN            AS API_ISBN,
+	    pa.TITLE           AS TITLE,
+	    pa.IMAGE           AS IMAGE,
+	
+	    (SELECT COUNT(*) FROM COMMENT c WHERE c.ISBN = b.ISBN) AS COMMENT_COUNT
+	
+	  FROM ORDERS o
+	  LEFT JOIN ORDER_DETAIL od ON o.ORDER_ID = od.ORDER_ID
+	  LEFT JOIN BOOK b          ON od.BOOK_NO = b.BOOK_NO
+	  LEFT JOIN PRODUCT_API pa  ON b.ISBN = pa.ISBN
+	  WHERE o.ORDER_ID = #{orderId}
   </select>
 
   <!-- 배송지 정보 -->
