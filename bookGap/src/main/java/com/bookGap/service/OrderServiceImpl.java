@@ -262,14 +262,12 @@ public class OrderServiceImpl implements OrderService {
   public List<OrderVO> getOrdersPaging(String userId, int start, int perPage) {
     return orderDAO.getOrdersPaging(userId, start, perPage);
   }
-<<<<<<< HEAD
 
   @Override
   public List<OrderVO> findGuestOrdersByPasswordAndEmail(String orderPassword, String guestEmail) {
       return orderDAO.findGuestOrdersByPasswordAndEmail(orderPassword, guestEmail);
   }
 
-=======
   
   @Override
   public OrderVO getOrderById(int orderId) {
@@ -280,6 +278,5 @@ public class OrderServiceImpl implements OrderService {
   public UserAddressVO getAddressByOrderId(int orderId) {
       return orderDAO.getAddressByOrderId(orderId);
   }
-  
->>>>>>> branch 'main' of https://github.com/SongJieunJinny/bookHiatus.git
+
 }
