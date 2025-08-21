@@ -20,9 +20,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.bookGap.service.OrderService;
+import com.bookGap.service.PaymentService;
 import com.bookGap.util.PagingUtil;
 import com.bookGap.vo.BookVO;
 import com.bookGap.vo.OrderVO;
+import com.bookGap.vo.PaymentVO;
 import com.bookGap.vo.UserAddressVO;
 import com.bookGap.vo.UserInfoVO;
 
@@ -33,6 +35,7 @@ public class OrderController {
   
   @Autowired
   private OrderService orderService;
+  @Autowired private PaymentService paymentService;
 	
   //===================== 공통: 주문내역 페이지 =====================
   @GetMapping("/order/orderDetails.do")
@@ -178,5 +181,72 @@ public class OrderController {
       return "FAIL: " + e.getMessage();
     }
   }
+<<<<<<< HEAD
+=======
+	
+	/* 비회원 주문 페이지로 이동 */
+  @GetMapping("/guest/guestOrder.do")
+  public String showGuestOrderPage(@RequestParam(value="isbns",     required=false) List<String> isbns,
+                                   @RequestParam(value="quantities",required=false) List<Integer> quantities,
+                                   @RequestParam(value="isbn",      required=false) String isbn,
+                                   @RequestParam(value="quantity",  required=false) Integer quantity,
+                                   Model model) {
+
+    List<BookVO> books = new ArrayList<>();
+    List<Integer> qtys = new ArrayList<>();
+
+    if(isbns != null && !isbns.isEmpty()){
+      books = orderService.getBooksByIsbnList(isbns);
+      qtys  = (quantities != null) ? quantities : Collections.emptyList();
+    }else if (isbn != null && quantity != null){
+      BookVO book = orderService.getBookByIsbn(isbn);
+      if (book == null) return "redirect:/?error=book_not_found";
+      books.add(book);
+      qtys.add(quantity);
+    }else{
+      return "redirect:/?error=no_data";
+    }
+
+    model.addAttribute("bookList", books);
+    model.addAttribute("quantityList", qtys);
+    return "guest/guestOrder";
+  }
+	
+  // ===================== 비회원 주문 생성(API) =====================
+  @PostMapping("/order/guest/create")
+  @ResponseBody
+  public Map<String, Object> createGuestOrder(@RequestBody Map<String, Object> orderData) {
+    Map<String, Object> resp = new HashMap<>();
+    try{
+      Map<String, Object> result = orderService.createGuestOrderWithDetails(orderData);
+      resp.put("status", "SUCCESS");
+      resp.put("orderId", result.get("orderId"));
+      resp.put("guestId", result.get("guestId"));
+    }catch (IllegalStateException e){
+      resp.put("status", "FAIL");
+      resp.put("message", e.getMessage());
+    }catch (Exception e){
+      resp.put("status", "FAIL");
+      resp.put("message", "비회원 주문 처리 중 오류가 발생했습니다.");
+    }
+    return resp;
+  }
+  
+  @GetMapping("/order/orderComplete.do")
+  public String orderComplete(@RequestParam("paymentNo") int paymentNo, Model model) {
+	  PaymentVO payment = paymentService.getPaymentByNo(paymentNo);
+	    
+	    // 예: 주문번호로 주문상세 및 배송지 조회
+	    OrderVO order = orderService.getOrderById(payment.getOrderId());
+	    UserAddressVO address = orderService.getAddressByOrderId(payment.getOrderId());
+
+	    model.addAttribute("payment", payment);
+	    model.addAttribute("order", order);
+	    model.addAttribute("address", address);
+
+      model.addAttribute("paymentNo", paymentNo);
+      return "order/orderComplete";  // --> /WEB-INF/views/order/orderComplete.jsp
+  }
+>>>>>>> branch 'main' of https://github.com/SongJieunJinny/bookHiatus.git
 
 }
