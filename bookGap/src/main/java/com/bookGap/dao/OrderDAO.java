@@ -21,32 +21,35 @@ public class OrderDAO {
   
   private static final String NS = "com.bookGap.mapper.orderMapper.";
 
+  //====== 주문 관련 ======
   public void insertOrder(OrderVO vo) {
-    sqlSession.insert(NS + "insertOrder", vo);
+      sqlSession.insert(NS + "insertOrder", vo);
   }
 
   public void insertOrderDetail(OrderDetailVO vo) {
-    sqlSession.insert(NS + "insertOrderDetail", vo);
+      sqlSession.insert(NS + "insertOrderDetail", vo);
   }
 
   public void insertOrderDetailList(List<OrderDetailVO> list) {
-    sqlSession.insert(NS + "insertOrderDetailList", list);
+      sqlSession.insert(NS + "insertOrderDetailList", list);
   }
 
+  //회원 주문 조회
   public List<OrderVO> getOrdersByUserId(String userId) {
-    return sqlSession.selectList(NS + "getOrdersByUserId", userId);
+      return sqlSession.selectList(NS + "getOrdersByUserId", userId);
+  }
+
+  public int getTotalOrderCount(String userId) {
+      return sqlSession.selectOne(NS + "getTotalOrderCount", userId);
   }
   
-  public int getTotalOrderCount(String userId) {
-    return sqlSession.selectOne(NS + "getTotalOrderCount", userId);
-  }
-
+  //페이징
   public List<OrderVO> getOrdersPaging(String userId, int start, int perPage) {
-    Map<String, Object> p = new HashMap<>();
-    p.put("userId", userId);
-    p.put("start", start);     // OFFSET
-    p.put("perPage", perPage); // LIMIT
-    return sqlSession.selectList(NS + "getOrdersPaging", p);
+      Map<String, Object> p = new HashMap<>();
+      p.put("userId", userId);
+      p.put("start", start);
+      p.put("perPage", perPage);
+      return sqlSession.selectList(NS + "getOrdersPaging", p);
   }
 
   public BookVO findBookByIsbn(String isbn) {
@@ -84,5 +87,13 @@ public class OrderDAO {
     int updated = sqlSession.update(NS + "updateBookStock", p);
     return updated > 0;
   }
+  
+  //비회원 주문 조회
+  public List<OrderVO> findGuestOrdersByPasswordAndEmail(String orderPassword, String guestEmail) {
+    Map<String, Object> p = new HashMap<>();
+    p.put("orderPassword", orderPassword);
+    p.put("guestEmail", guestEmail);
+    return sqlSession.selectList(NS + "findGuestOrdersByPasswordAndEmail", p);
+}
 
 }

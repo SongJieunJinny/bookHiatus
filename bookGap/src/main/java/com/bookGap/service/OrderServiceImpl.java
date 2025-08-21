@@ -26,8 +26,10 @@ public class OrderServiceImpl implements OrderService {
   @Override
   public void placeOrder(OrderVO order, List<OrderDetailVO> details) {
     orderDAO.insertOrder(order); // PK 생성
-    for (OrderDetailVO d : details) d.setOrderId(order.getOrderId());
-    orderDAO.insertOrderDetailList(details);
+    for (OrderDetailVO detail : details) {
+      detail.setOrderId(order.getOrderId()); // FK 세팅
+      orderDAO.insertOrderDetail(detail);
+    }
   }
   
   @Transactional
@@ -53,7 +55,7 @@ public class OrderServiceImpl implements OrderService {
   }
   
   @Override
-  public List<OrderVO> getOrdersByUser(String userId) {
+  public List<OrderVO> getOrdersByUserId(String userId) {
     return orderDAO.getOrdersByUserId(userId);
   }
 
@@ -260,5 +262,10 @@ public class OrderServiceImpl implements OrderService {
   public List<OrderVO> getOrdersPaging(String userId, int start, int perPage) {
     return orderDAO.getOrdersPaging(userId, start, perPage);
   }
-  
+
+  @Override
+  public List<OrderVO> findGuestOrdersByPasswordAndEmail(String orderPassword, String guestEmail) {
+      return orderDAO.findGuestOrdersByPasswordAndEmail(orderPassword, guestEmail);
+  }
+
 }

@@ -111,6 +111,7 @@
 			</c:if>
     </div>
   </section>
+
 <jsp:include page="/WEB-INF/views/include/footer.jsp" />
 <script>
 $(function () {
@@ -135,8 +136,6 @@ $(function () {
 	
   updateCartCount();
   initHeaderEvents();
-  
-  
 
   function filterAndDisplayOrders() {
     const s = $("#orderDateStart").val();
