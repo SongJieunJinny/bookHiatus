@@ -174,8 +174,7 @@
 	  WHERE o.ORDER_PASSWORD = #{orderPassword}
 	    AND g.GUEST_EMAIL = #{guestEmail}
 	</select>
-	
-<<<<<<< HEAD
+
 	<select id="findGuestOrdersByPasswordAndEmail" parameterType="map" resultMap="OrderResultMap">
 	  SELECT
 	    o.ORDER_ID,
@@ -207,7 +206,7 @@
 	    AND g.GUEST_EMAIL = #{guestEmail}
 	  ORDER BY o.ORDER_DATE DESC
 	</select>
-=======
+
 	<select id="getTotalOrderCount" parameterType="string" resultType="int">
     SELECT COUNT(*) FROM ORDERS WHERE USER_ID = #{userId}
   </select>
@@ -225,6 +224,6 @@
     WHERE o.ORDER_ID = #{orderId}
   </select>
   
->>>>>>> branch 'main' of https://github.com/SongJieunJinny/bookHiatus.git
+
 
 </mapper>

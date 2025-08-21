@@ -2,6 +2,7 @@ package com.bookGap.controller;
 
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -181,8 +182,6 @@ public class OrderController {
       return "FAIL: " + e.getMessage();
     }
   }
-<<<<<<< HEAD
-=======
 	
 	/* 비회원 주문 페이지로 이동 */
   @GetMapping("/guest/guestOrder.do")
@@ -247,6 +246,6 @@ public class OrderController {
       model.addAttribute("paymentNo", paymentNo);
       return "order/orderComplete";  // --> /WEB-INF/views/order/orderComplete.jsp
   }
->>>>>>> branch 'main' of https://github.com/SongJieunJinny/bookHiatus.git
+
 
 }
