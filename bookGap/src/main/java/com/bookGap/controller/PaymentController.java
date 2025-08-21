@@ -8,6 +8,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -35,7 +37,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Controller
 @RequestMapping("/payment")
 public class PaymentController {
-
+	private static final Logger log = LoggerFactory.getLogger(PaymentController.class);
   @Autowired private PaymentService paymentService;
 
   @Autowired private RestTemplate restTemplate;
@@ -66,7 +68,10 @@ public class PaymentController {
       }
 
       paymentService.insertPayment(payment);
+      log.info("[orderComplete] loaded payment: paymentNo={}, orderId={}",
+    	         payment.getPaymentNo(), payment.getOrderId());
       int paymentNo = payment.getPaymentNo();
+      log.info("[kakaopayReady] save to session paymentNo={}, partner_user_id={}", paymentNo, requestVO.getPartnerUserId());
       requestVO.setPaymentNo(paymentNo);
 
       // 요청 파라미터 준비
@@ -120,6 +125,10 @@ public class PaymentController {
       Integer paymentNo = (Integer) session.getAttribute("paymentNo");
       String tid = (String) session.getAttribute("tid");
       String partnerUserId = (String) session.getAttribute("partner_user_id");
+      
+      log.info("[kakaopaySuccess] session paymentNo={}, tid={}, partner_user_id={}, pg_token={}",
+    	         new Object[]{paymentNo, tid, partnerUserId, pgToken});
+
 
       if (paymentNo == null || tid == null || partnerUserId == null) {
           return "redirect:/order/error";

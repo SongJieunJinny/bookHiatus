@@ -37,7 +37,6 @@ public interface OrderService {
   public Map<String, Object> createGuestOrderWithDetails(Map<String, Object> orderData) throws Exception;
   
   public OrderVO getOrderById(int orderId);
-  public UserAddressVO getAddressByOrderId(int orderId);
 
   //비회원 주문 조회
   public List<OrderVO> findGuestOrdersByPasswordAndEmail(String orderPassword, String guestEmail);

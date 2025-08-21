@@ -274,9 +274,6 @@ public class OrderServiceImpl implements OrderService {
       return orderDAO.getOrderById(orderId);
   }
 
-  @Override
-  public UserAddressVO getAddressByOrderId(int orderId) {
-      return orderDAO.getAddressByOrderId(orderId);
-  }
+
 
 }

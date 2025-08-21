@@ -234,16 +234,18 @@ public class OrderController {
   @GetMapping("/order/orderComplete.do")
   public String orderComplete(@RequestParam("paymentNo") int paymentNo, Model model) {
 	  PaymentVO payment = paymentService.getPaymentByNo(paymentNo);
-	    
+	 // log.info("[orderComplete] request paymentNo = {}", paymentNo);
+
+	   // System.out.println("payment"+payment);
+	   // System.out.println("getPaymenNo"+payment.getPaymentNo());
 	    // 예: 주문번호로 주문상세 및 배송지 조회
 	    OrderVO order = orderService.getOrderById(payment.getOrderId());
-	    UserAddressVO address = orderService.getAddressByOrderId(payment.getOrderId());
+	    
+	    System.out.println("getPaymenNo"+order.getOrderId());
 
 	    model.addAttribute("payment", payment);
 	    model.addAttribute("order", order);
-	    model.addAttribute("address", address);
-
-      model.addAttribute("paymentNo", paymentNo);
+        model.addAttribute("paymentNo", paymentNo);
       return "order/orderComplete";  // --> /WEB-INF/views/order/orderComplete.jsp
   }
 
