@@ -11,7 +11,7 @@
     <result property="bookStock"             column="BOOK_STOCK"/>
     <result property="bookState"             column="BOOK_STATE"/>
     <result property="bookCategory"          column="BOOK_CATEGORY"/>
-    <result property="isbn"                  column="BOOK_ISBN"/>
+     <result property="isbn"                  column="ISBN"/>
     <result property="bookImgUrl"            column="BOOK_IMGURL"/>
     <result property="bookIndex"             column="BOOK_INDEX"/>
     <result property="publisherBookReview"   column="PUBLISHER_BOOK_REVIEW"/>

@@ -8,8 +8,20 @@
 <head>
 <meta charset="UTF-8">
 <title>orderComplete</title>
+<script src="<%=request.getContextPath()%>/resources/js/jquery-3.7.1.js"></script>
+<link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/resources/css/index.css"/>
 </head>
 <body>
+<sec:authorize access="isAuthenticated()">
+  <script>
+    const isLoggedIn = true;
+  </script>
+</sec:authorize>
+<sec:authorize access="isAnonymous()">
+  <script>const isLoggedIn = false;</script>
+</sec:authorize>
+<jsp:include page="/WEB-INF/views/include/header.jsp" />
+<section>
     <h2>주문이 성공적으로 완료되었습니다!</h2>
 
     <h3>결제 정보</h3>
@@ -41,5 +53,15 @@
 
     <br>
     <a href="<c:url value='/' />">메인으로 돌아가기</a>
+</section>
+<jsp:include page="/WEB-INF/views/include/footer.jsp" />
+<script>
+// 장바구니 개수 업데이트 함수
+  $(document).ready(function() {
+	updateCartCount(); // 장바구니 개수 업데이트
+	initHeaderEvents();
+  });
+
+</script>
 </body>
 </html>
