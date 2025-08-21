@@ -122,16 +122,15 @@ public class OrderServiceImpl implements OrderService {
       String isbn = (String) item.get("isbn");
       Integer quantity = (Integer) item.get("quantity");
       BookVO book = booksInDb.stream()
-          .filter(b -> b.getIsbn().equals(isbn))
-          .findFirst()
-          .orElseThrow(() -> new IllegalStateException("주문 처리 중 상품 정보를 찾을 수 없습니다: " + isbn));
+                    .filter(b -> b.getIsbn().equals(isbn))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalStateException("주문 처리 중 상품 정보를 찾을 수 없습니다: " + isbn));
       serverCalculatedTotalPrice += book.getProductInfo().getDiscount() * quantity;
     }
 
     serverCalculatedTotalPrice += (Integer) orderData.get("deliveryFee");
     if(serverCalculatedTotalPrice != (Integer) orderData.get("totalPrice")){
-      System.out.println("WARN: 가격 검증 불일치. 서버:" + serverCalculatedTotalPrice +
-          ", 클라이언트:" + orderData.get("totalPrice"));
+      System.out.println("WARN: 가격 검증 불일치. 서버:" + serverCalculatedTotalPrice +", 클라이언트:" + orderData.get("totalPrice"));
     }
 
     OrderVO newOrder = new OrderVO();
@@ -265,15 +264,12 @@ public class OrderServiceImpl implements OrderService {
 
   @Override
   public List<OrderVO> findGuestOrdersByPasswordAndEmail(String orderPassword, String guestEmail) {
-      return orderDAO.findGuestOrdersByPasswordAndEmail(orderPassword, guestEmail);
+    return orderDAO.findGuestOrdersByPasswordAndEmail(orderPassword, guestEmail);
   }
-
   
   @Override
   public OrderVO getOrderById(int orderId) {
-      return orderDAO.getOrderById(orderId);
+    return orderDAO.getOrderById(orderId);
   }
-
-
 
 }

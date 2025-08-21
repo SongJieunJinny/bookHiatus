@@ -176,7 +176,7 @@
       </div>
     </div>
     <div id="guestMain" class="tabContent" style="display:none;">
- 			<form id="guestForm" method="post" action="${pageContext.request.contextPath}/guestOrderInfo.do">
+ 			<form id="guestForm" method="post" action="${pageContext.request.contextPath}/guest/guestOrderInfo.do">
 		 		<div id="guestMain">
 		      <div id="guestMainDiv">
 		        <div id="guestInput">
