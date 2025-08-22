@@ -25,6 +25,8 @@ public class OrderVO {
   private String orderPassword;
   private List<OrderDetailVO> orderDetails;
   private PaymentVO payment; 
+  private String courier; // 택배사
+  private String invoice; // 송장번호
 
   //===================== 게스트주문필요 필드 =====================
   private String guestName;
@@ -231,4 +233,21 @@ public class OrderVO {
     this.guestEmail = guestEmail;
   }
 
+public String getCourier() {
+	return courier;
+}
+
+public void setCourier(String courier) {
+	this.courier = courier;
+}
+
+public String getInvoice() {
+	return invoice;
+}
+
+public void setInvoice(String invoice) {
+	this.invoice = invoice;
+}
+  
+  
 }
