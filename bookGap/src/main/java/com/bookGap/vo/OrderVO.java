@@ -33,6 +33,10 @@ public class OrderVO {
   private String guestPhone;
   private String guestEmail;
   
+//===================== 환불필요 필드 =====================
+  private int paymentNo;
+  private Integer refundStatus; // 환불상태(1 요청, 2 처리중, 3 완료, 4 거절)
+  
   // ===================== equals/hashCode: orderId 기준 =====================
   @Override
   public boolean equals(Object o) {
@@ -62,6 +66,24 @@ public class OrderVO {
       case 5: return "교환/반품";
       default: return "-";
     }
+  }
+  
+  public String getRefundStatusText() {
+    if (refundStatus == null) return "-";
+    switch (refundStatus) {
+      case 1: return "환불 요청";
+      case 2: return "처리중";
+      case 3: return "환불 완료";
+      case 4: return "환불 거절";
+      default: return "-";
+    }
+  }
+  
+  public String getDisplayStatusText() {
+    if (refundStatus != null && refundStatus > 0) {
+      return getRefundStatusText(); // 환불 상태 우선 표시
+    }
+    return getOrderStatusText(); // 없으면 배송 상태 표시
   }
 
   //===================== getter&setter =====================
@@ -232,22 +254,37 @@ public class OrderVO {
   public void setGuestEmail(String guestEmail) {
     this.guestEmail = guestEmail;
   }
-
-public String getCourier() {
-	return courier;
-}
-
-public void setCourier(String courier) {
-	this.courier = courier;
-}
-
-public String getInvoice() {
-	return invoice;
-}
-
-public void setInvoice(String invoice) {
-	this.invoice = invoice;
-}
   
+  public String getCourier() {
+  	return courier;
+  }
+  
+  public void setCourier(String courier) {
+  	this.courier = courier;
+  }
+  
+  public String getInvoice() {
+  	return invoice;
+  }
+  
+  public void setInvoice(String invoice) {
+  	this.invoice = invoice;
+  }
+  
+  public int getPaymentNo() {
+    return paymentNo;
+  }
+  
+  public void setPaymentNo(int paymentNo) {
+    this.paymentNo = paymentNo;
+  }
+
+  public Integer getRefundStatus() {
+    return refundStatus;
+  }
+
+  public void setRefundStatus(Integer refundStatus) {
+    this.refundStatus = refundStatus;
+  }
   
 }
