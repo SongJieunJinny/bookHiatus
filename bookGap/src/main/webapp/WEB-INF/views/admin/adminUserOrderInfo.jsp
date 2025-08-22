@@ -254,6 +254,7 @@
 			  method: "GET",
 			  data: { orderId },
 			  success: function (result) {
+			  $("#orderModal").data("orderId", orderId);
 			  const paymentMethodMap = { 1: 'Toss', 2: 'KakaoPay' };
 			  const paymentStatusMap = { 1: '결제 중', 2: '결제 승인', 3: '결제 취소' };
 			  const paymentMethodText = paymentMethodMap[result.payment?.paymentMethod] || '기타';

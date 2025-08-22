@@ -84,16 +84,19 @@
 	</select>
 	
 	
-	<update id="updateUserOrder" parameterType="com.bookGap.vo.AdminOrderUpdateRequestVO">
-	    UPDATE ORDERS
-	    SET ORDER_STATUS = #{orderStatus},
-	        COURIER = #{courier},
-	        INVOICE = #{invoice}
-	    WHERE ORDER_ID = #{orderId};
+	<update id="updateUserOrder">
+	  UPDATE ORDERS
+	  SET ORDER_STATUS = #{orderStatus},
+	      COURIER = #{courier},
+	      INVOICE = #{invoice}
+	  WHERE ORDER_ID = #{orderId}
+	</update>
 	
-	    UPDATE PAYMENTS
-	    SET STATUS = #{paymentStatus}
-	    WHERE ORDER_ID = #{orderId};
+	<!-- 결제 상태 업데이트 -->
+	<update id="updateUserPaymentStatus">
+	  UPDATE PAYMENTS
+	  SET STATUS = #{paymentStatus}
+	  WHERE ORDER_ID = #{orderId}
 	</update>
 
 
