@@ -26,6 +26,8 @@
 	  <result property="receiverRoadAddress" column="RECEIVER_ROAD_ADDRESS"/>
 	  <result property="receiverDetailAddress" column="RECEIVER_DETAIL_ADDRESS"/>
 	  <result property="deliveryRequest" column="DELIVERY_REQUEST"/>
+	  <result property="courier" column="COURIER"/>        <!-- 추가 -->
+ 	  <result property="invoice" column="INVOICE"/> 
 	  <result property="userId" column="USER_ID"/>
 	  <result property="guestId" column="GUEST_ID"/>
 	
@@ -72,6 +74,7 @@
 	    o.ORDER_ID, o.ORDER_DATE, o.ORDER_STATUS, o.TOTAL_PRICE,
 	    o.RECEIVER_NAME, o.RECEIVER_PHONE, o.RECEIVER_POST_CODE,
 	    o.RECEIVER_ROAD_ADDRESS, o.RECEIVER_DETAIL_ADDRESS, o.DELIVERY_REQUEST,
+	    o.COURIER, o.INVOICE, 
 	    o.USER_ID, o.GUEST_ID,
 	
 	    p.PAYMENT_NO, p.AMOUNT, p.PAYMENT_METHOD, p.STATUS, p.CREATED_AT
@@ -79,6 +82,19 @@
 	  LEFT JOIN PAYMENTS p ON o.ORDER_ID = p.ORDER_ID
 	  WHERE o.ORDER_ID = #{orderId}
 	</select>
+	
+	
+	<update id="updateUserOrder" parameterType="com.bookGap.vo.AdminOrderUpdateRequestVO">
+	    UPDATE ORDERS
+	    SET ORDER_STATUS = #{orderStatus},
+	        COURIER = #{courier},
+	        INVOICE = #{invoice}
+	    WHERE ORDER_ID = #{orderId};
+	
+	    UPDATE PAYMENTS
+	    SET STATUS = #{paymentStatus}
+	    WHERE ORDER_ID = #{orderId};
+	</update>
 
 
 </mapper>

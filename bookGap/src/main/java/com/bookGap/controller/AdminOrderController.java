@@ -3,9 +3,12 @@ package com.bookGap.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -13,8 +16,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.bookGap.service.AdminBookService;
 import com.bookGap.service.AdminUserOrderInfoService;
+import com.bookGap.util.StringUtils;
+import com.bookGap.vo.AdminOrderUpdateRequestVO;
 import com.bookGap.vo.OrderDetailVO;
 import com.bookGap.vo.OrderVO;
+
+import lombok.Data;
 
 @Controller
 public class AdminOrderController {
@@ -56,5 +63,52 @@ public class AdminOrderController {
 
 	    return order;
 	}
+	
+
+
+	
+	 @PostMapping(value = "/admin/adminUserOrderInfo/updateUserOrder.do", consumes = "application/json", produces = "application/json")
+	 @ResponseBody
+	 public ResponseEntity<?> updateUserOrder(@RequestBody AdminOrderUpdateRequestVO req) {
+
+		    // 1) 기본 검증
+		    if (req.getOrderId() <= 0) {
+		        return ResponseEntity.badRequest().body("{\"success\":false,\"message\":\"invalid orderId\"}");
+		    }
+		    if (req.getOrderStatus() < 1 || req.getOrderStatus() > 5) {
+		        return ResponseEntity.badRequest().body("{\"success\":false,\"message\":\"invalid orderStatus\"}");
+		    }
+		    if (req.getPaymentStatus() < 1 || req.getPaymentStatus() > 3) {
+		        return ResponseEntity.badRequest().body("{\"success\":false,\"message\":\"invalid paymentStatus\"}");
+		    }
+
+		    // 2) 비즈니스 규칙(예시): 배송중/완료면 송장 필수
+		    if ((req.getOrderStatus() == 2 || req.getOrderStatus() == 3)
+		        && (StringUtils.isBlank(req.getCourier()) || StringUtils.isBlank(req.getInvoice()))) {
+		        return ResponseEntity.badRequest().body("{\"success\":false,\"message\":\"courier/invoice required when shipping or completed\"}");
+		    }
+
+		    try {
+		        // 3) 서비스 호출(트랜잭션 내 일괄 처리)
+		        int updated = adminUserOrderInfoService.updateUserOrderAndPayment(
+		                req.getOrderId(),
+		                req.getOrderStatus(),
+		                req.getPaymentStatus(),
+		                StringUtils.emptyToNull(req.getCourier()),
+		                StringUtils.emptyToNull(req.getInvoice())
+		        );
+
+		        if (updated <= 0) {
+		            return ResponseEntity.status(500).body("{\"success\":false,\"message\":\"no rows updated\"}");
+		        }
+		        return ResponseEntity.ok("{\"success\":true}");
+		    } catch (Exception e) {
+		        // 로그 찍기 권장
+		        e.printStackTrace();
+		        return ResponseEntity.status(500).body("{\"success\":false,\"message\":\"server error\"}");
+		    }
+		}
+
+
 
 }

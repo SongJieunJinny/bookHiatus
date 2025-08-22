@@ -4,9 +4,11 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.bookGap.dao.AdminOrderDAO;
 import com.bookGap.dao.UserDAO;
+import com.bookGap.vo.AdminOrderUpdateRequestVO;
 import com.bookGap.vo.OrderDetailVO;
 import com.bookGap.vo.OrderVO;
 import com.bookGap.vo.UserInfoVO;
@@ -33,7 +35,17 @@ public class AdminUserOrderInfoServiceImpl  implements  AdminUserOrderInfoServic
 	        return order;
 	    }
 	 
-	
+	 @Override
+	 @Transactional
+	 public int updateUserOrderAndPayment(int orderId, int orderStatus, int paymentStatus, String courier, String invoice) {
+	     AdminOrderUpdateRequestVO vo = new AdminOrderUpdateRequestVO();
+	     vo.setOrderId(orderId);
+	     vo.setOrderStatus(orderStatus);
+	     vo.setPaymentStatus(paymentStatus);
+	     vo.setCourier(courier);
+	     vo.setInvoice(invoice);
+	     return adminOrderDAO.updateUserOrder(vo);
+	 }
 
 
 	

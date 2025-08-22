@@ -6,6 +6,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.bookGap.vo.AdminOrderUpdateRequestVO;
 import com.bookGap.vo.OrderDetailVO;
 import com.bookGap.vo.OrderVO;
 
@@ -32,6 +33,10 @@ public class AdminOrderDAO {
 	
     public OrderVO getOrderInfoWithPayment(int orderId) {
         return sqlSession.selectOne(namespace + ".getOrderInfoWithPayment", orderId);
+    }
+    
+    public int updateUserOrder(AdminOrderUpdateRequestVO req) {
+        return sqlSession.update(namespace + ".updateUserOrder", req);
     }
 
 }
