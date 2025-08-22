@@ -39,4 +39,8 @@ public class AdminOrderDAO {
         return sqlSession.update(namespace + ".updateUserOrder", req);
     }
 
+    public int updateUserPaymentStatus(AdminOrderUpdateRequestVO req) {
+        return sqlSession.update(namespace + ".updateUserPaymentStatus", req);
+    }
+
 }

@@ -44,7 +44,11 @@ public class AdminUserOrderInfoServiceImpl  implements  AdminUserOrderInfoServic
 	     vo.setPaymentStatus(paymentStatus);
 	     vo.setCourier(courier);
 	     vo.setInvoice(invoice);
-	     return adminOrderDAO.updateUserOrder(vo);
+
+	     int updatedOrder = adminOrderDAO.updateUserOrder(vo);
+	     int updatedPayment = adminOrderDAO.updateUserPaymentStatus(vo);
+
+	     return (updatedOrder > 0 || updatedPayment > 0) ? 1 : 0;
 	 }
 
 
