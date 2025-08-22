@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bookGap.mapper.refundMapper">
+  <!-- 환불 신청 -->
+  <insert id="applyRefund" parameterType="com.bookGap.vo.RefundVO">
+    INSERT INTO REFUND
+    (ORDER_ID, PAYMENT_NO, REFUND_REASON, REFUND_IMAGE, REFUND_MAIL, REFUND_STATUS)
+    VALUES
+    (#{orderId}, #{paymentNo}, #{refundReason}, #{refundImage}, #{refundMail}, 1)
+  </insert>
+  
+  <!-- 환불 신청 내역을 고객 화면에서 조회 -->
+  <select id="selectRefundListByOrderId" resultType="com.bookGap.vo.RefundVO">
+	  SELECT REFUND_NO, ORDER_ID, PAYMENT_NO, REFUND_REASON, REFUND_IMAGE, 
+	         REFUND_MAIL, REFUND_STATUS, CREATED_AT
+	  FROM REFUND
+	  WHERE ORDER_ID = #{orderId}
+	  ORDER BY CREATED_AT DESC
+	</select>
+	
+	<!-- 주문ID + 결제ID 기준 환불 조회 -->
+  <select id="getRefundByOrderAndPayment" parameterType="map" resultType="com.bookGap.vo.RefundVO">
+    SELECT REFUND_NO,
+           ORDER_ID,
+           PAYMENT_NO,
+           REFUND_REASON,
+           REFUND_IMAGE,
+           REFUND_MAIL,
+           REFUND_STATUS,
+           CREATED_AT
+    FROM REFUND
+    WHERE ORDER_ID = #{orderId}
+      AND PAYMENT_NO = #{paymentNo}
+  </select>
+  
+</mapper>
