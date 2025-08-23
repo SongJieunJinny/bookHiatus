@@ -149,127 +149,96 @@
 							</div>
 							<div class="card-body">
 								<table id="datatablesSimple">
-									<thead>
-										<tr>
-											<th>주문 번호</th>
-											<th>주문일</th>
-											<th>주문 상태</th>
-											<th>총 주문 금액</th>
-											<th>배송 상태</th>
-											<th>상세보기</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr>
-											<td>20250407001</td>
-											<td>2025-04-07</td>
-											<td>결제완료</td>
-											<td>58,000원</td>
-											<td>배송 중</td>
-											<td><button class="btn btn-sm btn-dark viewBtn">상세보기</button></td>
-										</tr>
-									</tbody>
+								  <thead>
+								    <tr>
+								      <th>주문 번호</th>
+								      <th>주문일</th>
+								      <th>주문 상태</th>
+								      <th>총 금액</th>
+								      <th>주문자</th>
+								      <th>상세보기</th>
+								    </tr>
+								  </thead>
+								  <tbody>
+								    <c:forEach var="order" items="${guestOrderList}">
+								      <tr>
+										<td>${order.orderId}</td>
+										<td>${order.orderDate}</td>
+										<td>
+											 <c:choose>
+									          <c:when test="${order.orderStatus == 1}">배송 준비중</c:when>
+									          <c:when test="${order.orderStatus == 2}">배송중</c:when>
+									          <c:when test="${order.orderStatus == 3}">배송완료</c:when>
+									          <c:when test="${order.orderStatus == 4}">주문취소</c:when>
+									          <c:when test="${order.orderStatus == 5}">교환/반품</c:when>
+									          <c:otherwise>알 수 없음</c:otherwise>
+									        </c:choose>
+										</td>
+										<td>${order.totalPrice}</td>
+										<td>${order.guestId}</td>
+										<td>
+								          <button class="btn btn-sm btn-dark viewBtn" data-order-id="${order.orderId}">상세보기</button>
+								        </td>
+								      </tr>
+								    </c:forEach>
+								  </tbody>
 								</table>
 								 <!-- 주문 상세 모달 -->
 								<div class="modal fade" id="orderModal" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
-									<div class="modal-dialog modal-dialog-centered modal-lg">
-										<div class="modal-content">
-						                      <div class="modal-header">
-						                        <h5 class="modal-title" id="orderModalLabel" style="margin-top: 1%; font-size: 24px; font-weight: bold;">주문 상세 정보</h5>
-						                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
-						                      </div>
-						                      <div class="modalGuestOrder">
-						                        <span class="modalGuestOrderContainer">
-						                          <div class="modal-body">
-						                            <h6 class="fw-bold" style="text-align: center;">주문 정보</h6>
-						                            <ul class="list-group mb-3">
-						                              <li class="list-group-item">주문 번호 : <span id="orderNum"></span></li>
-						                              <li class="list-group-item">주문일자 : 2025-04-07</li>
-						                              <li class="list-group-item">결제 수단 : 카드</li>
-						                              <li class="list-group-item">결제 상태 : 정상</li>
-						                              <li class="list-group-item">
-						                                주문 상태:
-						                                <select class="form-select d-inline w-auto ms-2" id="orderStatus">
-						                                  <option>결제완료</option>
-						                                  <option>주문취소</option>
-						                                  <option>환불요청</option>
-						                                  <option>교환요청</option>
-						                                </select>
-						                              </li>
-						                            </ul>
-						                          </div>
-						                        </span>
-						                        <span class="modalGuestOrderContainer">
-						                          <div class="modal-body" style="margin-top: 10.5%;">
-						                            <h6 class="fw-bold" style="text-align: center;">주문자 정보</h6>
-						                            <ul class="list-group mb-3">
-						                              <li class="list-group-item">주문자 이름 : 김길동</li>
-						                              <li class="list-group-item">주문자 연락처 : 010-2445-5112</li>
-						                              <li class="list-group-item">주문자 이메일 : kim@kim.com</li>
-						                            </ul>
-						                          </div>
-						                        </span>
-						                      </div>
-						                      <div class="modalGuestOrderInfo">
-						                        <h6 class="fw-bold" style="text-align: center;">배송 정보</h6>
-						                        <ul class="list-group mb-3">
-						                          <li class="list-group-item">수령인 : 홍길동 / 010-1234-5678</li>
-						                          <li class="list-group-item">주소 : 전주시 이젠로 190 302동 1001호</li>
-						                          <li class="list-group-item">요청사항 : 문 앞에 놓아주세요</li>
-						                          <li class="list-group-item">
-						                            배송 상태 :
-						                            <select class="form-select d-inline w-auto ms-2" id="deliveryStatus">
-						                              <option>배송 준비</option>
-						                              <option>배송 중</option>
-						                              <option>배송 완료</option>
-						                            </select>
-						                          </li>
-						                          <li class="list-group-item">
-						                            택배사 :
-						                            <input type="text" class="form-control d-inline w-50 ms-2" id="courier" value="CJ대한통운" />
-						                          </li>
-						                          <li class="list-group-item">
-						                            송장번호 :
-						                            <input type="text" class="form-control d-inline w-50 ms-2" id="invoice" value="123456789" />
-						                          </li>
-						                        </ul>
-						                      </div>
-						                      <div class="modalGuestOrderProductInfo">
-						                        <h6 class="fw-bold" style="text-align: center;">상품 정보</h6>
-						                        <table class="table" style="border: 1px solid lightgrey; border-radius: 10px; ">
-						                          <thead>
-						                            <tr>
-						                              <th>상품명</th>
-						                              <th>수량</th>
-						                              <th>가격</th>
-						                              <th>옵션</th>
-						                            </tr>
-						                          </thead>
-						                          <tbody>
-						                            <tr>
-						                              <td>고흐로 읽는 심리 수업</td>
-						                              <td>2</td>
-						                              <td>25,000원</td>
-						                              <td>블랙</td>
-						                            </tr>
-						                          </tbody>
-						                        </table>
-						                      </div>
-						                    <div class="modalGuestOrderPayment">
-						                      <h6 class="fw-bold" style="text-align: center;">총 결제 내역</h6>
-						                      <ul class="list-group mb-3">
-						                        <li class="list-group-item">상품 합계 : 50,000원</li>
-						                        <li class="list-group-item">배송비 : 3,000원</li>
-						                        <li class="list-group-item">할인 : -5,000원</li>
-						                        <li class="list-group-item">최종 결제 금액 : 48,000원</li>
-						                      </ul>
-						                      <div class="d-flex justify-content-end gap-2">
-						                        <button class="btn btn-dark" id="saveOrder" style="margin-bottom: 3%;">저장</button>
-						                      </div>
-						                    </div>
-										</div>
-									</div>
+								  <div class="modal-dialog modal-dialog-centered modal-lg">
+								    <div class="modal-content">
+								      <!-- 모달 헤더 -->
+								      <div class="modal-header">
+								        <h5 class="modal-title fw-bold" id="orderModalLabel">주문 상세 정보</h5>
+								        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+								      </div>
+								
+								      <!-- 모달 본문 -->
+								      <div class="modal-body">
+								        <!-- 주문 정보 -->
+								        <h6 class="fw-bold">주문 정보</h6>
+								        <ul class="list-group mb-3" id="orderInfoList">
+								          <!-- Ajax로 동적 바인딩됨 -->
+								        </ul>
+								
+								        <!-- 배송 정보 -->
+								        <h6 class="fw-bold">배송 정보</h6>
+								        <ul class="list-group mb-3" id="deliveryInfo">
+								          <!-- Ajax로 동적 바인딩됨 -->
+								        </ul>
+								
+								        <!-- 상품 정보 -->
+								        <h6 class="fw-bold">상품 정보</h6>
+								        <table class="table mb-3" style="border: 1px solid lightgrey; border-radius: 10px;">
+								          <thead>
+								            <tr>
+								              <th>상품명</th>
+								              <th>수량</th>
+								              <th>가격</th>
+								              <th>옵션</th>
+								            </tr>
+								          </thead>
+								          <tbody id="productTable">
+								            <!-- Ajax로 동적 바인딩됨 -->
+								          </tbody>
+								        </table>
+								
+								        <!-- 결제 내역 -->
+								        <h6 class="fw-bold">총 결제 내역</h6>
+								        <ul class="list-group mb-3" id="paymentSummaryList">
+								          <!-- Ajax로 동적 바인딩됨 -->
+								        </ul>
+								      </div>
+								
+								      <!-- 모달 푸터 -->
+								      <div class="modal-footer">
+								        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+								        <button type="button" class="btn btn-dark" id="saveOrder">저장</button>
+								      </div>
+								    </div>
+								  </div>
 								</div>
+								
 							</div>
 						</div>
 					</div>
@@ -283,54 +252,190 @@
 <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
 <script src="<%=request.getContextPath()%>/resources/js/datatables-simple-demo.js"></script>
 <script>
-	 $(document).ready(function () {
-		   // 모달 관련 변수
-		   let selectedRow = null;
+	$(document).ready(function () {
+		  // 모달 관련 변수
+		  let selectedRow = null;
 		
-		   // 상세보기 버튼 클릭 시
-		   $(document).on("click", ".viewBtn", function () {
-		     selectedRow = $(this).closest("tr");
+		$(document).on("click", ".viewBtn", function () {
+			  const orderId = $(this).data("order-id");
+			  $.ajax({
+			  url: "<%=request.getContextPath()%>/admin/adminGuestOrderInfo/getGuestOrderDetail.do",
+			  method: "GET",
+			  data: { orderId },
+			  success: function (result) {
+			  $("#orderModal").data("orderId", orderId);
+			  const paymentMethodMap = { 1: 'Toss', 2: 'KakaoPay' };
+			  const paymentStatusMap = { 1: '결제 중', 2: '결제 승인', 3: '결제 취소' };
+			  const paymentMethodText = paymentMethodMap[result.payment?.paymentMethod] || '기타';
+			  const paymentStatusText = paymentStatusMap[result.payment?.status] || '알 수 없음';
+			  const total = result.totalPrice || 0;
+		        //배송비 조건 처리
+		        let shippingFee = 3000;
+		        if (total >= 50000) {
+		          shippingFee = 0;
+		        }
+		        const discount = 0;
+		        const finalPrice = total + shippingFee - discount;
+
+
+			  const orderInfo =
+				    '<li class="list-group-item">주문 번호: ' + (result.orderId ?? '-') + '</li>' +
+				    '<li class="list-group-item">주문일자: ' + (result.formattedOrderDate || '-') + '</li>' +
+				    '<li class="list-group-item">결제 수단: ' + paymentMethodText + '</li>' +
+				    '<li class="list-group-item">' +
+				    '결제 상태 :' +
+				    '<select class="form-select d-inline w-auto ms-2" id="paymentStatus">' +
+				      '<option value="1"' + (result.payment?.status == 1 ? ' selected' : '') + '>결제중</option>' +
+				      '<option value="2"' + (result.payment?.status == 2 ? ' selected' : '') + '>결제승인</option>' +
+				      '<option value="3"' + (result.payment?.status == 3 ? ' selected' : '') + '>결제취소</option>' +
+				    '</select>' +
+				    '</li>' +
+				    '<li class="list-group-item">' +
+				    '주문 상태 :' +
+				    '<select class="form-select d-inline w-auto ms-2" id="orderStatus">' +
+				      '<option value="1"' + (result.orderStatus == 1 ? ' selected' : '') + '>배송 준비중</option>' +
+				      '<option value="2"' + (result.orderStatus == 2 ? ' selected' : '') + '>배송 중</option>' +
+				      '<option value="3"' + (result.orderStatus == 3 ? ' selected' : '') + '>배송 완료</option>' +
+				      '<option value="4"' + (result.orderStatus == 4 ? ' selected' : '') + '>주문 취소</option>' +
+				      '<option value="5"' + (result.orderStatus == 5 ? ' selected' : '') + '>교환/반품</option>' +
+				    '</select>' +
+				    '</li>';
+
+			  const deliveryInfo =
+				  '<li class="list-group-item">수령인: ' + (result.receiverName || '-') + ' / ' + (result.receiverPhone || '-') + '</li>' +
+				  '<li class="list-group-item">주소: ' + (result.receiverRoadAddress || '-') + ' ' + (result.receiverDetailAddress || '') + '</li>' +
+				  '<li class="list-group-item">요청사항: ' + (result.deliveryRequest || '-') + '</li>' +
+				  '<li class="list-group-item">' +
+				    '배송 상태 :' +
+				    '<select class="form-select d-inline w-auto ms-2" id="deliveryStatus">' +
+				      '<option' + (result.orderStatus == 1 ? ' selected' : '') + '>배송 준비</option>' +
+				      '<option' + (result.orderStatus == 2 ? ' selected' : '') + '>배송 중</option>' +
+				      '<option' + (result.orderStatus == 3 ? ' selected' : '') + '>배송 완료</option>' +
+				    '</select>' +
+				  '</li>' +
+				  '<li class="list-group-item">' +
+				    '택배사 :' +
+				    '<input type="text" class="form-control d-inline w-50 ms-2" id="courier" value="' + (result.courier || '') + '" />' +
+				  '</li>' +
+				  '<li class="list-group-item">' +
+				    '송장번호 :' +
+				    '<input type="text" class="form-control d-inline w-50 ms-2" id="invoice" value="' + (result.invoice || '') + '" />' +
+				  '</li>';
+				  
+		        const productTable = $("#productTable");
+		        productTable.empty();
+
+		        if (result.orderDetails && result.orderDetails.length > 0) {
+		          result.orderDetails.forEach(function (item) {
+		            const price = Number(item.orderPrice || 0);
+		            const row =
+		              '<tr>' +
+		              '<td>' + (item.book?.title || '-') + '</td>' +
+		              '<td>' + (item.orderCount ?? 0) + '</td>' +
+		              '<td>' + price.toLocaleString() + '원</td>' +
+		              '<td>' + (item.book?.bookCategory || '-') + '</td>' +
+		              '</tr>';
+		            productTable.append(row);
+		          });
+		        } else {
+		          productTable.append('<tr><td colspan="4">상품 정보 없음</td></tr>');
+		        }
+
+		        const paymentSummaryList =
+		          '<li class="list-group-item">상품 합계 : ' + total.toLocaleString() + '원</li>' +
+		          '<li class="list-group-item">배송비 : ' + shippingFee.toLocaleString() + '원</li>' +
+		          '<li class="list-group-item">할인 : -' + discount.toLocaleString() + '원</li>' +
+		          '<li class="list-group-item">최종 결제 금액 : ' + finalPrice.toLocaleString() + '원</li>';
+
+		        $("#orderInfoList").html(orderInfo);
+		        $("#deliveryInfo").html(deliveryInfo);
+		        $("#paymentSummaryList").html(paymentSummaryList);
+
+		        new bootstrap.Modal($("#orderModal")[0]).show();
+		      },
+		      error: function () {
+		        alert("주문 상세 정보를 불러오는 데 실패했습니다.");
+		      }
+		    });
+		  });
+		  // 저장 버튼 클릭 시
+		$("#saveOrder").on("click", function () {
+			 
+			  const orderId = Number($("#orderModal").data("orderId"));
+			
+			  const orderStatus   = Number($("#orderStatus").val());      // 주문 상태
+			  const paymentStatus = Number($("#paymentStatus").val());    // 결제 상태
+			  const courier       = ($("#courier").val() || "").trim();   // 택배사
+			  const invoice       = ($("#invoice").val() || "").trim();   // 송장번호
+			  const deliveryStatus = $("#deliveryStatus").val();          // UI표시용(서버 미전송)
+			
+			  if (!orderId) {
+			    alert("주문 번호를 확인할 수 없습니다.");
+			    return;
+			  }
+			
+			  // (선택) 상태 전이 검증 예시: 배송 중/완료로 바꾸려면 송장 필수
+			  if ((orderStatus === 2 || orderStatus === 3) && (!courier || !invoice)) {
+			    alert("배송 중/완료 상태로 변경하려면 택배사와 송장번호가 필요합니다.");
+			    return;
+			  }
+			
+			  // (선택) 송장번호 간단 유효성 - 영문/숫자만
+			  if (invoice && /[^a-zA-Z0-9]/.test(invoice)) {
+			    alert("송장번호는 영문/숫자만 입력 가능합니다.");
+			    return;
+			  }
+			
+			  const csrfHeader = $("meta[name='_csrf_header']").attr("content");
+			  const csrfToken  = $("meta[name='_csrf']").attr("content");
+			
+			  // 버튼 중복 클릭 방지
+			  const $btn = $(this).prop("disabled", true);
+			
+			  $.ajax({
+			    url: "<%=request.getContextPath()%>/admin/adminGuestOrderInfo/updateGuestOrder.do",
+			    method: "POST",
+			    contentType: "application/json; charset=UTF-8",
+			    data: JSON.stringify({
+			      orderId,
+			      orderStatus,
+			      paymentStatus,
+			      courier: courier || null,
+			      invoice: invoice || null
+			    }),
+			    beforeSend: function(xhr){
+			      if (csrfHeader && csrfToken) xhr.setRequestHeader(csrfHeader, csrfToken);
+			    },
+			    success: function (res) {
+			      // 서버가 "success" 문자열을 주거나 {success:true}를 줘도 대응
+			      const ok = (res === "success") || (typeof res === "object" && res?.success);
+			      if (!ok) {
+			        alert("업데이트 실패");
+			        return;
+			      }
+			
+			      // 테이블 상태 텍스트 갱신
+			      const orderStatusTextMap = {1:"배송 준비중",2:"배송 중",3:"배송 완료",4:"주문 취소",5:"교환/반품"};
+			      if (selectedRow) {
+			        selectedRow.find("td").eq(2).text(orderStatusTextMap[orderStatus] || "-");
+			      }
+			
+			      alert("저장되었습니다.");
+			      const modalInstance = bootstrap.Modal.getInstance($("#orderModal")[0]);
+			      modalInstance.hide();
+			    },
+			    error: function () {
+			      alert("업데이트에 실패했습니다. 다시 시도해 주세요.");
+			    },
+			    complete: function() {
+			      $btn.prop("disabled", false);
+			    }
+			  });
+			});
 		
-		     const orderNum = selectedRow.find("td").eq(0).text();
-		     const orderStatus = selectedRow.find("td").eq(2).text();
-		     const deliveryStatus = selectedRow.find("td").eq(4).text();
-		
-		     $("#orderNum").text(orderNum);
-		     $("#orderStatus").val(orderStatus);
-		     $("#deliveryStatus").val(deliveryStatus);
-		
-		     // 모달 열기
-		     const modal = new bootstrap.Modal($("#orderModal")[0]);
-		     modal.show();
-		   });
-		
-		   // 저장 버튼 클릭 시
-		   $("#saveOrder").on("click", function () {
-		     const orderStatus = $("#orderStatus").val();
-		     const deliveryStatus = $("#deliveryStatus").val();
-		     const courier = $("#courier").val();
-		     const invoice = $("#invoice").val();
-		
-		     const orderNum = $("#orderNum").text();
-		
-		     // 테이블에 반영
-		     if (selectedRow) {
-		       selectedRow.find("td").eq(2).text(orderStatus);   // 주문 상태
-		       selectedRow.find("td").eq(4).text(deliveryStatus); // 배송 상태
-		     }
-		
-		     alert(`저장되었습니다.\n주문번호: ${orderNum}\n주문상태: ${orderStatus}\n배송상태: ${deliveryStatus}\n택배사: ${courier}\n송장번호: ${invoice}`);
-		
-		     // 모달 닫기
-		     const modalInstance = bootstrap.Modal.getInstance($("#orderModal")[0]);
-		     modalInstance.hide();
-		   });
-		
-		   // simple-datatables 초기화 (선택사항)
-		   // const dataTable = new simpleDatatables.DataTable("#datatablesSimple");
-	 });
-	 
-	 
+		  // simple-datatables 초기화 (선택사항)
+		  // const dataTable = new simpleDatatables.DataTable("#datatablesSimple");
+	});
 </script>
 <script>
 	document.addEventListener("DOMContentLoaded", function() {

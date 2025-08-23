@@ -16,7 +16,7 @@ import com.bookGap.vo.UserInfoVO;
 
 
 @Service
-public class AdminUserOrderInfoServiceImpl  implements  AdminUserOrderInfoService {
+public class AdminOrderInfoServiceImpl  implements  AdminOrderInfoService {
 	 @Autowired
 	 private AdminOrderDAO adminOrderDAO;
 	 
@@ -47,6 +47,37 @@ public class AdminUserOrderInfoServiceImpl  implements  AdminUserOrderInfoServic
 
 	     int updatedOrder = adminOrderDAO.updateUserOrder(vo);
 	     int updatedPayment = adminOrderDAO.updateUserPaymentStatus(vo);
+
+	     return (updatedOrder > 0 || updatedPayment > 0) ? 1 : 0;
+	 }
+	 
+	 @Override
+	 public List<OrderVO> getAllGuestOrders() {
+	     return adminOrderDAO.selectAllGuestOrders();
+	 }
+
+	 @Override
+	 public OrderVO getGuestOrderDetail(int orderId) {
+	     OrderVO order = adminOrderDAO.getGuestOrderInfoWithPayment(orderId);
+	     if (order != null) {
+	         List<OrderDetailVO> details = adminOrderDAO.getOrderDetailsByOrderId(orderId);
+	         order.setOrderDetails(details);
+	     }
+	     return order;
+	 }
+
+	 @Override
+	 @Transactional
+	 public int updateGuestOrderAndPayment(int orderId, int orderStatus, int paymentStatus, String courier, String invoice) {
+	     AdminOrderUpdateRequestVO vo = new AdminOrderUpdateRequestVO();
+	     vo.setOrderId(orderId);
+	     vo.setOrderStatus(orderStatus);
+	     vo.setPaymentStatus(paymentStatus);
+	     vo.setCourier(courier);
+	     vo.setInvoice(invoice);
+
+	     int updatedOrder = adminOrderDAO.updateGuestOrder(vo);
+	     int updatedPayment = adminOrderDAO.updateGuestPaymentStatus(vo);
 
 	     return (updatedOrder > 0 || updatedPayment > 0) ? 1 : 0;
 	 }

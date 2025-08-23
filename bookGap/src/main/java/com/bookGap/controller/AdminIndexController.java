@@ -39,11 +39,6 @@ public class AdminIndexController {
 		return "admin/adminSales";
 	}
 	
-	@RequestMapping(value = "admin/adminGuestOrderInfo.do", method = RequestMethod.GET)
-	public String adminGuestOrderInfo() {
-	
-		return "admin/adminGuestOrderInfo";
-	}
 	
 	@RequestMapping(value = "admin/err401.do", method = RequestMethod.GET)
 	public String err401() {

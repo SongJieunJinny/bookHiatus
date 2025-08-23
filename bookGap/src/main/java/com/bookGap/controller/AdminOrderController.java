@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.bookGap.service.AdminBookService;
-import com.bookGap.service.AdminUserOrderInfoService;
+import com.bookGap.service.AdminOrderInfoService;
 import com.bookGap.util.StringUtils;
 import com.bookGap.vo.AdminOrderUpdateRequestVO;
 import com.bookGap.vo.OrderDetailVO;
@@ -26,12 +26,12 @@ import lombok.Data;
 @Controller
 public class AdminOrderController {
 	@Autowired
-    private AdminUserOrderInfoService adminUserOrderInfoService;
+    private AdminOrderInfoService adminOrderInfoService;
 	
 	@GetMapping( "/admin/adminUserOrderInfo.do")
 	public String adminOrder(Model model) {
 		
-		    List<OrderVO> orderList = adminUserOrderInfoService.getAllUserOrders();
+		    List<OrderVO> orderList = adminOrderInfoService.getAllUserOrders();
 		    model.addAttribute("orderList", orderList);
 		return "admin/adminUserOrderInfo";
 	}
@@ -39,7 +39,7 @@ public class AdminOrderController {
 	@GetMapping("/admin/adminUserOrderInfo/getOrderDetail.do")
 	@ResponseBody
 	public OrderVO getOrderDetail(@RequestParam("orderId") int orderId) {
-		OrderVO order = adminUserOrderInfoService.getOrderDetail(orderId);
+		OrderVO order = adminOrderInfoService.getOrderDetail(orderId);
 
 	   // System.out.println("== 주문 상세 요청 ==");
 	    //System.out.println("orderId: " + orderId);
@@ -90,7 +90,7 @@ public class AdminOrderController {
 
 		    try {
 		        // 3) 서비스 호출(트랜잭션 내 일괄 처리)
-		        int updated = adminUserOrderInfoService.updateUserOrderAndPayment(
+		        int updated = adminOrderInfoService.updateUserOrderAndPayment(
 		                req.getOrderId(),
 		                req.getOrderStatus(),
 		                req.getPaymentStatus(),
@@ -109,6 +109,57 @@ public class AdminOrderController {
 		    }
 		}
 
+	// 1. 비회원 주문 목록 페이지
+	    @GetMapping("/admin/adminGuestOrderInfo.do")
+	    public String guestOrderPage(Model model) {
+	        List<OrderVO> guestOrderList = adminOrderInfoService.getAllGuestOrders();
+	        model.addAttribute("guestOrderList", guestOrderList);
+	        return "admin/adminGuestOrderInfo"; // JSP 위치
+	    }
 
+	    // 2. 비회원 주문 상세 조회 (AJAX)
+	    @GetMapping("/admin/adminGuestOrderInfo/getGuestOrderDetail.do")
+	    @ResponseBody
+	    public OrderVO getGuestOrderDetail(@RequestParam("orderId") int orderId) {
+	        return adminOrderInfoService.getGuestOrderDetail(orderId);
+	    }
+
+	    // 3. 비회원 주문 업데이트 (AJAX 저장)
+	    @PostMapping(value = "/admin/adminGuestOrderInfo/updateGuestOrder.do", consumes = "application/json", produces = "application/json")
+	    @ResponseBody
+	    public ResponseEntity<?> updateGuestOrder(@RequestBody AdminOrderUpdateRequestVO req) {
+
+	        if (req.getOrderId() <= 0) {
+	            return ResponseEntity.badRequest().body("{\"success\":false,\"message\":\"invalid orderId\"}");
+	        }
+	        if (req.getOrderStatus() < 1 || req.getOrderStatus() > 5) {
+	            return ResponseEntity.badRequest().body("{\"success\":false,\"message\":\"invalid orderStatus\"}");
+	        }
+
+	        // 송장 필수 조건
+	        if ((req.getOrderStatus() == 2 || req.getOrderStatus() == 3) &&
+	            (StringUtils.isBlank(req.getCourier()) || StringUtils.isBlank(req.getInvoice()))) {
+	            return ResponseEntity.badRequest().body("{\"success\":false,\"message\":\"courier/invoice required\"}");
+	        }
+
+	        try {
+	            int updated = adminOrderInfoService.updateGuestOrderAndPayment(
+	                    req.getOrderId(),
+	                    req.getOrderStatus(),
+	                    req.getPaymentStatus(),
+	                    StringUtils.emptyToNull(req.getCourier()),
+	                    StringUtils.emptyToNull(req.getInvoice())
+	            );
+
+	            if (updated <= 0) {
+	                return ResponseEntity.status(500).body("{\"success\":false,\"message\":\"update failed\"}");
+	            }
+	            return ResponseEntity.ok("{\"success\":true}");
+
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	            return ResponseEntity.status(500).body("{\"success\":false,\"message\":\"server error\"}");
+	        }
+	    }
 
 }

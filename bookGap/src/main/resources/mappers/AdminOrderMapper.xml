@@ -98,6 +98,47 @@
 	  SET STATUS = #{paymentStatus}
 	  WHERE ORDER_ID = #{orderId}
 	</update>
-
+	
+	<select id="selectAllGuestOrders" resultType="com.bookGap.vo.OrderVO">
+	    SELECT 
+	        o.ORDER_ID       AS orderId,
+	        o.ORDER_DATE     AS orderDate,
+	        o.ORDER_STATUS   AS orderStatus,
+	        o.TOTAL_PRICE    AS totalPrice,
+	        o.GUEST_ID       AS guestId
+	    FROM ORDERS o
+	    WHERE o.ORDER_TYPE = 2
+	    ORDER BY o.ORDER_DATE DESC
+	</select>
+	
+	<!-- 비회원 주문 상세 + 결제 -->
+	<select id="getGuestOrderInfoWithPayment" resultMap="OrderWithPayment">
+	    SELECT 
+	        o.ORDER_ID, o.ORDER_DATE, o.ORDER_STATUS, o.TOTAL_PRICE,
+	        o.RECEIVER_NAME, o.RECEIVER_PHONE, o.RECEIVER_POST_CODE,
+	        o.RECEIVER_ROAD_ADDRESS, o.RECEIVER_DETAIL_ADDRESS, o.DELIVERY_REQUEST,
+	        o.COURIER, o.INVOICE, 
+	        o.USER_ID, o.GUEST_ID,
+	        p.PAYMENT_NO, p.AMOUNT, p.PAYMENT_METHOD, p.STATUS, p.CREATED_AT
+	    FROM ORDERS o
+	    LEFT JOIN PAYMENTS p ON o.ORDER_ID = p.ORDER_ID
+	    WHERE o.ORDER_ID = #{orderId}
+	</select>
+	
+	<!-- 비회원 주문 상태 업데이트 -->
+	<update id="updateGuestOrder">
+	    UPDATE ORDERS
+	    SET ORDER_STATUS = #{orderStatus},
+	        COURIER = #{courier},
+	        INVOICE = #{invoice}
+	    WHERE ORDER_ID = #{orderId}
+	</update>
+	
+	<!-- 비회원 결제 상태 업데이트 -->
+	<update id="updateGuestPaymentStatus">
+	    UPDATE PAYMENTS
+	    SET STATUS = #{paymentStatus}
+	    WHERE ORDER_ID = #{orderId}
+	</update>
 
 </mapper>
