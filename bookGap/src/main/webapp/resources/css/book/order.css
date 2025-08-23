@@ -13,7 +13,6 @@ section{
 }
 #navOrderDetails{
   width: 100%;
-  height: 70%;
 }
 .orderDetailsContainer{
 	margin-top: 5%;
@@ -54,7 +53,6 @@ section{
 }
 #orderDetailsMid{
   width: 60%;
-  height: 40%;
   display: flex;
   margin-left: 20%;
   align-items: center;
@@ -145,8 +143,40 @@ section{
   padding: 0%;
 }
 .orderPayCompl{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+  padding:16px 20px;
+  border-top:none;           /* 카드 안에서 상단선 중복 방지 */
   width: 100%;
-  display: flex;
+}
+/* 썸네일 */
+.orderThumb{
+  width:90px;
+  height:120px;
+  object-fit:cover;
+  border-radius:6px;
+  flex:0 0 auto;
+}
+
+/* 가운데 정보 */
+.orderInfo{
+  flex:1 1 auto;
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+.orderMeta{ color:#666; font-size:14px; }
+
+/* 오른쪽 상태 */
+.orderShip{
+  flex:0 0 auto;
+  min-width:140px;
+  text-align:center;
+  color:#7a7a7a;
+  font-weight:700;
 }
 .orderPayComplInfoDiv1{
   width: 100%;
@@ -174,34 +204,18 @@ section{
 .orderContainer {
   border: 1px solid #ccc;  /* 전체를 감싸는 연한 테두리 */
   border-radius: 8px;      /* 부드러운 모서리 */
-  margin-bottom: 25px;     /* 각 주문 박스 사이의 간격 */
-  overflow: hidden;        /* 내부 요소가 모서리를 삐져나가지 않도록 */
+  margin-bottom: 20px;     /* 각 주문 박스 사이의 간격 */
   background-color: #fdfdfd; /* 약간의 배경색으로 구분감 부여 */
 }
 .orderHeader {
   display: flex;
+  height: 100%;
   justify-content: space-between; /* 양쪽 끝으로 정렬 */
   align-items: center;            /* 세로 중앙 정렬 */
-  padding: 15px 20px;             /* 내부 여백 */
-  background-color: #f7f7f7;    /* 헤더 배경색 */
-  border-bottom: 1px solid #eee; /* 상품 목록과의 구분선 */
-  font-weight: bold;
 }
 .orderStatus {
   color: #007bff; /* 파란색으로 강조 */
   font-size: 18px;
-}
-.orderPayComplDiv {
-   width: 100%;
-  display: flex;
-  align-items: center; /* 세로 중앙 정렬 */
-  padding: 15px 20px; /* 내부 여백 통일 */
-  font-size: 17px;
-  
-  /* 이제 상품 아이템은 컨테이너 안에 있으므로, 강한 테두리 대신 구분선을 사용합니다. */
-  border: none;
-  border-top: 1px solid #f0f0f0; 
-  margin-bottom: 0;
 }
 .orderContainer .orderPayComplDiv:first-of-type {
   border-top: none;
@@ -699,6 +713,36 @@ font-size: 13px;
 	align-items: center;
 	gap: 4px;
 	margin: 0px 0px 5px 0px;
+}
+.refundModal {
+  display: none;
+  position: fixed;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.5);
+}
+.refundModalContent {
+  background-color: #fff;
+  margin: 10% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 400px;
+  border-radius: 8px;
+  box-shadow: 0px 5px 15px rgba(0,0,0,0.3);
+}
+.refundModal .close {
+  color: #aaa;
+  float: right;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.refundModal .close:hover {
+  color: #000;
 }
 
 /* ============================================= */

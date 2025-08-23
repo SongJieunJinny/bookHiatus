@@ -62,7 +62,7 @@ public class BookServiceImpl implements BookService{
   }
   
   @Override
-  public List<BookVO> getNewBooks() {
+  public List<ProductApiVO> getNewBooks() {
     return bookDAO.getNewBooks();
   }
 	

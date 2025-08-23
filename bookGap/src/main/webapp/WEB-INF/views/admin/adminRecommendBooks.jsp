@@ -50,7 +50,7 @@
             <main>
                 <div class="container-fluid px-4">
                     <!-- 페이지 제목 -->
-                    <h1 class="mt-4">Recommend Book Management</h1>
+                    <h1 class="mt-4">Recommend Book Management System</h1>
                     <br>
                     <!-- 상단 카드 (간단 설명) -->
                     <div class="card mb-4">

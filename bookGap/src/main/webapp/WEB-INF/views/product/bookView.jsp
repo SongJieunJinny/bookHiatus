@@ -33,7 +33,8 @@
 	</c:choose>
 	<div id="bookView">
 		<div class="bookPart">
-		<input type="hidden" id="isbn" value="${bookDetail.isbn}" />
+		<input type="hidden" id="isbn"
+       value="${empty bookDetail.isbn ? (bookDetail.productInfo != null ? bookDetail.productInfo.isbn : '') : bookDetail.isbn}" />
 		<div class="bookPart">   
 			<div class="bookItem">
 				<a href="#"><img src="${bookDetail.image}" alt="${bookDetail.title}"></a>
@@ -44,7 +45,7 @@
         <div id="bookAuthor">저자: ${bookDetail.author}</div>
         <div id="bookPublisher">출판사: ${bookDetail.publisher}</div>
         <div id="bookPubdate">출간일: ${bookDetail.pubdate}</div>
-        <div id="bookIsbn">ISBN: ${bookDetail.isbn}</div>
+        <div id="bookIsbn"> ISBN: ${empty bookDetail.isbn ? (bookDetail.productInfo != null ? bookDetail.productInfo.isbn : '') : bookDetail.isbn}</div>
 				<div>배송비 : 3,000원 (50,000원 이상 구매 시 무료)<br>
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;제주 및 도서 산간 3,000원 추가 </div>
 				<div id="bookOrderCheck">
@@ -194,37 +195,60 @@
   </div>
 </div>
 <script type="text/javascript">
-const isbn = "${bookDetail.isbn}";
+var isbn = null;
+
 const userId = '<sec:authentication property="name" htmlEscape="false" />';
 const userRole = '<sec:authentication property="authorities" htmlEscape="false" />';
 
-
 $(document).ready(function() {
 
-   updateCartCount(); 
-    initHeaderEvents(); // 헤더 버튼들이 이제 정상적으로 동작.
-  
+	updateCartCount();
+	initHeaderEvents();
+
   if (isLoggedIn) {
     syncLocalCartToDB();
   }
-  if(isbn){
+    
+  isbn = $("#isbn").val();
+  if (!isbn) {
+    const m = location.search.match(/[?&]isbn=([^&]+)/);
+    if (m) isbn = decodeURIComponent(m[1]);
+  }
+  if (!isbn) {
+    isbn = "${bookDetail.isbn}";
+  }
+  if (!isbn) {
+    isbn = "${bookDetail.productInfo != null ? bookDetail.productInfo.isbn : ''}";
+  }
+
+  if (isbn) {
     loadComment(isbn);
   } else {
     console.error("isbn이 비어 있어 댓글을 불러올 수 없습니다.");
   }
 
-  // 댓글 관련 이벤트
-  $(document).on('click', '.reviewOptions', function (e) { e.stopPropagation(); let cmt = $(this).data("reviewBox"); $(".optionsMenu").hide(); $("#optionsMenu"+cmt).toggle(); });
+  //===== 댓글 이벤트 바인딩 =====
+  $(document).on('click', '.reviewOptions', function (e) {
+    e.stopPropagation();
+    let cmt = $(this).data("reviewBox");
+    $(".optionsMenu").hide();
+    $("#optionsMenu" + cmt).toggle();
+  });
   $(document).click(() => $(".optionsMenu").hide());
   $(document).on('click', '.optionsMenu', e => e.stopPropagation());
   $("#commentForm").on("submit", function (e) { e.preventDefault(); commentInsert(); });
   $(document).on('click', '.editReviewButton', function () { editReview($(this).data("commentno")); });
   $(document).on('click', '.deleteReviewButton', function () { deleteReview($(this).data("commentno")); });
   $(document).on('click', '.reportReviewButton', function () { reportReview($(this).data("commentno")); });
-  $(document).on("change", "div.comment-list .reviewLikeInput", function () { const cmt = $(this).data("commentno"); if(cmt){ toggleLove(cmt, isbn, userId, this); }});
-  $(document).on("change", ".reviewLikeInput", function () { $(this).closest(".reviewLike").toggleClass("active", this.checked); });
+  $(document).on("change", "div.comment-list .reviewLikeInput", function () {
+    const cmt = $(this).data("commentno");
+    if (cmt) { toggleLove(cmt, isbn, userId, this); }
+  });
+  $(document).on("change", ".reviewLikeInput", function () {
+    $(this).closest(".reviewLike").toggleClass("active", this.checked);
+  });
   
-
+  //===== 수량/가격 =====
   const minusBtn = document.querySelector(".minus");
   const plusBtn = document.querySelector(".plus");
   const numInput = document.querySelector(".num");
@@ -243,7 +267,7 @@ $(document).ready(function() {
     };
 
     minusBtn.addEventListener("click", () => {
-      if (parseInt(numInput.value) > 1) {
+      if(parseInt(numInput.value) > 1){
         numInput.value = parseInt(numInput.value) - 1;
         updateTotalPrice();
       }
@@ -251,11 +275,11 @@ $(document).ready(function() {
 
     plusBtn.addEventListener("click", () => {
       const current = parseInt(numInput.value) || 1;
-      if (current < maxStock) {
+      if(current < maxStock){
         numInput.value = current + 1;
         updateTotalPrice();
-      } else {
-    	alert("도서는 최대 " + maxStock + "권까지 구매 가능합니다.");
+      }else{
+    	  alert("도서는 최대 " + maxStock + "권까지 구매 가능합니다.");
       }
     });
 
@@ -263,8 +287,8 @@ $(document).ready(function() {
       numInput.value = numInput.value.replace(/[^0-9]/g, '');
       let value = parseInt(numInput.value) || 1;
       if (value < 1) value = 1;
-      if (value > maxStock) {
-    	alert("도서는 최대 " + maxStock + "권까지 구매 가능합니다.");
+      if(value > maxStock){
+    	  alert("도서는 최대 " + maxStock + "권까지 구매 가능합니다.");
         value = maxStock;
       }
       numInput.value = value;
@@ -273,22 +297,21 @@ $(document).ready(function() {
     updateTotalPrice();
   }
   
-  // 장바구니 버튼
+  //===== 장바구니 =====
   $(document).on("click", "#bookChartBtn", function () {
     const quantity = parseInt($(".num").val()) || 1;
     const title = "${bookDetail.title}";
     const price = ${bookPrice};
     const image = "${bookDetail.image}";
     const bookNo = ${bookDetail.bookNo};
-    const isbn = "${bookDetail.isbn}";
 
     if(!userId || userId === 'anonymousUser'){
       let cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
       const existing = cartItems.find(item => item.bookNo === bookNo);
-      if (existing) {
+      if(existing){
         if(!confirm("이미 장바구니에 있는 도서입니다. 수량을 추가하시겠습니까?")){ return; }
         existing.quantity += quantity;
-      } else {
+      }else{
         cartItems.push({ id: isbn, bookNo, title, price, image, quantity, isbn });
       }
       localStorage.setItem("cartItems", JSON.stringify(cartItems));
@@ -301,93 +324,60 @@ $(document).ready(function() {
     $.get(contextPath + "/product/getCartCountByBook.do", { bookNo: bookNo, userId: userId }, function(existingCount) {
       const finalCount = (parseInt(existingCount) || 0) + quantity;
       $.ajax({ url: contextPath + "/product/addOrUpdateCart.do",
-			type: "POST",
-			contentType: "application/json",
-			data: JSON.stringify({ userId: userId, bookNo: parseInt(bookNo, 10), count: finalCount }),
-			success: function(res){
-                if (res === "DB_OK"){ alert("장바구니에 새 도서를 추가했습니다."); }
-                else if(res === "EXISTING_UPDATED"){ alert("장바구니 수량이 갱신되었습니다."); }
-                else{ alert("장바구니 처리 실패: " + res); }
-                updateCartCount();
-                if(confirm("장바구니 페이지로 이동하시겠습니까?")){ window.location.href = contextPath + "/product/cart.do"; }
-            },
-			error: function(){ alert("서버 오류로 장바구니 저장에 실패했습니다."); }
+							 type: "POST",
+							 contentType: "application/json",
+							 data: JSON.stringify({ userId: userId, bookNo: parseInt(bookNo, 10), count: finalCount }),
+							 success: function(res){
+				                  if (res === "DB_OK"){ alert("장바구니에 새 도서를 추가했습니다."); }
+				                  else if(res === "EXISTING_UPDATED"){ alert("장바구니 수량이 갱신되었습니다."); }
+				                  else{ alert("장바구니 처리 실패: " + res); }
+				                  updateCartCount();
+				                  if(confirm("장바구니 페이지로 이동하시겠습니까?")){ window.location.href = contextPath + "/product/cart.do"; }
+            						},
+			         error: function(){ alert("서버 오류로 장바구니 저장에 실패했습니다."); }
         });
     });
   });
 
-  // 바로구매 버튼
+  //===== 바로구매 =====
   $(document).on("click", "#bookOrderBtn", function (event) {
-	  //console.log("bookOrderBtn 클릭됨");
     event.preventDefault();
     
     if (isLoggedIn === false) { // 비회원
-        if (!userId || userId === 'anonymousUser') {
-            alert("로그인 후 이용 가능합니다.");
-            const loginModal = document.getElementById('loginModal');
-            if (loginModal) loginModal.classList.add('show');
-            return;
-        }
-
-        // 기존 비회원 바로구매 GET 요청
-        const targetUrl = contextPath + "/order/orderMain.do?isbn=" + encodeURIComponent(isbn) + "&quantity=" + encodeURIComponent(quantity);
-        window.location.href = targetUrl;
+      if (!userId || userId === 'anonymousUser') {
+        alert("로그인 후 이용 가능합니다.");
+        const loginModal = document.getElementById('loginModal');
+        if (loginModal) loginModal.classList.add('show');
+        return;
+      }
+      const quantityTmp = parseInt($(".num").val()) || 1;
+      const targetUrl = contextPath + "/order/orderMain.do?isbn=" + encodeURIComponent(isbn) + "&quantity=" + encodeURIComponent(quantityTmp);
+      window.location.href = targetUrl;
+      return;
     }
     
     const quantity = parseInt($(".num").val()) || 1;
-    if(quantity < 1){
-      alert("구매 수량은 1권 이상이어야 합니다.");
-      return false;
-    }
+    if (quantity < 1) { alert("구매 수량은 1권 이상이어야 합니다."); return; }
     
     const maxStock = parseInt('${bookDetail.bookStock != null ? bookDetail.bookStock : 999}');
-    if(quantity > maxStock){
+    if (quantity > maxStock) {
       alert(`죄송합니다. 이 도서는 현재 재고가 ${maxStock}권이므로 최대 ${maxStock}권까지 구매 가능합니다.`);
-      return false;
+      return;
     }
     
-    if(!isbn){
-      alert("오류: 도서 정보를 가져올 수 없습니다. 다시 시도해주세요.");
-      return false;
-    }
+    if (!isbn) { alert("오류: 도서 정보를 가져올 수 없습니다. 다시 시도해주세요."); return; }
     
-    //로그인 여부에 따라 분기
-	  if(isLoggedIn === false){ // 비회원 (isAnonymous가 true일 때)
-		  //console.log("비회원 바로구매 진행 (GET)");
-		  const targetUrl = contextPath + "/order/orderMain.do?isbn=" + encodeURIComponent(isbn) + "&quantity=" + encodeURIComponent(quantity);
-      window.location.href = targetUrl;
-	  }else{ // 회원일 경우 (기존 로직 유지)
-	  
-		  // 회원: 동적 form을 생성하여 POST 방식으로 orderMain.do로 이동
-	    //console.log("회원 바로구매 진행 (POST)");
-	
-	    // 1. 동적으로 form 요소를 생성합니다.
-	    const form = $('<form></form>');
-	    form.attr('method', 'post'); // ★ 메서드를 'post'로 설정
-	    form.attr('action', contextPath + '/order/orderMain.do'); // ★ 보낼 위치(action) 설정
-	
-	    // 2. Controller가 받을 파라미터(isbns, quantities 등)를 hidden input으로 만들어 form에 추가
-	    // Controller는 List 형태로 받으므로, 'isbns'와 'quantities' 라는 이름을 사용
-	    form.append($('<input>', {type: 'hidden', name: 'isbns', value: isbn}));
-	    form.append($('<input>', {type: 'hidden', name: 'quantities', value: quantity}));
-	    
-	    // Controller는 로그인한 사용자 ID를 Principal에서 얻으므로 userId는 보낼 필요가 없다
-	    // 만약 총액 정보도 보낸다면 추가 가능
-	    // const totalPrice = parseInt($('#totalPrice').text().replace(/[^0-9]/g, ''));
-	    // form.append($('<input>', {type: 'hidden', name: 'totalPrice', value: totalPrice}));
-	
-	    // 3. 생성된 form을 현재 페이지에 보이지 않게 추가하고, 바로 전송(submit).
-	    form.appendTo('body');
-	    form.submit();
-	  }
+   // 회원: POST 폼 제출
+    const form = $('<form></form>');
+    form.attr('method', 'post');
+    form.attr('action', contextPath + '/order/orderMain.do');
+    form.append($('<input>', { type: 'hidden', name: 'isbns', value: isbn }));
+    form.append($('<input>', { type: 'hidden', name: 'quantities', value: quantity }));
+    form.appendTo('body');
+    form.submit();
   });
-  
-  
- 
-  // 로그인 모달 및 펼쳐보기 버튼 로직
-  
 
-  
+  // ===== 펼쳐보기 토글 =====
   document.querySelectorAll(".toggle-btn").forEach(function (btn) {
     const targetId = btn.getAttribute("data-target");
 	  const target = document.getElementById(targetId);
@@ -415,8 +405,6 @@ $(document).ready(function() {
 	    setToggleButton(btn, !isExpanded);
 	  });
   });
-
-
   
   $('#reportForm').on('submit', function(e) {
 		e.preventDefault();
@@ -424,10 +412,7 @@ $(document).ready(function() {
 		const commentNo = $('#reportCommentNo').val();
 		const complainType = $('input[name="complainType"]:checked').val();
 		
-		if(!commentNo || !complainType){
-			alert("오류: 신고 정보를 찾을 수 없습니다.");
-			return;
-		}
+		if (!commentNo || !complainType) { alert("오류: 신고 정보를 찾을 수 없습니다."); return; }
 		
 		$.ajax({ url: contextPath + "/comment/report.do",
 						 type: "POST",
@@ -459,10 +444,7 @@ $(document).ready(function() {
 
 //두번째 변수 생략시 1로 들어감
 function loadComment(isbn, page = 1) {
-	if (!isbn) {
-    console.error("ISBN 값이 비어있어 댓글을 로드할 수 없습니다.");
-    return; 
-  }
+	if (!isbn) { console.error("ISBN 값이 비어있어 댓글을 로드할 수 없습니다."); return; }
 	
   $.ajax({
     url: "<%= request.getContextPath()%>/comment/loadComment.do",
@@ -470,17 +452,11 @@ function loadComment(isbn, page = 1) {
     data: "isbn=" + encodeURIComponent(isbn) + "&cnowpage=" + page,
     dataType: "json",
     success : function(data) { 
-    	//console.log("loadComment 응답 성공:", data);
-    	//console.log("댓글 응답 전체:", data);            // 전체 응답 보기
-    	//console.log("첫 댓글 lovedByLoginUser:", data.commentList[0]?.lovedByLoginUser);
-    	//console.log(" 첫 댓글 commentRating:", data.commentList[0]?.commentRating);
-
     	const commentList = $(".comment-list");
         commentList.empty();
         let html = "";
         const cleanedUserRole = userRole.replace(/[\[\]]/g, '');
         let roles = cleanedUserRole.split(',').map(s => s.trim());
-       // console.log("Cleaned roles Array:", roles);
         
         if (data.commentList && data.commentList.length > 0) {
           for (let cvo of data.commentList) {
@@ -583,17 +559,12 @@ function commentInsert() {
     return;
   }
 
-  if (!content.trim()) {
-    alert("리뷰 내용을 입력해주세요.");
-    return;
-  }
+  if (!content.trim()) { alert("리뷰 내용을 입력해주세요."); return; }
   
   const commentData = { isbn: isbn,
 									      commentContent: content,
 									      commentRating: rating,
 									      commentLiked: liked };
-
-  //console.log("댓글 작성 요청 데이터:", commentData); // 전송 전 데이터 확인
 
   $.ajax({
     url : "<%= request.getContextPath()%>/comment/write.do",
@@ -613,9 +584,7 @@ function commentInsert() {
 			    	    	alert("댓글 등록에 실패했습니다: " + res);
 			    	  	}
 					  	},
-    error : function(xhr){
-      				alert("서버 통신 오류가 발생했습니다. (" + xhr.status + ")");
-    				}
+		error: function (xhr) { alert("서버 통신 오류가 발생했습니다. (" + xhr.status + ")"); }
   });
 }
 
@@ -782,7 +751,6 @@ function getCartItemsFromLocalStorage() {
   }
 }
 
-
 // 로그인 시 로컬 장바구니를 DB로 동기화 (bookView에서는 카운트만 업데이트)
 function syncLocalCartToDB() {
   const localItems = getCartItemsFromLocalStorage();
@@ -804,13 +772,10 @@ function syncLocalCartToDB() {
     contentType: "application/json",
     data: JSON.stringify(payload),
     success: function () {
-      //console.log("장바구니 동기화 완료");
       localStorage.removeItem("cartItems");
       fetchCartCountFromDB(); // 동기화 후 DB 기준으로 다시 카운트 가져오기
     },
-    error: function (xhr) {
-      console.error("동기화 실패:", xhr.responseText);
-    }
+    error: function (xhr) { console.error("동기화 실패:", xhr.responseText); }
   });
 }
 
@@ -823,7 +788,6 @@ function fetchCartCountFromDB() {
     }
   });
 }
-
 </script>
 </body>
 </html>

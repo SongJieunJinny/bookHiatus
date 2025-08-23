@@ -2,283 +2,363 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
 			"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.bookGap.mapper.orderMapper">
-	<!-- BookVO에 대응하는 resultMap -->
-	<resultMap id="BookResultMap" type="com.bookGap.vo.BookVO">
-	  <id property="bookNo" column="BOOK_NO"/><!-- BOOK 테이블 -->
-	  <result property="bookRdate" column="BOOK_RDATE"/>
-	  <result property="bookTrans" column="BOOK_TRANS"/>
-	  <result property="bookStock" column="BOOK_STOCK"/>
-	  <result property="bookState" column="BOOK_STATE"/>
-	  <result property="bookCategory" column="BOOK_CATEGORY"/>
-	  <result property="bookImgUrl" column="BOOK_IMGURL"/>
-	  <result property="bookIndex" column="BOOK_INDEX"/>
-	  <result property="publisherBookReview" column="PUBLISHER_BOOK_REVIEW"/>
-	  
-	  <result property="isbn" column="isbn"/><!-- PRODUCT_API 테이블 -->
-	  <result property="title" column="title"/>
-	  <result property="discount" column="discount"/>
-	  <result property="pubdate" column="pubdate"/>
-	  <result property="publisher" column="publisher"/>
-	  <result property="author" column="author"/>
-	  <result property="description" column="description"/>
-	  <result property="link" column="link"/>
-	  <result property="image" column="image"/>
-	</resultMap>
 
-	<!-- OrderDetailVO에 대응하는 resultMap -->
-  <resultMap id="OrderDetailResultMap" type="com.bookGap.vo.OrderDetailVO">
-	  <id property="orderDetailNo" column="ORDER_DETAIL_NO"/>
-	  <result property="orderCount" column="ORDER_COUNT"/>
-	  <result property="orderPrice" column="ORDER_PRICE"/>
-	  <result property="refundCheck" column="REFUND_CHECK"/>
-	  <result property="bookNo" column="BOOK_NO"/>
-	  <result property="orderId" column="ORDER_ID"/>
-	  <association property="book" resultMap="BookResultMap"/>
+  <!-- Book + ProductApiVO 매핑 -->
+  <resultMap id="BookWithApiMap" type="com.bookGap.vo.BookVO">
+    <id     property="bookNo"                column="BOOK_NO"/>
+    <result property="bookRdate"             column="BOOK_RDATE"/>
+    <result property="bookTrans"             column="BOOK_TRANS"/>
+    <result property="bookStock"             column="BOOK_STOCK"/>
+    <result property="bookState"             column="BOOK_STATE"/>
+    <result property="bookCategory"          column="BOOK_CATEGORY"/>
+     <result property="isbn"                  column="isbn"/>
+    <result property="bookImgUrl"            column="BOOK_IMGURL"/>
+    <result property="bookIndex"             column="BOOK_INDEX"/>
+    <result property="publisherBookReview"   column="PUBLISHER_BOOK_REVIEW"/>
+    <result property="commentCount"          column="COMMENT_COUNT"/>
+
+    <association property="productInfo" javaType="com.bookGap.vo.ProductApiVO">
+      <id     property="isbn"          column="API_isbn"/>
+      <result property="title"         column="TITLE"/>
+      <result property="author"        column="AUTHOR"/>
+      <result property="publisher"     column="PUBLISHER"/>
+      <result property="pubdate"       column="PUBDATE"/>
+      <result property="discount"      column="DISCOUNT"/>
+      <result property="description"   column="DESCRIPTION"/>
+      <result property="link"          column="LINK"/>
+      <result property="image"         column="IMAGE"/>
+    </association>
   </resultMap>
 
-	<!-- OrderVO에 대응하는 resultMap -->
+  <!-- Order + Details + Book(ProductApi 포함) -->
   <resultMap id="OrderResultMap" type="com.bookGap.vo.OrderVO">
-	  <id property="orderId" column="ORDER_ID"/>
-	  <result property="orderDate" column="ORDER_DATE"/>
-	  <result property="orderStatus" column="ORDER_STATUS"/>
-	  <result property="totalPrice" column="TOTAL_PRICE"/>
-	  <result property="orderType" column="ORDER_TYPE"/>
-	  <result property="userId" column="USER_ID"/>
-	  <result property="guestId" column="GUEST_ID"/>
-	
-	  <result property="receiverName" column="RECEIVER_NAME"/>
-	  <result property="receiverPhone" column="RECEIVER_PHONE"/>
-	  <result property="receiverPostCode" column="RECEIVER_POST_CODE"/>
-	  <result property="receiverRoadAddress" column="RECEIVER_ROAD_ADDRESS"/>
-	  <result property="receiverDetailAddress" column="RECEIVER_DETAIL_ADDRESS"/>
-	  <result property="deliveryRequest" column="DELIVERY_REQUEST"/>
-	  
-	  <collection property="orderDetails" ofType="com.bookGap.vo.OrderDetailVO" resultMap="OrderDetailResultMap"/>
-	</resultMap>
-	
-	<!-- orders 테이블에 주문 정보 저장 -->
-  <insert id="insertOrder" parameterType="com.bookGap.vo.OrderVO" useGeneratedKeys="true" keyProperty="orderId">
-    INSERT INTO ORDERS
-  
-    <!-- <trim> 태그를 사용해 괄호 '('를 열고, 맨 앞에 불필요한 쉼표(,)를 자동으로 제거합니다. -->
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-	    <!-- 공통 필드들 -->
-	    ORDER_DATE,
-	    ORDER_STATUS,
-	    TOTAL_PRICE,
-	    RECEIVER_NAME,
-	    RECEIVER_PHONE,
-	    RECEIVER_POST_CODE,
-	    RECEIVER_ROAD_ADDRESS,
-	    RECEIVER_DETAIL_ADDRESS,
-	    DELIVERY_REQUEST,
-	    ORDER_TYPE,
-	
-	    <!-- 조건부 필드들 -->
-	    <if test="userId != null and userId != ''">
-	      USER_ID,
-	      USER_ADDRESS_ID,
-	    </if>
-	    <if test="guestId != null and guestId != ''">
-	      GUEST_ID,
-	      ORDER_PASSWORD,
-	    </if>
-	  </trim>
-	  
-	  VALUES
-	
-	  <!-- <trim> 태그를 사용해 괄호 '('를 열고, 맨 앞에 불필요한 쉼표(,)를 자동으로 제거합니다. -->
-	  <trim prefix="(" suffix=")" suffixOverrides=",">
-	    <!-- 공통 값들 -->
-	    NOW(),
-	    #{orderStatus},
-	    #{totalPrice},
-	    #{receiverName},
-	    #{receiverPhone},
-	    #{receiverPostCode},
-	    #{receiverRoadAddress},
-	    #{receiverDetailAddress},
-	    #{deliveryRequest},
-	    #{orderType},
-	
-	    <!-- 조건부 값들 -->
-	    <if test="userId != null and userId != ''">
-	      #{userId},
-	      #{userAddressId},
-	    </if>
-	    <if test="guestId != null and guestId != ''">
-	      #{guestId},
-	      #{orderPassword},
-	    </if>
-	  </trim>
-	</insert>
-	
-	<!-- order_details 테이블에 주문 상품 정보 저장 (단일) -->
-	<insert id="insertOrderDetail" parameterType="com.bookGap.vo.OrderDetailVO">
-	  INSERT INTO ORDER_DETAIL (ORDER_COUNT, 
-														  ORDER_PRICE, 
-														  REFUND_CHECK, 
-														  BOOK_NO, 
-														  ORDER_ID)
-	  VALUES (#{orderCount}, 
-					  #{orderPrice}, 
-					  #{refundCheck}, 
-					  #{bookNo}, 
-					  #{orderId})
-	</insert>
+    <!-- Order -->
+    <id     property="orderId"               column="O_ORDER_ID"/>
+    <result property="orderDate"             column="ORDER_DATE"/>
+    <result property="orderStatus"           column="ORDER_STATUS"/>
+    <result property="totalPrice"            column="TOTAL_PRICE"/>
+    <result property="orderType"             column="ORDER_TYPE"/>
+    <result property="userId"                column="O_USER_ID"/>
+    <result property="guestId"               column="O_GUEST_ID"/>
+    <result property="cartNo"                column="CART_NO"/>
+    <result property="userAddressId"         column="USER_ADDRESS_ID"/>
+    <result property="receiverName"          column="RECEIVER_NAME"/>
+    <result property="receiverPhone"         column="RECEIVER_PHONE"/>
+    <result property="receiverPostCode"      column="RECEIVER_POST_CODE"/>
+    <result property="receiverRoadAddress"   column="RECEIVER_ROAD_ADDRESS"/>
+    <result property="receiverDetailAddress" column="RECEIVER_DETAIL_ADDRESS"/>
+    <result property="deliveryRequest"       column="DELIVERY_REQUEST"/>
+    <result property="orderPassword"         column="ORDER_PASSWORD"/>
+    <result property="guestName"             column="GUEST_NAME"/>
+    <result property="guestPhone"            column="GUEST_PHONE"/>
+    <result property="guestEmail"            column="GUEST_EMAIL"/>
+    <result property="refundStatus"          column="REFUND_STATUS"   jdbcType="TINYINT"/>
 
-  <!-- '주문 내역'을 조회 -->
-  <select id="getOrdersByUserId" parameterType="string" resultMap="OrderResultMap">
-  	SELECT o.ORDER_ID, o.ORDER_DATE, o.ORDER_STATUS, o.TOTAL_PRICE, o.ORDER_TYPE, o.USER_ID, o.GUEST_ID,
-			     o.RECEIVER_NAME, o.RECEIVER_PHONE, o.RECEIVER_POST_CODE, o.RECEIVER_ROAD_ADDRESS, o.RECEIVER_DETAIL_ADDRESS, o.DELIVERY_REQUEST,
-  			   od.ORDER_DETAIL_NO, od.ORDER_COUNT, od.ORDER_PRICE, od.REFUND_CHECK, od.BOOK_NO,
-			     b.BOOK_NO, b.BOOK_RDATE, b.BOOK_TRANS, b.BOOK_STOCK, b.BOOK_STATE, b.BOOK_CATEGORY, b.BOOK_IMGURL, b.BOOK_INDEX, b.PUBLISHER_BOOK_REVIEW,
-			     p.isbn, p.title, p.discount, p.pubdate, p.publisher, p.author, p.description, p.link, p.image
-	    FROM ORDERS o
-	    JOIN ORDER_DETAIL od ON o.ORDER_ID = od.ORDER_ID
-	    JOIN BOOK b ON od.BOOK_NO = b.BOOK_NO
-	    JOIN PRODUCT_API p ON b.isbn = p.isbn
-	   WHERE o.USER_ID = #{userId}
-	   ORDER BY o.ORDER_DATE DESC
-	</select>
-	
-	<!-- 여러 개의 isbn을 리스트로 받아 해당 도서 목록을 조회 -->
-	<select id="selectBooksByIsbnList" resultType="com.bookGap.vo.BookVO" parameterType="java.util.List">
-  SELECT pa.title, pa.image, pa.discount,
-	       b.BOOK_NO AS bookNo, b.BOOK_RDATE AS bookRdate, b.BOOK_TRANS AS bookTrans,
-	       b.BOOK_STOCK AS bookStock, b.BOOK_STATE AS bookState, b.BOOK_CATEGORY AS bookCategory,
-	       b.isbn, b.BOOK_IMGURL AS bookImgUrl, b.BOOK_INDEX AS bookIndex,
-	       b.PUBLISHER_BOOK_REVIEW AS publisherBookReview
+	  <!-- Payment 매핑 -->
+	  <association property="payment" javaType="com.bookGap.vo.PaymentVO">
+	    <id     property="paymentNo"     column="P_PAYMENT_NO"/>
+	    <result property="amount"        column="P_AMOUNT"/>
+	    <result property="paymentMethod" column="P_PAYMENT_METHOD"/>
+	    <result property="status"        column="P_STATUS"/>
+	    <result property="createdAt"     column="P_CREATED_AT"/>
+	    <result property="orderId"       column="P_ORDER_ID"/>
+	    <result property="userId"        column="P_USER_ID"/>
+	    <result property="guestId"       column="P_GUEST_ID"/>
+	  </association>
+
+    <!-- Details -->
+    <collection property="orderDetails" ofType="com.bookGap.vo.OrderDetailVO">
+      <id     property="orderDetailNo" column="ORDER_DETAIL_NO"/>
+      <result property="orderCount"    column="ORDER_COUNT"/>
+      <result property="orderPrice"    column="OD_ORDER_PRICE"/>
+      <result property="refundCheck"   column="REFUND_CHECK"/>
+      <result property="bookNo"        column="OD_BOOK_NO"/>
+      <result property="orderId"       column="OD_ORDER_ID"/>
+
+      <!-- Book + ProductApi (재사용) -->
+      <association property="book" resultMap="BookWithApiMap"/>
+    </collection>
+  </resultMap>
+
+  <!-- ================= INSERT / UPDATE / DELETE ================= -->
+
+  <insert id="insertOrder" parameterType="com.bookGap.vo.OrderVO" 
+          useGeneratedKeys="true" keyProperty="orderId">
+    INSERT INTO ORDERS
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      ORDER_DATE,
+      ORDER_STATUS,
+      TOTAL_PRICE,
+      RECEIVER_NAME,
+      RECEIVER_PHONE,
+      RECEIVER_POST_CODE,
+      RECEIVER_ROAD_ADDRESS,
+      RECEIVER_DETAIL_ADDRESS,
+      DELIVERY_REQUEST,
+      ORDER_TYPE,
+      <if test="userId != null and userId != ''">
+        USER_ID,
+        USER_ADDRESS_ID,
+      </if>
+      <if test="guestId != null and guestId != ''">
+        GUEST_ID,
+        ORDER_PASSWORD,
+      </if>
+    </trim>
+    VALUES
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      NOW(),
+      #{orderStatus},
+      #{totalPrice},
+      #{receiverName},
+      #{receiverPhone},
+      #{receiverPostCode},
+      #{receiverRoadAddress},
+      #{receiverDetailAddress},
+      #{deliveryRequest},
+      #{orderType},
+      <if test="userId != null and userId != ''">
+        #{userId},
+        #{userAddressId},
+      </if>
+      <if test="guestId != null and guestId != ''">
+        #{guestId},
+        #{orderPassword},
+      </if>
+    </trim>
+  </insert>
+
+  <insert id="insertOrderDetail" parameterType="com.bookGap.vo.OrderDetailVO">
+    INSERT INTO ORDER_DETAIL
+      (ORDER_COUNT, ORDER_PRICE, REFUND_CHECK, BOOK_NO, ORDER_ID)
+    VALUES
+      (#{orderCount}, #{orderPrice}, #{refundCheck}, #{bookNo}, #{orderId})
+  </insert>
+
+  <insert id="insertOrderDetailList" parameterType="java.util.List">
+    INSERT INTO ORDER_DETAIL
+      (ORDER_COUNT, ORDER_PRICE, REFUND_CHECK, BOOK_NO, ORDER_ID)
+    VALUES
+    <foreach collection="list" item="detail" separator=",">
+      (#{detail.orderCount},
+       #{detail.orderPrice},
+       #{detail.refundCheck},
+       #{detail.bookNo},
+       #{detail.orderId})
+    </foreach>
+  </insert>
+
+  <update id="updateBookStock" parameterType="map">
+    UPDATE BOOK
+       SET BOOK_STOCK = BOOK_STOCK - #{quantity}
+     WHERE isbn = #{isbn}
+       AND BOOK_STOCK >= #{quantity}
+  </update>
+  
+  <insert id="addAddress" parameterType="com.bookGap.vo.UserAddressVO">
+    INSERT INTO USER_ADDRESS
+      (USER_ID, ADDRESS_NAME, USER_NAME, USER_PHONE,
+       POST_CODE, ROAD_ADDRESS, DETAIL_ADDRESS, IS_DEFAULT)
+    VALUES
+      (#{userId}, #{addressName}, #{userName}, #{userPhone},
+       #{postCode}, #{roadAddress}, #{detailAddress}, 0)
+  </insert>
+
+  <delete id="deleteAddress" parameterType="int">
+    DELETE FROM USER_ADDRESS
+     WHERE USER_ADDRESS_ID = #{userAddressId}
+  </delete>
+
+  <!-- ================= SELECTS ================= -->
+
+  <select id="findAddressByUserAddressId" parameterType="int" resultType="com.bookGap.vo.UserAddressVO">
+    SELECT USER_ADDRESS_ID   AS userAddressId,
+           ADDRESS_NAME      AS addressName,
+           POST_CODE         AS postCode,
+           ROAD_ADDRESS      AS roadAddress,
+           DETAIL_ADDRESS    AS detailAddress,
+           USER_ID           AS userId,
+           USER_NAME         AS userName,
+           USER_PHONE        AS userPhone,
+           IS_DEFAULT        AS isDefault
+      FROM USER_ADDRESS
+     WHERE USER_ADDRESS_ID = #{userAddressId}
+  </select>
+
+  <select id="findDefaultAddressByUserId" parameterType="string" resultType="com.bookGap.vo.UserAddressVO">
+    SELECT USER_ADDRESS_ID   AS userAddressId,
+           ADDRESS_NAME      AS addressName,
+           POST_CODE         AS postCode,
+           ROAD_ADDRESS      AS roadAddress,
+           DETAIL_ADDRESS    AS detailAddress,
+           USER_ID           AS userId,
+           USER_NAME         AS userName,
+           USER_PHONE        AS userPhone,
+           IS_DEFAULT        AS isDefault
+      FROM USER_ADDRESS
+     WHERE USER_ID = #{userId}
+       AND IS_DEFAULT = 1
+  </select>
+
+  <select id="findAddressListByUserId" parameterType="string" resultType="com.bookGap.vo.UserAddressVO">
+    SELECT USER_ADDRESS_ID   AS userAddressId,
+           ADDRESS_NAME      AS addressName,
+           POST_CODE         AS postCode,
+           ROAD_ADDRESS      AS roadAddress,
+           DETAIL_ADDRESS    AS detailAddress,
+           USER_ID           AS userId,
+           USER_NAME         AS userName,
+           USER_PHONE        AS userPhone,
+           IS_DEFAULT        AS isDefault
+      FROM USER_ADDRESS
+     WHERE USER_ID = #{userId}
+  ORDER BY IS_DEFAULT DESC, USER_ADDRESS_ID ASC
+  </select>
+
+  <select id="findBookByIsbn" parameterType="string" resultMap="BookWithApiMap">
+    SELECT
+      b.BOOK_NO, b.BOOK_RDATE, b.BOOK_TRANS, b.BOOK_STOCK, b.BOOK_STATE,
+      b.BOOK_CATEGORY, b.isbn AS isbn, b.BOOK_IMGURL, b.BOOK_INDEX, b.PUBLISHER_BOOK_REVIEW,
+      pa.isbn AS API_isbn, pa.title AS TITLE, pa.author AS AUTHOR, pa.publisher AS PUBLISHER,
+      pa.pubdate AS PUBDATE, pa.discount AS DISCOUNT, pa.description AS DESCRIPTION,
+      pa.link AS LINK, pa.image AS IMAGE,
+      (SELECT COUNT(*) FROM COMMENT c WHERE c.isbn = b.isbn) AS COMMENT_COUNT
     FROM BOOK b
     JOIN PRODUCT_API pa ON b.isbn = pa.isbn
-   WHERE b.isbn IN
+    WHERE b.isbn = #{isbn}
+  </select>
+
+  <select id="selectBooksByIsbnList" parameterType="java.util.List" resultMap="BookWithApiMap">
+    SELECT
+      b.BOOK_NO, b.BOOK_RDATE, b.BOOK_TRANS, b.BOOK_STOCK, b.BOOK_STATE,
+      b.BOOK_CATEGORY, b.isbn AS isbn, b.BOOK_IMGURL, b.BOOK_INDEX, b.PUBLISHER_BOOK_REVIEW,
+      pa.isbn AS API_isbn, pa.title AS TITLE, pa.author AS AUTHOR, pa.publisher AS PUBLISHER,
+      pa.pubdate AS PUBDATE, pa.discount AS DISCOUNT, pa.description AS DESCRIPTION,
+      pa.link AS LINK, pa.image AS IMAGE,
+      (SELECT COUNT(*) FROM COMMENT c WHERE c.isbn = b.isbn) AS COMMENT_COUNT
+    FROM BOOK b
+    JOIN PRODUCT_API pa ON b.isbn = pa.isbn
+    WHERE b.isbn IN
     <foreach item="isbnItem" collection="list" open="(" separator="," close=")">
       #{isbnItem}
     </foreach>
   </select>
-    
-  <!-- 상품 정보 조회 --> 
-	<select id="findBookByIsbn" parameterType="string" resultType="com.bookGap.vo.BookVO">
-		SELECT pa.title,     -- 상품명
-			     pa.image,     -- 대표 이미지
-			     pa.discount,  -- 할인가 (실제 판매 가격)
-				   b.BOOK_NO                AS bookNo,
-				   b.BOOK_RDATE             AS bookRdate,
-				   b.BOOK_TRANS             AS bookTrans,
-				   b.BOOK_STOCK             AS bookStock,
-				   b.BOOK_STATE             AS bookState,
-				   b.BOOK_CATEGORY          AS bookCategory,
-				   b.isbn,
-				   b.BOOK_IMGURL            AS bookImgUrl,
-				   b.BOOK_INDEX             AS bookIndex,
-				   b.PUBLISHER_BOOK_REVIEW  AS publisherBookReview,
-   (SELECT COUNT(*) FROM COMMENT c WHERE c.isbn = b.isbn) AS commentCount
-			FROM BOOK b
-			JOIN PRODUCT_API pa 
-			  ON b.isbn = pa.isbn
-		 WHERE b.isbn = #{isbn}
-	</select>
-	
-	<!-- 사용자의 기본 배송지 정보 조회 --> 
-	<select id="findDefaultAddressByUserId" parameterType="string" resultType="com.bookGap.vo.UserAddressVO">
-		SELECT ua.USER_ADDRESS_ID   AS userAddressId,
-				   ua.ADDRESS_NAME      AS addressName,
-				   ua.POST_CODE         AS postCode,
-				   ua.ROAD_ADDRESS      AS roadAddress,
-				   ua.DETAIL_ADDRESS    AS detailAddress,
-				   ua.IS_DEFAULT        AS isDefault,
-				   ua.USER_ID           AS userId,
-				   u.USER_NAME          AS userName,
-				   u.USER_PHONE         AS userPhone
-			FROM USER_ADDRESS ua
-			JOIN USER u 
-				ON ua.USER_ID = u.USER_ID
-		 WHERE ua.USER_ID = #{userId}
-			 AND ua.IS_DEFAULT = 1
-	</select>
-	
-	<!-- 사용자의 모든 주소 목록을 조회하는 쿼리 -->
-	<select id="findAddressListByUserId" parameterType="string" resultType="com.bookGap.vo.UserAddressVO">
-		SELECT ua.USER_ADDRESS_ID   AS userAddressId,
-				   ua.ADDRESS_NAME      AS addressName,
-				   ua.POST_CODE         AS postCode,
-				   ua.ROAD_ADDRESS      AS roadAddress,
-				   ua.DETAIL_ADDRESS    AS detailAddress,
-				   ua.IS_DEFAULT        AS isDefault,
-				   ua.USER_ID           AS userId,
-				   u.USER_NAME          AS userName,
-				   u.USER_PHONE         AS userPhone
-		  FROM USER_ADDRESS ua
-		  JOIN USER u 
-				ON ua.USER_ID = u.USER_ID
-		 WHERE ua.USER_ID = #{userId}
-	ORDER BY ua.IS_DEFAULT DESC, ua.USER_ADDRESS_ID ASC
-	</select>
-	
-	<insert id="addAddress" parameterType="com.bookGap.vo.UserAddressVO">
-    INSERT INTO USER_ADDRESS (
-        USER_ID, 
-        ADDRESS_NAME, 
-        USER_NAME,
-        USER_PHONE,
-        POST_CODE, 
-        ROAD_ADDRESS, 
-        DETAIL_ADDRESS,
-        IS_DEFAULT
-    ) VALUES (
-        #{userId}, 
-        #{addressName}, 
-        #{userName},
-        #{userPhone},
-        #{postCode}, 
-        #{roadAddress}, 
-        #{detailAddress},
-        0
-    )
-	</insert>
-	
-	<delete id="deleteAddress" parameterType="int">
-	   DELETE FROM USER_ADDRESS 
-	   WHERE USER_ADDRESS_ID = #{userAddressId}
-  </delete>
-  	
-	<!-- order_details 테이블에 여러 상품 한번에 저장 (장바구니 주문용) -->
-	<insert id="insertOrderDetailList" parameterType="java.util.List">
-	  INSERT INTO ORDER_DETAIL (ORDER_COUNT,
-														  ORDER_PRICE, 
-														  REFUND_CHECK, 
-														  BOOK_NO, 
-														  ORDER_ID)
-	  VALUES
-	  <foreach collection="list" item="detail" separator=",">
-	    (#{detail.orderCount}, 
-	    #{detail.orderPrice}, 
-	    #{detail.refundCheck}, 
-	    #{detail.bookNo}, 
-	    #{detail.orderId})
-	  </foreach>
-	</insert>
-	
-	<!-- 주문 생성 시, '어디로 보낼지'에 대한 상세 정보를 얻기 위해 필요 -->
-	<select id="findAddressByUserAddressId" parameterType="int" resultType="com.bookGap.vo.UserAddressVO">
-	  SELECT ua.USER_ADDRESS_ID   AS userAddressId,
-	         ua.ADDRESS_NAME      AS addressName,
-	         ua.POST_CODE         AS postCode,
-	         ua.ROAD_ADDRESS      AS roadAddress,
-	         ua.DETAIL_ADDRESS    AS detailAddress,
-	         ua.USER_ID           AS userId,
-	         u.USER_NAME          AS userName,
-	         u.USER_PHONE         AS userPhone
-	    FROM USER_ADDRESS ua
-      LEFT JOIN USER u ON ua.USER_ID = u.USER_ID
-     WHERE ua.USER_ADDRESS_ID = #{userAddressId}
+
+  <!-- 회원 주문 목록 -->
+  <select id="getOrdersByUserId" parameterType="string" resultMap="OrderResultMap">
+    SELECT
+      o.ORDER_ID  AS O_ORDER_ID, o.ORDER_DATE  AS ORDER_DATE, o.ORDER_STATUS  AS ORDER_STATUS, o.TOTAL_PRICE  AS TOTAL_PRICE, o.ORDER_TYPE  AS ORDER_TYPE, o.USER_ID  AS O_USER_ID,
+      o.CART_NO, o.USER_ADDRESS_ID, o.RECEIVER_NAME, o.RECEIVER_PHONE, o.RECEIVER_POST_CODE, o.RECEIVER_ROAD_ADDRESS, o.RECEIVER_DETAIL_ADDRESS, o.DELIVERY_REQUEST, o.REFUND_STATUS,
+      p.PAYMENT_NO  AS P_PAYMENT_NO, p.AMOUNT  AS P_AMOUNT, p.PAYMENT_METHOD  AS P_PAYMENT_METHOD, p.STATUS  AS P_STATUS,
+      p.CREATED_AT  AS P_CREATED_AT, p.ORDER_ID  AS P_ORDER_ID, p.USER_ID  AS P_USER_ID,
+      od.ORDER_DETAIL_NO  AS ORDER_DETAIL_NO, od.ORDER_COUNT, od.ORDER_PRICE  AS OD_ORDER_PRICE, od.REFUND_CHECK, od.BOOK_NO  AS OD_BOOK_NO, od.ORDER_ID  AS OD_ORDER_ID,
+      b.BOOK_NO, b.BOOK_RDATE, b.BOOK_TRANS, b.BOOK_STOCK, b.BOOK_STATE, b.BOOK_CATEGORY, b.isbn, b.BOOK_IMGURL, b.BOOK_INDEX, b.PUBLISHER_BOOK_REVIEW,
+      api.isbn  AS API_isbn, api.TITLE, api.AUTHOR, api.PUBLISHER, api.PUBDATE, api.DISCOUNT, api.DESCRIPTION, api.LINK, api.IMAGE,
+	  (SELECT COUNT(*) FROM COMMENT c WHERE c.isbn = b.isbn) AS COMMENT_COUNT
+    FROM orders o
+    LEFT JOIN payments p      ON o.ORDER_ID = p.ORDER_ID
+    LEFT JOIN order_detail od ON o.ORDER_ID = od.ORDER_ID
+    LEFT JOIN book b          ON od.BOOK_NO = b.BOOK_NO
+    LEFT JOIN product_api api ON b.isbn = api.isbn
+    WHERE o.USER_ID = #{userId}
+    ORDER BY o.ORDER_DATE DESC
+  </select>
+  
+  <!-- 회원 주문 페이징 -->
+	<select id="getOrdersPaging" parameterType="map" resultMap="OrderResultMap">
+    SELECT
+      o.ORDER_ID  AS O_ORDER_ID, o.ORDER_DATE  AS ORDER_DATE, o.ORDER_STATUS  AS ORDER_STATUS, o.TOTAL_PRICE  AS TOTAL_PRICE, o.ORDER_TYPE  AS ORDER_TYPE, o.USER_ID  AS O_USER_ID,
+      o.CART_NO, o.USER_ADDRESS_ID, o.RECEIVER_NAME, o.RECEIVER_PHONE, o.RECEIVER_POST_CODE, o.RECEIVER_ROAD_ADDRESS, o.RECEIVER_DETAIL_ADDRESS, o.DELIVERY_REQUEST, o.REFUND_STATUS,
+      p.PAYMENT_NO  AS P_PAYMENT_NO, p.AMOUNT  AS P_AMOUNT, p.PAYMENT_METHOD  AS P_PAYMENT_METHOD, p.STATUS  AS P_STATUS,
+      p.CREATED_AT  AS P_CREATED_AT, p.ORDER_ID  AS P_ORDER_ID, p.USER_ID  AS P_USER_ID,
+      od.ORDER_DETAIL_NO  AS ORDER_DETAIL_NO, od.ORDER_COUNT, od.ORDER_PRICE  AS OD_ORDER_PRICE, od.REFUND_CHECK, od.BOOK_NO  AS OD_BOOK_NO, od.ORDER_ID  AS OD_ORDER_ID,
+      b.BOOK_NO, b.BOOK_RDATE, b.BOOK_TRANS, b.BOOK_STOCK, b.BOOK_STATE, b.BOOK_CATEGORY, b.isbn, b.BOOK_IMGURL, b.BOOK_INDEX, b.PUBLISHER_BOOK_REVIEW,
+      api.isbn  AS API_isbn, api.TITLE, api.AUTHOR, api.PUBLISHER, api.PUBDATE, api.DISCOUNT, api.DESCRIPTION, api.LINK, api.IMAGE,
+    (SELECT COUNT(*) FROM COMMENT c WHERE c.isbn = b.isbn) AS COMMENT_COUNT
+    FROM orders o
+    LEFT JOIN payments p      ON o.ORDER_ID = p.ORDER_ID
+    LEFT JOIN order_detail od ON o.ORDER_ID = od.ORDER_ID
+    LEFT JOIN book b          ON od.BOOK_NO = b.BOOK_NO
+    LEFT JOIN product_api api ON b.isbn = api.isbn
+    WHERE o.USER_ID = #{userId}
+    ORDER BY o.ORDER_DATE DESC
+    LIMIT #{start}, #{perPage}
+  </select>
+  
+  <!-- 회원 단건 주문 -->
+  <select id="getOrderById" parameterType="int" resultMap="OrderResultMap">
+	  SELECT
+      o.ORDER_ID  AS O_ORDER_ID, o.ORDER_DATE, o.ORDER_STATUS, o.TOTAL_PRICE, o.USER_ID  AS O_USER_ID, o.RECEIVER_NAME,
+      o.RECEIVER_PHONE, o.RECEIVER_POST_CODE, o.RECEIVER_ROAD_ADDRESS, o.RECEIVER_DETAIL_ADDRESS, o.DELIVERY_REQUEST, o.REFUND_STATUS,
+      p.PAYMENT_NO  AS P_PAYMENT_NO, p.AMOUNT  AS P_AMOUNT, p.PAYMENT_METHOD  AS P_PAYMENT_METHOD, p.STATUS  AS P_STATUS,
+      p.CREATED_AT  AS P_CREATED_AT, p.ORDER_ID  AS P_ORDER_ID, p.USER_ID  AS P_USER_ID,
+      od.ORDER_DETAIL_NO, od.ORDER_COUNT, od.ORDER_PRICE  AS OD_ORDER_PRICE, od.REFUND_CHECK, od.BOOK_NO  AS OD_BOOK_NO, od.ORDER_ID  AS OD_ORDER_ID,
+      b.BOOK_NO, b.isbn, b.BOOK_RDATE, b.BOOK_TRANS, b.BOOK_STOCK, b.BOOK_STATE, b.BOOK_CATEGORY, b.BOOK_IMGURL, b.BOOK_INDEX, b.PUBLISHER_BOOK_REVIEW,
+      api.isbn  AS API_isbn, api.TITLE, api.IMAGE,
+    (SELECT COUNT(*) FROM COMMENT c WHERE c.isbn = b.isbn) AS COMMENT_COUNT
+    FROM orders o
+    LEFT JOIN payments p      ON o.ORDER_ID = p.ORDER_ID
+    LEFT JOIN order_detail od ON o.ORDER_ID = od.ORDER_ID
+    LEFT JOIN book b          ON od.BOOK_NO = b.BOOK_NO
+    LEFT JOIN product_api api ON b.isbn = api.isbn
+    WHERE o.ORDER_ID = #{orderId}
+  </select>
+
+  <!-- 배송지 정보 -->
+  <select id="getAddressByOrderId" parameterType="int" resultType="com.bookGap.vo.UserAddressVO">
+    SELECT ua.*
+    FROM USER_ADDRESS ua
+    JOIN ORDERS o ON ua.USER_ADDRESS_ID = o.USER_ADDRESS_ID
+    WHERE o.ORDER_ID = #{orderId}
+  </select>
+
+  <!-- 비회원 단건 주문 조회 -->
+  <select id="findGuestOrderInfo" parameterType="map" resultMap="OrderResultMap">
+		SELECT
+				o.ORDER_ID AS O_ORDER_ID, o.ORDER_DATE AS ORDER_DATE, o.ORDER_STATUS AS ORDER_STATUS, o.TOTAL_PRICE AS TOTAL_PRICE, o.RECEIVER_NAME,
+				o.RECEIVER_PHONE, o.RECEIVER_POST_CODE, o.RECEIVER_ROAD_ADDRESS, o.RECEIVER_DETAIL_ADDRESS, o.DELIVERY_REQUEST, o.REFUND_STATUS,
+				g.GUEST_NAME AS GUEST_NAME, g.GUEST_PHONE AS GUEST_PHONE, g.GUEST_EMAIL AS GUEST_EMAIL,
+				p.PAYMENT_NO AS P_PAYMENT_NO, p.AMOUNT AS P_AMOUNT, p.PAYMENT_METHOD AS P_PAYMENT_METHOD, p.STATUS AS P_STATUS,
+				p.CREATED_AT AS P_CREATED_AT, p.ORDER_ID AS P_ORDER_ID, p.USER_ID AS P_USER_ID, p.GUEST_ID AS P_GUEST_ID,
+				od.ORDER_DETAIL_NO AS ORDER_DETAIL_NO, od.ORDER_COUNT, od.ORDER_PRICE AS OD_ORDER_PRICE, od.ORDER_ID AS OD_ORDER_ID,
+				b.BOOK_NO, b.isbn,
+				api.isbn AS API_isbn, api.TITLE, api.AUTHOR, api.PUBLISHER, api.IMAGE,
+			(SELECT COUNT(*) FROM COMMENT c WHERE c.isbn = b.isbn) AS COMMENT_COUNT
+		FROM ORDERS o
+		LEFT JOIN GUEST g ON o.GUEST_ID = g.GUEST_ID
+		LEFT JOIN PAYMENTS p ON o.ORDER_ID = p.ORDER_ID
+		LEFT JOIN ORDER_DETAIL od ON o.ORDER_ID = od.ORDER_ID
+		LEFT JOIN BOOK b ON od.BOOK_NO = b.BOOK_NO
+		LEFT JOIN PRODUCT_API api ON b.isbn = api.isbn
+		WHERE o.ORDER_PASSWORD = #{orderPassword}
+		AND g.GUEST_EMAIL = #{guestEmail}
 	</select>
 
-	<!-- 주문이 최종 확정될 때, 판매된 상품의 재고를 차감하기 위해 반드시 필요 -->
-	<update id="updateBookStock" parameterType="java.util.Map">
-	  UPDATE BOOK
-	     SET BOOK_STOCK = BOOK_STOCK - #{quantity} <!-- 'quantity' 또는 'count' 등 서비스 로직에서 넘겨주는 이름과 일치시켜야 함 -->
-	   WHERE isbn = #{isbn} <!-- ISBN을 기준으로 재고를 업데이트하는 것이 더 명확할 수 있습니다. bookNo를 사용해도 무방합니다. -->
-	     AND BOOK_STOCK >= #{quantity} <!-- 재고가 부족할 경우 업데이트되지 않도록 막는 안전장치 -->
-	</update>
+  <!-- 비회원 주문 전체 조회 -->
+	<select id="findGuestOrdersByPasswordAndEmail" parameterType="map" resultMap="OrderResultMap">
+		SELECT
+				o.ORDER_ID AS O_ORDER_ID, o.ORDER_DATE AS ORDER_DATE, o.ORDER_STATUS AS ORDER_STATUS, o.TOTAL_PRICE AS TOTAL_PRICE, o.RECEIVER_NAME,
+				o.RECEIVER_PHONE, o.RECEIVER_POST_CODE, o.RECEIVER_ROAD_ADDRESS, o.RECEIVER_DETAIL_ADDRESS, o.DELIVERY_REQUEST, o.REFUND_STATUS,
+				g.GUEST_NAME AS GUEST_NAME, g.GUEST_PHONE AS GUEST_PHONE, g.GUEST_EMAIL AS GUEST_EMAIL,
+				p.PAYMENT_NO AS P_PAYMENT_NO, p.AMOUNT AS P_AMOUNT, p.PAYMENT_METHOD AS P_PAYMENT_METHOD, p.STATUS AS P_STATUS,
+				p.CREATED_AT AS P_CREATED_AT, p.ORDER_ID AS P_ORDER_ID, p.USER_ID AS P_USER_ID, p.GUEST_ID AS P_GUEST_ID,
+				od.ORDER_DETAIL_NO AS ORDER_DETAIL_NO, od.ORDER_COUNT, od.ORDER_PRICE AS OD_ORDER_PRICE, od.ORDER_ID AS OD_ORDER_ID,
+				b.BOOK_NO, b.isbn,
+				api.isbn AS API_isbn, api.TITLE, api.AUTHOR, api.PUBLISHER, api.IMAGE,
+			(SELECT COUNT(*) FROM COMMENT c WHERE c.isbn = b.isbn) AS COMMENT_COUNT
+		FROM orders o
+		LEFT JOIN guest g ON o.GUEST_ID = g.GUEST_ID
+		LEFT JOIN payments p ON o.ORDER_ID = p.ORDER_ID
+		LEFT JOIN order_detail od ON o.ORDER_ID = od.ORDER_ID
+		LEFT JOIN book b ON od.BOOK_NO = b.BOOK_NO
+		LEFT JOIN product_api api ON b.isbn = api.isbn
+		WHERE o.ORDER_PASSWORD = #{orderPassword}
+		AND g.GUEST_EMAIL = #{guestEmail}
+		ORDER BY o.ORDER_DATE DESC
+	</select>
+
+	<select id="getTotalOrderCount" parameterType="string" resultType="int">
+    SELECT COUNT(*) FROM ORDERS WHERE USER_ID = #{userId}
+  </select>
+
 </mapper>

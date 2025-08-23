@@ -1,21 +1,17 @@
 package com.bookGap.vo;
 
+import lombok.Data;
+
+@Data
 public class OrderDetailVO {
-  private int orderDetailNo;      // 주문상세번호 (PK)
-  private int orderCount;         // 수량
-  private int orderPrice;         // 가격 (할인가가 적용된 개당 가격)
-  private int refundCheck;        // 환불가능여부 (1:Y, 2:N)
-  private int bookNo;             // 상품번호 (FK)
-  private int orderId;            // 주문ID (FK)
+  private int orderDetailNo;
+  private int orderCount;
+  private int orderPrice;
+  private int refundCheck;
+  private int bookNo;
+  private int orderId;
+  private BookVO book;
   
-  private BookVO book; 
-  
-  public BookVO getBook() {
-    return book;
-  }
-  public void setBook(BookVO book) {
-    this.book = book;
-  }  
   public int getOrderDetailNo() {
     return orderDetailNo;
   }
@@ -52,5 +48,11 @@ public class OrderDetailVO {
   public void setOrderId(int orderId) {
     this.orderId = orderId;
   }
-
+  public BookVO getBook() {
+    return book;
+  }
+  public void setBook(BookVO book) {
+    this.book = book;
+  }
+  
 }

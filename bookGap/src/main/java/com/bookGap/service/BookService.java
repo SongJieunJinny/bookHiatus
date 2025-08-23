@@ -20,7 +20,7 @@ public interface BookService {
 	
 	 public int getBookNoByIsbn(String isbn);
 	 
-	 List<BookVO> getNewBooks();
+	 List<ProductApiVO> getNewBooks();
 	 
   //제목 또는 저자명으로 도서 검색
    List<ProductApiVO> searchBooksByKeyword(SearchVO searchVO);

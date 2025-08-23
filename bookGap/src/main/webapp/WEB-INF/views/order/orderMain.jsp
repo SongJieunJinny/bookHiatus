@@ -85,14 +85,14 @@
 			            <div class="orderDetailDiv">
 			              <input type="hidden" class="orderItemIsbn" value="${item.book.isbn}">
                     <input type="hidden" class="orderItemQuantity" value="${item.quantity}">
-			              <img class="orderImg" src="${item.book.image}" alt="${item.book.title}">
+			              <img class="orderImg" src="${item.book.productInfo.image}" alt="${item.book.productInfo.title}">
 			              <div class="orderDetails">
-			                <div class="orderDetailsTitle">${item.book.title}</div>
+			                <div class="orderDetailsTitle">${item.book.productInfo.title}</div>
                       <div class="orderDetailsContainer">
 			                  <span class="orderCount">${item.quantity}개</span>
 			                  <span class="orderSlash">/</span>
 			                  <span class="orderPrice">
-			                    <fmt:formatNumber value="${item.book.discount * item.quantity}" pattern="#,###" />원
+			                    <fmt:formatNumber value="${item.book.productInfo.discount * item.quantity}" pattern="#,###" />원
 			                  </span>
 			                </div>
 			              </div>
@@ -333,6 +333,7 @@ $(document).ready(function () {
 								        userAddressId: selectedAddress.data("address-id"),
 								        
 								        orderPrice: parseInt($('.Price').text().replace(/[^0-9]/g, ''), 10),
+								        deliveryRequest: $('.orderMainRequestInput').val(),
 								        deliveryFee: parseInt($('.deliveryFee').text().replace(/[^0-9]/g, ''), 10),
 								        totalPrice: parseInt($('.finalPaymentPrice').text().replace(/[^0-9]/g, ''), 10),
 								        
