@@ -14,113 +14,112 @@
 </head>
 <body>
 <jsp:include page="/WEB-INF/views/include/header.jsp" />
-  <section>
-    <div id="navOrderDetails">
-      <div id="orderDetailsHead">
-        <div id="orderDetailsDiv">
-          <div id="myInfo"><a href="<%=request.getContextPath()%>/user/mypageInfo.do">My Info</a></div>
-	          &nbsp;&nbsp;<div>|</div>&nbsp;&nbsp;
-          <div id="orderDetails"><a href="<%=request.getContextPath()%>/order/orderDetails.do">Order Details</a></div>
-        </div>
+<section>
+  <div id="navOrderDetails">
+    <div id="orderDetailsHead">
+      <div id="orderDetailsDiv">
+        <div id="myInfo"><a href="<%=request.getContextPath()%>/user/mypageInfo.do">My Info</a></div>
+          &nbsp;&nbsp;<div>|</div>&nbsp;&nbsp;
+        <div id="orderDetails"><a href="<%=request.getContextPath()%>/order/orderDetails.do">Order Details</a></div>
       </div>
-      <div id="orderDetailsMid">
-        <div class="orderDetailsDivLine"></div>
-        <div class="orderDetailsDiv">
-          <div class="orderDateInfo">
-            <input class="orderWeekButton" type="button" value="오늘">
-            <input class="orderWeekButton" type="button" value="1주일">
-            <input class="orderWeekButton" type="button" value="1개월">
-            <input class="orderWeekButton" type="button" value="3개월">
-          </div>
-          <div class="orderDateInfo">
-            <input class="orderDate" id="orderDateStart" type="date">
-            &nbsp;<div class="orderDateSign">～</div>&nbsp;
-            <input class="orderDate" id="orderDateLast" type="date">
-            &nbsp;&nbsp;&nbsp;
-            <input class="orderDateButton" type="button" value="조회">
-          </div>                      
-        </div>
-        <div class="orderMsg">조회할 기간을 선택해주세요.</div>
-      </div><br>
-      <div id="orderDetailsEnd">
-      	<c:if test="${empty orderList}">
-            <div class="orderMsg" style="display:block;">주문내역이 없습니다.</div>
-        </c:if>
-        <c:forEach var="order" items="${orderList}">
-          <!-- 하나의 주문을 감싸는 컨테이너 -->
-          <div class="orderContainer" data-order-date="<fmt:formatDate value='${order.orderDate}' pattern='yyyy-MM-dd'/>">
-            <div class="orderHeader">
-              <!-- 주문에 포함된 상품 목록 -->
-	            <c:forEach var="detail" items="${order.orderDetails}">
-							  <div class="orderPayCompl">
-							    <!-- 왼쪽: 책 이미지 -->
-							    <img class="orderThumb" src="${detail.book.image}" alt="${detail.book.title}"/>
-							
-							    <!-- 가운데: 도서 정보 -->
-							    <div class="orderInfo">
-							    <div class="orderPayDate">
-	                <fmt:formatDate value="${order.orderDate}" pattern="yyyy-MM-dd" />
-	                (주문번호: ${order.orderId})
-	              </div>
-							      <div class="orderTitle">[${detail.book.bookCategory}] ${detail.book.title}</div>
-							      <div class="orderMeta">${detail.book.author} 저자 | ${detail.book.publisher} 출판</div>
-							      <div class="orderPrice">
-							        <fmt:formatNumber value="${detail.orderPrice}" pattern="#,###"/>원 (수량: ${detail.orderCount}개)
-							      </div>
-							    </div>
-									<span id="orderShip_${order.orderId}" 
-									      onclick="openRefundModal('${order.orderId}', '${order.paymentNo}', false)">
-									  <c:choose>
-									    <c:when test="${not empty order.refundStatus}">
-									      <c:choose>
-									        <c:when test="${order.refundStatus == 1}">환불요청</c:when>
-									        <c:when test="${order.refundStatus == 2}">환불처리중</c:when>
-									        <c:when test="${order.refundStatus == 3}">환불완료</c:when>
-									        <c:when test="${order.refundStatus == 4}">환불거절</c:when>
-									      </c:choose>
-									    </c:when>
-									    <c:otherwise>
-									      <c:choose>
-									        <c:when test="${order.orderStatus == 1}">배송준비중</c:when>
-									        <c:when test="${order.orderStatus == 2}">배송중</c:when>
-									        <c:when test="${order.orderStatus == 3}">배송완료</c:when>
-									        <c:when test="${order.orderStatus == 4}">배송취소</c:when>
-									      </c:choose>
-									    </c:otherwise>
-									  </c:choose>
-									</span>
-							  </div>
-							</c:forEach>
-            </div>
-          </div>
-        </c:forEach>
-      </div>
-
-      <!-- 페이징 -->
-			<c:if test="${paging.lastPage > 1}">
-			  <div class="paging">
-			    <ul class="pagination">
-			      <!-- 처음/이전 묶음 -->
-			      <li class="${paging.startPage == 1 ? 'disabled' : ''}">
-			        <a href="<c:url value='/order/orderDetails.do'><c:param name='page' value='1'/></c:url>">«</a>
-			      </li>
-			      <c:forEach var="p" begin="${paging.startPage}" end="${paging.endPage}">
-			        <li class="${p == paging.nowPage ? 'active' : ''}">
-			          <a href="<c:url value='/order/orderDetails.do'><c:param name='page' value='${p}'/></c:url>">
-			            ${p}
-			          </a>
-			        </li>
-			      </c:forEach>
-			      <!-- 끝/다음 묶음 -->
-			      <li class="${paging.endPage == paging.lastPage ? 'disabled' : ''}">
-			        <a href="<c:url value='/order/orderDetails.do'><c:param name='page' value='${paging.lastPage}'/></c:url>">»</a>
-			      </li>
-			    </ul>
-			  </div>
-			</c:if>
     </div>
-  </section>
-
+    <div id="orderDetailsMid">
+      <div class="orderDetailsDivLine"></div>
+      <div class="orderDetailsDiv">
+        <div class="orderDateInfo">
+          <input class="orderWeekButton" type="button" value="오늘">
+          <input class="orderWeekButton" type="button" value="1주일">
+          <input class="orderWeekButton" type="button" value="1개월">
+          <input class="orderWeekButton" type="button" value="3개월">
+        </div>
+        <div class="orderDateInfo">
+          <input class="orderDate" id="orderDateStart" type="date">
+          &nbsp;<div class="orderDateSign">～</div>&nbsp;
+          <input class="orderDate" id="orderDateLast" type="date">
+          &nbsp;&nbsp;&nbsp;
+          <input class="orderDateButton" type="button" value="조회">
+        </div>
+      </div>
+      <div class="orderMsg">조회할 기간을 선택해주세요.</div>
+    </div><br>
+    <div id="orderDetailsEnd">
+    	<c:if test="${empty orderList}">
+				<div class="orderMsg" style="display:block;">주문내역이 없습니다.</div>
+      </c:if>
+      <c:forEach var="order" items="${orderList}">
+      	<!-- 하나의 주문을 감싸는 컨테이너 -->
+        <div class="orderContainer" data-order-date="<fmt:formatDate value='${order.orderDate}' pattern='yyyy-MM-dd'/>">
+          <div class="orderHeader">
+          	<!-- 주문에 포함된 상품 목록 -->
+            <c:forEach var="detail" items="${order.orderDetails}">
+						  <div class="orderPayCompl">
+						    <img class="orderThumb" 
+								     src="<c:out value='${empty detail.book.image ? "/resources/img/no_image.png" : detail.book.image}'/>" 
+								     alt="${detail.book.title}"/>
+								<!-- 가운데: 도서 정보 -->
+						    <div class="orderInfo">
+							    <div class="orderPayDate">
+		                <fmt:formatDate value="${order.orderDate}" pattern="yyyy-MM-dd" />
+		                (주문번호: ${order.orderId})
+	                </div>
+						      <div class="orderTitle">[${detail.book.bookCategory}] ${detail.book.title}</div>
+						      <div class="orderMeta">${detail.book.author} 저자 | ${detail.book.publisher} 출판</div>
+						      <div class="orderPrice">
+						        <fmt:formatNumber value="${detail.orderPrice}" pattern="#,###"/>원 (수량: ${detail.orderCount}개)
+						      </div>
+						    </div>
+						    <!-- 오른쪽: 배송/환불 상태 -->
+								<span class="orderShip" data-order-id="${order.orderId}"
+								      onclick="openRefundModal('${order.orderId}', '${order.paymentNo}')">
+								  <c:choose>
+								    <c:when test="${not empty order.refundStatus}">
+								      <c:choose>
+								        <c:when test="${order.refundStatus == 1}">환불요청</c:when>
+								        <c:when test="${order.refundStatus == 2}">환불처리중</c:when>
+								        <c:when test="${order.refundStatus == 3}">환불완료</c:when>
+								        <c:when test="${order.refundStatus == 4}">환불거절</c:when>
+								      </c:choose>
+								    </c:when>
+								    <c:otherwise>
+								      <c:choose>
+								        <c:when test="${order.orderStatus == 1}">배송준비중</c:when>
+								        <c:when test="${order.orderStatus == 2}">배송중</c:when>
+								        <c:when test="${order.orderStatus == 3}">배송완료</c:when>
+								        <c:when test="${order.orderStatus == 4}">배송취소</c:when>
+								      </c:choose>
+								    </c:otherwise>
+								  </c:choose>
+								</span>
+						  </div>
+						</c:forEach>
+          </div>
+        </div>
+      </c:forEach>
+    </div>
+    <!-- 페이징 -->
+		<c:if test="${paging.lastPage > 1}">
+		  <div class="paging">
+		    <ul class="pagination">
+		      <!-- 처음/이전 묶음 -->
+		      <li class="${paging.startPage == 1 ? 'disabled' : ''}">
+		        <a href="<c:url value='/order/orderDetails.do'><c:param name='page' value='1'/></c:url>">«</a>
+		      </li>
+		      <c:forEach var="p" begin="${paging.startPage}" end="${paging.endPage}">
+		        <li class="${p == paging.nowPage ? 'active' : ''}">
+		          <a href="<c:url value='/order/orderDetails.do'><c:param name='page' value='${p}'/></c:url>">
+		            ${p}
+		          </a>
+		        </li>
+		      </c:forEach>
+		      <!-- 끝/다음 묶음 -->
+		      <li class="${paging.endPage == paging.lastPage ? 'disabled' : ''}">
+		        <a href="<c:url value='/order/orderDetails.do'><c:param name='page' value='${paging.lastPage}'/></c:url>">»</a>
+		      </li>
+		    </ul>
+		  </div>
+		</c:if>
+  </div>
+</section>
 <jsp:include page="/WEB-INF/views/include/footer.jsp" />
 <script>
 $(function () {
@@ -226,7 +225,7 @@ $(function () {
       <input type="hidden" name="paymentNo" id="refundPaymentNo">
 
       <label>환불 사유</label><br>
-      <textarea name="refundReason" required></textarea><br><br>
+      <textarea name="refundReason" required style="min-height:80px;"></textarea><br><br>
 
       <label>사진 첨부</label><br>
       <input type="file" name="refundImage"><br><br>
@@ -320,7 +319,8 @@ function updateOrderShip(orderId, paymentNo) {
           case 3: statusText = "환불완료"; break;
           case 4: statusText = "환불거절"; break;
         }
-        document.getElementById("orderShip_" + orderId).innerText = statusText;
+        document.querySelectorAll(".orderShip[data-order-id='" + orderId + "']")
+        .forEach(el => el.innerText = statusText);
       }
     });
 }
