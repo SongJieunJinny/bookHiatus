@@ -2,6 +2,12 @@
 <!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0/EN" 
 				"http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
+
+
+	<settings>
+  		<setting name="mapUnderscoreToCamelCase" value="true"/>
+	</settings>
+
 	<!-- vo 별칭 지정 -->
 	<typeAliases>
 		<!-- 별칭 지정시 반드시 클래스부터 선언 후 별칭 지정! -->
@@ -30,7 +36,7 @@
 		<typeAlias type="com.bookGap.vo.ComplainVO" alias="ComplainVO"/>
 		<typeAlias type="com.bookGap.vo.RefundVO" alias="RefundVO"/>
 	</typeAliases>
+	
 
 </configuration>
-
 

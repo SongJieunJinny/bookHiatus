@@ -14,7 +14,10 @@ public interface OrderService {
   
   public OrderVO createGuestOrder(Map<String, Object> orderData) throws Exception; 
   
-  public List<OrderVO> getOrdersByUser(String userId);
+  //회원 주문 조회
+  public List<OrderVO> getOrdersByUserId(String userId);
+  public List<OrderVO> getOrdersPaging(String userId, int start, int perPage);
+  public int getTotalOrderCount(String userId);
 
   // 상품 관련
   public BookVO getBookByIsbn(String isbn);
@@ -32,5 +35,9 @@ public interface OrderService {
   public int createOrderWithDetails(Map<String, Object> orderData) throws IllegalStateException;
   
   public Map<String, Object> createGuestOrderWithDetails(Map<String, Object> orderData) throws Exception;
+  
+  public OrderVO getOrderById(int orderId);
 
+  //비회원 주문 조회
+  public List<OrderVO> findGuestOrdersByPasswordAndEmail(String orderPassword, String guestEmail);
 }

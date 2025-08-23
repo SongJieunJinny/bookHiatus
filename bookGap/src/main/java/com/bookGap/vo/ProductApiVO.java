@@ -6,7 +6,7 @@ import lombok.Data;
 public class ProductApiVO {
 	  private String isbn;
 	  private String title;//책제
-	  private int discount;//판매가
+	  private Integer discount; //판매가
 	  private String pubdate;//출간
 	  private String publisher;//출판
 	  private String author;//저자이

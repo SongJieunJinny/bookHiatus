@@ -176,12 +176,12 @@
       </div>
     </div>
     <div id="guestMain" class="tabContent" style="display:none;">
- 			<form id="guestForm" method="post" action="${pageContext.request.contextPath}/guestOrder.do">
+ 			<form id="guestForm" method="post" action="${pageContext.request.contextPath}/guest/guestOrderInfo.do">
 		 		<div id="guestMain">
 		      <div id="guestMainDiv">
 		        <div id="guestInput">
-		          <input id="guestId" type="text" name="GUEST_ID" placeholder="주문번호"><br>
-		          <input id="guestPw" type="password" name="GUEST_PW" placeholder="비밀번호">
+		          <input id="orderPassword" type="password" name="orderPassword" placeholder="주문 비밀번호"><br>
+		          <input id="guestEmail" type="email" name="guestEmail" placeholder="주문 이메일">
 		        </div>
 		        <button id="guestBtn" type="submit">CHECK</button>
 		      </div>

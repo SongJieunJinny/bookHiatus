@@ -2,6 +2,16 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
 			"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.bookGap.mapper.paymentMapper">
+<resultMap id="PaymentResultMap" type="com.bookGap.vo.PaymentVO">
+  <id     property="paymentNo"    column="PAYMENT_NO"/>
+  <result property="amount"       column="AMOUNT"/>
+  <result property="paymentMethod" column="PAYMENT_METHOD"/>
+  <result property="status"       column="STATUS"/>
+  <result property="createdAt"    column="CREATED_AT"/>
+  <result property="orderId"      column="ORDER_ID"/>
+  <result property="userId"       column="USER_ID"/>
+  <result property="guestId"      column="GUEST_ID"/>
+</resultMap>
 
   <!-- ========== 공통 결제 로직 ========== -->
   <insert id="insertPayment" parameterType="com.bookGap.vo.PaymentVO" useGeneratedKeys="true" keyProperty="paymentNo">
@@ -84,5 +94,9 @@
 	  INSERT INTO TOSS_CANCEL (PAYMENT_NO, payment_key, cancel_reason)
 	  VALUES (#{paymentNo}, #{paymentKey}, #{cancelReason})
   </insert>
+  
+  <select id="getPaymentByNo" parameterType="int" resultMap="PaymentResultMap">
+    SELECT * FROM PAYMENTS WHERE PAYMENT_NO = #{paymentNo}
+</select>
   
 </mapper>

@@ -54,7 +54,7 @@ public class BookDAO {
     return bookNo != null ? bookNo.intValue() : 0;
 	}
 	
-	public List<BookVO> getNewBooks(){
+	public List<ProductApiVO> getNewBooks(){
 		return sqlSession.selectList(namespace + "getNewBooks");
 	}
 	

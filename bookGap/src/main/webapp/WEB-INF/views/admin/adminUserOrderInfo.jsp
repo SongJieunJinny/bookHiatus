@@ -5,15 +5,11 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-<meta name="description" content="" />
-<meta name="author" content="" />
-<title>adminGuestOrderInfo</title>
-<link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
-<script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+<title>adminUserOrderInfo</title>
 <link href="<%=request.getContextPath()%>/resources/css/styles.css" rel="stylesheet" />
 <script src="<%=request.getContextPath()%>/resources/js/jquery-3.7.1.js"></script>
+<script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+<link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
 <style>
 	.orderModal {
 		border: 1px solid black;
@@ -31,8 +27,8 @@
 		background-color: #fefefe;
 		margin: 8% auto;
 		border: 1px solid #888;
-		width: 80%;
-		max-width: 400px;
+		width: 100%;
+		max-width: 300px;
 		border-radius: 20px;
 		text-align: center;
 		padding: 30px 0;
@@ -95,158 +91,153 @@
 	#deliveryAddressText{
 		margin-top:10px;
 	}
-	.modalGuestOrder{
-		display: flex;
-		margin-bottom: -3%;
-    }
-	.modalGuestOrderContainer{
-		width: 100%;
-    }
-	.modalGuestOrderInfo,
-	.modalGuestOrderProductInfo,
-	.modalGuestOrderPayment {
-		padding: 3% 3% 0% 3%;
-    }
+	.modalOrderContainer{
+		margin: 5% 1% 0% 1%;
+	}
+	.modalOrderInfoContainer{
+		margin: 1% 2% 0% 1%;
+	}
 	.datatable-selector {
 		padding: 8px;
 		width: 170%;
+		margin-left: -10px;
 		margin-bottom:10px;
 		margin-right: 20px;
 	}
-	    
 </style>
 </head>
 <body class="sb-nav-fixed">
-		<!--header삽입-->
-		<jsp:include page="/WEB-INF/views/include/adminHeader.jsp" />
-		<div id="layoutSidenav">
-			<div id="layoutSidenav_nav">
-				<nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
-					<div class="sb-sidenav-menu">
-						<!--nav삽입-->
-						<jsp:include page="/WEB-INF/views/include/adminNav.jsp" />
-					</div>
-					<div class="sb-sidenav-footer">
-						<div class="small">BOOK틈 관리자페이지</div>
-						admin
-					</div>
-				</nav>
-			</div>
-			<div id="layoutSidenav_content">
-				<main>
-					<div class="container-fluid px-4">
-						<h1 class="mt-4">Guest Order Management System</h1>
-						<br>
-						<div class="card mb-4">
-							<div class="card-body">
-								비회원전용 주문 및 배송관리
-							</div>
-						</div>
-						<div class="card mb-4">
-							<div class="card-header">
-								<i class="fas fa-table me-1"></i>
-								Guest Order Management Table
-							</div>
-							<div class="card-body">
-								<table id="datatablesSimple">
-								  <thead>
-								    <tr>
-								      <th>주문 번호</th>
-								      <th>주문일</th>
-								      <th>주문 상태</th>
-								      <th>총 금액</th>
-								      <th>주문자</th>
-								      <th>상세보기</th>
-								    </tr>
-								  </thead>
-								  <tbody>
-								    <c:forEach var="order" items="${guestOrderList}">
-								      <tr>
-										<td>${order.orderId}</td>
-										<td>${order.orderDate}</td>
-										<td>
-											 <c:choose>
-									          <c:when test="${order.orderStatus == 1}">배송 준비중</c:when>
-									          <c:when test="${order.orderStatus == 2}">배송중</c:when>
-									          <c:when test="${order.orderStatus == 3}">배송완료</c:when>
-									          <c:when test="${order.orderStatus == 4}">주문취소</c:when>
-									          <c:when test="${order.orderStatus == 5}">교환/반품</c:when>
-									          <c:otherwise>알 수 없음</c:otherwise>
-									        </c:choose>
-										</td>
-										<td>${order.totalPrice}</td>
-										<td>${order.guestId}</td>
-										<td>
-								          <button class="btn btn-sm btn-dark viewBtn" data-order-id="${order.orderId}">상세보기</button>
-								        </td>
-								      </tr>
-								    </c:forEach>
-								  </tbody>
-								</table>
-								 <!-- 주문 상세 모달 -->
-								<div class="modal fade" id="orderModal" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
-								  <div class="modal-dialog modal-dialog-centered modal-lg">
-								    <div class="modal-content">
-								      <!-- 모달 헤더 -->
-								      <div class="modal-header">
-								        <h5 class="modal-title fw-bold" id="orderModalLabel">주문 상세 정보</h5>
-								        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
-								      </div>
-								
-								      <!-- 모달 본문 -->
-								      <div class="modal-body">
-								        <!-- 주문 정보 -->
-								        <h6 class="fw-bold">주문 정보</h6>
-								        <ul class="list-group mb-3" id="orderInfoList">
-								          <!-- Ajax로 동적 바인딩됨 -->
-								        </ul>
-								
-								        <!-- 배송 정보 -->
-								        <h6 class="fw-bold">배송 정보</h6>
-								        <ul class="list-group mb-3" id="deliveryInfo">
-								          <!-- Ajax로 동적 바인딩됨 -->
-								        </ul>
-								
-								        <!-- 상품 정보 -->
-								        <h6 class="fw-bold">상품 정보</h6>
-								        <table class="table mb-3" style="border: 1px solid lightgrey; border-radius: 10px;">
-								          <thead>
-								            <tr>
-								              <th>상품명</th>
-								              <th>수량</th>
-								              <th>가격</th>
-								              <th>옵션</th>
-								            </tr>
-								          </thead>
-								          <tbody id="productTable">
-								            <!-- Ajax로 동적 바인딩됨 -->
-								          </tbody>
-								        </table>
-								
-								        <!-- 결제 내역 -->
-								        <h6 class="fw-bold">총 결제 내역</h6>
-								        <ul class="list-group mb-3" id="paymentSummaryList">
-								          <!-- Ajax로 동적 바인딩됨 -->
-								        </ul>
-								      </div>
-								
-								      <!-- 모달 푸터 -->
-								      <div class="modal-footer">
-								        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-								        <button type="button" class="btn btn-dark" id="saveOrder">저장</button>
-								      </div>
-								    </div>
-								  </div>
-								</div>
-								
-							</div>
-						</div>
-					</div>
-				</main>
-				<!--footer 삽입-->
-				<jsp:include page="/WEB-INF/views/include/adminFooter.jsp" />
-			</div>
+	<!--header삽입-->
+	<jsp:include page="/WEB-INF/views/include/adminHeader.jsp" />
+	<div id="layoutSidenav">
+		<div id="layoutSidenav_nav">
+			<nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+				<div class="sb-sidenav-menu">
+					<!--nav삽입-->
+					<jsp:include page="/WEB-INF/views/include/adminNav.jsp" />
+				</div>
+				<div class="sb-sidenav-footer">
+					<div class="small">BOOK틈 관리자페이지</div>
+					admin
+				</div>
+			</nav>
 		</div>
+		<div id="layoutSidenav_content">
+			<main>
+				<div class="container-fluid px-4">
+					<h1 class="mt-4">User Order Info Management System</h1>
+					<br>
+					<div class="card mb-4">
+						<div class="card-body">
+							회원전용 주문 및 배송관리
+						</div>
+					</div>
+					<div class="card mb-4">
+						<div class="card-header">
+							<i class="fas fa-table me-1"></i>
+							회원 전용 주문 목록 
+						</div>
+						<div class="card-body">
+							<table id="datatablesSimple">
+								<thead>
+									<tr>
+										<th>주문 번호</th>
+										<th>주문일</th>
+										<th>주문 상태</th>
+										<th>총 주문 금액</th>
+										<th>주문자 </th>
+										<th>상세보기</th>
+									</tr>
+								</thead>
+								<tbody>
+									<c:forEach var="order" items="${orderList}">
+										<tr>
+											<td>${order.orderId}</td>
+											<td>${order.orderDate}</td>
+											<td>
+												 <c:choose>
+										          <c:when test="${order.orderStatus == 1}">배송 준비중</c:when>
+										          <c:when test="${order.orderStatus == 2}">배송중</c:when>
+										          <c:when test="${order.orderStatus == 3}">배송완료</c:when>
+										          <c:when test="${order.orderStatus == 4}">주문취소</c:when>
+										          <c:when test="${order.orderStatus == 5}">교환/반품</c:when>
+										          <c:otherwise>알 수 없음</c:otherwise>
+										        </c:choose>
+											</td>
+											<td>${order.totalPrice}</td>
+											<td>${order.userId}</td>
+											<td>
+											<button class="btn btn-sm btn-dark viewBtn" data-order-id="${order.orderId}">상세보기</button>
+											</td>
+										</tr>
+									</c:forEach>
+								</tbody>
+							</table>
+
+							<!-- 주문 상세 모달 -->
+							<div class="modal fade" id="orderModal" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
+							  <div class="modal-dialog modal-dialog-centered modal-lg">
+							    <div class="modal-content">
+							      <!-- 모달 헤더 -->
+							      <div class="modal-header">
+							        <h5 class="modal-title fw-bold" id="orderModalLabel">주문 상세 정보</h5>
+							        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+							      </div>
+							
+							      <!-- 모달 본문 -->
+							      <div class="modal-body">
+							        <!-- 주문 정보 -->
+							        <h6 class="fw-bold">주문 정보</h6>
+							        <ul class="list-group mb-3" id="orderInfoList">
+							          <!-- Ajax로 동적 바인딩됨 -->
+							        </ul>
+							
+							        <!-- 배송 정보 -->
+							        <h6 class="fw-bold">배송 정보</h6>
+							        <ul class="list-group mb-3" id="deliveryInfo">
+							          <!-- Ajax로 동적 바인딩됨 -->
+							        </ul>
+							
+							        <!-- 상품 정보 -->
+							        <h6 class="fw-bold">상품 정보</h6>
+							        <table class="table mb-3" style="border: 1px solid lightgrey; border-radius: 10px;">
+							          <thead>
+							            <tr>
+							              <th>상품명</th>
+							              <th>수량</th>
+							              <th>가격</th>
+							              <th>옵션</th>
+							            </tr>
+							          </thead>
+							          <tbody id="productTable">
+							            <!-- Ajax로 동적 바인딩됨 -->
+							          </tbody>
+							        </table>
+							
+							        <!-- 결제 내역 -->
+							        <h6 class="fw-bold">총 결제 내역</h6>
+							        <ul class="list-group mb-3" id="paymentSummaryList">
+							          <!-- Ajax로 동적 바인딩됨 -->
+							        </ul>
+							      </div>
+							
+							      <!-- 모달 푸터 -->
+							      <div class="modal-footer">
+							        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+							        <button type="button" class="btn btn-dark" id="saveOrder">저장</button>
+							      </div>
+							    </div>
+							  </div>
+							</div>
+							
+						</div>
+					</div>
+				</div>
+			</main>
+			<!--footer 삽입-->
+			<jsp:include page="/WEB-INF/views/include/adminFooter.jsp" />
+		</div>
+	</div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 <script src="<%=request.getContextPath()%>/resources/js/scripts.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
@@ -259,7 +250,7 @@
 		$(document).on("click", ".viewBtn", function () {
 			  const orderId = $(this).data("order-id");
 			  $.ajax({
-			  url: "<%=request.getContextPath()%>/admin/adminGuestOrderInfo/getGuestOrderDetail.do",
+			  url: "<%=request.getContextPath()%>/admin/adminUserOrderInfo/getOrderDetail.do",
 			  method: "GET",
 			  data: { orderId },
 			  success: function (result) {
@@ -393,7 +384,7 @@
 			  const $btn = $(this).prop("disabled", true);
 			
 			  $.ajax({
-			    url: "<%=request.getContextPath()%>/admin/adminGuestOrderInfo/updateGuestOrder.do",
+			    url: "<%=request.getContextPath()%>/admin/adminUserOrderInfo/updateUserOrder.do",
 			    method: "POST",
 			    contentType: "application/json; charset=UTF-8",
 			    data: JSON.stringify({
@@ -438,16 +429,16 @@
 	});
 </script>
 <script>
-	document.addEventListener("DOMContentLoaded", function() {
-	    const table = new simpleDatatables.DataTable("#datatablesSimple", {
-	      labels: {
-	        perPage: "",  // 이 부분이 'entries per page' 문구를 담당
-	        placeholder: "검색어 입력...",
-	        noRows: "데이터가 없습니다.",
-	        info: ""
-	      }
-	    });
-	  });
+document.addEventListener("DOMContentLoaded", function() {
+    const table = new simpleDatatables.DataTable("#datatablesSimple", {
+      labels: {
+        perPage: "",  // 이 부분이 'entries per page' 문구를 담당
+        placeholder: "검색어 입력...",
+        noRows: "데이터가 없습니다.",
+        info: ""
+      }
+    });
+  });
 </script>
 </body>
 </html>

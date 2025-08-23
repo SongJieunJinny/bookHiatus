@@ -3,25 +3,31 @@
 			"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.bookGap.mapper.bookMapper">
   <resultMap id="bookDetailMap" type="com.bookGap.vo.BookVO">
-    <result property="isbn" column="isbn"/>
-    <result property="title" column="title"/>
-    <result property="author" column="author"/>
-    <result property="publisher" column="publisher"/>
-    <result property="description" column="description"/>
-    <result property="image" column="image"/>
-    <result property="discount" column="discount"/>
-    <result property="pubdate" column="pubdate"/>
-    <result property="link" column="link"/>
-    <result property="bookNo" column="bookNo"/>
-    <result property="bookTrans" column="bookTrans"/>
-    <result property="bookCategory" column="bookCategory"/>
-    <result property="bookImgUrl" column="bookImgUrl"/>
-    <result property="bookIndex" column="bookIndex"/>
-    <result property="publisherBookReview" column="publisherBookReview"/>
-    <result property="bookRdate" column="bookRdate"/>
-    <result property="bookStock" column="bookStock"/>
-    <result property="bookState" column="bookState"/>
-  </resultMap>
+	  <!-- BOOK 컬럼들 -->
+	  <id     property="bookNo"          column="BOOK_NO"/>
+	  <result property="bookRdate"       column="BOOK_RDATE"/>
+	  <result property="bookTrans"       column="BOOK_TRANS"/>
+	  <result property="bookStock"       column="BOOK_STOCK"/>
+	  <result property="bookState"       column="BOOK_STATE"/>
+	  <result property="bookCategory"    column="BOOK_CATEGORY"/>
+	  <result property="bookImgUrl"      column="BOOK_IMGURL"/>
+	  <result property="bookIndex"       column="BOOK_INDEX"/>
+	  <result property="publisherBookReview"   column="PUBLISHER_BOOK_REVIEW"/>
+	
+	  <!-- PRODUCT_API -> productInfo -->
+	  <association property="productInfo" javaType="com.bookGap.vo.ProductApiVO">
+	    <id     property="isbn"         column="isbn"/>
+	    <result property="title"        column="TITLE"/>
+	    <result property="author"       column="AUTHOR"/>
+	    <result property="publisher"    column="PUBLISHER"/>
+	    <result property="description"  column="DESCRIPTION"/>
+	    <result property="image"        column="IMAGE"/>
+	    <result property="discount"     column="DISCOUNT"/>
+	    <result property="pubdate"      column="PUBDATE"/>
+	    <result property="link"         column="LINK"/>
+	  </association>
+	</resultMap>
+	
 	 <!-- 도서 등록 -->
 		<insert id="insertBook" parameterType="BookVO">
 		    INSERT INTO BOOK (BOOK_TRANS, BOOK_CATEGORY, isbn, BOOK_IMGURL, BOOK_INDEX, PUBLISHER_BOOK_REVIEW)
@@ -131,13 +137,29 @@
 		WHERE b.BOOK_CATEGORY = #{category}
 	</select>
 	
-	<select id="selectBookDetailByIsbn" parameterType="String"  resultMap="bookDetailMap">
-		SELECT p.isbn, p.title, p.author, p.publisher, p.description, p.image, p.discount, p.pubdate, p.link, 
-           b.BOOK_NO AS bookNo, b.BOOK_RDATE AS bookRdate, b.BOOK_TRANS AS bookTrans, b.BOOK_STOCK AS bookStock, b.BOOK_STATE AS bookState,
-           b.BOOK_CATEGORY AS bookCategory, b.BOOK_IMGURL AS bookImgUrl, b.BOOK_INDEX AS bookIndex, b.PUBLISHER_BOOK_REVIEW AS publisherBookReview
-      FROM PRODUCT_API p
-INNER JOIN BOOK b ON p.isbn = b.isbn
-     WHERE p.isbn = #{isbn}
+	<select id="selectBookDetailByIsbn" parameterType="String" resultMap="bookDetailMap">
+	  SELECT
+	    b.BOOK_NO        AS BOOK_NO,
+	    b.BOOK_RDATE     AS BOOK_RDATE,
+	    b.BOOK_TRANS     AS BOOK_TRANS,
+	    b.BOOK_STOCK     AS BOOK_STOCK,
+	    b.BOOK_STATE     AS BOOK_STATE,
+	    b.BOOK_CATEGORY  AS BOOK_CATEGORY,
+	    b.BOOK_IMGURL    AS BOOK_IMGURL,
+	    b.BOOK_INDEX     AS BOOK_INDEX,
+	    b.PUBLISHER_BOOK_REVIEW AS PUBLISHER_BOOK_REVIEW,
+	    p.isbn           AS isbn,
+	    p.title          AS TITLE,
+	    p.author         AS AUTHOR,
+	    p.publisher      AS PUBLISHER,
+	    p.description    AS DESCRIPTION,
+	    p.image          AS IMAGE,
+	    p.discount       AS DISCOUNT,
+	    p.pubdate        AS PUBDATE,
+	    p.link           AS LINK
+	  FROM PRODUCT_API p
+	  JOIN BOOK b ON p.isbn = b.isbn
+	  WHERE p.isbn = #{isbn}
 	</select>
 	
 	<select id="adminInventoryManagementSelectAll"   resultType="BookVO" >
@@ -170,12 +192,12 @@ INNER JOIN BOOK b ON p.isbn = b.isbn
 	  WHERE book_no = #{bookNo}
 	</update>
 	
-	<select id="getNewBooks"  resultType="BookVO" >
-		SELECT p.isbn, p.title, p.image, p.discount
-		FROM BOOK b
-		INNER JOIN PRODUCT_API p ON b.isbn = p.isbn
-		ORDER BY b.BOOK_RDATE DESC
-		LIMIT 9
+	<select id="getNewBooks" resultType="com.bookGap.vo.ProductApiVO">
+	  SELECT p.isbn, p.title, p.image, p.discount
+	  FROM BOOK b
+	  INNER JOIN PRODUCT_API p ON b.isbn = p.isbn
+	  ORDER BY b.BOOK_RDATE DESC
+	  LIMIT 9
 	</select>
 	
 	<!-- 제목 또는 저자명으로 도서 검색 -->

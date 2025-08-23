@@ -33,23 +33,12 @@ public class AdminIndexController {
 		return "admin/adminIndex";
 	}
 	
-	@RequestMapping(value = "admin/adminOrder.do", method = RequestMethod.GET)
-	public String adminOrder() {
-	
-		return "admin/adminOrder";
-	}
-	
 	@RequestMapping(value = "admin/adminSales.do", method = RequestMethod.GET)
 	public String adminSales() {
 	
 		return "admin/adminSales";
 	}
 	
-	@RequestMapping(value = "admin/adminGuestOrderInfo.do", method = RequestMethod.GET)
-	public String adminGuestOrderInfo() {
-	
-		return "admin/adminGuestOrderInfo";
-	}
 	
 	@RequestMapping(value = "admin/err401.do", method = RequestMethod.GET)
 	public String err401() {

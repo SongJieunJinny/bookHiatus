@@ -19,12 +19,11 @@ import com.bookGap.service.AdminBookService;
 import com.bookGap.vo.BookVO;
 
 @Controller
-@RequestMapping("/admin/books")
 public class AdminBookController {
 	@Autowired
     private AdminBookService adminBookService;
 	// 도서 등록 처리 
-	@PostMapping("/bookInsert")
+	@PostMapping("/admin/books/bookInsert")
     @ResponseBody
     public ResponseEntity<String> insertBook(
     		@RequestParam("bookTrans") String bookTrans,
@@ -53,20 +52,20 @@ public class AdminBookController {
         return ResponseEntity.ok("도서가 성공적으로 등록되었습니다!");
     }
     // 도서 수정 처리
-    @PostMapping("/bookUpdate")
+    @PostMapping("/admin/books/bookUpdate")
     public String updateBook(BookVO bookVO) {
     	adminBookService.updateBook(bookVO);
         return "redirect:/admin/adminBook.do";
     }
 
     // 도서 삭제 처리
-    @PostMapping("/bookDelete")
+    @PostMapping("/admin/books/bookDelete")
     public String deleteBook(@RequestParam("bookNo") int bookNo) {
     	adminBookService.deleteBook(bookNo);
         return "redirect:/admin/adminBook.do";
     }
     
-    @RequestMapping(value = "/adminBook.do", method = RequestMethod.GET)
+    @GetMapping("/admin/adminBook.do")
 	public String adminBook(Model model) {
 		
 		List<BookVO> getAllBooks = adminBookService.getAllBooks();

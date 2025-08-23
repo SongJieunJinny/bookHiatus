@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+			"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bookGap.mapper.AdminOrderMapper">
+	<resultMap id="OrderDetailWithBook" type="com.bookGap.vo.OrderDetailVO">
+	  <id property="orderDetailNo" column="ORDER_DETAIL_NO"/>
+	  <result property="orderCount" column="ORDER_COUNT"/>
+	  <result property="orderPrice" column="ORDER_PRICE"/>
+	  <result property="refundCheck" column="REFUND_CHECK"/>
+	  <result property="bookNo" column="BOOK_NO"/>
+	  
+	  <association property="book" javaType="com.bookGap.vo.BookVO">
+	    <result property="bookCategory" column="BOOK_CATEGORY"/>
+	    <result property="title" column="TITLE"/>
+	    <result property="isbn" column="ISBN"/>
+	  </association>
+	</resultMap>
+	<resultMap id="OrderWithPayment" type="com.bookGap.vo.OrderVO">
+	  <id property="orderId" column="ORDER_ID"/>
+	  <result property="orderDate" column="ORDER_DATE"/>
+	  <result property="orderStatus" column="ORDER_STATUS"/>
+	  <result property="totalPrice" column="TOTAL_PRICE"/>
+	  <result property="receiverName" column="RECEIVER_NAME"/>
+	  <result property="receiverPhone" column="RECEIVER_PHONE"/>
+	  <result property="receiverPostCode" column="RECEIVER_POST_CODE"/>
+	  <result property="receiverRoadAddress" column="RECEIVER_ROAD_ADDRESS"/>
+	  <result property="receiverDetailAddress" column="RECEIVER_DETAIL_ADDRESS"/>
+	  <result property="deliveryRequest" column="DELIVERY_REQUEST"/>
+	  <result property="courier" column="COURIER"/>        <!-- 추가 -->
+ 	  <result property="invoice" column="INVOICE"/> 
+	  <result property="userId" column="USER_ID"/>
+	  <result property="guestId" column="GUEST_ID"/>
+	
+	  <association property="payment" javaType="com.bookGap.vo.PaymentVO">
+	    <result property="paymentNo" column="PAYMENT_NO"/>
+	    <result property="amount" column="AMOUNT"/>
+	    <result property="paymentMethod" column="PAYMENT_METHOD"/>
+	    <result property="status" column="STATUS"/>
+	    <result property="createdAt" column="CREATED_AT"/>
+	  </association>
+	</resultMap>
+	<!-- 주문 목록 조회 -->
+	<select id="selectAllUserOrders" resultType="com.bookGap.vo.OrderVO">
+		  SELECT 
+		    o.ORDER_ID       AS orderId,
+		    o.ORDER_DATE     AS orderDate,
+		    o.ORDER_STATUS   AS orderStatus,
+		    o.TOTAL_PRICE    AS totalPrice,
+		    o.USER_ID        AS userId
+		  FROM ORDERS o
+		  WHERE o.ORDER_TYPE = 1
+		  ORDER BY o.ORDER_DATE DESC
+	</select>
+
+	<!-- 주문 상세 항목 (도서 목록 포함) -->
+	<select id="getOrderDetailsByOrderId" resultMap="OrderDetailWithBook">
+		  SELECT 
+		    od.ORDER_DETAIL_NO,
+		    od.ORDER_COUNT,
+		    od.ORDER_PRICE,
+		    od.REFUND_CHECK,
+		    b.BOOK_NO,
+		    b.BOOK_CATEGORY,
+		    p.TITLE,
+		    p.ISBN
+		  FROM ORDER_DETAIL od
+		  JOIN BOOK b ON od.BOOK_NO = b.BOOK_NO
+		  JOIN PRODUCT_API p ON b.ISBN = p.ISBN
+		  WHERE od.ORDER_ID = #{orderId}
+	</select>
+	
+	<select id="getOrderInfoWithPayment" resultMap="OrderWithPayment">
+	    SELECT 
+	    o.ORDER_ID, o.ORDER_DATE, o.ORDER_STATUS, o.TOTAL_PRICE,
+	    o.RECEIVER_NAME, o.RECEIVER_PHONE, o.RECEIVER_POST_CODE,
+	    o.RECEIVER_ROAD_ADDRESS, o.RECEIVER_DETAIL_ADDRESS, o.DELIVERY_REQUEST,
+	    o.COURIER, o.INVOICE, 
+	    o.USER_ID, o.GUEST_ID,
+	
+	    p.PAYMENT_NO, p.AMOUNT, p.PAYMENT_METHOD, p.STATUS, p.CREATED_AT
+	  FROM ORDERS o
+	  LEFT JOIN PAYMENTS p ON o.ORDER_ID = p.ORDER_ID
+	  WHERE o.ORDER_ID = #{orderId}
+	</select>
+	
+	
+	<update id="updateUserOrder">
+	  UPDATE ORDERS
+	  SET ORDER_STATUS = #{orderStatus},
+	      COURIER = #{courier},
+	      INVOICE = #{invoice}
+	  WHERE ORDER_ID = #{orderId}
+	</update>
+	
+	<!-- 결제 상태 업데이트 -->
+	<update id="updateUserPaymentStatus">
+	  UPDATE PAYMENTS
+	  SET STATUS = #{paymentStatus}
+	  WHERE ORDER_ID = #{orderId}
+	</update>
+	
+	<select id="selectAllGuestOrders" resultType="com.bookGap.vo.OrderVO">
+	    SELECT 
+	        o.ORDER_ID       AS orderId,
+	        o.ORDER_DATE     AS orderDate,
+	        o.ORDER_STATUS   AS orderStatus,
+	        o.TOTAL_PRICE    AS totalPrice,
+	        o.GUEST_ID       AS guestId
+	    FROM ORDERS o
+	    WHERE o.ORDER_TYPE = 2
+	    ORDER BY o.ORDER_DATE DESC
+	</select>
+	
+	<!-- 비회원 주문 상세 + 결제 -->
+	<select id="getGuestOrderInfoWithPayment" resultMap="OrderWithPayment">
+	    SELECT 
+	        o.ORDER_ID, o.ORDER_DATE, o.ORDER_STATUS, o.TOTAL_PRICE,
+	        o.RECEIVER_NAME, o.RECEIVER_PHONE, o.RECEIVER_POST_CODE,
+	        o.RECEIVER_ROAD_ADDRESS, o.RECEIVER_DETAIL_ADDRESS, o.DELIVERY_REQUEST,
+	        o.COURIER, o.INVOICE, 
+	        o.USER_ID, o.GUEST_ID,
+	        p.PAYMENT_NO, p.AMOUNT, p.PAYMENT_METHOD, p.STATUS, p.CREATED_AT
+	    FROM ORDERS o
+	    LEFT JOIN PAYMENTS p ON o.ORDER_ID = p.ORDER_ID
+	    WHERE o.ORDER_ID = #{orderId}
+	</select>
+	
+	<!-- 비회원 주문 상태 업데이트 -->
+	<update id="updateGuestOrder">
+	    UPDATE ORDERS
+	    SET ORDER_STATUS = #{orderStatus},
+	        COURIER = #{courier},
+	        INVOICE = #{invoice}
+	    WHERE ORDER_ID = #{orderId}
+	</update>
+	
+	<!-- 비회원 결제 상태 업데이트 -->
+	<update id="updateGuestPaymentStatus">
+	    UPDATE PAYMENTS
+	    SET STATUS = #{paymentStatus}
+	    WHERE ORDER_ID = #{orderId}
+	</update>
+
+</mapper>
