@@ -308,7 +308,7 @@ nav{
   align-items: center; 
   width: 60%;
 }
-#loginId,#loginPw, #guestId, #guestPw{
+#loginId,#loginPw, #orderPassword, #guestEmail{
   border: 1px solid lightgrey;
   border-radius: 10px;
   padding: 4%;
