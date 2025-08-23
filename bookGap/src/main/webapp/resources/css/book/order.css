@@ -125,6 +125,17 @@ section{
   justify-content: center;
   flex-direction: column;
 }
+.orderPayComplLine{
+  width: 99%;
+  text-align: center;
+  height: 30px;
+  border-bottom: solid 1px #ccc;
+  display: flex;
+  align-items: center;
+  color: #7a7a7a;
+  font-size: 15px;
+  justify-content: flex-end;
+}
 .orderPayComplDiv{
   width: 100%;
   height: auto;
@@ -167,6 +178,7 @@ section{
   display:flex;
   flex-direction:column;
   gap:6px;
+  width: 500px;
 }
 .orderMeta{ color:#666; font-size:14px; }
 
@@ -177,6 +189,7 @@ section{
   text-align:center;
   color:#7a7a7a;
   font-weight:700;
+  cursor: pointer;
 }
 .orderPayComplInfoDiv1{
   width: 100%;
@@ -208,7 +221,6 @@ section{
   background-color: #fdfdfd; /* 약간의 배경색으로 구분감 부여 */
 }
 .orderHeader {
-  display: flex;
   height: 100%;
   justify-content: space-between; /* 양쪽 끝으로 정렬 */
   align-items: center;            /* 세로 중앙 정렬 */

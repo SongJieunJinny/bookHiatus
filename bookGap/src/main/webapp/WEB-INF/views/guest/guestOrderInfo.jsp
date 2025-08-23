@@ -81,6 +81,7 @@
 	    <div id="guestDeliveryInfoEnd">
 	      <div class="guestOrderPayComplDiv1">
 	        <div class="guestOrderPayComplDiv2" data-order-idx="${status.index}">
+	          <div class="orderPayComplLine">주문상세>></div>
 		        <c:forEach var="item" items="${order.orderDetails}" varStatus="s">
 		          <div class="orderItem" data-price="${item.orderPrice}" 
 													           data-qty="${item.orderCount}" 

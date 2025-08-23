@@ -46,12 +46,15 @@
     	<c:if test="${empty orderList}">
 				<div class="orderMsg" style="display:block;">주문내역이 없습니다.</div>
       </c:if>
+      
       <c:forEach var="order" items="${orderList}">
       	<!-- 하나의 주문을 감싸는 컨테이너 -->
         <div class="orderContainer" data-order-date="<fmt:formatDate value='${order.orderDate}' pattern='yyyy-MM-dd'/>">
           <div class="orderHeader">
+            <div class="orderPayComplLine">주문상세>></div>
           	<!-- 주문에 포함된 상품 목록 -->
             <c:forEach var="detail" items="${order.orderDetails}">
+						  
 						  <div class="orderPayCompl">
 						    <img class="orderThumb" 
 								     src="<c:out value='${empty detail.book.image ? "/resources/img/no_image.png" : detail.book.image}'/>" 
