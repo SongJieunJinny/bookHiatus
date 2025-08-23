@@ -42,5 +42,25 @@ public class AdminOrderDAO {
     public int updateUserPaymentStatus(AdminOrderUpdateRequestVO req) {
         return sqlSession.update(namespace + ".updateUserPaymentStatus", req);
     }
+    
+ // 비회원 주문 목록 조회
+    public List<OrderVO> selectAllGuestOrders() {
+        return sqlSession.selectList(namespace + ".selectAllGuestOrders");
+    }
+
+    // 비회원 주문 상세 (결제 포함)
+    public OrderVO getGuestOrderInfoWithPayment(int orderId) {
+        return sqlSession.selectOne(namespace + ".getGuestOrderInfoWithPayment", orderId);
+    }
+
+    // 비회원 주문 상태 업데이트
+    public int updateGuestOrder(AdminOrderUpdateRequestVO req) {
+        return sqlSession.update(namespace + ".updateGuestOrder", req);
+    }
+
+    // 비회원 결제 상태 업데이트
+    public int updateGuestPaymentStatus(AdminOrderUpdateRequestVO req) {
+        return sqlSession.update(namespace + ".updateGuestPaymentStatus", req);
+    }
 
 }
