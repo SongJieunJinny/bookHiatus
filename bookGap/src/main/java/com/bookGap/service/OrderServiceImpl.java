@@ -256,24 +256,6 @@ public class OrderServiceImpl implements OrderService {
   public int getTotalOrderCount(String userId) {
     return orderDAO.getTotalOrderCount(userId);
   }
-<<<<<<< HEAD
-
-  @Override
-  public List<OrderVO> getOrdersPaging(String userId, int start, int perPage) {
-    return orderDAO.getOrdersPaging(userId, start, perPage);
-  }
-
-  @Override
-  public List<OrderVO> findGuestOrdersByPasswordAndEmail(String orderPassword, String guestEmail) {
-    return orderDAO.findGuestOrdersByPasswordAndEmail(orderPassword, guestEmail);
-  }
-  
-  @Override
-  public OrderVO getOrderById(int orderId) {
-    return orderDAO.getOrderById(orderId);
-  }
-=======
->>>>>>> branch 'main' of https://github.com/SongJieunJinny/bookHiatus.git
 
   @Override
   public List<OrderVO> getOrdersPaging(String userId, int start, int perPage) {
