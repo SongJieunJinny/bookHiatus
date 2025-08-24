@@ -53,6 +53,7 @@
     <result property="guestPhone"            column="GUEST_PHONE"/>
     <result property="guestEmail"            column="GUEST_EMAIL"/>
     <result property="refundStatus"          column="REFUND_STATUS"   jdbcType="TINYINT"/>
+    <result property="paymentNo"             column="P_PAYMENT_NO"/>
 
 	  <!-- Payment 매핑 -->
 	  <association property="payment" javaType="com.bookGap.vo.PaymentVO">
@@ -243,26 +244,6 @@
       #{isbnItem}
     </foreach>
   </select>
-
-  <!-- 회원 주문 목록 -->
-  <select id="getOrdersByUserId" parameterType="string" resultMap="OrderResultMap">
-    SELECT
-      o.ORDER_ID  AS O_ORDER_ID, o.ORDER_DATE  AS ORDER_DATE, o.ORDER_STATUS  AS ORDER_STATUS, o.TOTAL_PRICE  AS TOTAL_PRICE, o.ORDER_TYPE  AS ORDER_TYPE, o.USER_ID  AS O_USER_ID,
-      o.CART_NO, o.USER_ADDRESS_ID, o.RECEIVER_NAME, o.RECEIVER_PHONE, o.RECEIVER_POST_CODE, o.RECEIVER_ROAD_ADDRESS, o.RECEIVER_DETAIL_ADDRESS, o.DELIVERY_REQUEST, o.REFUND_STATUS,
-      p.PAYMENT_NO  AS P_PAYMENT_NO, p.AMOUNT  AS P_AMOUNT, p.PAYMENT_METHOD  AS P_PAYMENT_METHOD, p.STATUS  AS P_STATUS,
-      p.CREATED_AT  AS P_CREATED_AT, p.ORDER_ID  AS P_ORDER_ID, p.USER_ID  AS P_USER_ID,
-      od.ORDER_DETAIL_NO  AS ORDER_DETAIL_NO, od.ORDER_COUNT, od.ORDER_PRICE  AS OD_ORDER_PRICE, od.REFUND_CHECK, od.BOOK_NO  AS OD_BOOK_NO, od.ORDER_ID  AS OD_ORDER_ID,
-      b.BOOK_NO, b.BOOK_RDATE, b.BOOK_TRANS, b.BOOK_STOCK, b.BOOK_STATE, b.BOOK_CATEGORY, b.isbn, b.BOOK_IMGURL, b.BOOK_INDEX, b.PUBLISHER_BOOK_REVIEW,
-      api.isbn  AS API_isbn, api.TITLE, api.AUTHOR, api.PUBLISHER, api.PUBDATE, api.DISCOUNT, api.DESCRIPTION, api.LINK, api.IMAGE,
-	  (SELECT COUNT(*) FROM COMMENT c WHERE c.isbn = b.isbn) AS COMMENT_COUNT
-    FROM orders o
-    LEFT JOIN payments p      ON o.ORDER_ID = p.ORDER_ID
-    LEFT JOIN order_detail od ON o.ORDER_ID = od.ORDER_ID
-    LEFT JOIN book b          ON od.BOOK_NO = b.BOOK_NO
-    LEFT JOIN product_api api ON b.isbn = api.isbn
-    WHERE o.USER_ID = #{userId}
-    ORDER BY o.ORDER_DATE DESC
-  </select>
   
   <!-- 회원 주문 페이징 -->
 	<select id="getOrdersPaging" parameterType="map" resultMap="OrderResultMap">
@@ -294,7 +275,7 @@
       p.CREATED_AT  AS P_CREATED_AT, p.ORDER_ID  AS P_ORDER_ID, p.USER_ID  AS P_USER_ID,
       od.ORDER_DETAIL_NO, od.ORDER_COUNT, od.ORDER_PRICE  AS OD_ORDER_PRICE, od.REFUND_CHECK, od.BOOK_NO  AS OD_BOOK_NO, od.ORDER_ID  AS OD_ORDER_ID,
       b.BOOK_NO, b.isbn, b.BOOK_RDATE, b.BOOK_TRANS, b.BOOK_STOCK, b.BOOK_STATE, b.BOOK_CATEGORY, b.BOOK_IMGURL, b.BOOK_INDEX, b.PUBLISHER_BOOK_REVIEW,
-      api.isbn  AS API_isbn, api.TITLE, api.IMAGE,
+      api.isbn AS API_isbn, api.TITLE, api.AUTHOR, api.PUBLISHER, api.PUBDATE, api.DISCOUNT, api.DESCRIPTION, api.LINK, api.IMAGE,
     (SELECT COUNT(*) FROM COMMENT c WHERE c.isbn = b.isbn) AS COMMENT_COUNT
     FROM orders o
     LEFT JOIN payments p      ON o.ORDER_ID = p.ORDER_ID
@@ -302,6 +283,26 @@
     LEFT JOIN book b          ON od.BOOK_NO = b.BOOK_NO
     LEFT JOIN product_api api ON b.isbn = api.isbn
     WHERE o.ORDER_ID = #{orderId}
+  </select>
+  
+  <!-- 회원 주문 목록 -->
+  <select id="getOrdersByUserId" parameterType="string" resultMap="OrderResultMap">
+    SELECT
+      o.ORDER_ID  AS O_ORDER_ID, o.ORDER_DATE  AS ORDER_DATE, o.ORDER_STATUS  AS ORDER_STATUS, o.TOTAL_PRICE  AS TOTAL_PRICE, o.ORDER_TYPE  AS ORDER_TYPE, o.USER_ID  AS O_USER_ID,
+      o.CART_NO, o.USER_ADDRESS_ID, o.RECEIVER_NAME, o.RECEIVER_PHONE, o.RECEIVER_POST_CODE, o.RECEIVER_ROAD_ADDRESS, o.RECEIVER_DETAIL_ADDRESS, o.DELIVERY_REQUEST, o.REFUND_STATUS,
+      p.PAYMENT_NO  AS P_PAYMENT_NO, p.AMOUNT  AS P_AMOUNT, p.PAYMENT_METHOD  AS P_PAYMENT_METHOD, p.STATUS  AS P_STATUS,
+      p.CREATED_AT  AS P_CREATED_AT, p.ORDER_ID  AS P_ORDER_ID, p.USER_ID  AS P_USER_ID,
+      od.ORDER_DETAIL_NO  AS ORDER_DETAIL_NO, od.ORDER_COUNT, od.ORDER_PRICE  AS OD_ORDER_PRICE, od.REFUND_CHECK, od.BOOK_NO  AS OD_BOOK_NO, od.ORDER_ID  AS OD_ORDER_ID,
+      b.BOOK_NO, b.BOOK_RDATE, b.BOOK_TRANS, b.BOOK_STOCK, b.BOOK_STATE, b.BOOK_CATEGORY, b.isbn, b.BOOK_IMGURL, b.BOOK_INDEX, b.PUBLISHER_BOOK_REVIEW,
+      api.isbn  AS API_isbn, api.TITLE, api.AUTHOR, api.PUBLISHER, api.PUBDATE, api.DISCOUNT, api.DESCRIPTION, api.LINK, api.IMAGE,
+	  (SELECT COUNT(*) FROM COMMENT c WHERE c.isbn = b.isbn) AS COMMENT_COUNT
+    FROM orders o
+    LEFT JOIN payments p      ON o.ORDER_ID = p.ORDER_ID
+    LEFT JOIN order_detail od ON o.ORDER_ID = od.ORDER_ID
+    LEFT JOIN book b          ON od.BOOK_NO = b.BOOK_NO
+    LEFT JOIN product_api api ON b.isbn = api.isbn
+    WHERE o.USER_ID = #{userId}
+    ORDER BY o.ORDER_DATE DESC
   </select>
 
   <!-- 배송지 정보 -->
@@ -313,26 +314,25 @@
   </select>
 
   <!-- 비회원 단건 주문 조회 -->
-  <select id="findGuestOrderInfo" parameterType="map" resultMap="OrderResultMap">
-		SELECT
-				o.ORDER_ID AS O_ORDER_ID, o.ORDER_DATE AS ORDER_DATE, o.ORDER_STATUS AS ORDER_STATUS, o.TOTAL_PRICE AS TOTAL_PRICE, o.RECEIVER_NAME,
-				o.RECEIVER_PHONE, o.RECEIVER_POST_CODE, o.RECEIVER_ROAD_ADDRESS, o.RECEIVER_DETAIL_ADDRESS, o.DELIVERY_REQUEST, o.REFUND_STATUS,
-				g.GUEST_NAME AS GUEST_NAME, g.GUEST_PHONE AS GUEST_PHONE, g.GUEST_EMAIL AS GUEST_EMAIL,
-				p.PAYMENT_NO AS P_PAYMENT_NO, p.AMOUNT AS P_AMOUNT, p.PAYMENT_METHOD AS P_PAYMENT_METHOD, p.STATUS AS P_STATUS,
-				p.CREATED_AT AS P_CREATED_AT, p.ORDER_ID AS P_ORDER_ID, p.USER_ID AS P_USER_ID, p.GUEST_ID AS P_GUEST_ID,
-				od.ORDER_DETAIL_NO AS ORDER_DETAIL_NO, od.ORDER_COUNT, od.ORDER_PRICE AS OD_ORDER_PRICE, od.ORDER_ID AS OD_ORDER_ID,
-				b.BOOK_NO, b.isbn,
-				api.isbn AS API_isbn, api.TITLE, api.AUTHOR, api.PUBLISHER, api.IMAGE,
-			(SELECT COUNT(*) FROM COMMENT c WHERE c.isbn = b.isbn) AS COMMENT_COUNT
-		FROM ORDERS o
-		LEFT JOIN GUEST g ON o.GUEST_ID = g.GUEST_ID
-		LEFT JOIN PAYMENTS p ON o.ORDER_ID = p.ORDER_ID
-		LEFT JOIN ORDER_DETAIL od ON o.ORDER_ID = od.ORDER_ID
-		LEFT JOIN BOOK b ON od.BOOK_NO = b.BOOK_NO
-		LEFT JOIN PRODUCT_API api ON b.isbn = api.isbn
-		WHERE o.ORDER_PASSWORD = #{orderPassword}
-		AND g.GUEST_EMAIL = #{guestEmail}
-	</select>
+  <select id="getGuestOrderByOrderId" parameterType="int" resultMap="OrderResultMap">
+    SELECT
+        o.ORDER_ID AS O_ORDER_ID, o.ORDER_DATE AS ORDER_DATE, o.ORDER_STATUS AS ORDER_STATUS, o.TOTAL_PRICE AS TOTAL_PRICE, o.RECEIVER_NAME,
+        o.RECEIVER_PHONE, o.RECEIVER_POST_CODE, o.RECEIVER_ROAD_ADDRESS, o.RECEIVER_DETAIL_ADDRESS, o.DELIVERY_REQUEST, o.REFUND_STATUS,
+        g.GUEST_NAME AS GUEST_NAME, g.GUEST_PHONE AS GUEST_PHONE, g.GUEST_EMAIL AS GUEST_EMAIL,
+        p.PAYMENT_NO AS P_PAYMENT_NO, p.AMOUNT AS P_AMOUNT, p.PAYMENT_METHOD AS P_PAYMENT_METHOD, p.STATUS AS P_STATUS,
+        p.CREATED_AT AS P_CREATED_AT, p.ORDER_ID AS P_ORDER_ID, p.GUEST_ID AS P_GUEST_ID,
+        od.ORDER_DETAIL_NO AS ORDER_DETAIL_NO, od.ORDER_COUNT, od.ORDER_PRICE AS OD_ORDER_PRICE, od.ORDER_ID AS OD_ORDER_ID,
+        b.BOOK_NO,
+        api.isbn AS API_isbn, api.TITLE, api.AUTHOR, api.PUBLISHER, api.PUBDATE, api.DISCOUNT, api.DESCRIPTION, api.LINK, api.IMAGE,
+        (SELECT COUNT(*) FROM COMMENT c WHERE c.isbn = b.isbn) AS COMMENT_COUNT
+    FROM ORDERS o
+    LEFT JOIN GUEST g ON o.GUEST_ID = g.GUEST_ID
+    LEFT JOIN PAYMENTS p ON o.ORDER_ID = p.ORDER_ID
+    LEFT JOIN ORDER_DETAIL od ON o.ORDER_ID = od.ORDER_ID
+    LEFT JOIN BOOK b ON od.BOOK_NO = b.BOOK_NO
+    LEFT JOIN PRODUCT_API api ON b.isbn = api.isbn
+    WHERE o.ORDER_ID = #{orderId}
+  </select>
 
   <!-- 비회원 주문 전체 조회 -->
 	<select id="findGuestOrdersByPasswordAndEmail" parameterType="map" resultMap="OrderResultMap">
@@ -357,6 +357,7 @@
 		ORDER BY o.ORDER_DATE DESC
 	</select>
 
+  <!-- 주문갯수 조회 -->
 	<select id="getTotalOrderCount" parameterType="string" resultType="int">
     SELECT COUNT(*) FROM ORDERS WHERE USER_ID = #{userId}
   </select>

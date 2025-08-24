@@ -199,5 +199,16 @@ public class OrderController {
         model.addAttribute("paymentNo", paymentNo);
       return "order/orderComplete";  // --> /WEB-INF/views/order/orderComplete.jsp
   }
+  
+  // 주문 상세 화면 이동
+  @GetMapping("/order/orderDetailsView.do")
+  public String orderDetailsView(@RequestParam("orderId") int orderId, Model model) {
+    OrderVO order = orderService.getOrderById(orderId);
+    if (order == null) {
+      return "redirect:/order/orderDetails.do";
+    }
+    model.addAttribute("order", order);
+    return "order/orderDetailsView"; // → /WEB-INF/views/order/orderDetailsView.jsp
+  }
 
 }

@@ -50,9 +50,7 @@
 	          <div class="guestOrderNum">[주문번호: ${order.orderId}]
 	            <div class="guestOrderInfo2">주문일시 : <fmt:formatDate value="${order.orderDate}" pattern="yyyy-MM-dd"/></div>
 	            <div class="guestOrderNumInfo">
-								<span class="orderStatus" 
-                      data-order-id="${order.orderId}" 
-								      onclick="openGuestRefundModal('${order.orderId}', '${order.paymentNo}')">
+								<span class="orderStatus">
 								  <c:choose>
 								    <c:when test="${not empty order.refundStatus}">
 								      <c:choose>
@@ -81,7 +79,8 @@
 	    <div id="guestDeliveryInfoEnd">
 	      <div class="guestOrderPayComplDiv1">
 	        <div class="guestOrderPayComplDiv2" data-order-idx="${status.index}">
-	          <div class="orderPayComplLine">주문상세>></div>
+	          <div class="orderPayComplLine" 
+     						 onclick="goGuestOrderDetailsView(${order.orderId})">주문상세>></div>
 		        <c:forEach var="item" items="${order.orderDetails}" varStatus="s">
 		          <div class="orderItem" data-price="${item.orderPrice}" 
 													           data-qty="${item.orderCount}" 
@@ -143,128 +142,17 @@ $(document).ready(function() {
     );
   });
 });
-</script>
-<!-- 환불 신청 모달 -->
-<div id="guestRefundModal" class="guestRefundModal">
-  <div class="guestRefundModalContent">
-    <span class="close" onclick="closeGuestRefundModal()">&times;</span>
-    <h3>환불 신청</h3>
-    <form id="guestRefundForm">
-      <input type="hidden" name="orderId" id="guestRefundOrderId">
-      <input type="hidden" name="paymentNo" id="guestRefundPaymentNo">
-
-      <label>환불 사유</label><br>
-      <textarea name="refundReason" required style="min-height:80px;"></textarea><br><br>
-
-      <label>사진 첨부</label><br>
-      <input type="file" name="refundImage"><br><br>
-
-      <label>이메일</label><br>
-      <input type="email" name="refundMail" required><br><br>
-
-      <button type="button" onclick="submitGuestRefund()">신청하기</button>
-    </form>
-
-    <!-- 환불 상태 표시 -->
-    <div id="guestRefundStatusBox"></div>
-  </div>
-</div>
-<script>
-/* 환불 모달 열기 (비회원) */
-function openGuestRefundModal(orderId, paymentNo) {
-  document.getElementById("guestRefundOrderId").value = orderId;
-  document.getElementById("guestRefundPaymentNo").value = paymentNo;
-  document.getElementById("guestRefundModal").style.display = "block";
-
-  // 기존 환불 정보 조회
-  fetch("<%=request.getContextPath()%>/refund/status.do?orderId=" + orderId + "&paymentNo=" + paymentNo)
-  .then(res => res.json())
-  .then(refund => {
-    const form = document.getElementById("guestRefundForm");
-    const box = document.getElementById("guestRefundStatusBox");
-
-    if (refund) {
-	    form.querySelector("textarea[name='refundReason']").value = refund.refundReason;
-	    form.querySelector("textarea[name='refundReason']").readOnly = true;
-	    form.querySelector("textarea[name='refundReason']").classList.add("readonly");
+function goGuestOrderDetailsView(orderId) {
+	  location.href = "<%=request.getContextPath()%>/guest/guestOrderDetailsView.do?orderId=" + orderId;
+	}
 	
-	    form.querySelector("input[name='refundMail']").value = refund.refundMail;
-	    form.querySelector("input[name='refundMail']").readOnly = true;
-	    form.querySelector("input[name='refundMail']").classList.add("readonly");
-	
-	    form.querySelector("button").style.display = "none";
-	
-	    let statusText = getRefundStatusText(refund.refundStatus);
-	    box.innerText = "현재 상태: " + statusText;
-	    box.className = "status-refund-" + refund.refundStatus;
-    } else {
-	    form.reset();
-	    form.querySelector("textarea[name='refundReason']").readOnly = false;
-	    form.querySelector("textarea[name='refundReason']").classList.remove("readonly");
-	    form.querySelector("input[name='refundMail']").readOnly = false;
-	    form.querySelector("input[name='refundMail']").classList.remove("readonly");
-	    form.querySelector("button").style.display = "inline-block";
-	    box.innerText = "";
-	    box.className = "";
-    }
-  });
-}
-
-/* 환불 상태 텍스트/색상 */
-function getRefundStatusText(status) {
-  switch (status) {
-    case 1: return "환불요청";
-    case 2: return "환불처리중";
-    case 3: return "환불완료";
-    case 4: return "환불거절";
-    default: return "-";
+//✅ 장바구니 수량 업데이트
+function updateCartCount() {
+  let cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
+  let cartCountElement = $("#cart-count"); // jQuery 셀렉터 사용
+  if (cartCountElement.length) {
+    cartCountElement.text(cartItems.length).css("visibility", cartItems.length > 0 ? "visible" : "hidden");
   }
-}
-
-/* 환불 신청 (비회원) */
-function submitGuestRefund() {
-  const form = document.getElementById("guestRefundForm");
-  const formData = new FormData(form);
-
-  fetch("<%=request.getContextPath()%>/refund/apply.do", {
-    method: "POST",
-    body: formData
-  })
-  .then(res => res.text())
-  .then(result => {
-    if (result === "success") {
-      alert("환불 신청이 완료되었습니다.");
-      document.getElementById("guestRefundModal").style.display = "none";
-
-      // 화면 상태 갱신
-      const orderId = form.querySelector("input[name='orderId']").value;
-      const paymentNo = form.querySelector("input[name='paymentNo']").value;
-      updateGuestOrderStatus(orderId, paymentNo);
-    } else {
-      alert("환불 신청에 실패했습니다.");
-    }
-  });
-}
-
-/* 환불 상태 갱신 (비회원) */
-function updateGuestOrderStatus(orderId, paymentNo) {
-  fetch("<%=request.getContextPath()%>/refund/status.do?orderId=" + orderId + "&paymentNo=" + paymentNo)
-    .then(res => res.json())
-    .then(refund => {
-      if (refund) {
-        let statusText = getRefundStatusText(refund.refundStatus);
-        document.querySelectorAll(".orderStatus[data-order-id='" + orderId + "']")
-          .forEach(el => {
-            el.innerText = statusText;
-            el.className = "orderStatus status-refund-" + refund.refundStatus;
-          });
-      }
-    });
-}
-
-/* 모달 닫기 */
-function closeGuestRefundModal() {
-  document.getElementById("guestRefundModal").style.display = "none";
 }
 </script>
 </body>
