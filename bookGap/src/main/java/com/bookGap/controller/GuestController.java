@@ -99,5 +99,19 @@ public class GuestController {
     model.addAttribute("guestOrders", orders);
     return "guest/guestOrderInfo";
   }
+  
+  //===================== 비회원 주문 상세 조회 =====================
+  @GetMapping("/guest/guestOrderDetailsView.do")
+  public String guestOrderDetailsView(@RequestParam("orderId") int orderId, Model model) {
+
+    OrderVO order = orderService.getGuestOrderByOrderId(orderId);
+
+    if(order == null){
+      model.addAttribute("msg", "해당 주문 정보를 찾을 수 없습니다.");
+      return "order/guestOrderForm"; 
+    }
+    model.addAttribute("order", order);
+    return "guest/guestOrderDetailsView"; 
+  }
 
 }

@@ -28,14 +28,12 @@ public class RefundController {
                             @RequestParam("refundReason") String refundReason,
                             @RequestParam(value="refundImage", required=false) MultipartFile refundImage,
                             @RequestParam("refundMail") String refundMail) {
-
     RefundVO refundVO = new RefundVO();
     refundVO.setOrderId(orderId);
     refundVO.setPaymentNo(paymentNo);
     refundVO.setRefundReason(refundReason);
     refundVO.setRefundMail(refundMail);
 
-    // 첨부 이미지 파일명 저장 (실제 파일 저장 로직은 별도 구현 필요)
     if(refundImage != null && !refundImage.isEmpty()){
       refundVO.setRefundImage(refundImage.getOriginalFilename());
     }
