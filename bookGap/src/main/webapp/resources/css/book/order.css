@@ -135,6 +135,7 @@ section{
   color: #7a7a7a;
   font-size: 15px;
   justify-content: flex-end;
+  cursor: pointer;
 }
 .orderPayComplDiv{
   width: 100%;
@@ -189,7 +190,6 @@ section{
   text-align:center;
   color:#7a7a7a;
   font-weight:700;
-  cursor: pointer;
 }
 .orderPayComplInfoDiv1{
   width: 100%;

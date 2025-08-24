@@ -51,15 +51,18 @@
       	<!-- 하나의 주문을 감싸는 컨테이너 -->
         <div class="orderContainer" data-order-date="<fmt:formatDate value='${order.orderDate}' pattern='yyyy-MM-dd'/>">
           <div class="orderHeader">
-            <div class="orderPayComplLine">주문상세>></div>
-          	<!-- 주문에 포함된 상품 목록 -->
+          
+            <!-- ✅ 상세 페이지 이동 -->
+            <div class="orderPayComplLine" 
+                 onclick="goOrderDetailsView(${order.orderId})">주문상세>></div>
+          	
+          	<!-- 상품들 -->
             <c:forEach var="detail" items="${order.orderDetails}">
-						  
 						  <div class="orderPayCompl">
 						    <img class="orderThumb" 
 								     src="<c:out value='${empty detail.book.image ? "/resources/img/no_image.png" : detail.book.image}'/>" 
 								     alt="${detail.book.title}"/>
-								<!-- 가운데: 도서 정보 -->
+								     
 						    <div class="orderInfo">
 							    <div class="orderPayDate">
 		                <fmt:formatDate value="${order.orderDate}" pattern="yyyy-MM-dd" />
@@ -71,9 +74,9 @@
 						        <fmt:formatNumber value="${detail.orderPrice}" pattern="#,###"/>원 (수량: ${detail.orderCount}개)
 						      </div>
 						    </div>
-						    <!-- 오른쪽: 배송/환불 상태 -->
-								<span class="orderShip" data-order-id="${order.orderId}"
-								      onclick="openRefundModal('${order.orderId}', '${order.paymentNo}')">
+						    
+						    <!-- 배송/환불 상태 -->
+								<span class="orderShip">
 								  <c:choose>
 								    <c:when test="${not empty order.refundStatus}">
 								      <c:choose>
@@ -148,38 +151,34 @@ $(function () {
   updateCartCount();
   initHeaderEvents();
 
+  //✅ 기간 필터링
   function filterAndDisplayOrders() {
     const s = $("#orderDateStart").val();
     const e = $("#orderDateLast").val();
-
     if (!s || !e) {
       $(".orderContainer").hide();
       $(".orderMsg").text("조회할 기간을 선택해주세요.").show();
       return;
     }
-
     const start = new Date(s);
     const end = new Date(e); end.setHours(23,59,59,999);
-
     let found = 0;
     $(".orderContainer").each(function(){
-      const d = $(this).data("order-date"); // yyyy-MM-dd
+      const d = $(this).data("order-date");
       if (!d) return;
       const od = new Date(d);
       const hit = od >= start && od <= end;
       $(this).toggle(hit);
       if (hit) found++;
     });
-
     $(".orderMsg").toggle(found === 0)
                   .text(found === 0 ? "해당 기간의 주문내역이 없습니다." : "");
   }
 
   function updateDateRange(v){
-    const label = String(v).trim();        // 혹시 모를 공백 방지
+    const label = String(v).trim();
     const today = new Date();
     let start = new Date();
-
     if (label === "오늘") start = new Date();
     else if (label === "1주일") start.setDate(today.getDate() - 7);
     else if (label === "1개월") start.setMonth(today.getMonth() - 1);
@@ -201,13 +200,6 @@ $(function () {
 	  $("#orderDetailsMid .orderDetailsDiv").hide();
 	}
 
-  // 버튼 스타일 & 동작
-  $(".orderWeekButton").on("mouseenter", function(){
-    if (!$(this).hasClass("selected")) $(this).css({backgroundColor:"black", color:"white"});
-  }).on("mouseleave", function(){
-    if (!$(this).hasClass("selected")) $(this).css({backgroundColor:"white", color:"black"});
-  });
-
   $(".orderWeekButton").on("click", function(){
 	  $(".orderWeekButton").removeClass("selected").css({backgroundColor:"white", color:"black"});
 	  $(this).addClass("selected").css({backgroundColor:"black", color:"white"});
@@ -216,121 +208,28 @@ $(function () {
 	});
 
 	$(".orderDateButton").on("click", filterAndDisplayOrders);
-});
-</script>
-<!-- 환불 신청 모달 -->
-<div id="refundModal" class="refundModal">
-  <div class="refundModalContent">
-    <span class="close" onclick="closeRefundModal()">&times;</span>
-    <h3>환불 신청</h3>
-    <form id="refundForm">
-      <input type="hidden" name="orderId" id="refundOrderId">
-      <input type="hidden" name="paymentNo" id="refundPaymentNo">
-
-      <label>환불 사유</label><br>
-      <textarea name="refundReason" required style="min-height:80px;"></textarea><br><br>
-
-      <label>사진 첨부</label><br>
-      <input type="file" name="refundImage"><br><br>
-
-      <label>이메일</label><br>
-      <input type="email" name="refundMail" required><br><br>
-
-      <button type="button" onclick="submitRefund()">신청하기</button>
-    </form>
-
-    <!-- 환불 상태 표시 -->
-    <div id="refundStatusBox"></div>
-  </div>
-</div>
-<script>
-/* 환불 모달 열기 */
-function openRefundModal(orderId, paymentNo) {
-  document.getElementById("refundOrderId").value = orderId;
-  document.getElementById("refundPaymentNo").value = paymentNo;
-  document.getElementById("refundModal").style.display = "block";
-
-  // 기존 환불 정보 조회
-  fetch("<%=request.getContextPath()%>/refund/status.do?orderId=" + orderId + "&paymentNo=" + paymentNo)
-    .then(res => res.json())
-    .then(refund => {
-      const form = document.getElementById("refundForm");
-      const box = document.getElementById("refundStatusBox");
-
-      if (refund) {
-        // 이미 환불 신청된 경우 → 값 채우고 수정 불가 처리
-        form.querySelector("textarea[name='refundReason']").value = refund.refundReason;
-        form.querySelector("input[name='refundMail']").value = refund.refundMail;
-        form.querySelector("textarea[name='refundReason']").readOnly = true;
-        form.querySelector("input[name='refundMail']").readOnly = true;
-        form.querySelector("button").style.display = "none";
-
-        let statusText = "";
-        switch (refund.refundStatus) {
-          case 1: statusText = "환불요청"; break;
-          case 2: statusText = "환불처리중"; break;
-          case 3: statusText = "환불완료"; break;
-          case 4: statusText = "환불거절"; break;
-        }
-        box.innerText = "현재 상태: " + statusText;
-      } else {
-        // 환불 신청 전 → 새 신청 가능
-        form.reset();
-        form.querySelector("textarea[name='refundReason']").readOnly = false;
-        form.querySelector("input[name='refundMail']").readOnly = false;
-        form.querySelector("button").style.display = "inline-block";
-        box.innerText = "";
-      }
-    });
-}
-
-/* 환불 신청 */
-function submitRefund() {
-  const form = document.getElementById("refundForm");
-  const formData = new FormData(form);
-
-  fetch("<%=request.getContextPath()%>/refund/apply.do", {
-    method: "POST",
-    body: formData
-  })
-  .then(res => res.text())
-  .then(result => {
-    if (result === "success") {
-      alert("환불 신청이 완료되었습니다.");
-      document.getElementById("refundModal").style.display = "none";
-
-      // 화면 상태 갱신
-      const orderId = form.querySelector("input[name='orderId']").value;
-      const paymentNo = form.querySelector("input[name='paymentNo']").value;
-      updateOrderShip(orderId, paymentNo);
-    } else {
-      alert("환불 신청에 실패했습니다.");
-    }
+	
+  // 버튼 스타일 & 동작
+  $(".orderWeekButton").on("mouseenter", function(){
+    if (!$(this).hasClass("selected")) $(this).css({backgroundColor:"black", color:"white"});
+  }).on("mouseleave", function(){
+    if (!$(this).hasClass("selected")) $(this).css({backgroundColor:"white", color:"black"});
   });
+
+});
+
+//✅ 상세 페이지 이동 함수
+function goOrderDetailsView(orderId) {
+	location.href = "<%=request.getContextPath()%>/order/orderDetailsView.do?orderId=" + orderId;
 }
 
-/* 환불 상태 갱신 */
-function updateOrderShip(orderId, paymentNo) {
-  fetch("<%=request.getContextPath()%>/refund/status.do?orderId=" + orderId + "&paymentNo=" + paymentNo)
-    .then(res => res.json())
-    .then(refund => {
-      if (refund) {
-        let statusText = "";
-        switch (refund.refundStatus) {
-          case 1: statusText = "환불요청"; break;
-          case 2: statusText = "환불처리중"; break;
-          case 3: statusText = "환불완료"; break;
-          case 4: statusText = "환불거절"; break;
-        }
-        document.querySelectorAll(".orderShip[data-order-id='" + orderId + "']")
-        .forEach(el => el.innerText = statusText);
-      }
-    });
-}
-
-/* 모달 닫기 */
-function closeRefundModal() {
-  document.getElementById("refundModal").style.display = "none";
+//✅ 장바구니 수량 업데이트
+function updateCartCount() {
+  let cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
+  let cartCountElement = $("#cart-count"); // jQuery 셀렉터 사용
+  if (cartCountElement.length) {
+    cartCountElement.text(cartItems.length).css("visibility", cartItems.length > 0 ? "visible" : "hidden");
+  }
 }
 </script>
 </body>

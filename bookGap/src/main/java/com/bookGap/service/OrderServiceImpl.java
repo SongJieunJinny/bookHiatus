@@ -272,4 +272,9 @@ public class OrderServiceImpl implements OrderService {
     return orderDAO.getOrderById(orderId);
   }
 
+  @Override
+  public OrderVO getGuestOrderByOrderId(int orderId) {
+	return orderDAO.getGuestOrderByOrderId(orderId);
+}
+
 }

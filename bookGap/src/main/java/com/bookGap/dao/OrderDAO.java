@@ -23,49 +23,23 @@ public class OrderDAO {
 
   //====== 주문 관련 ======
   public void insertOrder(OrderVO vo) {
-      sqlSession.insert(NS + "insertOrder", vo);
+    sqlSession.insert(NS + "insertOrder", vo);
   }
 
   public void insertOrderDetail(OrderDetailVO vo) {
-      sqlSession.insert(NS + "insertOrderDetail", vo);
+    sqlSession.insert(NS + "insertOrderDetail", vo);
   }
 
   public void insertOrderDetailList(List<OrderDetailVO> list) {
-      sqlSession.insert(NS + "insertOrderDetailList", list);
-  }
-
-  //회원 주문 조회
-  public List<OrderVO> getOrdersByUserId(String userId) {
-      return sqlSession.selectList(NS + "getOrdersByUserId", userId);
-  }
-
-  public int getTotalOrderCount(String userId) {
-      return sqlSession.selectOne(NS + "getTotalOrderCount", userId);
+    sqlSession.insert(NS + "insertOrderDetailList", list);
   }
   
-  //페이징
-  public List<OrderVO> getOrdersPaging(String userId, int start, int perPage) {
-      Map<String, Object> p = new HashMap<>();
-      p.put("userId", userId);
-      p.put("start", start);
-      p.put("perPage", perPage);
-      return sqlSession.selectList(NS + "getOrdersPaging", p);
-  }
-
-  public BookVO findBookByIsbn(String isbn) {
-    return sqlSession.selectOne(NS + "findBookByIsbn", isbn);
-  }
-
-  public List<BookVO> selectBooksByIsbnList(List<String> isbnList) {
-    return sqlSession.selectList(NS + "selectBooksByIsbnList", isbnList);
-  }
-
-  public UserAddressVO findDefaultAddressByUserId(String userId) {
-    return sqlSession.selectOne(NS + "findDefaultAddressByUserId", userId);
-  }
-
-  public List<UserAddressVO> findAddressListByUserId(String userId) {
-    return sqlSession.selectList(NS + "findAddressListByUserId", userId);
+  public boolean updateBookStock(String isbn, int quantity) {
+    Map<String, Object> p = new HashMap<>();
+    p.put("isbn", isbn);
+    p.put("quantity", quantity);
+    int updated = sqlSession.update(NS + "updateBookStock", p);
+    return updated > 0;
   }
 
   public void addAddress(UserAddressVO address) {
@@ -77,26 +51,59 @@ public class OrderDAO {
   }
 
   public UserAddressVO findAddressByUserAddressId(int userAddressId) {
-    return sqlSession.selectOne(NS + "findAddressByUserAddressId", userAddressId);
+	return sqlSession.selectOne(NS + "findAddressByUserAddressId", userAddressId);
   }
 
-  public boolean updateBookStock(String isbn, int quantity) {
-    Map<String, Object> p = new HashMap<>();
-    p.put("isbn", isbn);
-    p.put("quantity", quantity);
-    int updated = sqlSession.update(NS + "updateBookStock", p);
-    return updated > 0;
+  public UserAddressVO findDefaultAddressByUserId(String userId) {
+	return sqlSession.selectOne(NS + "findDefaultAddressByUserId", userId);
   }
   
-  //비회원 주문 조회
+  public List<UserAddressVO> findAddressListByUserId(String userId) {
+	return sqlSession.selectList(NS + "findAddressListByUserId", userId);
+  }
+
+  public BookVO findBookByIsbn(String isbn) {
+    return sqlSession.selectOne(NS + "findBookByIsbn", isbn);
+  }
+
+  public List<BookVO> selectBooksByIsbnList(List<String> isbnList) {
+    return sqlSession.selectList(NS + "selectBooksByIsbnList", isbnList);
+  }
+
+  //페이징
+  public List<OrderVO> getOrdersPaging(String userId, int start, int perPage) {
+    Map<String, Object> p = new HashMap<>();
+    p.put("userId", userId);
+    p.put("start", start);
+    p.put("perPage", perPage);
+    return sqlSession.selectList(NS + "getOrdersPaging", p);
+  }
+
+  //회원 단건 주문조회
+  public OrderVO getOrderById(int orderId) {
+    return sqlSession.selectOne(NS + "getOrderById", orderId);
+  }
+  
+  //회원 주문 조회
+  public List<OrderVO> getOrdersByUserId(String userId) {
+    return sqlSession.selectList(NS + "getOrdersByUserId", userId);
+  }
+  
+  //비회원 단건 주문조회
+  public OrderVO getGuestOrderByOrderId(int orderId) {
+	return sqlSession.selectOne(NS + "getGuestOrderByOrderId", orderId);
+  }
+  
+  //비회원 주문 전체 조회
   public List<OrderVO> findGuestOrdersByPasswordAndEmail(String orderPassword, String guestEmail) {
     Map<String, Object> p = new HashMap<>();
     p.put("orderPassword", orderPassword);
     p.put("guestEmail", guestEmail);
     return sqlSession.selectList(NS + "findGuestOrdersByPasswordAndEmail", p);
   }
-  public OrderVO getOrderById(int orderId) {
-      return sqlSession.selectOne(NS + "getOrderById", orderId);
+  
+  public int getTotalOrderCount(String userId) {
+	return sqlSession.selectOne(NS + "getTotalOrderCount", userId);
   }
 
 }
