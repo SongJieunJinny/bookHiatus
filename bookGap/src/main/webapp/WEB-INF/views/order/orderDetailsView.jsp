@@ -11,32 +11,12 @@
 <script src="<%=request.getContextPath()%>/resources/js/jquery-3.7.1.js"></script>
 <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/resources/css/index.css"/>
 <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/resources/css/book/order.css"/>
-<style>
-/* ---------------- 주문 상세 ---------------- */
-.orderDetailView { width:90%; margin: 20px auto; }
-.orderDetailView h2 { text-align:center; margin-bottom:20px; }
-.orderInfoBox { border:1px solid #ccc; padding:15px; margin-bottom:20px; border-radius:8px; background:#fafafa; }
-.orderTable { width:100%; border-collapse:collapse; margin-bottom:20px; }
-.orderTable th, .orderTable td { border:1px solid #ddd; padding:10px; text-align:center; }
-.orderTable th { background:#f5f5f5; }
-.orderTable img { max-width:80px; }
-.refundForm { border:1px solid #ccc; padding:15px; border-radius:8px; }
-.refundForm textarea, .refundForm input[type="email"] { width:100%; margin-top:5px; margin-bottom:10px; padding:8px; }
-.refundForm button { padding:10px 15px; background:black; color:white; border:none; border-radius:5px; cursor:pointer; }
-.refundForm button:hover { background:#333; }
-
-/* 상태 색상 */
-.status-refund-1 { color: #ff9800; font-weight:bold; }
-.status-refund-2 { color: #2196f3; font-weight:bold; }
-.status-refund-3 { color: #4caf50; font-weight:bold; }
-.status-refund-4 { color: #f44336; font-weight:bold; }
-</style>
 </head>
 <body>
 <jsp:include page="/WEB-INF/views/include/header.jsp" />
 <section>
   <div class="orderDetailView">
-    <h2>주문 상세 내역</h2>
+    <div class="orderDetailViewTitle">Order Details</div>
 
     <!-- 주문 기본 정보 -->
     <div class="orderInfoBox">
@@ -147,7 +127,7 @@ function submitRefund() {
     if (result === "success") {
       alert("환불 신청이 완료되었습니다.");
       // ✅ 신청 성공 후 → 주문 목록으로 이동
-      location.href = "<%=request.getContextPath()%>/order/orderDetails.do";
+      location.href = "<%=request.getContextPath()%>/order/myOrder.do";
     } else {
       alert("환불 신청에 실패했습니다. 다시 시도해주세요.");
     }
