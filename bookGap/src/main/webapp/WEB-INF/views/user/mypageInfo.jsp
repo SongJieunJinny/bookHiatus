@@ -78,7 +78,7 @@
 	        <div id="myInfoDiv">
 	          <div id="myInfo"><a href="<%=request.getContextPath()%>/user/mypageInfo.do">My Info</a></div>
 	          &nbsp;&nbsp;<div>|</div>&nbsp;&nbsp;
-	          <div id="orderDetails"><a href="<%=request.getContextPath()%>/order/orderDetails.do">Order Details</a></div>
+	          <div id="orderDetails"><a href="<%=request.getContextPath()%>/order/myOrder.do">My Order</a></div>
 	        </div>
 	      </div>
 	      <div id="myInfoMid">

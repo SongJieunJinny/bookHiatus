@@ -271,7 +271,7 @@ section{
   border-color: #ddd;
 }
 
-/* --------------orderMain-------------- */
+/* ------------------------------------------------------orderMain---------------------------------------------- */
 #orderMainHead{
 	width: 100%;
 	margin : 0% 0% 2% 0%;
@@ -931,3 +931,86 @@ font-size: 13px;
     font-size: 22px;
   }
 }
+/*------------------------------------orderDetailsView-------------------------------------------------------------------*/
+
+.orderDetailView {
+	width:90%; margin: 20px auto;
+}
+.orderDetailViewTitle {
+	margin-top: 2%;
+	margin-bottom: 2%;
+  margin-left: 3.5%;
+	text-align: center;
+	font-size: 25px;
+  display: flex;
+  justify-items: center;
+  justify-content: center;
+  font-weight:bold;
+}
+.orderInfoBox {
+	border:1px solid #ccc; 
+	padding:15px; 
+	margin-bottom:20px; 
+	border-radius:8px; 
+	background:#fafafa; 
+}
+.orderTable { 
+	width:100%; 
+	border-collapse:collapse; 
+	margin-bottom:20px; 
+}
+.orderTable th, .orderTable td { 
+	border:1px solid #ddd; 
+	padding:10px; 
+	text-align:center; 
+}
+.orderTable th { 
+	background:#f5f5f5; 
+}
+.orderTable img { 
+	max-width:80px; 
+}
+
+.refundForm { 
+	border:1px solid #ccc; 
+	padding:15px; 
+	border-radius:8px; 
+}
+.refundForm textarea, .refundForm input[type="email"] { 
+	width:100%; 
+	margin-top:5px; 
+	margin-bottom:10px; 
+	padding:8px; 
+}
+.refundForm button { 
+	padding:10px 15px; 
+	background:black; 
+	color:white; 
+	border:none; 
+	border-radius:5px; 
+	cursor:pointer; 
+}
+.refundForm button:hover { 
+	background:#333; 
+}
+.status-refund-1 { 
+	color: #ff9800; 
+	font-weight:bold;
+}
+.status-refund-2 {
+	color: #2196f3;
+	font-weight:bold; 
+}
+.status-refund-3 {
+	color: #4caf50; 
+	font-weight:bold; 
+}
+.status-refund-4 {
+	color: #f44336;
+	font-weight:bold;
+}
+
+
+
+
+
