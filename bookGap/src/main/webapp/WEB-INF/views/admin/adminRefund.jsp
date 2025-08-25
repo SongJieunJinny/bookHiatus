@@ -129,7 +129,7 @@
 					<br>
 					<div class="card mb-4">
 						<div class="card-body">
-							환불 관리 페이
+							환불 관리 페이지 
 						</div>
 					</div>
 					<div class="card mb-4">
@@ -341,9 +341,6 @@ $(function () {
     });
   });
 
-  // simple-datatables 라벨 커스터마이즈(동일)
-  const table = new simpleDatatables.DataTable("#datatablesSimple", {
-    labels: { perPage:"", placeholder:"검색어 입력...", noRows:"데이터가 없습니다.", info:"" }
   });
 });
 </script>
