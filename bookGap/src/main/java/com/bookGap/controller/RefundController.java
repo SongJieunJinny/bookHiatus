@@ -3,6 +3,7 @@ package com.bookGap.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,24 +24,20 @@ public class RefundController {
   /* 환불 신청 */
   @PostMapping("/apply.do")
   @ResponseBody
-  public String applyRefund(@RequestParam("orderId") int orderId,
-                            @RequestParam("paymentNo") int paymentNo,
-                            @RequestParam("refundReason") String refundReason,
-                            @RequestParam(value="refundImage", required=false) MultipartFile refundImage,
-                            @RequestParam("refundMail") String refundMail) {
-    RefundVO refundVO = new RefundVO();
-    refundVO.setOrderId(orderId);
-    refundVO.setPaymentNo(paymentNo);
-    refundVO.setRefundReason(refundReason);
-    refundVO.setRefundMail(refundMail);
+  public ResponseEntity<String> applyRefund(RefundVO refundVO, @RequestParam(value="refundImage", required=false) MultipartFile refundImage) {
+    try {
+        if (refundImage != null && !refundImage.isEmpty()) {
+          refundVO.setRefundImage(refundImage.getOriginalFilename());
+        }
+        refundService.applyRefundAndUpdateStatus(refundVO);
+    
+        return ResponseEntity.ok("success");
 
-    if(refundImage != null && !refundImage.isEmpty()){
-      refundVO.setRefundImage(refundImage.getOriginalFilename());
+    } catch (Exception e) {
+        // 서비스에서 예외가 터지면 이곳에서 잡아 실패 응답을 보냅니다.
+        // 로그를 남기는 것이 좋습니다: log.error("환불 신청 실패", e);
+        return ResponseEntity.status(500).body("fail");
     }
-
-    int result = refundService.applyRefund(refundVO);
-
-    return result > 0 ? "success" : "fail";
   }
 
   /* 환불 신청 내역을 고객 화면에서 조회 */
