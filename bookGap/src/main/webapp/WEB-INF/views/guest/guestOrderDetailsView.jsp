@@ -11,29 +11,12 @@
 <script src="<%=request.getContextPath()%>/resources/js/jquery-3.7.1.js"></script>
 <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/resources/css/index.css"/>
 <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/resources/css/guest/guest.css"/>
-<style>
-.orderDetailView { width:90%; margin:20px auto; }
-.orderDetailView h2 { text-align:center; margin-bottom:20px; }
-.orderInfoBox { border:1px solid #ccc; padding:15px; margin-bottom:20px; border-radius:8px; background:#fafafa; }
-.orderTable { width:100%; border-collapse:collapse; margin-bottom:20px; border:1px solid #ccc; border-radius:8px;}
-.orderTable th, .orderTable td { border:1px solid #ddd; padding:10px; text-align:center; }
-.orderTable th { background:#f5f5f5; }
-.orderTable img { max-width:80px; }
-.refundForm { border:1px solid #ccc; padding:15px; border-radius:8px; }
-.refundForm textarea, .refundForm input[type="email"] { width:100%; margin-top:5px; margin-bottom:10px; padding:8px;}
-.refundForm button { padding:10px 15px; background:black; color:white; border:none; border-radius:5px; cursor:pointer; }
-.refundForm button:hover { background:#333; }
-.status-refund-1 { color: #ff9800; font-weight:bold; }
-.status-refund-2 { color: #2196f3; font-weight:bold; }
-.status-refund-3 { color: #4caf50; font-weight:bold; }
-.status-refund-4 { color: #f44336; font-weight:bold; }
-</style>
 </head>
 <body>
 <jsp:include page="/WEB-INF/views/include/header.jsp" />
 <section>
   <div class="orderDetailView">
-    <h2>비회원 주문 상세</h2>
+    <div class="orderDetailViewTitle">Guest Order Details</div>
 
     <!-- 주문 기본 정보 -->
     <div class="orderInfoBox">
@@ -94,27 +77,20 @@
     <!-- 환불 신청 폼 -->
     <h3>환불 신청</h3>
     <form id="guestRefundForm" enctype="multipart/form-data">
+    <div class="guestRefundFormLine">
 		  <input type="hidden" name="orderId" value="${order.orderId}">
 		  <input type="hidden" name="paymentNo" value="${order.paymentNo}">
 		
 		  <label>환불 사유</label><br>
-		  <textarea name="refundReason" required style="width:100%; font-size: 15px; padding: 0.5%; min-height:80px; resize: none; border:1px solid black; border-radius:8px;"></textarea><br><br>
+		  <textarea class="guestRefundFormReason" name="refundReason" required></textarea><br><br>
 		
 		  <label>이메일</label><br>
-		  <input type="email" name="refundMail" required style="width:50%; font-size: 15px; padding: 0.5%; min-height:30px; border:1px solid black; border-radius:8px;"><br><br>
+		  <input class="guestRefundFormMail" type="email" name="refundMail" required><br><br>
 		
 		  <label>사진 첨부</label><br>
-		  <input type="file" name="refundImage"><br><br>
-		
-		  <button type="submit" style=" background-color: black;
-    color: white;
-    border: 1px solid black;
-    border-radius: 8px;
-    width: 15%;
-    height: 45px;
-    font-size: 18px;
-    text-align: center;
-    margin-left: 42.5%;">환불 신청하기</button>
+		  <input class="guestRefundFormImage" type="file" name="refundImage"><br>
+		</div> 
+		  <button class="guestRefundFormButton" type="submit">환불 신청하기</button>
 		</form>
   </div>
 </section>
