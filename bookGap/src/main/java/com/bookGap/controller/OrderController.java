@@ -38,7 +38,7 @@ public class OrderController {
   @Autowired private PaymentService paymentService;
 	
   //===================== 공통: 주문내역 페이지 =====================
-  @GetMapping("/order/orderDetails.do")
+  @GetMapping("/order/myOrder.do")
   public String orderDetails(@RequestParam(name="page", defaultValue="1") int page,
                              Principal principal,
                              Model model) {
@@ -62,7 +62,7 @@ public class OrderController {
 
     model.addAttribute("orderList", orderList);
     model.addAttribute("paging", paging);
-    return "order/orderDetails";
+    return "order/myOrder";
   }
   
   // ===================== 회원 주문 페이지 진입 =====================

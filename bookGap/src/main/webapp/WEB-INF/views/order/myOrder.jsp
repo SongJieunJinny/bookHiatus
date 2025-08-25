@@ -7,7 +7,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>orderDetails</title>
+<title>myOrder</title>
 <script src="<%=request.getContextPath()%>/resources/js/jquery-3.7.1.js"></script>
 <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/resources/css/index.css"/>
 <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/resources/css/book/order.css"/>
@@ -20,7 +20,7 @@
       <div id="orderDetailsDiv">
         <div id="myInfo"><a href="<%=request.getContextPath()%>/user/mypageInfo.do">My Info</a></div>
           &nbsp;&nbsp;<div>|</div>&nbsp;&nbsp;
-        <div id="orderDetails"><a href="<%=request.getContextPath()%>/order/orderDetails.do">Order Details</a></div>
+        <div id="orderDetails"><a href="<%=request.getContextPath()%>/order/myOrder.do">My Order</a></div>
       </div>
     </div>
     <div id="orderDetailsMid">
@@ -108,18 +108,18 @@
 		    <ul class="pagination">
 		      <!-- 처음/이전 묶음 -->
 		      <li class="${paging.startPage == 1 ? 'disabled' : ''}">
-		        <a href="<c:url value='/order/orderDetails.do'><c:param name='page' value='1'/></c:url>">«</a>
+		        <a href="<c:url value='/order/myOrder.do'><c:param name='page' value='1'/></c:url>">«</a>
 		      </li>
 		      <c:forEach var="p" begin="${paging.startPage}" end="${paging.endPage}">
 		        <li class="${p == paging.nowPage ? 'active' : ''}">
-		          <a href="<c:url value='/order/orderDetails.do'><c:param name='page' value='${p}'/></c:url>">
+		          <a href="<c:url value='/order/myOrder.do'><c:param name='page' value='${p}'/></c:url>">
 		            ${p}
 		          </a>
 		        </li>
 		      </c:forEach>
 		      <!-- 끝/다음 묶음 -->
 		      <li class="${paging.endPage == paging.lastPage ? 'disabled' : ''}">
-		        <a href="<c:url value='/order/orderDetails.do'><c:param name='page' value='${paging.lastPage}'/></c:url>">»</a>
+		        <a href="<c:url value='/order/myOrder.do'><c:param name='page' value='${paging.lastPage}'/></c:url>">»</a>
 		      </li>
 		    </ul>
 		  </div>
