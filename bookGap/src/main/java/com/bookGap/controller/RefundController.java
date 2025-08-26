@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.bookGap.service.RefundService;
 import com.bookGap.vo.RefundVO;
@@ -26,14 +25,18 @@ public class RefundController {
   @ResponseBody
   public ResponseEntity<String> applyRefund(RefundVO refundVO) {
     try {
-        refundService.applyRefundAndUpdateStatus(refundVO);
-    
-        return ResponseEntity.ok("success");
+      if (refundVO.getOrderId() == null || refundVO.getPaymentNo() == null) {
+        return ResponseEntity.badRequest().body("필수 데이터 누락");
+      }
+      if (refundVO.getRefundMail() == null || refundVO.getRefundMail().trim().isEmpty()) {
+        return ResponseEntity.badRequest().body("메일 주소 누락");
+      }
 
+      refundService.applyRefundAndUpdateStatus(refundVO);
+        return ResponseEntity.ok("success");
     } catch (Exception e) {
-        // 서비스에서 예외가 터지면 이곳에서 잡아 실패 응답을 보냅니다.
-        // 로그를 남기는 것이 좋습니다: log.error("환불 신청 실패", e);
-        return ResponseEntity.status(500).body("fail");
+      e.printStackTrace(); // 서버 콘솔에 상세 로그 출력
+      return ResponseEntity.status(500).body("fail");
     }
   }
 

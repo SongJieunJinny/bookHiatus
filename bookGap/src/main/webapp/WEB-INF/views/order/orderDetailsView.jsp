@@ -76,10 +76,10 @@
 
     <!-- 환불 신청 폼 -->
     <h3>환불 신청</h3>
-		<form class="refundForm" id="refundForm"  method="POST" action="<%=request.getContextPath()%>/refund/apply.do" enctype="multipart/form-data">
+		<form class="refundForm" id="refundForm"  method="POST" action="<%=request.getContextPath()%>/refund/apply.do">
 			<div class="refundFormLine">
 			  <input type="hidden" name="orderId" value="${order.orderId}">
-			  <input type="hidden" name="paymentNo" value="${not empty order.payment ? order.payment.paymentNo : ''}">
+			  <input type="hidden" name="paymentNo" value="${not empty order.payment ? order.payment.paymentNo : order.paymentNo}">
 			  
 			  <label>메일 입력</label>
 			  <br><input class="refundFormMail" type="email" name="refundMail" required><br>
@@ -90,7 +90,7 @@
 			</div>
 		  <button class="refundFormButton" type="submit">환불 신청하기</button>
 		</form>
-		<div id="refundStatusBox">
+		<div id="refundStatusBox" style="display: none;">
         이미 환불을 신청한 주문입니다. 현재 상태: <strong id="refundStatusText"></strong>
     </div>
   </div>
@@ -102,67 +102,72 @@ $(document).ready(function() {
   initHeaderEvents();
   checkExistingRefund(); // 페이지 로드 시, 기존 환불 신청 내역 확인
 
-  // form의 submit 이벤트를 가로채서 AJAX로 처리
   $("#refundForm").submit(function(e) {
-	  e.preventDefault(); // 기본 폼 제출(새로고침)을 막습니다.
-	  
-	  // 폼 제출 전, paymentNo 값이 있는지 한번 더 확인하여 안전장치 마련
+    e.preventDefault(); 
+    
     const paymentNo = $(this).find('input[name="paymentNo"]').val();
     if (!paymentNo || paymentNo === '0') {
       alert('결제 정보가 유효하지 않아 환불을 신청할 수 없습니다.');
       return;
     }
-	  
-	  if (!confirm("환불을 신청하시겠습니까?")) {
-      return;
-    }
 
-    const formData = new FormData(this);
+    if (!confirm("정말로 환불을 신청하시겠습니까?")) { return; }
 
-    fetch(this.action, { // form의 action 속성을 URL로 사용
-      method: this.method,
-      body: formData
+    const formData = new URLSearchParams(new FormData(this)).toString();
+
+    fetch(this.action, { // form 태그의 action 속성 값을 URL로 사용
+      method: this.method, // form 태그의 method 속성 값(POST)을 사용
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: formData 
     })
     .then(response => {
-      if (response.ok) return response.text(); // HTTP 200-299 상태 코드면 성공
-      throw new Error('Server Error'); // 그 외에는 에러 발생
+      if (response.ok) {
+        return response.text();
+      } else {
+        return response.text().then(text => {
+          throw new Error(text || '서버 오류가 발생했습니다.');
+        });
+      }
     })
     .then(result => {
       if (result === "success") {
-          alert("환불 신청이 완료되었습니다. 주문 목록 페이지로 이동합니다.");
-          // ✅ [수정] 성공 시, GET 방식의 주문 목록 페이지로 안전하게 이동
-          location.href = "<%=request.getContextPath()%>/order/myOrder.do";
+        alert("환불 신청이 성공적으로 완료되었습니다. 주문 목록 페이지로 이동합니다.");
+        location.href = "<%=request.getContextPath()%>/order/myOrder.do";
       } else {
-          alert("환불 신청에 실패했습니다. 다시 시도해주세요.");
+        alert("환불 신청에 실패했습니다: " + result);
       }
     })
     .catch(err => {
       console.error("환불 신청 처리 중 오류:", err);
-      alert("처리 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
-	  });
+      alert("처리 중 오류가 발생했습니다: " + err.message);
+    });
   });
 });
 
 function checkExistingRefund() {
   const orderId = "${order.orderId}";
-  const paymentNo = "${order.payment.paymentNo}";
+  const paymentNo = "${not empty order.payment ? order.payment.paymentNo : order.paymentNo}";
 
-  // orderId나 paymentNo가 없으면 함수를 실행하지 않음
-  if (!orderId || !paymentNo) return;
+  if (!orderId || !paymentNo || paymentNo === '0') { $("#refundForm").hide(); return; }
   
   fetch(`<%=request.getContextPath()%>/refund/status.do?orderId=\${orderId}&paymentNo=\${paymentNo}`)
-  .then(res => res.text()) // 결과가 비어있을 수 있으므로 먼저 text로 받음
-  .then(text => {
-    if(text) { // 응답 내용이 있을 때만 JSON으로 파싱
-      const refund = JSON.parse(text);
-      if(refund && refund.refundStatus) {
-        // 환불 정보가 있으면, 신청 폼을 숨기고 상태 메시지를 표시
-        $("#refundForm").hide();
-        const statusText = getRefundStatusText(refund.refundStatus);
-        $("#refundStatusText").text(statusText).addClass('status-refund-' + refund.refundStatus);
-        $("#refundStatusBox").show();
+    .then(res => res.text())
+    .then(text => {
+      if(text) { // 응답 내용이 있을 때만 JSON으로 파싱합니다.
+        try {
+          const refund = JSON.parse(text);
+          if(refund && refund.refundStatus) {
+            $("#refundForm").hide();
+            const statusText = getRefundStatusText(refund.refundStatus);
+            $("#refundStatusText").text(statusText);
+            $("#refundStatusBox").show();
+          }
+        } catch (e) {
+          console.error("JSON 파싱 오류:", e);
+        }
       }
-    }
   });
 }
 
