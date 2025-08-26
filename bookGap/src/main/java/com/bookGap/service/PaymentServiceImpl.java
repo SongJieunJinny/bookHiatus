@@ -78,4 +78,14 @@ public class PaymentServiceImpl  implements PaymentService{
       return paymentDAO.getPaymentByNo(paymentNo);
   }
   
+  @Override
+  public PaymentVO selectPaymentByRefundNo(int refundNo) {
+      return paymentDAO.selectPaymentByRefundNo(refundNo);
+  }
+
+  @Override
+  public KakaoPayRequestVO selectKakaoRequest(int paymentNo) {
+      return paymentDAO.selectKakaoRequest(paymentNo);
+  }
+  
 }

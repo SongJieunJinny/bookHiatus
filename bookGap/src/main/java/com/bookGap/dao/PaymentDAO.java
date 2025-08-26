@@ -66,4 +66,13 @@ public class PaymentDAO {
   public PaymentVO getPaymentByNo(int paymentNo) {
 	    return sqlSession.selectOne(namespace + "getPaymentByNo", paymentNo);
 	}
+  
+  
+  public PaymentVO selectPaymentByRefundNo(int refundNo) {
+	    return sqlSession.selectOne(namespace + "selectPaymentByRefundNo", refundNo);
+	}
+
+	public KakaoPayRequestVO selectKakaoRequest(int paymentNo) {
+	    return sqlSession.selectOne(namespace + "selectKakaoRequest", paymentNo);
+	}
 }
