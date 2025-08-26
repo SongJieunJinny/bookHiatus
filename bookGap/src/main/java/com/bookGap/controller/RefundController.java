@@ -24,11 +24,8 @@ public class RefundController {
   /* 환불 신청 */
   @PostMapping("/apply.do")
   @ResponseBody
-  public ResponseEntity<String> applyRefund(RefundVO refundVO, @RequestParam(value="refundImage", required=false) MultipartFile refundImage) {
+  public ResponseEntity<String> applyRefund(RefundVO refundVO) {
     try {
-        if (refundImage != null && !refundImage.isEmpty()) {
-          refundVO.setRefundImage(refundImage.getOriginalFilename());
-        }
         refundService.applyRefundAndUpdateStatus(refundVO);
     
         return ResponseEntity.ok("success");

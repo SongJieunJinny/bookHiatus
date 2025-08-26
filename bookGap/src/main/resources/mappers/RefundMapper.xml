@@ -5,13 +5,13 @@
   <!-- 환불 신청 -->
   <insert id="applyRefund" parameterType="com.bookGap.vo.RefundVO">
     INSERT INTO REFUND
-    (ORDER_ID, PAYMENT_NO, REFUND_REASON, REFUND_IMAGE, REFUND_MAIL, REFUND_STATUS)
+    (ORDER_ID, PAYMENT_NO, REFUND_REASON, REFUND_MAIL, REFUND_STATUS)
     VALUES
-    (#{orderId}, #{paymentNo}, #{refundReason}, #{refundImage}, #{refundMail}, 1)
+    (#{orderId}, #{paymentNo}, #{refundReason}, #{refundMail}, 1)
   </insert>
   
   <!-- 환불 신청 시 ORDERS 테이블 REFUND_STATUS = 1 로 변경 -->
-  <update id="updateRefundStatusToRequest" parameterType="int">
+  <update id="updateRefundStatusToRequest" parameterType="map">
     UPDATE ORDERS
        SET REFUND_STATUS = 1
      WHERE ORDER_ID = #{orderId}
@@ -19,7 +19,7 @@
   
   <!-- 환불 신청 내역을 고객 화면에서 조회 -->
   <select id="selectRefundListByOrderId" resultType="com.bookGap.vo.RefundVO">
-	  SELECT REFUND_NO, ORDER_ID, PAYMENT_NO, REFUND_REASON, REFUND_IMAGE, 
+	  SELECT REFUND_NO, ORDER_ID, PAYMENT_NO, REFUND_REASON,
 	         REFUND_MAIL, REFUND_STATUS, CREATED_AT
 	  FROM REFUND
 	  WHERE ORDER_ID = #{orderId}
@@ -32,7 +32,6 @@
            ORDER_ID,
            PAYMENT_NO,
            REFUND_REASON,
-           REFUND_IMAGE,
            REFUND_STATUS,
            CREATED_AT
     FROM REFUND
