@@ -463,7 +463,7 @@ input[type="checkbox"] {
 
 }
 
-/* -------------------guestDeliveryInfo------------------- */
+/* ------------------------------------------guestDeliveryInfo------------------------------------------ */
 
 #guestDeliveryInfoNav{
   width: 100%;
@@ -780,3 +780,113 @@ input[type="checkbox"] {
     padding: 15px;
   }
 }
+/* ------------------------------------------guestOrderDetailsView------------------------------------------ */
+.orderDetailView {
+	width:90%; margin:20px auto;
+}
+.orderDetailViewTitle {
+	margin-top: 2%;
+	margin-bottom: 2%;
+  margin-left: 3.5%;
+	text-align: center;
+	font-size: 25px;
+  display: flex;
+  justify-items: center;
+  justify-content: center;
+  font-weight:bold;
+}
+.orderInfoBox {
+	border:1px solid #ccc; padding:15px; margin-bottom:20px; border-radius:8px; background:#fafafa;
+}
+.status-refund-1 {
+	color: #ff9800; font-weight:bold;
+}
+.status-refund-2 {
+	color: #2196f3; font-weight:bold;
+}
+.status-refund-3 {
+	color: #4caf50; font-weight:bold;
+}
+.status-refund-4 {
+	color: #f44336; font-weight:bold;
+}
+.orderTable {
+	width:100%; border-collapse:collapse; margin-bottom:20px; border:1px solid #ccc; border-radius:8px;
+}
+.orderTable th, .orderTable td {
+	border:1px solid #ddd; padding:10px; text-align:center;
+}
+.orderTable th {
+	background:#f5f5f5;
+}
+.orderTable img {
+	max-width:80px;
+}
+.guestRefundFormLine { 
+	border:1px solid #ccc; 
+	padding:15px; 
+	border-radius:8px; 
+	margin-bottom: 20px;
+}
+.guestRefundFormReason{
+	width:100%;
+	font-size: 15px;
+	padding: 0.5%;
+	min-height:80px;
+	resize: none;
+	border:1px solid #ccc;
+	border-radius:8px;
+	margin-top: 5px;
+}
+.guestRefundFormMail {
+	width:50%;
+	font-size: 15px;
+	padding: 0.5%;
+	min-height:30px;
+	border:1px solid #ccc;
+	border-radius:8px;
+	margin-top: 5px;
+}
+.guestRefundFormImage{
+	font-size: 15px;
+	margin-top: 5px;
+	margin-bottom: 10px;
+}
+.guestRefundFormButton{
+	background-color: black;
+  color: white;
+  border: 1px solid black;
+  border-radius: 8px;
+  width: 15%;
+  height: 45px;
+  font-size: 18px;
+  text-align: center;
+  margin-left: 45%;	
+}
+.guestRefundFormButton:hover { 
+	background:#333; 
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
