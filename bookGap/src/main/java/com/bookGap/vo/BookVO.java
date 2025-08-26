@@ -16,6 +16,13 @@ public class BookVO {
   private String publisherBookReview;
   private int commentCount;
   private String title;
+  private String author;
+  private String publisher;
+  private Integer discount;
+  private String description;
+  private String pubdate;
+  private String link;
+  
 
   // 외부 API 응답 포함
   private ProductApiVO productInfo;
@@ -96,14 +103,37 @@ public class BookVO {
     this.title = title;
   }
   
-  public String  getImage()     { return productInfo != null ? productInfo.getImage() : null; }
-  public String getTitle()         { return title != null ? title : (productInfo != null ? productInfo.getTitle() : null);}
-  public String  getAuthor()    { return productInfo != null ? productInfo.getAuthor() : null; }
-  public String  getPublisher() { return productInfo != null ? productInfo.getPublisher() : null; }
-  public Integer getDiscount()  { return productInfo != null ? productInfo.getDiscount() : null; }
-  public String  getDescription() { return productInfo != null ? productInfo.getDescription() : null; }
-  public String  getPubdate()     { return productInfo != null ? productInfo.getPubdate()     : null; }
-  public String  getLink()        { return productInfo != null ? productInfo.getLink()        : null; }
+  public String getImage() {
+	    return bookImgUrl != null ? bookImgUrl : (productInfo != null ? productInfo.getImage() : null);
+	}
+
+	public String getTitle() {
+	    return title != null ? title : (productInfo != null ? productInfo.getTitle() : null);
+	}
+
+	public String getAuthor() {
+	    return author != null ? author : (productInfo != null ? productInfo.getAuthor() : null);
+	}
+
+	public String getPublisher() {
+	    return publisher != null ? publisher : (productInfo != null ? productInfo.getPublisher() : null);
+	}
+
+	public Integer getDiscount() {
+	    return discount != null ? discount : (productInfo != null ? productInfo.getDiscount() : null);
+	}
+
+	public String getDescription() {
+	    return description != null ? description : (productInfo != null ? productInfo.getDescription() : null);
+	}
+
+	public String getPubdate() {
+	    return pubdate != null ? pubdate : (productInfo != null ? productInfo.getPubdate() : null);
+	}
+
+	public String getLink() {
+	    return link != null ? link : (productInfo != null ? productInfo.getLink() : null);
+	}
   
   @Override
   public String toString() {

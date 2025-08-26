@@ -12,7 +12,25 @@ public class RefundVO {
   private int refundStatus;      // 환불상태(1 요청, 2 처리중, 3 완료, 4 거절)
   private Timestamp createdAt;   // 신청일시
   
+  
+  private String userId;         // ORDERS.USER_ID
+  private String guestId;        // ORDERS.GUEST_ID
+  private Integer orderStatus;   // ORDERS.ORDER_STATUS
+  private Integer paymentMethod; // PAYMENTS.PAYMENT_METHOD
+  private Integer paymentStatus; // PAYMENTS.STATUS
+
+  public String getRefundStatusText() {
+    switch (refundStatus) {
+      case 1: return "환불 요청";
+      case 2: return "처리 중";
+      case 3: return "환불 완료";
+      case 4: return "거절";
+      default: return "-";
+    }
+  }
+  
   //getter / setter
+  
   
   public int getRefundNo() {
     return refundNo;
@@ -56,5 +74,48 @@ public class RefundVO {
   public void setCreatedAt(Timestamp createdAt) {
     this.createdAt = createdAt;
   }
+
+  public String getUserId() {
+	return userId;
+  }
+
+  public void setUserId(String userId) {
+    this.userId = userId;
+  }
+
+  public String getGuestId() {
+    return guestId;
+  }
+
+  public void setGuestId(String guestId) {
+    this.guestId = guestId;
+  }
+
+  public Integer getOrderStatus() {
+    return orderStatus;
+  }
+
+  public void setOrderStatus(Integer orderStatus) {
+    this.orderStatus = orderStatus;
+  }
+
+  public Integer getPaymentMethod() {
+    return paymentMethod;
+  }
+
+  public void setPaymentMethod(Integer paymentMethod) {
+    this.paymentMethod = paymentMethod;
+  }
+
+  public Integer getPaymentStatus() {
+    return paymentStatus;
+  }
+
+  public void setPaymentStatus(Integer paymentStatus) {
+    this.paymentStatus = paymentStatus;
+  }
+  
+  
+  
   
 }
