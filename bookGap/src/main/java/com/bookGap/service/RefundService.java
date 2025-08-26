@@ -14,5 +14,7 @@ public interface RefundService {
 
   /* 주문ID + 결제ID 기준 환불 조회 */
   public RefundVO getRefundByOrderAndPayment(int orderId, int paymentNo);
+  
+  public void updateRefundStatusToRequest(int orderId);
 
 }

@@ -79,13 +79,10 @@
 		<form class="refundForm" id="refundForm"  method="POST" action="<%=request.getContextPath()%>/refund/apply.do" enctype="multipart/form-data">
 			<div class="refundFormLine">
 			  <input type="hidden" name="orderId" value="${order.orderId}">
-			  <input type="hidden" name="paymentNo" value="${order.payment.paymentNo}">
+			  <input type="hidden" name="paymentNo" value="${not empty order.payment ? order.payment.paymentNo : ''}">
 			  
 			  <label>메일 입력</label>
 			  <br><input class="refundFormMail" type="email" name="refundMail" required><br>
-			
-			  <label>사진 첨부(선택)</label><br>
-			  <input class="refundFormImage" type="file" name="refundImage"><br>
 			  
 			  <label>환불 사유</label>
 			  <textarea class="refundFormReason" name="refundReason" required ></textarea>
@@ -108,6 +105,13 @@ $(document).ready(function() {
   // form의 submit 이벤트를 가로채서 AJAX로 처리
   $("#refundForm").submit(function(e) {
 	  e.preventDefault(); // 기본 폼 제출(새로고침)을 막습니다.
+	  
+	  // 폼 제출 전, paymentNo 값이 있는지 한번 더 확인하여 안전장치 마련
+    const paymentNo = $(this).find('input[name="paymentNo"]').val();
+    if (!paymentNo || paymentNo === '0') {
+      alert('결제 정보가 유효하지 않아 환불을 신청할 수 없습니다.');
+      return;
+    }
 	  
 	  if (!confirm("환불을 신청하시겠습니까?")) {
       return;

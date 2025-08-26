@@ -86,9 +86,7 @@
 		
 		  <label>이메일</label><br>
 		  <input class="guestRefundFormMail" type="email" name="refundMail" required><br><br>
-		
-		  <label>사진 첨부</label><br>
-		  <input class="guestRefundFormImage" type="file" name="refundImage"><br>
+
 		</div> 
 		  <button class="guestRefundFormButton" type="submit">환불 신청하기</button>
 		</form>
