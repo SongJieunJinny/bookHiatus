@@ -180,7 +180,7 @@
 		 		<div id="guestMain">
 		      <div id="guestMainDiv">
 		        <div id="guestInput">
-		          <input id="orderPassword" type="password" name="orderPassword" placeholder="주문 비밀번호"><br>
+		          <input id="orderPw" type="password" name="orderPassword" placeholder="주문 비밀번호"><br>
 		          <input id="guestEmail" type="email" name="guestEmail" placeholder="주문 이메일">
 		        </div>
 		        <button id="guestBtn" type="submit">CHECK</button>
