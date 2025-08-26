@@ -8,8 +8,6 @@
     <result property="orderId" column="ORDER_ID"/>
     <result property="paymentNo" column="PAYMENT_NO"/>
     <result property="refundReason" column="REFUND_REASON"/>
-    <result property="refundImage" column="REFUND_IMAGE"/>
-    <result property="refundMail" column="REFUND_MAIL"/>
     <result property="refundStatus" column="REFUND_STATUS"/>
     <result property="createdAt" column="CREATED_AT"/>
     <!-- joins -->
@@ -24,7 +22,7 @@
   <select id="selectAllRefunds" resultMap="RefundWithJoins">
     SELECT
       r.REFUND_NO, r.ORDER_ID, r.PAYMENT_NO,
-      r.REFUND_REASON, r.REFUND_IMAGE, r.REFUND_MAIL,
+      r.REFUND_REASON,
       r.REFUND_STATUS, r.CREATED_AT,
       o.USER_ID, o.GUEST_ID, o.ORDER_STATUS,
       p.PAYMENT_METHOD, p.STATUS AS PAYMENT_STATUS
@@ -38,7 +36,7 @@
   <select id="getRefundDetail" resultMap="RefundWithJoins">
     SELECT
       r.REFUND_NO, r.ORDER_ID, r.PAYMENT_NO,
-      r.REFUND_REASON, r.REFUND_IMAGE, r.REFUND_MAIL,
+      r.REFUND_REASON,
       r.REFUND_STATUS, r.CREATED_AT,
       o.USER_ID, o.GUEST_ID, o.ORDER_STATUS,
       p.PAYMENT_METHOD, p.STATUS AS PAYMENT_STATUS
