@@ -21,12 +21,14 @@ public class BookController {
 	@GetMapping("product/bookList.do")
 	public String bookList(@RequestParam(required = false) String category,
 	                       @RequestParam(value = "nowpage", required = false, defaultValue = "1") int nowpage,
+	                       @RequestParam(value = "sort", required = false, defaultValue = "recent") String sort,
 	                       SearchVO searchVO,
 	                       Model model) {
 
 	    searchVO.setNowPage(nowpage);
-	    searchVO.setPerPage(15); // 페이지당 항목 수
+	    searchVO.setPerPage(16); // 페이지당 항목 수
 	    searchVO.setCategory(category); // 카테고리 필터용
+	    searchVO.setSort(sort); 
 
 	    //System.out.println("Current Page: " + nowpage);
 	    //System.out.println("Per Page: " + searchVO.getPerPage());
@@ -41,20 +43,18 @@ public class BookController {
 	    searchVO.calcStartEnd(nowpage, searchVO.getPerPage());
 	    searchVO.calcLastPage(total, searchVO.getPerPage());
 	    searchVO.calcStartEndPage(nowpage, searchVO.getCntPage());
+	    
+	    List<ProductApiVO> selectBookList;
+	    if ("popular".equals(sort)) {
+	        selectBookList = bookService.getPopularBooks(searchVO); // 인기순
+	    } else {
+	        selectBookList = (category != null && !category.isEmpty())
+	                         ? bookService.getBooksByCategoryPaging(searchVO)
+	                         : bookService.getBooksPaging(searchVO); // 최신순
+	    }
 
 	    //System.out.println("Start Index: " + searchVO.getStart());
 	    //System.out.println("End Index: " + searchVO.getEnd());
-
-	    List<ProductApiVO> selectBookList = (category != null && !category.isEmpty())
-	        ? bookService.getBooksByCategoryPaging(searchVO)
-	        : bookService.getBooksPaging(searchVO);
-
-	    //System.out.println("Books returned: " + (selectBookList != null ? selectBookList.size() : 0));
-	    if (selectBookList != null) {
-	        for (ProductApiVO vo : selectBookList) {
-	            //System.out.println(" - " + vo.getTitle());
-	        }
-	    }
 
 	    List<String> categories = bookService.getDistinctCategories();
 
@@ -64,6 +64,7 @@ public class BookController {
 	    model.addAttribute("searchType", searchVO.getSearchType());
 	    model.addAttribute("searchValue", searchVO.getSearchValue());
 	    model.addAttribute("category", category);
+	    model.addAttribute("sort", sort);
 
 	    return "product/bookList";
 	}
