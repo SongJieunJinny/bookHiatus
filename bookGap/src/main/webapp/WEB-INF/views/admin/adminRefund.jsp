@@ -188,18 +188,23 @@
 							        
 							       <h6 class="fw-bold">환불 정보</h6>
 										<ul class="list-group mb-3" id="refundInfoList">
-										  <li class="list-group-item">환불 번호: ${order.refundNo}</li>
-										  <li class="list-group-item">환불 사유: ${order.refundReason}</li>
-										  <li class="list-group-item">이메일: ${order.refundMail}</li>
-										  <li class="list-group-item">환불 상태:
-										    <select class="form-select d-inline w-auto ms-2" id="refundStatus">
-										      <option value="1">환불 요청</option>
-										      <option value="2">처리 중</option>
-										      <option value="3">환불 완료</option>
-										      <option value="4">거절</option>
-										    </select>
-										  </li>
+										  
 										</ul>
+										
+									<h6 class="fw-bold mt-4">상품 정보</h6>
+										<table class="table table-bordered" id="productTable">
+										  <thead>
+										    <tr>
+										      <th>도서명</th>
+										      <th>수량</th>
+										      <th>가격</th>
+										      <th>카테고리</th>
+										    </tr>
+										  </thead>
+										  <tbody>
+										    <!-- JavaScript에서 동적으로 채워짐 -->
+										  </tbody>
+										</table>
 							
 							      <!-- 모달 푸터 -->
 							      <div class="modal-footer">
@@ -228,120 +233,181 @@ $(function () {
 
   // 상세보기 버튼
   $(document).on("click", ".viewBtn", function () {
-    selectedRow = $(this).closest("tr");
-    const refundNo = $(this).data("refund-no"); // 환불번호로 변경
-    $.ajax({
-      url: "<%=request.getContextPath()%>/admin/adminRefund/getRefundDetail.do",
-      method: "GET",
-      data: { refundNo }, // refundNo 전달
-      success: function (result) {
-        // 모달에 환불번호 보관
-        $("#orderModal").data("refundNo", refundNo);
-
-        const refundStatus = Number(result?.refundStatus || 1);
-
-        // 환불 정보 블록 렌더링
-        const refundInfoHtml =
-          '<li class="list-group-item">환불 번호: ' + (result?.refundNo ?? '-') + '</li>' +
-          '<li class="list-group-item">신청일시: ' + (result?.createdAt ?? '-') + '</li>' +
-          '<li class="list-group-item">주문 번호: ' + (result?.orderId ?? '-') + '</li>' +
-          '<li class="list-group-item">이메일: ' + (result?.refundMail ?? '-') + '</li>' +
-          '<li class="list-group-item">환불 사유:<div class="mt-2" style="white-space:pre-wrap">' + (result?.refundReason ?? '-') + '</div></li>' +
-          '<li class="list-group-item">환불 상태: ' +
-            '<select class="form-select d-inline w-auto ms-2" id="refundStatus">' +
-              '<option value="1" ' + (refundStatus===1?'selected':'') + '>환불 요청</option>' +
-              '<option value="2" ' + (refundStatus===2?'selected':'') + '>처리 중</option>' +
-              '<option value="3" ' + (refundStatus===3?'selected':'') + '>환불 완료</option>' +
-              '<option value="4" ' + (refundStatus===4?'selected':'') + '>거절</option>' +
-            '</select>' +
-          '</li>';
-
-        $("#refundInfoList").html(refundInfoHtml);
-
-        // 증빙 이미지 렌더링
-        $("#refundImageContainer").remove(); // 중복 삽입 방지
-        const imageFile = result?.refundImage;
-        let imageHtml = '<div class="text-muted">증빙 이미지가 없습니다.</div>';
-        if (imageFile) {
-          // 로컬 정적 매핑(예: /uploads/refund/**) 사용 시
-          const imgUrl = "<%=request.getContextPath()%>/uploads/refund/" + imageFile;
-          imageHtml =
-            '<a href="'+imgUrl+'" target="_blank" rel="noopener">' +
-              '<img src="'+imgUrl+'" alt="환불 증빙 이미지" ' +
-              'style="max-width:180px;height:auto;border:1px solid #ddd;border-radius:8px"/>' +
-            '</a>';
-        }
-        $("#refundInfoList").after('<div id="refundImageContainer" class="mb-3">'+imageHtml+'</div>');
-
-        
-        const productTable = $("#productTable");
-        if (productTable.length) {
-          productTable.empty();
-          if (result?.orderDetails?.length) {
-            result.orderDetails.forEach(function (item) {
-              productTable.append(
-                '<tr>' +
-                  '<td>' + (item.book?.title ?? '-') + '</td>' +
-                  '<td>' + (item.orderCount ?? 0) + '</td>' +
-                  '<td>' + (Number(item.orderPrice||0)).toLocaleString() + '원</td>' +
-                  '<td>' + (item.book?.bookCategory ?? '-') + '</td>' +
-                '</tr>'
-              );
-            });
-          } else {
-            productTable.append('<tr><td colspan="4">상품 정보 없음</td></tr>');
-          }
-        }
-
-        new bootstrap.Modal($("#orderModal")[0]).show();
-      },
-      error: function () {
-        alert("환불 상세 정보를 불러오지 못했습니다.");
-      }
-    });
-  });
-
+	  selectedRow = $(this).closest("tr");
+	  const refundNo = $(this).data("refund-no");
+	
+	  $.ajax({
+	    url: "<%=request.getContextPath()%>/admin/adminRefund/getRefundDetail.do",
+	    method: "GET",
+	    data: { refundNo },
+	    success: function (result) {
+	      // 모달에 환불번호 보관
+	      $("#orderModal").data("refundNo", refundNo);
+	      $("#orderModal").data("paymentMethod", Number(result?.paymentMethod));
+	      
+	      const refundStatus = Number(result?.refundStatus || 1);
+	      const createdAt = result?.createdAt;
+	      let createdAtStr = "-";
+	      if (createdAt) {
+	        const date = new Date(Number(createdAt));
+	        createdAtStr = date.toLocaleString("ko-KR", {
+	          year: "numeric",
+	          month: "2-digit",
+	          day: "2-digit",
+	          hour: "2-digit",
+	          minute: "2-digit",
+	          second: "2-digit"
+	        });
+	      }
+	      const paymentMethod = result?.paymentMethod;
+	      let paymentMethodStr = "-";
+	      if (paymentMethod === 1) paymentMethodStr = "토스페이";
+	      else if (paymentMethod === 2) paymentMethodStr = "카카오페이";
+	
+	      // 환불 정보 블록 렌더링
+	      const refundInfoHtml =
+	        '<li class="list-group-item">환불 번호: ' + (result?.refundNo ?? '-') + '</li>' +
+	        '<li class="list-group-item">신청일시: ' + createdAtStr + '</li>' +
+	        '<li class="list-group-item">주문 번호: ' + (result?.orderId ?? '-') + '</li>' +
+	        '<li class="list-group-item">결제 수단: ' + paymentMethodStr + '</li>' +
+	        '<li class="list-group-item">결제 번호: ' + (result?.paymentNo ?? '-') + '</li>' +
+	        '<li class="list-group-item">환불 사유:<div class="mt-2" style="white-space:pre-wrap">' + (result?.refundReason ?? '-') + '</div></li>' +
+	        '<li class="list-group-item">환불 상태: ' +
+	          '<select class="form-select d-inline w-auto ms-2" id="refundStatus">' +
+	            '<option value="1" ' + (refundStatus===1?'selected':'') + '>환불 요청</option>' +
+	            '<option value="2" ' + (refundStatus===2?'selected':'') + '>처리 중</option>' +
+	            '<option value="3" ' + (refundStatus===3?'selected':'') + '>환불 완료</option>' +
+	            '<option value="4" ' + (refundStatus===4?'selected':'') + '>거절</option>' +
+	          '</select>' +
+	        '</li>';
+	
+	      $("#refundInfoList").html(refundInfoHtml);
+	
+	      const productTableBody = $("#productTable tbody");
+	      if (productTableBody.length) {
+	        productTableBody.empty();
+	
+	        if (result?.orderDetails?.length) {
+	          result.orderDetails.forEach(function (item) {
+	            productTableBody.append(
+	              '<tr>' +
+	                '<td>' + (item.book?.title ?? '-') + '</td>' +
+	                '<td>' + (item.orderCount ?? 0) + '</td>' +
+	                '<td>' + (Number(item.orderPrice || 0).toLocaleString()) + '원</td>' +
+	                '<td>' + (item.book?.bookCategory ?? '-') + '</td>' +
+	              '</tr>'
+	            );
+	          });
+	        } else {
+	          productTableBody.append('<tr><td colspan="4">상품 정보 없음</td></tr>');
+	        }
+	      }
+	
+	      // 모달 열기
+	      new bootstrap.Modal($("#orderModal")[0]).show();
+	    },
+	    error: function () {
+	      alert("환불 상세 정보를 불러오지 못했습니다.");
+	    }
+	  });
+	});
+  
   // 저장(환불 상태 업데이트)
   $("#saveOrder").on("click", function () {
-    const refundNo = $("#orderModal").data("refundNo");
-    if (!refundNo) { alert("환불 번호를 확인할 수 없습니다."); return; }
+    const refundNo = Number($("#orderModal").data("refundNo"));
+    const paymentMethod = Number($("#orderModal").data("paymentMethod")); // 1: 토스, 2: 카카오
+
+    if (!refundNo) {
+      alert("환불 번호를 확인할 수 없습니다.");
+      return;
+    }
 
     const refundStatus = Number($("#refundStatus").val());
+    const $btn = $(this).prop("disabled", true);
 
     const csrfHeader = $("meta[name='_csrf_header']").attr("content");
     const csrfToken  = $("meta[name='_csrf']").attr("content");
 
-    const $btn = $(this).prop("disabled", true);
+    // 환불 완료로 바꾸는 경우에만 결제 취소 API 호출
+    if (refundStatus === 3) {
+      if (paymentMethod === 1) {
+        // 토스페이 취소
+        $.ajax({
+          url: "<%=request.getContextPath()%>/payment/toss/cancelPayment.do",
+          method: "POST",
+          contentType: "application/json",
+          data: JSON.stringify({ refundNo }),
+          beforeSend: function (xhr) {
+            if (csrfHeader && csrfToken) xhr.setRequestHeader(csrfHeader, csrfToken);
+          },
+          success: function () {
+            updateRefundStatus(); // 결제 취소 성공 시 상태 업데이트
+          },
+          error: function () {
+            alert("토스페이 결제 취소 실패");
+            $btn.prop("disabled", false);
+          }
+        });
+        return;
+      } else if (paymentMethod === 2) {
+        // 카카오페이 취소
+        $.ajax({
+          url: "<%=request.getContextPath()%>/payment/kakao/cancelPayment.do",
+          method: "POST",
+          contentType: "application/json",
+          data: JSON.stringify({ refundNo }),
+          beforeSend: function (xhr) {
+            if (csrfHeader && csrfToken) xhr.setRequestHeader(csrfHeader, csrfToken);
+          },
+          success: function () {
+            updateRefundStatus();
+          },
+          error: function () {
+            alert("카카오페이 결제 취소 실패");
+            $btn.prop("disabled", false);
+          }
+        });
+        return;
+      } else {
+        alert("결제 수단이 유효하지 않습니다.");
+        $btn.prop("disabled", false);
+        return;
+      }
+    }
 
-    $.ajax({
-      url: "<%=request.getContextPath()%>/admin/adminRefund/updateRefundStatus.do",
-      method: "POST",
-      contentType: "application/json; charset=UTF-8",
-      data: JSON.stringify({ refundNo, refundStatus }), // 환불 상태만 전송
-      beforeSend: function (xhr) {
-        if (csrfHeader && csrfToken) xhr.setRequestHeader(csrfHeader, csrfToken);
-      },
-      success: function (res) {
-        const ok = (res === "success") || (typeof res === "object" && res?.success);
-        if (!ok) { alert("업데이트 실패"); return; }
+    // 환불 완료가 아니면 바로 상태 업데이트
+    updateRefundStatus();
 
-        // 목록 테이블 환불 상태 텍스트 갱신 (3번째 컬럼)
-        if (selectedRow) {
-          const textMap = {1:"환불 요청", 2:"처리 중", 3:"환불 완료", 4:"거절"};
-          selectedRow.find("td").eq(2).text(textMap[refundStatus] || "-");
-        }
+    function updateRefundStatus() {
+      $.ajax({
+        url: "<%=request.getContextPath()%>/admin/adminRefund/updateRefundStatus.do",
+        method: "POST",
+        contentType: "application/json; charset=UTF-8",
+        data: JSON.stringify({ refundNo, refundStatus }),
+        beforeSend: function (xhr) {
+          if (csrfHeader && csrfToken) xhr.setRequestHeader(csrfHeader, csrfToken);
+        },
+        success: function (res) {
+          const ok = (res === "success") || (typeof res === "object" && res?.success);
+          if (!ok) { alert("업데이트 실패"); return; }
 
-        alert("저장되었습니다.");
-        bootstrap.Modal.getInstance($("#orderModal")[0]).hide();
-      },
-      error: function () {
-        alert("업데이트에 실패했습니다. 다시 시도해 주세요.");
-      },
-      complete: function () { $btn.prop("disabled", false); }
-    });
+          if (selectedRow) {
+            const textMap = {1:"환불 요청", 2:"처리 중", 3:"환불 완료", 4:"거절"};
+            selectedRow.find("td").eq(2).text(textMap[refundStatus] || "-");
+          }
+
+          alert("해당 주문 상품의 환불이 완료되었습니다.");
+          bootstrap.Modal.getInstance($("#orderModal")[0]).hide();
+        },
+        error: function () {
+          alert("업데이트에 실패했습니다. 다시 시도해 주세요.");
+        },
+        complete: function () { $btn.prop("disabled", false); }
+      });
+    }
   });
 
-  });
+
 });
 </script>
 <script>

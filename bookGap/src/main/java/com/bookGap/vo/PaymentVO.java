@@ -6,7 +6,7 @@ import java.sql.Timestamp;
 public class PaymentVO {
   private int paymentNo;  //결제ID
   private BigDecimal amount;  //결제금액
-  private int paymentMethod;  //결제수단(1 toss, 2 kakaopay)
+  private Integer paymentMethod;  //결제수단(1 toss, 2 kakaopay)
   private int status;  //결제상태(1 결제중,2 결제승인,3 결제취소)
   private Timestamp createdAt;  //결제요청시간
   private int orderId;  //주문 번호
@@ -44,10 +44,10 @@ public class PaymentVO {
   public void setAmount(BigDecimal amount) {
     this.amount = amount;
   }
-  public int getPaymentMethod() {
+  public Integer getPaymentMethod() {
     return paymentMethod;
   }
-  public void setPaymentMethod(int paymentMethod) {
+  public void setPaymentMethod(Integer paymentMethod) {
     this.paymentMethod = paymentMethod;
   }
   public int getStatus() {

@@ -23,4 +23,9 @@ public interface PaymentService {
   public TossRequestVO findTossRequestByPaymentNo(int paymentNo);
   public void insertTossCancel(TossCancelVO tossCancelVO);
   PaymentVO getPaymentByNo(int paymentNo);
+  
+  
+  PaymentVO selectPaymentByRefundNo(int refundNo);
+  KakaoPayRequestVO selectKakaoRequest(int paymentNo);
+ 
 }
