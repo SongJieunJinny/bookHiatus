@@ -98,5 +98,15 @@
   <select id="getPaymentByNo" parameterType="int" resultMap="PaymentResultMap">
     SELECT * FROM PAYMENTS WHERE PAYMENT_NO = #{paymentNo}
 </select>
+
+	<select id="selectPaymentByRefundNo" parameterType="int" resultMap="PaymentResultMap">
+	    SELECT * FROM PAYMENTS WHERE ORDER_ID = (
+	        SELECT ORDER_ID FROM REFUND WHERE REFUND_NO = #{refundNo}
+	    )
+	</select>
+	
+	<select id="selectKakaoRequest" parameterType="int" resultType="com.bookGap.vo.KakaoPayRequestVO">
+	    SELECT * FROM KAKAOPAY_REQUESTS WHERE PAYMENT_NO = #{paymentNo}
+	</select>
   
 </mapper>

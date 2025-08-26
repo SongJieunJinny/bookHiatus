@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.bookGap.dao.AdminRefundDAO;
+import com.bookGap.vo.OrderDetailVO;
 import com.bookGap.vo.RefundUpdateRequestVO;
 import com.bookGap.vo.RefundVO;
 
@@ -23,12 +24,17 @@ public class AdminRefundServiceImpl implements AdminRefundService {
 	    return adminRefundDAO.selectAllRefunds();
 	  }
 
-	  @Override
-	  public RefundVO getRefundDetail(int refundNo) {
-	    RefundVO vo = adminRefundDAO.getRefundDetail(refundNo);
-	    // 필요 시 vo.setOrderDetails(refundDAO.getOrderDetailsByOrderId(vo.getOrderId()));
-	    return vo;
-	  }
+	 @Override
+	 public RefundVO getRefundDetail(int refundNo) {
+	   RefundVO vo = adminRefundDAO.getRefundDetail(refundNo);
+
+	   if (vo != null && vo.getOrderId() != null) {
+	     List<OrderDetailVO> details = adminRefundDAO.getOrderDetailsByOrderId(vo.getOrderId());
+	     vo.setOrderDetails(details); // 상품 정보 주입
+	   }
+
+	   return vo;
+	 }
 
 	  @Override
 	  @Transactional

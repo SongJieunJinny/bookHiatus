@@ -1,6 +1,9 @@
 package com.bookGap.vo;
 
 import java.sql.Timestamp;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class RefundVO {
   
@@ -17,6 +20,8 @@ public class RefundVO {
   private Integer orderStatus;   // ORDERS.ORDER_STATUS
   private Integer paymentMethod; // PAYMENTS.PAYMENT_METHOD
   private Integer paymentStatus; // PAYMENTS.STATUS
+  
+  private List<OrderDetailVO> orderDetails;
 
   public String getRefundStatusText() {
     switch (refundStatus) {
@@ -117,6 +122,12 @@ public class RefundVO {
     this.paymentStatus = paymentStatus;
   }
   
+  public List<OrderDetailVO> getOrderDetails() {
+	  return orderDetails;
+	}
+	public void setOrderDetails(List<OrderDetailVO> orderDetails) {
+	  this.orderDetails = orderDetails;
+	}
   
   
   

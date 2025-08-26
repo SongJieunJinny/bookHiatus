@@ -302,6 +302,8 @@
 				      '<option' + (result.orderStatus == 1 ? ' selected' : '') + '>배송 준비</option>' +
 				      '<option' + (result.orderStatus == 2 ? ' selected' : '') + '>배송 중</option>' +
 				      '<option' + (result.orderStatus == 3 ? ' selected' : '') + '>배송 완료</option>' +
+				      '<option' + (result.orderStatus == 4 ? ' selected' : '') + '>주문 취소</option>' +
+				      '<option' + (result.orderStatus == 5 ? ' selected' : '') + '>교환/반품</option>' +
 				    '</select>' +
 				  '</li>' +
 				  '<li class="list-group-item">' +
