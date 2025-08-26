@@ -76,7 +76,7 @@
 
     <!-- 환불 신청 폼 -->
     <h3>환불 신청</h3>
-		<form class="refundForm" id="refundForm"  method="POST" action="<%=request.getContextPath()%>/refund/apply.do">
+		<form class="refundForm" id="refundForm" method="POST" action="<%=request.getContextPath()%>/refund/apply.do">
 			<div class="refundFormLine">
 			  <input type="hidden" name="orderId" value="${order.orderId}">
 			  <input type="hidden" name="paymentNo" value="${not empty order.payment ? order.payment.paymentNo : order.paymentNo}">

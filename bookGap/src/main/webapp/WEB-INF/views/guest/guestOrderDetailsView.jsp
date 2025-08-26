@@ -76,10 +76,12 @@
 
     <!-- 환불 신청 폼 -->
     <h3>환불 신청</h3>
-    <form id="guestRefundForm" enctype="multipart/form-data">
+    <input type="hidden" id="guestEmailForRedirect" value="${guestEmail}">
+    <input type="hidden" id="orderPasswordForRedirect" value="${orderPassword}">
+    <form class="guestRefundForm" id="guestRefundForm" method="POST" action="<%=request.getContextPath()%>/refund/apply.do">
     <div class="guestRefundFormLine">
 		  <input type="hidden" name="orderId" value="${order.orderId}">
-		  <input type="hidden" name="paymentNo" value="${order.paymentNo}">
+		  <input type="hidden" name="paymentNo" value="${not empty order.payment ? order.payment.paymentNo : order.paymentNo}">
 		
 		  <label>환불 사유</label><br>
 		  <textarea class="guestRefundFormReason" name="refundReason" required></textarea><br><br>
@@ -90,6 +92,9 @@
 		</div> 
 		  <button class="guestRefundFormButton" type="submit">환불 신청하기</button>
 		</form>
+		<div id="refundStatusBox" style="display: none;">
+        이미 환불을 신청한 주문입니다. 현재 상태: <strong id="refundStatusText"></strong>
+    </div>
   </div>
 </section>
 <jsp:include page="/WEB-INF/views/include/footer.jsp" />
@@ -98,30 +103,90 @@
 $(document).ready(function() {
   updateCartCount();
   initHeaderEvents();
+  checkExistingRefund();
   
   $("#guestRefundForm").submit(function(e){
-    e.preventDefault(); // 기본 submit 막기
-    var formData = new FormData(this);
-
-    fetch("<%=request.getContextPath()%>/refund/apply.do", {
+    e.preventDefault(); 
+    if (!confirm("정말로 환불을 신청하시겠습니까?")) { return; }
+    const formData = new URLSearchParams(new FormData(this)).toString();
+    fetch(this.action, {
       method: "POST",
-      body: formData
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+      body: formData 
     })
-    .then(res => res.text())
+    .then(response => {
+      if (!response.ok) throw new Error('Server responded with an error.');
+      return response.text();
+    })
     .then(result => {
       if(result === "success") {
-        alert("✅ 환불 신청이 완료되었습니다.");
-        // 환불신청 후 목록으로 이동
-        location.href = "<%=request.getContextPath()%>/guest/guestOrderInfo.do";
+        alert("✅ 환불 신청이 완료되었습니다. 비회원 주문조회 페이지로 이동합니다.");
+        submitPostRedirect();
       } else {
-        alert("❌ 환불 신청에 실패했습니다.");
+        alert("❌ 환불 신청에 실패했습니다: " + result);
       }
     })
     .catch(err => {
       console.error("환불 신청 오류:", err);
-      alert("서버와 통신 중 오류가 발생했습니다.");
+      alert("처리 중 오류가 발생했습니다: " + err.message);
     });
   });
+});
+
+function submitPostRedirect() {
+	const guestEmail = document.getElementById('guestEmailForRedirect').value;
+	const orderPassword = document.getElementById('orderPasswordForRedirect').value;
+
+	const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = '<%=request.getContextPath()%>/guest/guestOrderInfo.do';
+  const emailInput = document.createElement('input');
+  emailInput.type = 'hidden';
+  emailInput.name = 'guestEmail';
+  emailInput.value = guestEmail;
+  const passwordInput = document.createElement('input');
+  passwordInput.type = 'hidden';
+  passwordInput.name = 'orderPassword';
+  passwordInput.value = orderPassword;
+  form.appendChild(emailInput);
+  form.appendChild(passwordInput);
+  document.body.appendChild(form);
+  form.submit();
+}
+
+function checkExistingRefund() {
+  const orderId = "${order.orderId}";
+  const paymentNo = "${not empty order.payment ? order.payment.paymentNo : order.paymentNo}";
+
+  if (!orderId || !paymentNo || paymentNo === '0') return;
+  
+  fetch(`<%=request.getContextPath()%>/refund/status.do?orderId=\${orderId}&paymentNo=\${paymentNo}`)
+    .then(res => res.text()) 
+    .then(text => {
+      if(text) {
+        try {
+          const refund = JSON.parse(text);
+          if(refund && refund.refundStatus) {
+            $("#guestRefundForm").hide();
+            const statusText = getRefundStatusText(refund.refundStatus);
+            $("#refundStatusText").text(statusText);
+            $("#refundStatusBox").show();
+          }
+        } catch (e) {
+          console.error("JSON 파싱 오류:", e);
+        }
+      }
+    });
+}
+
+function getRefundStatusText(status) {
+  switch (status) {
+    case 1: return "환불요청";
+    case 2: return "환불처리중";
+    case 3: return "환불완료";
+    case 4: return "환불거절";
+    default: return "상태 미확인";
+  }
 }
 
 //✅ 장바구니 수량 업데이트
@@ -133,25 +198,6 @@ function updateCartCount() {
   }
 }
 
-function submitGuestRefund() {
-  const form = document.getElementById("guestRefundForm");
-  const formData = new FormData(form);
-
-  fetch("<%=request.getContextPath()%>/refund/apply.do", {
-    method: "POST",
-    body: formData
-  })
-  .then(res => res.text())
-  .then(result => {
-    if (result === "success") {
-      alert("환불 신청이 완료되었습니다.");
-      // ✅ 신청 성공 후 → 비회원 주문 목록으로 이동
-      location.href = "<%=request.getContextPath()%>/guest/guestOrderInfo.do?guestEmail=${order.guestEmail}&orderPassword=${order.orderPassword}";
-    } else {
-      alert("환불 신청에 실패했습니다.");
-    }
-  });
-}
 </script>
 </body>
 </html>
