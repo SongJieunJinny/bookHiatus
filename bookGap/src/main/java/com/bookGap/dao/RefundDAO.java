@@ -1,5 +1,6 @@
 package com.bookGap.dao;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,7 +25,9 @@ public class RefundDAO {
   
   /* 환불 신청 시 ORDERS 테이블 REFUND_STATUS = 1 로 변경 */
   public int updateRefundStatusToRequest(int orderId) {
-    return sqlSession.update(name_space + "updateRefundStatusToRequest", orderId);
+    Map<String, Object> params = new HashMap<>();
+    params.put("orderId", orderId);
+    return sqlSession.update(name_space + "updateRefundStatusToRequest", params);
   }
   
   /* 환불 신청 내역을 고객 화면에서 조회 */

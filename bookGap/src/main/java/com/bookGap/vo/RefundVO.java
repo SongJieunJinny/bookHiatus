@@ -8,7 +8,6 @@ public class RefundVO {
   private int orderId;           // 주문ID
   private int paymentNo;         // 결제ID
   private String refundReason;   // 환불사유
-  private String refundImage;    // 환불사유사진
   private String refundMail;     // 이메일
   private int refundStatus;      // 환불상태(1 요청, 2 처리중, 3 완료, 4 거절)
   private Timestamp createdAt;   // 신청일시
@@ -56,12 +55,6 @@ public class RefundVO {
   }
   public void setRefundReason(String refundReason) {
     this.refundReason = refundReason;
-  }
-  public String getRefundImage() {
-    return refundImage;
-  }
-  public void setRefundImage(String refundImage) {
-    this.refundImage = refundImage;
   }
   public String getRefundMail() {
     return refundMail;
