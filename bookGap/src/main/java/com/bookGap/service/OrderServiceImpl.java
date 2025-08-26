@@ -175,6 +175,7 @@ public class OrderServiceImpl implements OrderService {
   @Transactional
   public Map<String, Object> createGuestOrderWithDetails(Map<String, Object> orderData) throws Exception {
     String guestEmail = (String) orderData.get("ordererEmail");
+    System.out.println("[DEBUG] orderData map 전체: " + orderData);
     GuestVO guest = guestService.getGuestByEmail(guestEmail);
     String guestId;
     if(guest == null){
@@ -185,8 +186,10 @@ public class OrderServiceImpl implements OrderService {
       guest.setGuestPhone((String) orderData.get("ordererPhone"));
       guest.setGuestEmail(guestEmail);
       guestService.registerGuest(guest);
+      System.out.println("[INFO] 새로운 게스트 등록됨: " + guestId);
     }else{
       guestId = guest.getGuestId();
+      System.out.println("[INFO] 기존 게스트 사용됨: " + guestId);
     }
 
     @SuppressWarnings("unchecked")
@@ -222,6 +225,9 @@ public class OrderServiceImpl implements OrderService {
     guestOrder.setReceiverRoadAddress((String) orderData.get("receiverRoadAddress"));
     guestOrder.setReceiverDetailAddress((String) orderData.get("receiverDetailAddress"));
     guestOrder.setDeliveryRequest((String) orderData.get("deliveryRequest"));
+    
+    System.out.println("[DEBUG] guestOrder.getGuestId() = " + guestOrder.getGuestId());
+    System.out.println("[DEBUG] guestOrder.getOrderPassword() = " + guestOrder.getOrderPassword());
 
     orderDAO.insertOrder(guestOrder);
     int newOrderId = guestOrder.getOrderId();
