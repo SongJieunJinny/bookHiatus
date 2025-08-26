@@ -64,13 +64,13 @@ section{
   font-size: 17px;
   flex-shrink: 0;
 }
-.guestInfoTableInput{
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  padding: 10px;
-  font-size: 15px;
-  margin: 0;
-  width: 70%;
+input.guestInfoTableInput {
+    border: 1px solid #ccc !important;
+    border-radius: 5px !important;
+    padding: 10px !important;
+    font-size: 15px !important;
+    margin: 0 !important;
+    width: 70% !important;
 }
 .guestInfoTablePostInput{
   border: 1px solid #ccc;
