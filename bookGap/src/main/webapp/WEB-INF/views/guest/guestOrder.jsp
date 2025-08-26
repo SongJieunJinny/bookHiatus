@@ -35,7 +35,7 @@
             </div>
             <div class="guestInfoTableContainer">
               <div class="guestInfoCategory">PW</div>
-              <input class="guestInfoTableInput" type="password" id="orderPw" placeholder="PW">
+              <input class="guestInfoTableInput" type="password" id="orderPassword" placeholder="PW">
             </div>
             <div class="guestInfoTableContainer">
               <div class="guestInfoCategory">PW CHECK</div>
@@ -320,8 +320,8 @@ $(document).ready(function() {
 
     if(!$('#ordererName').val().trim()){ alert("주문자 이름을 입력해주세요."); $('#ordererName').focus(); return; }
     if(!$('#ordererPhone').val().trim()){ alert("주문자 연락처를 입력해주세요."); $('#ordererPhone').focus(); return; }
-    if(!$('#orderPw').val().trim()){ alert("주문조회용 비밀번호를 입력해주세요."); $('#orderPw').focus(); return; }
-    if($('#orderPw').val() !== $('#orderPasswordCheck').val()){ alert("비밀번호가 일치하지 않습니다."); $('#orderPasswordCheck').focus(); return; }
+    if(!$('#orderPassword').val().trim()){ alert("주문조회용 비밀번호를 입력해주세요."); $('#orderPassword').focus(); return; }
+    if($('#orderPassword').val() !== $('#orderPasswordCheck').val()){ alert("비밀번호가 일치하지 않습니다."); $('#orderPasswordCheck').focus(); return; }
     if(!$('#ordererEmail').val().trim()){ alert("주문자 이메일을 입력해주세요."); $('#ordererEmail').focus(); return; }
     if(!$('#receiverName').val().trim()){ alert("받는 분 이름을 입력해주세요."); $('#receiverName').focus(); return; }
     if(!$('#receiverPhone').val().trim()){ alert("받는 분 연락처를 입력해주세요."); $('#receiverPhone').focus(); return; }
@@ -351,7 +351,7 @@ $(document).ready(function() {
 		
 		  	    ordererName: $('#ordererName').val(),
 		  	    ordererPhone: $('#ordererPhone').val(),
-		  	    orderPw: $('#orderPw').val(),
+		  	    orderPassword: $('#orderPassword').val(),
 		  	    ordererEmail: $('#ordererEmail').val(),
 		
 		  	    receiverName: $('#receiverName').val(),
