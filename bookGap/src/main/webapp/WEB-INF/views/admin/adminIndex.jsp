@@ -86,6 +86,15 @@
 								</div>
 								<div class="col-xl-3 col-md-6">
 									<div class="card bg-secondary text-white mb-4">
+										<div class="card-body">환불 관리  </div>
+										<div class="card-footer d-flex align-items-center justify-content-between">
+											<a class="small text-white stretched-link" href="${pageContext.request.contextPath}/admin/adminRefund.do">View Details</a>
+											<div class="small text-white"><i class="fas fa-angle-right"></i></div>
+										</div>
+									</div>
+								</div>
+								<div class="col-xl-3 col-md-6">
+									<div class="card bg-secondary text-white mb-4">
 										<div class="card-body">신고관리  </div>
 										<div class="card-footer d-flex align-items-center justify-content-between">
 											<a class="small text-white stretched-link" href="${pageContext.request.contextPath}/admin/adminReportManagement.do">View Details</a>

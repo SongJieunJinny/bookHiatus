@@ -67,5 +67,9 @@ public class BookDAO {
   public int getBookTotalCountByKeyword(SearchVO searchVO) {
     return sqlSession.selectOne(namespace + "getBookTotalCountByKeyword", searchVO);
   }
+  
+  public List<ProductApiVO> selectPopularBooks(SearchVO vo) {
+	    return sqlSession.selectList(namespace + "selectPopularBooks", vo);
+	}
 
 }

@@ -7,6 +7,7 @@ public class SearchVO extends PagingUtil {
 	private String searchType; //검색조건
 	private String searchValue; //검색내용
 	private String category;
+	private String sort;
 	
 
 	/* USER TABLE */
@@ -123,5 +124,12 @@ public class SearchVO extends PagingUtil {
 	}
 	public void setCommentType(int commentType) {
 		this.commentType = commentType;
+	}
+	
+	public String getSort() {
+		return sort;
+	}
+	public void setSort(String sort) {
+		this.sort = sort;
 	}
 }

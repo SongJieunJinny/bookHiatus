@@ -16,6 +16,7 @@
 	    ua.DETAIL_ADDRESS   AS detailAddress
 	  	FROM USER u
 	  	LEFT JOIN USER_ADDRESS ua ON u.USER_ID = ua.USER_ID
+	  		AND ua.IS_DEFAULT  = 1
 	  	WHERE u.USER_ID = #{userId}
   </select>
   <update id="userUpdate" parameterType="com.bookGap.vo.MypageVO">

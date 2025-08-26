@@ -27,10 +27,15 @@
 		<div class="bookAll">
 			<div class="bookTitleName">${empty category ? '모든 책' : category}</div>
 			<div class="bookTitleSelect">
-				<select>
-					<option>인기상품</option>
-					<option>최신상품</option>
-				</select>
+				<form id="sortForm" method="get" action="bookList.do">
+			      <input type="hidden" name="category" value="${category}"/>
+			      <input type="hidden" name="searchType" value="${searchType}"/>
+			      <input type="hidden" name="searchValue" value="${searchValue}"/>
+			      <select name="sort" onchange="document.getElementById('sortForm').submit();">
+			        <option value="recent" ${param.sort == 'recent' || empty param.sort ? 'selected' : ''}>최신상품</option>
+					<option value="popular" ${param.sort == 'popular' ? 'selected' : ''}>인기상품</option>
+			      </select>
+			    </form>
 			</div>
 		</div>
 	    <div class="${selectBookList.size() <= 2 ? 'bookItems centered' : 'bookItems'}">
@@ -49,12 +54,14 @@
 	    </div>
 	</section>
 	<div class="pagination">
+		<!-- 이전 페이지 버튼 -->
 		<c:if test="${paging.startPage > 1}">
-	  	<a href="bookList.do?nowpage=${paging.startPage - 1}
-	     	&searchType=${searchType}&searchValue=${searchValue}
-	     	&category=${category}">&lt;</a>
+			<a href="bookList.do?nowpage=${paging.startPage - 1}
+				&searchType=${searchType}&searchValue=${searchValue}
+				&category=${category}&sort=${sort}">&lt;</a>
 		</c:if>
 	
+		<!-- 페이지 번호 -->
 		<c:forEach begin="${paging.startPage}" end="${paging.endPage}" var="cnt">
 			<c:choose>
 				<c:when test="${paging.nowPage eq cnt}">
@@ -63,15 +70,16 @@
 				<c:otherwise>
 					<a href="bookList.do?nowpage=${cnt}
 						&searchType=${searchType}&searchValue=${searchValue}
-						&category=${category}">${cnt}</a>
+						&category=${category}&sort=${sort}">${cnt}</a>
 				</c:otherwise>
 			</c:choose>
 		</c:forEach>
 	
+		<!-- 다음 페이지 버튼 -->
 		<c:if test="${paging.endPage < paging.lastPage}">
 			<a href="bookList.do?nowpage=${paging.endPage + 1}
 				&searchType=${searchType}&searchValue=${searchValue}
-				&category=${category}">&gt;</a>
+				&category=${category}&sort=${sort}">&gt;</a>
 		</c:if>
 	</div>
 
