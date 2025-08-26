@@ -19,13 +19,11 @@ public class RefundServiceImpl implements RefundService{
   @Override
   @Transactional(rollbackFor = Exception.class)
   public void applyRefundAndUpdateStatus(RefundVO refundVO) {
-    // 1. REFUND 테이블에 환불 정보 삽입
     int insertResult = refundDAO.applyRefund(refundVO);
     if (insertResult == 0) {
       throw new RuntimeException("환불 정보 삽입(INSERT)에 실패했습니다.");
     }
-    
-    // 2. ORDERS 테이블의 상태 업데이트
+
     refundDAO.updateRefundStatusToRequest(refundVO.getOrderId());
   }
   
