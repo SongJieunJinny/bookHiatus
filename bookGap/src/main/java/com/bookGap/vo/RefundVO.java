@@ -5,8 +5,8 @@ import java.sql.Timestamp;
 public class RefundVO {
   
   private int refundNo;          // 환불번호
-  private int orderId;           // 주문ID
-  private int paymentNo;         // 결제ID
+  private Integer orderId;           // 주문ID
+  private Integer paymentNo;         // 결제ID
   private String refundReason;   // 환불사유
   private String refundMail;     // 이메일
   private int refundStatus;      // 환불상태(1 요청, 2 처리중, 3 완료, 4 거절)
@@ -35,18 +35,23 @@ public class RefundVO {
   public void setRefundNo(int refundNo) {
     this.refundNo = refundNo;
   }
-  public int getOrderId() {
+  
+  public Integer getOrderId() {
     return orderId;
   }
-  public void setOrderId(int orderId) {
+
+  public void setOrderId(Integer orderId) {
     this.orderId = orderId;
   }
-  public int getPaymentNo() {
+
+  public Integer getPaymentNo() {
     return paymentNo;
   }
-  public void setPaymentNo(int paymentNo) {
+
+  public void setPaymentNo(Integer paymentNo) {
     this.paymentNo = paymentNo;
   }
+
   public String getRefundReason() {
     return refundReason;
   }
