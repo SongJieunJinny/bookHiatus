@@ -17,17 +17,15 @@ public class RefundServiceImpl implements RefundService{
   @Autowired public RefundDAO refundDAO;
 
   @Override
-  @Transactional(rollbackFor = Exception.class) // 4. 트랜잭션 적용
+  @Transactional(rollbackFor = Exception.class)
   public void applyRefundAndUpdateStatus(RefundVO refundVO) {
-    // 첫 번째 DB 작업: REFUND 테이블에 삽입
+    // 1. REFUND 테이블에 환불 정보 삽입
     int insertResult = refundDAO.applyRefund(refundVO);
-    
-    // 삽입이 실패하면 예외를 발생시켜 롤백
     if (insertResult == 0) {
-        throw new RuntimeException("환불 정보 삽입에 실패했습니다. (OrderId: " + refundVO.getOrderId() + ")");
+      throw new RuntimeException("환불 정보 삽입(INSERT)에 실패했습니다.");
     }
     
-    // 두 번째 DB 작업: ORDERS 테이블의 상태 업데이트
+    // 2. ORDERS 테이블의 상태 업데이트
     refundDAO.updateRefundStatusToRequest(refundVO.getOrderId());
   }
   
@@ -44,6 +42,11 @@ public class RefundServiceImpl implements RefundService{
     params.put("orderId", orderId);
     params.put("paymentNo", paymentNo);
     return refundDAO.getRefundByOrderAndPayment(params);
+  }
+  
+  @Override
+  public void updateRefundStatusToRequest(int orderId) {
+    refundDAO.updateRefundStatusToRequest(orderId);
   }
 
 }
