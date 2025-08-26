@@ -84,50 +84,54 @@
   <!-- ================= INSERT / UPDATE / DELETE ================= -->
 
   <insert id="insertOrder" parameterType="com.bookGap.vo.OrderVO" 
-          useGeneratedKeys="true" keyProperty="orderId">
-    INSERT INTO ORDERS
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      ORDER_DATE,
-      ORDER_STATUS,
-      TOTAL_PRICE,
-      RECEIVER_NAME,
-      RECEIVER_PHONE,
-      RECEIVER_POST_CODE,
-      RECEIVER_ROAD_ADDRESS,
-      RECEIVER_DETAIL_ADDRESS,
-      DELIVERY_REQUEST,
-      ORDER_TYPE,
-      <if test="userId != null and userId != ''">
-        USER_ID,
-        USER_ADDRESS_ID,
-      </if>
-      <if test="guestId != null and guestId != ''">
-        GUEST_ID,
-        ORDER_PASSWORD,
-      </if>
-    </trim>
-    VALUES
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      NOW(),
-      #{orderStatus},
-      #{totalPrice},
-      #{receiverName},
-      #{receiverPhone},
-      #{receiverPostCode},
-      #{receiverRoadAddress},
-      #{receiverDetailAddress},
-      #{deliveryRequest},
-      #{orderType},
-      <if test="userId != null and userId != ''">
-        #{userId},
-        #{userAddressId},
-      </if>
-      <if test="guestId != null and guestId != ''">
-        #{guestId},
-        #{orderPassword},
-      </if>
-    </trim>
-  </insert>
+        useGeneratedKeys="true" keyProperty="orderId">
+	  INSERT INTO ORDERS
+	  <trim prefix="(" suffix=")" suffixOverrides=",">
+	    ORDER_DATE,
+	    ORDER_STATUS,
+	    TOTAL_PRICE,
+	    RECEIVER_NAME,
+	    RECEIVER_PHONE,
+	    RECEIVER_POST_CODE,
+	    RECEIVER_ROAD_ADDRESS,
+	    RECEIVER_DETAIL_ADDRESS,
+	    DELIVERY_REQUEST,
+	    ORDER_TYPE,
+	    <if test="userId != null and userId != ''">
+	      USER_ID,
+	      USER_ADDRESS_ID,
+	    </if>
+	    <if test="guestId != null and guestId != ''">
+	      GUEST_ID,
+	    </if>
+	    <if test="orderPassword != null and orderPassword != ''">
+	      ORDER_PASSWORD,
+	    </if>
+	  </trim>
+	  VALUES
+	  <trim prefix="(" suffix=")" suffixOverrides=",">
+	    NOW(),
+	    #{orderStatus},
+	    #{totalPrice},
+	    #{receiverName},
+	    #{receiverPhone},
+	    #{receiverPostCode},
+	    #{receiverRoadAddress},
+	    #{receiverDetailAddress},
+	    #{deliveryRequest},
+	    #{orderType},
+	    <if test="userId != null and userId != ''">
+	      #{userId},
+	      #{userAddressId},
+	    </if>
+	    <if test="guestId != null and guestId != ''">
+	      #{guestId},
+	    </if>
+	    <if test="orderPassword != null and orderPassword != ''">
+	      #{orderPassword},
+	    </if>
+	  </trim>
+	</insert>
 
   <insert id="insertOrderDetail" parameterType="com.bookGap.vo.OrderDetailVO">
     INSERT INTO ORDER_DETAIL
