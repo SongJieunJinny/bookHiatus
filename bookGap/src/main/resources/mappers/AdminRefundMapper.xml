@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+			"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bookGap.mapper.adminRefundMapper">
+<!-- 환불 기본 + 주문/결제 일부 필드 매핑 -->
+  <resultMap id="RefundWithJoins" type="com.bookGap.vo.RefundVO">
+    <id property="refundNo" column="REFUND_NO"/>
+    <result property="orderId" column="ORDER_ID"/>
+    <result property="paymentNo" column="PAYMENT_NO"/>
+    <result property="refundReason" column="REFUND_REASON"/>
+    <result property="refundImage" column="REFUND_IMAGE"/>
+    <result property="refundMail" column="REFUND_MAIL"/>
+    <result property="refundStatus" column="REFUND_STATUS"/>
+    <result property="createdAt" column="CREATED_AT"/>
+    <!-- joins -->
+    <result property="userId" column="USER_ID"/>
+    <result property="guestId" column="GUEST_ID"/>
+    <result property="orderStatus" column="ORDER_STATUS"/>
+    <result property="paymentMethod" column="PAYMENT_METHOD"/>
+    <result property="paymentStatus" column="PAYMENT_STATUS"/>
+  </resultMap>
+
+  <!-- 환불 목록 -->
+  <select id="selectAllRefunds" resultMap="RefundWithJoins">
+    SELECT
+      r.REFUND_NO, r.ORDER_ID, r.PAYMENT_NO,
+      r.REFUND_REASON, r.REFUND_IMAGE, r.REFUND_MAIL,
+      r.REFUND_STATUS, r.CREATED_AT,
+      o.USER_ID, o.GUEST_ID, o.ORDER_STATUS,
+      p.PAYMENT_METHOD, p.STATUS AS PAYMENT_STATUS
+    FROM REFUND r
+    JOIN ORDERS o ON r.ORDER_ID = o.ORDER_ID
+    LEFT JOIN PAYMENTS p ON r.PAYMENT_NO = p.PAYMENT_NO
+    ORDER BY r.CREATED_AT DESC
+  </select>
+
+  <!-- 환불 상세 -->
+  <select id="getRefundDetail" resultMap="RefundWithJoins">
+    SELECT
+      r.REFUND_NO, r.ORDER_ID, r.PAYMENT_NO,
+      r.REFUND_REASON, r.REFUND_IMAGE, r.REFUND_MAIL,
+      r.REFUND_STATUS, r.CREATED_AT,
+      o.USER_ID, o.GUEST_ID, o.ORDER_STATUS,
+      p.PAYMENT_METHOD, p.STATUS AS PAYMENT_STATUS
+    FROM REFUND r
+    JOIN ORDERS o ON r.ORDER_ID = o.ORDER_ID
+    LEFT JOIN PAYMENTS p ON r.PAYMENT_NO = p.PAYMENT_NO
+    WHERE r.REFUND_NO = #{refundNo}
+  </select>
+
+  <!-- (선택) 주문 상세(상품 라인업) - 필요 시 JSP에서 호출 -->
+  <resultMap id="OrderDetailWithBook" type="com.bookGap.vo.OrderDetailVO">
+    <id property="orderDetailNo" column="ORDER_DETAIL_NO"/>
+    <result property="orderCount" column="ORDER_COUNT"/>
+    <result property="orderPrice" column="ORDER_PRICE"/>
+    <result property="refundCheck" column="REFUND_CHECK"/>
+    <result property="bookNo" column="BOOK_NO"/>
+    <association property="book" javaType="com.bookGap.vo.BookVO">
+      <result property="bookCategory" column="BOOK_CATEGORY"/>
+      <result property="title" column="TITLE"/>
+      <result property="isbn" column="ISBN"/>
+    </association>
+  </resultMap>
+
+  <select id="getOrderDetailsByOrderId" resultMap="OrderDetailWithBook">
+    SELECT
+      od.ORDER_DETAIL_NO,
+      od.ORDER_COUNT,
+      od.ORDER_PRICE,
+      od.REFUND_CHECK,
+      b.BOOK_NO,
+      b.BOOK_CATEGORY,
+      p.TITLE,
+      p.ISBN
+    FROM ORDER_DETAIL od
+    JOIN BOOK b ON od.BOOK_NO = b.BOOK_NO
+    JOIN PRODUCT_API p ON b.ISBN = p.ISBN
+    WHERE od.ORDER_ID = #{orderId}
+  </select>
+
+  <!-- REFUND 상태 업데이트 -->
+  <update id="updateRefundStatus">
+    UPDATE REFUND
+    SET REFUND_STATUS = #{refundStatus}
+    WHERE REFUND_NO = #{refundNo}
+  </update>
+
+  <!-- ORDERS.REFUND_STATUS 동기화 -->
+  <update id="updateOrderRefundStatusByRefundNo">
+    UPDATE ORDERS
+    SET REFUND_STATUS = #{refundStatus}
+    WHERE ORDER_ID = (
+      SELECT ORDER_ID FROM REFUND WHERE REFUND_NO = #{refundNo}
+    )
+  </update>
+
+  <!-- 환불완료(3)일 때 ORDERS.ORDER_STATUS = 5 -->
+  <update id="updateOrderStatusToReturnedByRefundNo">
+    UPDATE ORDERS
+    SET ORDER_STATUS = 5
+    WHERE ORDER_ID = (
+      SELECT ORDER_ID FROM REFUND WHERE REFUND_NO = #{refundNo}
+    )
+  </update>
+
+ 
+</mapper>

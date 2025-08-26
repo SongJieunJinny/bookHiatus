@@ -75,5 +75,10 @@ public class BookServiceImpl implements BookService{
   public int getBookTotalCountByKeyword(SearchVO searchVO) {
     return bookDAO.getBookTotalCountByKeyword(searchVO);
   }
+  
+  @Override
+  public List<ProductApiVO> getPopularBooks(SearchVO searchVO) {
+      return bookDAO.selectPopularBooks(searchVO);
+  }
 
 }

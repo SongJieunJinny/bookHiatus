@@ -218,4 +218,20 @@ INNER JOIN PRODUCT_API p ON b.isbn = p.isbn
 	  WHERE (p.title LIKE CONCAT('%', #{searchValue}, '%') OR p.author LIKE CONCAT('%', #{searchValue}, '%'))
 	</select>
 	
+	
+	<select id="selectPopularBooks" parameterType="SearchVO" resultType="com.bookGap.vo.ProductApiVO">
+	  SELECT 
+	    p.isbn,
+	    p.title,
+	    p.image,
+	    p.discount,
+	    IFNULL(SUM(od.ORDER_COUNT), 0) AS total_sales
+	  FROM BOOK b
+	  JOIN PRODUCT_API p ON b.isbn = p.isbn
+	  LEFT JOIN ORDER_DETAIL od ON od.BOOK_NO = b.BOOK_NO
+	  GROUP BY p.isbn
+	  ORDER BY total_sales DESC
+	  LIMIT #{start}, #{perPage}
+	</select>
+	
 </mapper>

@@ -26,5 +26,6 @@ public interface BookService {
    List<ProductApiVO> searchBooksByKeyword(SearchVO searchVO);
    // 제목 또는 저자명으로 검색된 도서의 전체 개수 조회
    int getBookTotalCountByKeyword(SearchVO searchVO);
+   List<ProductApiVO> getPopularBooks(SearchVO searchVO);
 
 }
