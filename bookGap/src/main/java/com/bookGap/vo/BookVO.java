@@ -22,6 +22,7 @@ public class BookVO {
   private String description;
   private String pubdate;
   private String link;
+  private String image;
   
 
   // 외부 API 응답 포함
@@ -104,7 +105,7 @@ public class BookVO {
   }
   
   public String getImage() {
-	    return bookImgUrl != null ? bookImgUrl : (productInfo != null ? productInfo.getImage() : null);
+	    return image != null ? image : (productInfo != null ? productInfo.getImage() : null);
 	}
 
 	public String getTitle() {
@@ -142,5 +143,9 @@ public class BookVO {
         + bookImgUrl + ", bookIndex=" + bookIndex + ", publisherBookReview=" + publisherBookReview + ", commentCount="
         + commentCount + ", title=" + title + ", productInfo=" + productInfo + "]";
   }
+public void setImage(String image) {
+	this.image = image;
+}
+  
 
 }
