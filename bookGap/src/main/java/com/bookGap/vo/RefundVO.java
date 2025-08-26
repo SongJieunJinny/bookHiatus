@@ -12,7 +12,6 @@ public class RefundVO {
   private int refundStatus;      // 환불상태(1 요청, 2 처리중, 3 완료, 4 거절)
   private Timestamp createdAt;   // 신청일시
   
-  
   private String userId;         // ORDERS.USER_ID
   private String guestId;        // ORDERS.GUEST_ID
   private Integer orderStatus;   // ORDERS.ORDER_STATUS
@@ -30,8 +29,6 @@ public class RefundVO {
   }
   
   //getter / setter
-  
-  
   public int getRefundNo() {
     return refundNo;
   }
