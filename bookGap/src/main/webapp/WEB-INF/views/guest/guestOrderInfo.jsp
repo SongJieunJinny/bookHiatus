@@ -28,7 +28,7 @@
 	          <div class="guestOrderInfo">[주문자 정보]
 	            <div class="guestOrderInfo1">${order.guestName}</div>
 	            <div class="guestOrderInfo2">${order.guestPhone}</div>
-	            <div class="guestOrderInfo3">${order.guestEmail}</div>
+	            <div class="guestOrderInfo3">${guestEmail}</div>
 	          </div>                        
 	        </div>
 	      </div>
@@ -80,7 +80,7 @@
 	      <div class="guestOrderPayComplDiv1">
 	        <div class="guestOrderPayComplDiv2" data-order-idx="${status.index}">
 	          <div class="orderPayComplLine" 
-     						 onclick="goGuestOrderDetailsView(${order.orderId})">주문상세>></div>
+	          		 onclick="goGuestOrderDetailsView(${order.orderId})">주문상세>></div>
 		        <c:forEach var="item" items="${order.orderDetails}" varStatus="s">
 		          <div class="orderItem" data-price="${item.orderPrice}" 
 													           data-qty="${item.orderCount}" 
@@ -142,9 +142,11 @@ $(document).ready(function() {
     );
   });
 });
+
+//✅ 주문 상세 보기 페이지로 이동하는 함수
 function goGuestOrderDetailsView(orderId) {
-	  location.href = "<%=request.getContextPath()%>/guest/guestOrderDetailsView.do?orderId=" + orderId;
-	}
+	location.href = "<%=request.getContextPath()%>/guest/guestOrderDetailsView.do?orderId=" + orderId;
+}
 	
 //✅ 장바구니 수량 업데이트
 function updateCartCount() {
