@@ -118,111 +118,94 @@ public class PaymentServiceImpl implements PaymentService{
   public Map<String, Object> prepareAndCreateTossOrder(Map<String, Object> orderData, Principal principal, HttpServletRequest request) throws Exception {
     
     OrderVO newOrder = new OrderVO();
-    
     String customerKey;
     String customerName;
 
-    // 1. 주문자 정보 및 배송지 정보 설정 (회원/비회원 분기)
-    if(principal != null){ // 회원
+    // --- 1. 주문자/배송지 정보 설정 ---
+    if (principal != null) { // 회원일 경우
       String userId = principal.getName();
       customerKey = userId;
-      newOrder.setUserId(userId);
-      newOrder.setOrderType(1);
-      
       Integer userAddressId = (Integer) orderData.get("userAddressId");
       UserAddressVO address = orderDAO.findAddressByUserAddressId(userAddressId);
-      if(address == null || !address.getUserId().equals(userId)){ throw new Exception("유효하지 않은 배송지입니다."); }
-      customerName = address.getUserName();
+      if (address == null || !address.getUserId().equals(userId)) {
+          throw new Exception("유효하지 않거나 소유권이 없는 배송지입니다.");
+      }
+      newOrder.setUserId(userId);
+      newOrder.setOrderType(1);
       newOrder.setUserAddressId(userAddressId);
+      customerName = address.getUserName();
       newOrder.setReceiverName(address.getUserName());
       newOrder.setReceiverPhone(address.getUserPhone());
       newOrder.setReceiverPostCode(address.getPostCode());
       newOrder.setReceiverRoadAddress(address.getRoadAddress());
       newOrder.setReceiverDetailAddress(address.getDetailAddress());
-    }else{ // 비회원
+    } else { // 비회원일 경우
       String guestEmail = (String) orderData.get("guestEmail");
-      String guestNameFromForm = (String) orderData.get("guestName");
-      String guestPhoneFromForm = (String) orderData.get("guestPhone");
-      String orderPassword = (String) orderData.get("orderPassword");
-      
       GuestVO guest = guestService.getGuestByEmail(guestEmail);
       String guestId;
-      
-      if(guest == null){
+      if (guest == null) {
         guest = new GuestVO();
-        guestId = "G-" + System.currentTimeMillis(); // 고유한 ID 생성
+        guestId = "G-" + System.currentTimeMillis();
         guest.setGuestId(guestId);
-        guest.setGuestName(guestNameFromForm);
-        guest.setGuestPhone(guestPhoneFromForm);
+        guest.setGuestName((String) orderData.get("guestName"));
+        guest.setGuestPhone((String) orderData.get("guestPhone"));
         guest.setGuestEmail(guestEmail);
         guestService.registerGuest(guest);
-      }else{
-        guestId = guest.getGuestId();
-      }
+        } else {
+          guestId = guest.getGuestId();
+        }
       customerKey = guestId;
-      customerName = guestNameFromForm;
-
+      customerName = (String) orderData.get("guestName");
       newOrder.setOrderType(2);
       newOrder.setGuestId(guestId);
-      newOrder.setOrderPassword(orderPassword);
+      newOrder.setOrderPassword((String) orderData.get("orderPassword"));
       newOrder.setReceiverName((String) orderData.get("receiverName"));
       newOrder.setReceiverPhone((String) orderData.get("receiverPhone"));
       newOrder.setReceiverPostCode((String) orderData.get("receiverPostCode"));
       newOrder.setReceiverRoadAddress((String) orderData.get("receiverRoadAddress"));
       newOrder.setReceiverDetailAddress((String) orderData.get("receiverDetailAddress"));
     }
-
     newOrder.setDeliveryRequest((String) orderData.get("deliveryRequest"));
     newOrder.setOrderStatus(1);
     
-    // 2. 서버에서 가격 및 재고 재계산 (친구의 OrderServiceImpl 로직 차용)
+    // --- 2. 가격 계산 및 검증 (이제 회원/비회원 모두 동일하게 처리) ---
     @SuppressWarnings("unchecked")
     List<Map<String, Object>> items = (List<Map<String, Object>>) orderData.get("orderItems");
     List<String> isbnList = new ArrayList<>();
-    for (Map<String, Object> item : items) isbnList.add((String) item.get("isbn"));
-    List<BookVO> booksInDb = orderDAO.selectBooksByIsbnList(isbnList);
-    
-    int productTotalPrice = 0; // 순수 상품 가격 합계
-    for(Map<String, Object> item : items) {
-      String isbn = (String) item.get("isbn");
-      Integer quantity = (Integer) item.get("quantity");
-      BookVO book = booksInDb.stream().filter(b -> b.getIsbn().equals(isbn))
-                                      .findFirst()
-                                      .orElseThrow(() -> new Exception("주문 상품 정보를 찾을 수 없습니다: " + isbn));
-      productTotalPrice += book.getProductInfo().getDiscount() * quantity;
+    for (Map<String, Object> item : items) {
+      isbnList.add((String) item.get("isbn"));
     }
+    List<BookVO> booksInDb = orderDAO.selectBooksByIsbnList(isbnList);
 
-    int deliveryFee = (productTotalPrice >= 50000) ? 0 : 3000;
-    int serverCalculatedTotalPrice = productTotalPrice + deliveryFee;
+    int serverCalculatedTotalPrice = 0;
+    for (Map<String, Object> item : items) {
+      String isbn = (String) item.get("isbn");
+      int quantity = (Integer) item.get("quantity");
+      BookVO book = booksInDb.stream().filter(b -> b.getIsbn().equals(isbn)).findFirst().orElseThrow(() -> new Exception("DB에 없는 상품 주문 시도: " + isbn));
+      serverCalculatedTotalPrice += book.getProductInfo().getDiscount() * quantity;
+    }
+    serverCalculatedTotalPrice += (serverCalculatedTotalPrice >= 50000 ? 0 : 3000);
 
-    int clientTotalPrice = (Integer) orderData.get("totalPrice");
-    System.out.println("-------------------------------------------");
-    System.out.println("[가격 검증] 클라이언트가 보낸 금액: " + clientTotalPrice);
-    System.out.println("[가격 검증] 서버가 계산한 금액: " + serverCalculatedTotalPrice);
-    System.out.println("-------------------------------------------");
-    
-    if(serverCalculatedTotalPrice != (Integer) orderData.get("totalPrice")){
-      throw new Exception("주문 가격이 일치하지 않습니다. (서버: " + serverCalculatedTotalPrice +", 클라이언트:" + orderData.get("totalPrice") + ")");
+    if (serverCalculatedTotalPrice != (Integer) orderData.get("totalPrice")) {
+      throw new Exception("가격 정보가 일치하지 않습니다.");
     }
     newOrder.setTotalPrice(serverCalculatedTotalPrice);
 
-    // 3. 주문(ORDERS) 정보 DB 저장
+    // --- 3. 주문(ORDERS) 정보 DB 저장 ---
     orderDAO.insertOrder(newOrder);
     int orderId = newOrder.getOrderId();
 
-    // 4. 주문 상세(ORDER_DETAIL) 정보 DB 저장 및 재고 업데이트
+    // --- 4. ★ (핵심!) 주문 상세(ORDER_DETAIL) 정보 저장 및 재고 업데이트 ★ ---
     List<OrderDetailVO> detailList = new ArrayList<>();
-    for(Map<String, Object> item : items){
+    for (Map<String, Object> item : items) {
       String isbn = (String) item.get("isbn");
-      Integer quantity = (Integer) item.get("quantity");
+      int quantity = (Integer) item.get("quantity");
       BookVO currentBook = booksInDb.stream().filter(b -> b.getIsbn().equals(isbn)).findFirst().get();
 
-      System.out.println("[재고 확인] 상품: " + currentBook.getProductInfo().getTitle() + ", 현재 재고: " + currentBook.getBookStock() + ", 주문 수량: " + quantity);
-      
-      if(!orderDAO.updateBookStock(isbn, quantity)){
+      if (!orderDAO.updateBookStock(isbn, quantity)) {
         throw new Exception("재고가 부족합니다: " + currentBook.getProductInfo().getTitle());
       }
-
+      
       OrderDetailVO d = new OrderDetailVO();
       d.setOrderId(orderId);
       d.setBookNo(currentBook.getBookNo());
@@ -231,23 +214,22 @@ public class PaymentServiceImpl implements PaymentService{
       d.setRefundCheck(0);
       detailList.add(d);
     }
-    if (!detailList.isEmpty()) orderDAO.insertOrderDetailList(detailList);
+    if (!detailList.isEmpty()) {
+      orderDAO.insertOrderDetailList(detailList);
+    }
 
-    // 5. 결제 대기(PAYMENTS) 정보 DB 저장
+    // --- 5. 결제 대기(PAYMENTS) 정보 DB 저장 ---
     PaymentVO payment = new PaymentVO();
     payment.setOrderId(orderId);
     payment.setAmount(new BigDecimal(newOrder.getTotalPrice()));
     payment.setStatus(1);
     payment.setPaymentMethod(1);
-    if(principal != null){
-      payment.setUserId(principal.getName());
-    }else{
-      payment.setGuestId(customerKey);
-    }
+    if (principal != null) payment.setUserId(principal.getName());
+    else payment.setGuestId(customerKey);
     paymentDAO.insertPayment(payment);
     int paymentNo = payment.getPaymentNo();
-    
-    // 6. 프론트엔드로 보낼 정보 꾸러미 생성
+
+    // --- 6. 프론트엔드 응답 생성 ---
     Map<String, Object> response = new HashMap<>();
     response.put("status", "SUCCESS");
     response.put("paymentNo", paymentNo);
@@ -256,8 +238,6 @@ public class PaymentServiceImpl implements PaymentService{
     response.put("amount", newOrder.getTotalPrice());
     response.put("orderName", (String) orderData.get("orderName"));
 
-    System.out.println("[성공] 모든 준비가 완료되었습니다. Payment No: " + paymentNo);
-    
     return response;
   }
 
