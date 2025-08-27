@@ -356,15 +356,11 @@ $(document).ready(function() {
             guestPhone:      $('#ordererPhone').val(),
             orderPassword:   $('#orderPassword').val(),
             guestEmail:      $('#ordererEmail').val(),
-            
-            // [배송지 정보]
             receiverName:    $('#receiverName').val(),
             receiverPhone:   $('#receiverPhone').val(),
             receiverPostCode:$('#receiverPostCode').val(),
             receiverRoadAddress: $('#receiverRoadAddress').val(),
             receiverDetailAddress: $('#receiverDetailAddress').val(),
-
-            // [주문/결제 공통 정보]
             deliveryRequest: $('#deliveryRequest').val(),
             totalPrice:      parseInt($('.finalPrice').data('price')),
             deliveryFee:     parseInt($('.deliveryFee').text().replace(/[^0-9]/g, '')),
@@ -422,22 +418,29 @@ function proceedToRealPayment(guestOrderData, realGuestId) {
 	            data: JSON.stringify(guestOrderData),
 	            success: function(response) {
                          if (response.status === 'SUCCESS') {
-				                  // 성공 시, 서버가 준비해준 정보로 토스 결제창을 엽니다.
-				                   const tossPayments = TossPayments('test_ck_ZLKGPx4M3MG0eMKOzG94rBaWypv1');
-				                   tossPayments.requestPayment('카드', {
-				                      amount: response.amount,
-				                      orderId: "BG_" + response.paymentNo + "_" + new Date().getTime(),
-				                      orderName: response.orderName,
-				                      customerName: response.customerName,
-				                      customerKey: response.customerKey,
-				                      successUrl: window.location.origin + contextPath + "/payment/success",
-				                      failUrl: window.location.origin + contextPath + "/payment/fail"
-				                  });
+                        	 proceedToTossPayment(response);
                          } else { alert("결제 준비 중 오류 발생: " + response.message); }
                        },
 	            error: function(xhr) { alert("서버 통신 오류가 발생했습니다."); }
 	         });
   }
+}
+
+function proceedToTossPayment(serverResponse) {
+    const tossPayments = TossPayments('test_ck_ZLKGPx4M3MG0eMKOzG94rBaWypv1');
+    tossPayments.requestPayment('카드', {
+        amount: serverResponse.amount,
+        orderId: "BG_" + serverResponse.paymentNo + "_" + new Date().getTime(),
+        orderName: serverResponse.orderName,
+        customerName: serverResponse.customerName,
+        customerKey: serverResponse.customerKey,
+        successUrl: window.location.origin + "<%=request.getContextPath()%>/payment/success",
+        failUrl: window.location.origin + "<%=request.getContextPath()%>/payment/fail"
+    }).catch(function (error) {
+        if (error.code !== 'USER_CANCEL') {
+            alert('결제에 실패하였습니다. 오류: ' + error.message);
+        }
+    });
 }
 
 //총 금액 계산 및 표시 함수
