@@ -947,7 +947,12 @@ font-size: 13px;
   justify-content: center;
   font-weight:bold;
 }
-.orderInfoBox {
+.orderDetailTitle{
+	font-weight:bold; 
+	font-size: 21px;
+	margin-bottom: 5px; 
+}
+.orderInfoBox, .deliveryInfoBox {
 	border:1px solid #ccc; 
 	padding:15px; 
 	margin-bottom:20px; 
@@ -1013,6 +1018,30 @@ font-size: 13px;
 	margin-bottom: 20px;
 }
 .refundFormButton{
+	background-color: #ccc;
+  color: black;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  width: 15%;
+  height: 45px;
+  font-size: 18px;
+  text-align: center;
+  margin-left: 45%;	
+  cursor: pointer;
+}
+.refundFormButton:hover { 
+	background:#333; 
+	color: white;
+	cursor: pointer;
+}
+#refundStatusBox{
+	display:none;
+	padding:15px;
+	border:1px solid #ddd;
+	border-radius:8px;	
+	margin-bottom: 20px;	
+}
+#backMyOrder{
 	background-color: black;
   color: white;
   border: 1px solid black;
@@ -1022,14 +1051,10 @@ font-size: 13px;
   font-size: 18px;
   text-align: center;
   margin-left: 45%;	
+  cursor: pointer;
 }
-.refundFormButton:hover { 
+#backMyOrder:hover { 
 	background:#333; 
-}
-#refundStatusBox{
-	display:none;
-	margin-top:15px;
-	padding:15px;
-	border:1px solid #ddd;
-	border-radius:8px;	
+	color: white;
+	cursor: pointer;
 }

@@ -345,21 +345,31 @@ $(document).ready(function() {
 	      });
 	    </c:forEach>
 
+    let orderName = $(".orderDetailsTitle").first().text();
+    const remainingItems = items.length - 1;
+    if (remainingItems > 0) {
+      orderName += " 외 " + remainingItems + "건";
+    }
+    
     const guestOrderData = {
-    		    orderItems: items,
-		  	    totalPrice: parseInt($('.finalPrice').data('price')),
-		
-		  	    ordererName: $('#ordererName').val(),
-		  	    ordererPhone: $('#ordererPhone').val(),
-		  	    orderPassword: $('#orderPassword').val(),
-		  	    ordererEmail: $('#ordererEmail').val(),
-		
-		  	    receiverName: $('#receiverName').val(),
-		  	    receiverPhone: $('#receiverPhone').val(),
-		  	    receiverPostCode: $('#receiverPostCode').val(),
-		  	    receiverRoadAddress: $('#receiverRoadAddress').val(),
-		  	    receiverDetailAddress: $('#receiverDetailAddress').val(),
-		  	    deliveryRequest: $('#deliveryRequest').val()
+    		    guestName:       $('#ordererName').val(),
+            guestPhone:      $('#ordererPhone').val(),
+            orderPassword:   $('#orderPassword').val(),
+            guestEmail:      $('#ordererEmail').val(),
+            
+            // [배송지 정보]
+            receiverName:    $('#receiverName').val(),
+            receiverPhone:   $('#receiverPhone').val(),
+            receiverPostCode:$('#receiverPostCode').val(),
+            receiverRoadAddress: $('#receiverRoadAddress').val(),
+            receiverDetailAddress: $('#receiverDetailAddress').val(),
+
+            // [주문/결제 공통 정보]
+            deliveryRequest: $('#deliveryRequest').val(),
+            totalPrice:      parseInt($('.finalPrice').data('price')),
+            deliveryFee:     parseInt($('.deliveryFee').text().replace(/[^0-9]/g, '')),
+            orderItems:      items,
+            orderName:       orderName
     	};
     
     console.log("서버로 전송할 데이터:", guestOrderData);
@@ -393,37 +403,40 @@ function proceedToRealPayment(guestOrderData, realGuestId) {
   let orderName = items[0].isbn;
   if (items.length > 1) orderName += " 외 " + (items.length - 1) + "건";
 
-  if (paymentMethod === 'kakaopay') {
-    $.ajax({
-      type: "POST",
-      url: contextPath + "/payment/ready/kakaopay",
-      contentType: "application/json",
-      data: JSON.stringify({
-    	  partner_order_id: String(guestOrderData.orderId),
-        partner_user_id: realGuestId, // (완벽) 파라미터로 받은 '진짜' guestId
-        item_name: orderName,
-        quantity: items.reduce((sum, item) => sum + item.quantity, 0),
-        total_amount: guestOrderData.totalPrice
-      }),
-      success: (res) => window.location.href = res.next_redirect_pc_url,
-      error: () => alert("카카오페이 결제 준비에 실패했습니다.")
+  if (selectedPaymentMethod === 'kakaopay') {
+    $.ajax({ type: "POST",
+						 url: contextPath + "/payment/ready/kakaopay",
+					   contentType: "application/json",
+						 data: JSON.stringify({ partner_order_id: String(guestOrderData.orderId),
+															      partner_user_id: realGuestId, // (완벽) 파라미터로 받은 '진짜' guestId
+															      item_name: orderName,
+															      quantity: items.reduce((sum, item) => sum + item.quantity, 0),
+															      total_amount: guestOrderData.totalPrice }),
+						 success: (res) => window.location.href = res.next_redirect_pc_url,
+						 error: () => alert("카카오페이 결제 준비에 실패했습니다.")
     });
-
-  } else if (paymentMethod === 'tosspay') {
-    const tossPayments = TossPayments('test_ck_ZLKGPx4M3MG0eMKOzG94rBaWypv1');
-    tossPayments.requestPayment('카드', {
-    	amount: guestOrderData.totalPrice,
-      orderId: "bookGap_guest_" + guestOrderData.orderId + "_" + new Date().getTime(),
-      orderName: orderName,
-      customerName: guestOrderData.ordererName,
-      customerKey: realGuestId, 
-      successUrl: window.location.origin + contextPath + "/payment/success/tosspay",
-      failUrl: window.location.origin + contextPath + "/payment/fail"
-    }).catch(function (error) {
-      if (error.code !== 'USER_CANCEL') {
-        alert('결제에 실패하였습니다. 오류: ' + error.message);
-      }
-    });
+  } else if (selectedPaymentMethod === 'tosspay') {
+	  $.ajax({ type: "POST",
+	            url: contextPath + "/payment/prepare", 
+	            contentType: "application/json",
+	            data: JSON.stringify(guestOrderData),
+	            success: function(response) {
+                         if (response.status === 'SUCCESS') {
+				                  // 성공 시, 서버가 준비해준 정보로 토스 결제창을 엽니다.
+				                   const tossPayments = TossPayments('test_ck_ZLKGPx4M3MG0eMKOzG94rBaWypv1');
+				                   tossPayments.requestPayment('카드', {
+				                      amount: response.amount,
+				                      orderId: "BG_" + response.paymentNo + "_" + new Date().getTime(),
+				                      orderName: response.orderName,
+				                      customerName: response.customerName,
+				                      customerKey: response.customerKey,
+				                      successUrl: window.location.origin + contextPath + "/payment/success",
+				                      failUrl: window.location.origin + contextPath + "/payment/fail"
+				                  });
+                         } else { alert("결제 준비 중 오류 발생: " + response.message); }
+                       },
+	            error: function(xhr) { alert("서버 통신 오류가 발생했습니다."); }
+	         });
   }
 }
 
