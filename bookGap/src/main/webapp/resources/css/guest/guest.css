@@ -795,7 +795,12 @@ input[type="checkbox"] {
   justify-content: center;
   font-weight:bold;
 }
-.orderInfoBox {
+.guestOrderDetailsTitle{
+	font-weight:bold; 
+	font-size: 21px;
+	margin-bottom: 5px; 
+}
+.orderInfoBox, .deliveryInfoBox {
 	border:1px solid #ccc; padding:15px; margin-bottom:20px; border-radius:8px; background:#fafafa;
 }
 .status-refund-1 {
@@ -848,6 +853,30 @@ input[type="checkbox"] {
 	margin-top: 5px;
 }
 .guestRefundFormButton{
+	background-color: #ccc;
+  color: black;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  width: 15%;
+  height: 45px;
+  font-size: 18px;
+  text-align: center;
+  margin-left: 45%;	
+  cursor: pointer;
+}
+.guestRefundFormButton:hover { 
+	background:#333; 
+	color: white;
+	cursor: pointer;
+}
+#refundStatusBox{
+	display:none;
+	padding:15px;
+	border:1px solid #ddd;
+	border-radius:8px;	
+	margin-bottom: 20px;
+}
+#backGuestOrderInfo{
 	background-color: black;
   color: white;
   border: 1px solid black;
@@ -857,14 +886,10 @@ input[type="checkbox"] {
   font-size: 18px;
   text-align: center;
   margin-left: 45%;	
+  cursor: pointer;
 }
-.guestRefundFormButton:hover { 
+#backGuestOrderInfo:hover { 
 	background:#333; 
-}
-#refundStatusBox{
-	display:none;
-	margin-top:15px;
-	padding:15px;
-	border:1px solid #ddd;
-	border-radius:8px;	
+	color: white;
+	cursor: pointer;
 }
