@@ -26,7 +26,7 @@
            GUEST_PHONE AS guestPhone, 
            GUEST_EMAIL AS guestEmail
       FROM GUEST
-     WHERE GUEST_EMAIL = #{email}
+     WHERE GUEST_EMAIL = #{value}
      LIMIT 1
 	</select>
 

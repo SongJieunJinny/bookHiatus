@@ -63,15 +63,18 @@ public class GuestController {
   @ResponseBody
   public Map<String, Object> createGuestOrder(@RequestBody Map<String, Object> orderData) {
     Map<String, Object> resp = new HashMap<>();
-    try{
+    try {
       Map<String, Object> result = orderService.createGuestOrderWithDetails(orderData);
       resp.put("status", "SUCCESS");
       resp.put("orderId", result.get("orderId"));
       resp.put("guestId", result.get("guestId"));
-    }catch (IllegalStateException e){
+      resp.put("orderName", result.get("orderName"));
+      resp.put("totalPrice", result.get("totalPrice"));
+    } catch (IllegalStateException e) {
       resp.put("status", "FAIL");
       resp.put("message", e.getMessage());
-    }catch (Exception e){
+    } catch (Exception e) {
+      e.printStackTrace();
       resp.put("status", "FAIL");
       resp.put("message", "비회원 주문 처리 중 오류가 발생했습니다.");
     }

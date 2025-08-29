@@ -13,6 +13,9 @@ public class GuestServiceImpl implements GuestService {
 
   @Override
   public void registerGuest(GuestVO guestVO) {
+    if (guestVO.getGuestName() == null || guestVO.getGuestPhone() == null || guestVO.getGuestEmail() == null) {
+      throw new IllegalArgumentException("비회원 정보(이름/전화/이메일)가 누락되었습니다.");
+    }
     guestDAO.insertGuest(guestVO);
   }
 
