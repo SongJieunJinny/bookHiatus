@@ -21,48 +21,26 @@
   </div>
   <form id="guestOrderForm">
 	  <div id="guestOrderFormDiv">
+	  	<!-- 비회원 정보 입력 -->
 	    <div id="guestOrderNav">
 	      <div class="guestInfoTable">
 	        <div class="tableCategory">GUEST INFO</div>
           <div id="guestInfoTableDiv">
-            <div class="guestInfoTableContainer">
-              <div class="guestInfoCategory">NAME</div>
-              <input class="guestInfoTableInput" type="text" id="ordererName" placeholder="NAME">
-            </div>
-            <div class="guestInfoTableContainer">
-              <div class="guestInfoCategory">PHONE</div>
-              <input class="guestInfoTableInput" type="text" id="ordererPhone" placeholder="PHONE">
-            </div>
-            <div class="guestInfoTableContainer">
-              <div class="guestInfoCategory">PW</div>
-              <input class="guestInfoTableInput" type="password" id="orderPassword" placeholder="PW">
-            </div>
-            <div class="guestInfoTableContainer">
-              <div class="guestInfoCategory">PW CHECK</div>
-              <input class="guestInfoTableInput" type="password" id="orderPasswordCheck" placeholder="PW CHECK">
-            </div>
-            <div class="guestInfoTableContainer">
-              <div class="guestInfoCategory">E MAIL</div>
-              <input class="guestInfoTableInput" type="email" id="ordererEmail" placeholder="E MAIL">
-            </div>
+            <div class="guestInfoTableContainer"> <div class="guestInfoCategory">NAME</div> <input class="guestInfoTableInput" type="text" id="ordererName" placeholder="NAME"> </div>
+            <div class="guestInfoTableContainer"> <div class="guestInfoCategory">PHONE</div> <input class="guestInfoTableInput" type="text" id="ordererPhone" placeholder="PHONE"> </div>
+            <div class="guestInfoTableContainer"> <div class="guestInfoCategory">PW</div> <input class="guestInfoTableInput" type="password" id="orderPassword" placeholder="PW"> </div>
+            <div class="guestInfoTableContainer"> <div class="guestInfoCategory">PW CHECK</div> <input class="guestInfoTableInput" type="password" id="orderPasswordCheck" placeholder="PW CHECK"> </div>
+            <div class="guestInfoTableContainer"> <div class="guestInfoCategory">E MAIL</div> <input class="guestInfoTableInput" type="email" id="ordererEmail" placeholder="E MAIL"> </div>
           </div>
         </div><br>
+        <!-- 배송 정보 -->
         <div id="deliveryInfoTable">
           <div class="tableCategory">DELIVERY INFO</div>
           <div class="guestInfoTableDiv">
-            <div class="guestInfoTableContainer">
-              <div class="guestInfoCategory">NAME</div>
-              <input class="guestInfoTableInput" type="text" id="receiverName" placeholder="NAME">
-            </div>
-            <div class="guestInfoTableContainer">
-              <div class="guestInfoCategory">PHONE</div>
-              <input class="guestInfoTableInput" type="text" id="receiverPhone" placeholder="PHONE">
-            </div>
+            <div class="guestInfoTableContainer"> <div class="guestInfoCategory">NAME</div> <input class="guestInfoTableInput" type="text" id="receiverName" placeholder="NAME"> </div>
+            <div class="guestInfoTableContainer"> <div class="guestInfoCategory">PHONE</div> <input class="guestInfoTableInput" type="text" id="receiverPhone" placeholder="PHONE"> </div>
             <div class="guestInfoTableAddressContainer">
-            	<div class="guestInfoTableAddressContainerDiv">
-              	<div class="guestInfoCategory">POST NO</div>
-              	<input class="guestInfoTablePostInput" type="text" id="receiverPostCode" placeholder="POST NO">
-              </div>
+            	<div class="guestInfoTableAddressContainerDiv"> <div class="guestInfoCategory">POST NO</div> <input class="guestInfoTablePostInput" type="text" id="receiverPostCode" placeholder="POST NO"> </div>
               <input class="guestInfoTablePostButton" type="button" id="searchAddress" value="검색">
             </div>
             <div class="guestInfoTableContainer">
@@ -72,17 +50,13 @@
               	<input class="guestInfoTableAddress2" type="text" id="receiverDetailAddress" placeholder="ADDRESS">
               </div>
             </div>
-            <div class="guestInfoTableContainer">
-              <div class="guestInfoCategory">REQUEST</div>
-              <input class="guestInfoTableInput" type="text" id="deliveryRequest" placeholder="REQUEST">
-            </div>
-            <div class="guestInfoTableContainer">
-              <div id="deliveryInfo">※ 제주 및 도서 산간 지역의 배송은 추가 배송비가 발생할 수 있습니다.</div>
-            </div>
+            <div class="guestInfoTableContainer"> <div class="guestInfoCategory">REQUEST</div> <input class="guestInfoTableInput" type="text" id="deliveryRequest" placeholder="REQUEST"> </div>
+            <div class="guestInfoTableContainer"> <div id="deliveryInfo">※ 제주 및 도서 산간 지역의 배송은 추가 배송비가 발생할 수 있습니다.</div> </div>
             <br>
           </div>
         </div>
       </div>
+      <!-- 주문 상세 -->
 	    <div id="guestOrderSection">
 	      <div id="orderTable">
 			  	<div class="SectionTitle">ORDER DETAILS</div>
@@ -110,21 +84,16 @@
 				      </div>
 				    </c:forEach>
 				    <!-- 총 합계 출력 -->
-				    <div class="orderTotalPrice">
-				      총 합계: <fmt:formatNumber value="${totalPrice}" pattern="#,###"/>원
-				    </div>
+				    <div class="orderTotalPrice"> 총 합계: <fmt:formatNumber value="${totalPrice}" pattern="#,###"/>원 </div>
 				  </div>
 				</div>
+				<!-- 결제 수단 -->
 				<div id="payMathodTable">
 	        <div class="SectionTitle">PAYMENT METHOD</div>
 	        <div class="layout">
 	          <div class="payContainer">
-		          <div class="payIcon" data-pay="kakaopay">
-		            <div class="kakao"><img class="kakaoimg" src="<%=request.getContextPath()%>/resources/img/kakaopay.jpg"></div>
-		          </div>
-		          <div class="payIcon" data-pay="tosspay">
-		            <div class="toss"><img class="tossimg" src="<%=request.getContextPath()%>/resources/img/tosspay.png"></div>
-		          </div>
+		          <div class="payIcon" data-pay="kakaopay"> <div class="kakao"><img class="kakaoimg" src="<%=request.getContextPath()%>/resources/img/kakaopay.jpg"></div> </div>
+		          <div class="payIcon" data-pay="tosspay"> <div class="toss"><img class="tossimg" src="<%=request.getContextPath()%>/resources/img/tosspay.png"></div> </div>
 		        </div>
 		        <div id="paymentMethodSelected">결제 수단을 선택해주세요.</div>
 	        </div>
@@ -252,7 +221,7 @@
             </div>
 	        </div>
 	        <div class="payBtnDiv">
-	          <button type="button"  class="payBtn">결제하기</button>
+	          <button type="button" class="payBtn">결제하기</button>
 	        </div>
 		    </div>
       </div>
@@ -269,15 +238,16 @@ $(document).ready(function() {
   initializeToggleButtons();
   calculateTotal();
   
+  //결제수단 선택
   $(".payIcon").on("click", function() {
     $(".payIcon").removeClass("selected");
     $(this).addClass("selected");
     selectedPaymentMethod = $(this).data("pay");
-    
-    let paymentMethodText = selectedPaymentMethod === 'kakaopay' ? '카카오페이' : '토스페이';
-    $("#paymentMethodSelected")
-      .text(paymentMethodText + "로 결제합니다.")
-      .css({'color':'blue', 'font-weight':'bold'});
+    if(selectedPaymentMethod === 'kakaopay'){
+      $("#paymentMethodSelected").text("카카오페이로 결제합니다.").css({'color':'#FEE500','font-weight':'bold'});
+    }else{
+      $("#paymentMethodSelected").text("토스페이로 결제합니다.").css({'color':'#0064FF','font-weight':'bold'});
+    }
   });
 
   // '주소 검색' 버튼 클릭 이벤트
@@ -291,18 +261,7 @@ $(document).ready(function() {
     }).open();
   });
   
-  // '주문자 정보와 동일' 체크박스 이벤트
-  $('#sameAsOrderer').on('change', function(){
-    if($(this).is(':checked')){
-      $('#receiverName').val($('#ordererName').val());
-      $('#receiverPhone').val($('#ordererPhone').val());
-    }else{
-      $('#receiverName').val('');
-      $('#receiverPhone').val('');
-    }
-  });
-  
-  // 약관 동의 체크박스 이벤트
+  //약관 동의 체크박스 이벤트
   $('#agreeAll').on('click', function(){
     const isChecked = $(this).prop('checked');
     $('.req-agree').prop('checked', isChecked); // req-agree 클래스를 가진 모든 항목을 제어
@@ -315,132 +274,133 @@ $(document).ready(function() {
     $('#agreeAll').prop('checked', totalCount === checkedCount); // 모두 체크되면 '전체동의'도 체크
   });
   
+  // '주문자 정보와 동일' 체크박스 이벤트
+  $('#sameAsOrderer').on('change', function(){
+    if($(this).is(':checked')){
+      $('#receiverName').val($('#ordererName').val());
+      $('#receiverPhone').val($('#ordererPhone').val());
+    }else{
+      $('#receiverName').val('');
+      $('#receiverPhone').val('');
+    }
+  });
+
   // '결제하기' 버튼 클릭 시 AJAX 전송
   $('.payBtn').on('click', function(){
-
-    if(!$('#ordererName').val().trim()){ alert("주문자 이름을 입력해주세요."); $('#ordererName').focus(); return; }
-    if(!$('#ordererPhone').val().trim()){ alert("주문자 연락처를 입력해주세요."); $('#ordererPhone').focus(); return; }
-    if(!$('#orderPassword').val().trim()){ alert("주문조회용 비밀번호를 입력해주세요."); $('#orderPassword').focus(); return; }
-    if($('#orderPassword').val() !== $('#orderPasswordCheck').val()){ alert("비밀번호가 일치하지 않습니다."); $('#orderPasswordCheck').focus(); return; }
-    if(!$('#ordererEmail').val().trim()){ alert("주문자 이메일을 입력해주세요."); $('#ordererEmail').focus(); return; }
-    if(!$('#receiverName').val().trim()){ alert("받는 분 이름을 입력해주세요."); $('#receiverName').focus(); return; }
-    if(!$('#receiverPhone').val().trim()){ alert("받는 분 연락처를 입력해주세요."); $('#receiverPhone').focus(); return; }
-    if(!$('#receiverPostCode').val().trim()){ alert("배송지 주소를 검색해주세요."); $('#searchAddress').focus(); return; }
-    
-    // 동의 항목 체크 여부 검사 (개선된 버전)
-    if($('.req-agree').length !== $('.req-agree:checked').length){
-      alert("필수 동의 항목에 모두 체크해 주세요.");
-      return;
-    }
-    
+	  
+	  if(!validateForm()) return;
     if(!selectedPaymentMethod){ alert("결제 수단을 선택해주세요."); return; }
     
     const items = [];
-	    <c:forEach var="book" items="${bookList}" varStatus="status">
-	      items.push({
-	        bookNo: ${book.bookNo},
-	        isbn: "${book.isbn}",
-	        quantity: ${quantityList[status.index]},
-	        priceAtPurchase: ${book.productInfo.discount}
-	      });
-	    </c:forEach>
+    <c:forEach var="book" items="${bookList}" varStatus="status">
+      items.push({
+        bookNo: ${book.bookNo},
+        isbn: "${book.isbn}",
+        quantity: ${quantityList[status.index]},
+        priceAtPurchase: ${book.productInfo.discount}
+      });
+    </c:forEach>
 
     let orderName = $(".orderDetailsTitle").first().text();
     const remainingItems = items.length - 1;
-    if (remainingItems > 0) {
-      orderName += " 외 " + remainingItems + "건";
-    }
+    if (remainingItems > 0) { orderName += " 외 " + remainingItems + "건"; }
     
-    const guestOrderData = {
-    		    guestName:       $('#ordererName').val(),
-            guestPhone:      $('#ordererPhone').val(),
-            orderPassword:   $('#orderPassword').val(),
-            guestEmail:      $('#ordererEmail').val(),
-            receiverName:    $('#receiverName').val(),
-            receiverPhone:   $('#receiverPhone').val(),
-            receiverPostCode:$('#receiverPostCode').val(),
-            receiverRoadAddress: $('#receiverRoadAddress').val(),
-            receiverDetailAddress: $('#receiverDetailAddress').val(),
-            deliveryRequest: $('#deliveryRequest').val(),
-            totalPrice:      parseInt($('.finalPrice').data('price')),
-            deliveryFee:     parseInt($('.deliveryFee').text().replace(/[^0-9]/g, '')),
-            orderItems:      items,
-            orderName:       orderName
-    	};
+    const guestOrderData = { guestName: $('#ordererName').val(),
+												     guestPhone: $('#ordererPhone').val(),
+												     orderPassword: $('#orderPassword').val(),
+												     guestEmail: $('#ordererEmail').val(),
+												     receiverName: $('#receiverName').val(),
+												     receiverPhone: $('#receiverPhone').val(),
+												     receiverPostCode: $('#receiverPostCode').val(),
+												     receiverRoadAddress: $('#receiverRoadAddress').val(),
+												     receiverDetailAddress: $('#receiverDetailAddress').val(),
+												     deliveryRequest: $('#deliveryRequest').val(),
+												     totalPrice: parseInt($('.finalPrice').data('price')),
+												     orderItems: items,
+												     orderName: orderName };
     
     console.log("서버로 전송할 데이터:", guestOrderData);
 
-    // --- 3. AJAX로 서버에 주문 요청 전송 ---
     $.ajax({ type: "POST",
 			       url: contextPath + "/order/guest/create",
 			       contentType: "application/json",
 			       data: JSON.stringify(guestOrderData),
-			       success: function(response){
-						            if(response.status === 'SUCCESS'){
-						            	guestOrderData.orderId = response.orderId;
-						            	proceedToRealPayment(guestOrderData, response.guestId);
+			       success: function(res){
+						            if(res.status === 'SUCCESS'){
+						            	guestOrderData.orderId = "BG_" + res.paymentNo;  
+					                guestOrderData.paymentNo = res.paymentNo;
+					                guestOrderData.guestId = res.guestId;
+					                proceedToRealPayment(guestOrderData);
 						            }else{
-						              alert("주문 실패: " + response.message);
+						              alert("주문 실패: " + res.message);
 						            }
 						        	},
-			       error: function(xhr){
-					            alert("죄송합니다. 서버와 통신하는 중 오류가 발생했습니다.");
-					            console.error("AJAX Error:", xhr.responseText);
-					        	}
+						 error: function(){ alert("서버 오류 발생"); }
     });
   });
 });
 
-function proceedToRealPayment(guestOrderData, realGuestId) {
-	const paymentMethod = selectedPaymentMethod;
-	const items = guestOrderData.orderItems; 
-  
-  //비회원 주문명 생성
-  let orderName = items[0].isbn;
-  if (items.length > 1) orderName += " 외 " + (items.length - 1) + "건";
-
+//✅ 카카오/토스 둘 다 처리
+function proceedToRealPayment(orderData) {
   if (selectedPaymentMethod === 'kakaopay') {
-    $.ajax({ type: "POST",
-						 url: contextPath + "/payment/ready/kakaopay",
-					   contentType: "application/json",
-						 data: JSON.stringify({ partner_order_id: String(guestOrderData.orderId),
-															      partner_user_id: realGuestId, // (완벽) 파라미터로 받은 '진짜' guestId
-															      item_name: orderName,
-															      quantity: items.reduce((sum, item) => sum + item.quantity, 0),
-															      total_amount: guestOrderData.totalPrice }),
-						 success: (res) => window.location.href = res.next_redirect_pc_url,
-						 error: () => alert("카카오페이 결제 준비에 실패했습니다.")
+    $.ajax({
+      type: "POST",
+      url: contextPath + "/payment/ready/kakaopay",
+      contentType: "application/json",
+      data: JSON.stringify({
+    	  partner_order_id: orderData.orderId,
+        partner_user_id: orderData.guestId,
+        item_name: orderData.orderName,
+        quantity: orderData.orderItems.reduce((sum, item) => sum + item.quantity, 0),
+        total_amount: orderData.totalPrice
+      }),
+      success: (res) => window.location.href = res.next_redirect_pc_url,
+      error: () => alert("카카오페이 결제 준비에 실패했습니다.")
     });
   } else if (selectedPaymentMethod === 'tosspay') {
-	  $.ajax({ type: "POST",
-	            url: contextPath + "/payment/prepare", 
-	            contentType: "application/json",
-	            data: JSON.stringify(guestOrderData),
-	            success: function(response) {
-                         if (response.status === 'SUCCESS') {
-                        	 proceedToTossPayment(response);
-                         } else { alert("결제 준비 중 오류 발생: " + response.message); }
-                       },
-	            error: function(xhr) { alert("서버 통신 오류가 발생했습니다."); }
-	         });
+	  $.ajax({
+      type: "POST",
+      url: contextPath + "/payment/prepare",
+      contentType: "application/json",
+      data: JSON.stringify(orderData),
+      success: function(res) {
+        if (res.status === 'SUCCESS') {
+          const tossPayments = TossPayments('test_ck_ZLKGPx4M3MG0eMKOzG94rBaWypv1');
+          tossPayments.requestPayment('카드', {
+        	    amount: res.amount,
+              orderId: "BG_" + res.paymentNo,   // ✅ BG_paymentNo
+              orderName: res.orderName,
+              customerName: res.customerName,
+              customerKey: res.customerKey,
+              successUrl: window.location.origin + contextPath + "/payment/success",
+              failUrl: window.location.origin + contextPath + "/payment/fail"
+          }).catch(err => {
+            if(err.code !== 'USER_CANCEL') alert("토스 결제 실패: " + err.message);
+          });
+        } else {
+          alert("결제 준비 실패: " + res.message);
+        }
+      },
+      error: function(xhr) {
+        alert("서버 통신 오류 발생");
+        console.error("Error:", xhr.responseText);
+      }
+    });
   }
 }
 
-function proceedToTossPayment(serverResponse) {
-    const tossPayments = TossPayments('test_ck_ZLKGPx4M3MG0eMKOzG94rBaWypv1');
-    tossPayments.requestPayment('카드', {
-        amount: serverResponse.amount,
-        orderId: "BG_" + serverResponse.paymentNo + "_" + new Date().getTime(),
-        orderName: serverResponse.orderName,
-        customerName: serverResponse.customerName,
-        customerKey: serverResponse.customerKey,
-        successUrl: window.location.origin + "<%=request.getContextPath()%>/payment/success",
-        failUrl: window.location.origin + "<%=request.getContextPath()%>/payment/fail"
-    }).catch(function (error) {
-        if (error.code !== 'USER_CANCEL') {
-            alert('결제에 실패하였습니다. 오류: ' + error.message);
-        }
-    });
+//✅ 폼 필드 검증 함수
+function validateForm(){
+  if(!$('#ordererName').val().trim()){ alert("주문자 이름을 입력해주세요."); return false; }
+  if(!$('#ordererPhone').val().trim()){ alert("주문자 연락처를 입력해주세요."); return false; }
+  if(!$('#orderPassword').val().trim()){ alert("비밀번호를 입력해주세요."); return false; }
+  if($('#orderPassword').val() !== $('#orderPasswordCheck').val()){ alert("비밀번호가 일치하지 않습니다."); return false; }
+  if(!$('#ordererEmail').val().trim()){ alert("이메일을 입력해주세요."); return false; }
+  if(!$('#receiverName').val().trim()){ alert("수령인 이름을 입력해주세요."); return false; }
+  if(!$('#receiverPhone').val().trim()){ alert("수령인 연락처를 입력해주세요."); return false; }
+  if(!$('#receiverPostCode').val().trim()){ alert("주소를 검색해주세요."); return false; }
+  if($('.req-agree').length !== $('.req-agree:checked').length){ alert("필수 약관에 모두 동의해야 합니다."); return false; }
+  return true;
 }
 
 //총 금액 계산 및 표시 함수

@@ -16,12 +16,12 @@ public class GuestDAO {
   
   // 게스트 정보 저장
   public void insertGuest(GuestVO guestVO) {
-      sqlSession.insert(name_space + "insertGuest", guestVO);
+    sqlSession.insert(name_space + "insertGuest", guestVO);
   }
 
   // 이메일로 게스트 정보 조회
   public GuestVO findGuestByEmail(String email) {
-      return sqlSession.selectOne(name_space + "findGuestByEmail", email);
+    return sqlSession.selectOne(name_space + "findGuestByEmail", email);
   }
 
 }

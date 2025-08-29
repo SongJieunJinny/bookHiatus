@@ -2,7 +2,6 @@ package com.bookGap.controller;
 
 import java.math.BigDecimal;
 import java.security.Principal;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,8 +30,6 @@ import com.bookGap.service.PaymentService;
 import com.bookGap.vo.KakaoPayCancelVO;
 import com.bookGap.vo.KakaoPayRequestVO;
 import com.bookGap.vo.PaymentVO;
-import com.bookGap.vo.TossCancelVO;
-import com.bookGap.vo.TossRequestVO;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -60,71 +57,75 @@ public class PaymentController {
   /** 카카오페이 결제 준비 */
   @PostMapping("/ready/kakaopay")
   @ResponseBody
-  public KakaoReadyResponse kakaopayReady(@RequestBody KakaoPayRequestVO requestVO, HttpSession session) {
-    // 1) PAYMENTS 저장
-    PaymentVO payment = new PaymentVO();
-    payment.setAmount(BigDecimal.valueOf(requestVO.getTotalAmount()));
-    payment.setPaymentMethod(2); // 카카오
-    payment.setOrderId(Integer.parseInt(requestVO.getPartnerOrderId()));
-    if (requestVO.getPartnerUserId().startsWith("G-")) payment.setGuestId(requestVO.getPartnerUserId());
-    else payment.setUserId(requestVO.getPartnerUserId());
-    paymentService.insertPayment(payment);
-  
-    int paymentNo = payment.getPaymentNo();
-   
-    // 2) ★ KAKAOPAY_REQUESTS 선(先) INSERT
-    requestVO.setPaymentNo(paymentNo);
-    requestVO.setCid(CID);
-    requestVO.setPartnerOrderId(String.valueOf(paymentNo)); // 결제요청의 orderId는 paymentNo 사용
-    // 요청 URL도 VO에 채워서 보관 (VO 필드가 있다면)
-    requestVO.setApprovalUrl("http://localhost:8080/controller/payment/success/kakaopay");
-    requestVO.setCancelUrl("http://localhost:8080/controller/payment/cancel");
-    requestVO.setFailUrl("http://localhost:8080/controller/payment/fail");
-    paymentService.insertKakaoRequest(requestVO);
-  
-    // 3) 카카오 ready 호출
-    Map<String, Object> params = new HashMap<>();
-    params.put("cid", CID);
-    params.put("partner_order_id", String.valueOf(paymentNo));
-    params.put("partner_user_id", requestVO.getPartnerUserId());
-    params.put("item_name", requestVO.getItemName());
-    params.put("quantity", requestVO.getQuantity());
-    params.put("total_amount", requestVO.getTotalAmount());
-    params.put("tax_free_amount", 0);
-    params.put("approval_url", "http://localhost:8080/controller/payment/success/kakaopay");
-    params.put("cancel_url", "http://localhost:8080/controller/payment/cancel");
-    params.put("fail_url", "http://localhost:8080/controller/payment/fail");
-  
-    HttpHeaders headers = new HttpHeaders();
-    headers.set("Authorization", "SECRET_KEY " + KAKAO_SECRET_KEY);
-    headers.setContentType(MediaType.APPLICATION_JSON);
-  
-    ResponseEntity<JsonNode> response = restTemplate.postForEntity(
-      KAKAO_OPEN_API_URL + "/ready",
-      new HttpEntity<>(params, headers),
-      JsonNode.class
-    );
-  
-    if (!response.getStatusCode().is2xxSuccessful()) {
-      throw new RuntimeException("카카오페이 결제 준비 실패: " + response.getStatusCode());
+  public KakaoReadyResponse kakaopayReady(@RequestBody KakaoPayRequestVO requestVO, HttpSession session, Principal principal) {
+    
+    try {
+      // 1) PAYMENTS 저장
+      PaymentVO payment = new PaymentVO();
+      payment.setAmount(BigDecimal.valueOf(requestVO.getTotalAmount()));
+      payment.setPaymentMethod(2); // 카카오
+
+      // ✅ partner_order_id 는 "BG_" + paymentNo 이므로, 여기서는 paymentNo 자체를 DB orderId로 쓰면 됨
+      paymentService.insertPayment(payment);
+      int paymentNo = payment.getPaymentNo();
+     
+      // 2) ★ KAKAOPAY_REQUESTS 선(先) INSERT
+      requestVO.setPaymentNo(paymentNo);
+      requestVO.setCid(CID);
+      requestVO.setPartnerOrderId("BG_" + paymentNo); // ✅ partner_order_id 통일
+      requestVO.setApprovalUrl("http://localhost:8080/controller/payment/success/kakaopay");
+      requestVO.setCancelUrl("http://localhost:8080/controller/payment/cancel");
+      requestVO.setFailUrl("http://localhost:8080/controller/payment/fail");
+      
+      paymentService.insertKakaoRequest(requestVO);
+    
+      // 3) 카카오 ready 호출
+      Map<String, Object> params = new HashMap<>();
+      params.put("cid", CID);
+      params.put("partner_order_id", requestVO.getPartnerOrderId());
+      params.put("partner_user_id", requestVO.getPartnerUserId());
+      params.put("item_name", requestVO.getItemName());
+      params.put("quantity", requestVO.getQuantity());
+      params.put("total_amount", requestVO.getTotalAmount());
+      params.put("tax_free_amount", 0);
+      params.put("approval_url", "http://localhost:8080/controller/payment/success/kakaopay");
+      params.put("cancel_url", "http://localhost:8080/controller/payment/cancel");
+      params.put("fail_url", "http://localhost:8080/controller/payment/fail");
+    
+      HttpHeaders headers = new HttpHeaders();
+      headers.set("Authorization", "SECRET_KEY " + KAKAO_SECRET_KEY);
+      headers.setContentType(MediaType.APPLICATION_JSON);
+    
+      ResponseEntity<JsonNode> response = restTemplate.postForEntity(
+        KAKAO_OPEN_API_URL + "/ready",
+        new HttpEntity<>(params, headers),
+        JsonNode.class
+      );
+    
+      if (!response.getStatusCode().is2xxSuccessful()) {
+        throw new RuntimeException("카카오페이 결제 준비 실패: " + response.getStatusCode());
+      }
+    
+      // 4) ★ tid 업데이트
+      JsonNode body = response.getBody();
+      String tid = body.get("tid").asText();
+      String nextRedirectUrl = body.get("next_redirect_pc_url").asText();
+    
+      KakaoPayRequestVO updateVO = new KakaoPayRequestVO();
+      updateVO.setPaymentNo(paymentNo);
+      updateVO.setTid(tid);
+      paymentService.updateKakaoTid(updateVO);
+    
+      // 세션
+      session.setAttribute("paymentNo", paymentNo);
+      session.setAttribute("tid", tid);
+      session.setAttribute("partner_user_id", requestVO.getPartnerUserId());
+    
+      return new KakaoReadyResponse(tid, nextRedirectUrl);
+      
+    } catch (Exception e) {
+      throw new RuntimeException("카카오 결제 준비 중 오류: " + e.getMessage());
     }
-  
-    // 4) ★ tid 업데이트
-    JsonNode body = response.getBody();
-    String tid = body.get("tid").asText();
-    String nextRedirectUrl = body.get("next_redirect_pc_url").asText();
-  
-    KakaoPayRequestVO updateVO = new KakaoPayRequestVO();
-    updateVO.setPaymentNo(paymentNo);
-    updateVO.setTid(tid);
-    paymentService.updateKakaoTid(updateVO);
-  
-    // 세션
-    session.setAttribute("paymentNo", paymentNo);
-    session.setAttribute("tid", tid);
-    session.setAttribute("partner_user_id", requestVO.getPartnerUserId());
-  
-    return new KakaoReadyResponse(tid, nextRedirectUrl);
   }
 
   /** 카카오페이 승인 */
@@ -133,12 +134,13 @@ public class PaymentController {
     Integer paymentNo = (Integer) session.getAttribute("paymentNo");
     String tid = (String) session.getAttribute("tid");
     String partnerUserId = (String) session.getAttribute("partner_user_id");
+    
     if (paymentNo == null || tid == null || partnerUserId == null) return "redirect:/order/error";
 
     Map<String, Object> params = new HashMap<>();
     params.put("cid", CID);
     params.put("tid", tid);
-    params.put("partner_order_id", String.valueOf(paymentNo));
+    params.put("partner_order_id", "BG_" + paymentNo);
     params.put("partner_user_id", partnerUserId);
     params.put("pg_token", pgToken);
 
@@ -154,9 +156,11 @@ public class PaymentController {
         );
         if (response.getStatusCode().is2xxSuccessful()) {
           paymentService.updatePaymentStatus(paymentNo, 2);
+
           session.removeAttribute("paymentNo");
           session.removeAttribute("tid");
           session.removeAttribute("partner_user_id");
+
           return "redirect:/order/orderComplete.do?paymentNo=" + paymentNo;
         }
         return "redirect:/payment/fail";
@@ -260,13 +264,14 @@ public class PaymentController {
   public Map<String, Object> prepareTossPayment(@RequestBody Map<String, Object> orderData, 
                                                 Principal principal, 
                                                 HttpServletRequest request) {
-    try{
+    try {
+      // 서비스에서 주문 + 결제(PAYMENTS) 생성 후 응답 내려줌
       return paymentService.prepareAndCreateTossOrder(orderData, principal, request);
-    }catch (Exception e){
+    } catch (Exception e) {
       e.printStackTrace();
       Map<String, Object> response = new HashMap<>();
       response.put("status", "FAIL");
-      response.put("message", "결제 준비 중 오류가 발생했습니다: " + e.getMessage());
+      response.put("message", "결제 준비 중 오류: " + e.getMessage());
       return response;
     }
   }
@@ -274,7 +279,7 @@ public class PaymentController {
   /* 토스 결제 성공 콜백 */
   @GetMapping("/success")
   public String tossPaymentSuccess(@RequestParam String paymentKey,
-                                   @RequestParam(name = "orderId") String tossOrderId, // 토스가 보내는 파라미터명은 'orderId'
+                                   @RequestParam(name = "orderId") String tossOrderId,
                                    @RequestParam Long amount,
                                    Model model) {
     try {
@@ -283,17 +288,19 @@ public class PaymentController {
     } catch (Exception e) {
       e.printStackTrace();
       model.addAttribute("errorMessage", e.getMessage());
-      return "redirect:/order/fail?message=approval_failed"; //
+      return "redirect:/payment/fail?message=approval_failed";
     }
   }
   
   /* 결제 실패/취소시 확인페이지 */
   @GetMapping("/fail")
-  public String paymentFail(Model model, @RequestParam(required = false) String message, @RequestParam(required = false) String code) {
+  public String paymentFail(Model model,
+                            @RequestParam(required = false) String message,
+                            @RequestParam(required = false) String code) {
     model.addAttribute("errorMessage", "결제에 실패했습니다.");
     model.addAttribute("errorCode", code);
     model.addAttribute("errorDetail", message);
-    return "payment/paymentFail"; // (이 JSP 파일은 새로 만들어야 합니다)
+    return "payment/paymentFail"; 
   }
 
   
