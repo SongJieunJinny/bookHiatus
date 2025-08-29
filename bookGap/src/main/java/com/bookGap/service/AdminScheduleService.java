@@ -1,6 +1,7 @@
 package com.bookGap.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.bookGap.vo.ScheduleVO;
 
@@ -16,5 +17,7 @@ public interface AdminScheduleService {
 
     // 일정 삭제
     int deleteSchedule(int scheduleId);
+    
+    List<Map<String, Object>> getScheduleCountByWeekday();
 
 }
