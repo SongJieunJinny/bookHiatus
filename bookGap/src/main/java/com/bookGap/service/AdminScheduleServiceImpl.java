@@ -1,6 +1,7 @@
 package com.bookGap.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,11 @@ public class AdminScheduleServiceImpl implements   AdminScheduleService{
 	    @Override
 	    public int deleteSchedule(int scheduleId) {
 	        return adminScheduleDAO.deleteSchedule(scheduleId);
+	    }
+	    
+	    @Override
+	    public List<Map<String, Object>> getScheduleCountByWeekday() {
+	        return adminScheduleDAO.getScheduleCountByWeekday();
 	    }
 	
 	
