@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"  pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -110,7 +111,7 @@
 											<i class="fas fa-chart-area me-1"></i>
 											Sales
 										</div>
-										<div class="card-body"><canvas id="myAreaChart" width="100%" height="40"></canvas></div>
+										<div class="card-body"><canvas id="salesChart" width="100%" height="40"></canvas></div>
 									</div>
 								</div>
 								<div class="col-xl-6">
@@ -119,7 +120,7 @@
 											<i class="fas fa-chart-bar me-1"></i>
 											Schedule
 										</div>
-										<div class="card-body"><canvas id="myBarChart" width="100%" height="40"></canvas></div>
+										<div class="card-body"><canvas id="scheduleChart" width="100%" height="40"></canvas></div>
 									</div>
 								</div>
 							</div>	
@@ -131,8 +132,85 @@
 			</div>
 			<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 			<script src="<%=request.getContextPath()%>/resources/js/scripts.js"></script>
-			<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
-			<script src="<%=request.getContextPath()%>/resources/assets/demo/chart-area-demo.js"></script>
-			<script src="<%=request.getContextPath()%>/resources/assets/demo/chart-bar-demo.js"></script>
+			<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+			<script>
+				  const salesLabels = [
+				    <c:forEach var="s" items="${dailyStats}" varStatus="i">
+				      "${s.sales_date}"<c:if test="${!i.last}">,</c:if>
+				    </c:forEach>
+				  ];
+				  const salesData = [
+				    <c:forEach var="s" items="${dailyStats}" varStatus="i">
+				      ${s.total_revenue}<c:if test="${!i.last}">,</c:if>
+				    </c:forEach>
+				  ];
+
+				  // 일정 (요일별)
+				  const scheduleLabels = [
+				    <c:forEach var="d" items="${scheduleStats}" varStatus="i">
+				      "${d.weekday}"<c:if test="${!i.last}">,</c:if>
+				    </c:forEach>
+				  ];
+				  const scheduleData = [
+				    <c:forEach var="d" items="${scheduleStats}" varStatus="i">
+				      ${d.count}<c:if test="${!i.last}">,</c:if>
+				    </c:forEach>
+				  ];
+			
+			    const _salesLabels = (salesLabels && salesLabels.length) ? salesLabels : [];
+			    const _salesData   = (salesData && salesData.length) ? salesData.map(Number) : [];
+			    const _schedLabels = (scheduleLabels && scheduleLabels.length) ? scheduleLabels : [];
+			    const _schedData   = (scheduleData && scheduleData.length) ? scheduleData.map(Number) : [];
+			</script>
+			</script>
+			
+			<script>
+			    document.addEventListener("DOMContentLoaded", function () {
+			    	const salesEl = document.getElementById("salesChart");
+			        if (salesEl) {
+			          new Chart(salesEl, {
+			            type: 'line',
+			            data: {
+			              labels: _salesLabels,   // 일자
+			              datasets: [{
+			                label: '매출액',
+			                data: _salesData,     // 매출액
+			                borderColor: '#4e73df',
+			                backgroundColor: 'rgba(78, 115, 223, 0.08)',
+			                tension: 0.3,
+			                fill: true
+			              }]
+			            },
+			            options: {
+			              scales: {
+			                y: {
+			                  ticks: {
+			                    callback: v => v.toLocaleString() + '원' // 숫자 포맷팅
+			                  }
+			                }
+			              }
+			            }
+			          });
+			        }
+			
+			      const schedEl = document.getElementById("scheduleChart");
+			      if (schedEl) {
+			        new Chart(schedEl, {
+			          type: 'bar',
+			          data: {
+			            labels: _schedLabels,   // 요일
+			            datasets: [{
+			              label: '일정 개수',
+			              data: _schedData,     // 일정 건수
+			              backgroundColor: '#1cc88a'
+			            }]
+			          },
+			          options: {
+			            scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+			          }
+			        });
+			      }
+			    });
+			</script>
 		</body>
 </html> 

@@ -15,6 +15,9 @@
 <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+a{color: black;}
+</style>
 </head>
 <body class="sb-nav-fixed">
     <jsp:include page="/WEB-INF/views/include/adminHeader.jsp" />
@@ -74,7 +77,16 @@
                       <th>판매일</th>
                     </tr>
                   </thead>
-                  <tbody id="salesLogTable"></tbody>
+                  <tbody id="salesLogTable">
+                  	<c:forEach var="log" items="${salesLogs}">
+	                  <tr>
+	                    <td>${log.title}</td>
+	                    <td>${log.sales}권</td>
+	                    <td>${log.revenue}원</td> 
+	                    <td>${log.date}</td>
+	                  </tr>
+	                </c:forEach>
+                  </tbody>
                 </table>
               </div>
             </div>
@@ -84,118 +96,90 @@
       </div>
     </div>
     <!-- 차트 및 데이터 렌더링 -->
-    <script>
-			// 📦 하드코딩된 샘플 데이터
-			const bookSales = [
-				{ title: "작은 책방 이야기", sales: 120, revenue: 180000 },
-				{ title: "고양이 산문집", sales: 90, revenue: 135000 },
-				{ title: "하루를 닮은 책", sales: 60, revenue: 108000 },
-				{ title: "조용한 숲의 대화", sales: 70, revenue: 112000 },
-				{ title: "밤하늘 수첩", sales: 50, revenue: 90000 },
-				{ title: "커피향과 책갈피", sales: 80, revenue: 144000 },
-			];
-	
-			const dailyStats = [
-				{ date: "2025-04-01", revenue: 12000 },
-				{ date: "2025-04-02", revenue: 18000 },
-				{ date: "2025-04-03", revenue: 22000 },
-				{ date: "2025-04-04", revenue: 15000 },
-				{ date: "2025-04-05", revenue: 11000 },
-				{ date: "2025-04-06", revenue: 17000 },
-				{ date: "2025-04-07", revenue: 20000 },
-			];
-	
-			const salesLogs = [
-				{ title: "작은 책방 이야기", sales: 5, revenue: 7500, date: "2025-04-07" },
-				{ title: "고양이 산문집", sales: 3, revenue: 4500, date: "2025-04-07" },
-				{ title: "하루를 닮은 책", sales: 4, revenue: 7200, date: "2025-04-06" },
-				{ title: "조용한 숲의 대화", sales: 2, revenue: 3200, date: "2025-04-06" },
-				{ title: "밤하늘 수첩", sales: 3, revenue: 5400, date: "2025-04-05" },
-				{ title: "커피향과 책갈피", sales: 4, revenue: 7200, date: "2025-04-05" },
-				{ title: "작은 책방 이야기", sales: 6, revenue: 9000, date: "2025-04-04" },
-				{ title: "고양이 산문집", sales: 4, revenue: 6000, date: "2025-04-03" },
-				{ title: "하루를 닮은 책", sales: 2, revenue: 3600, date: "2025-04-02" },
-				{ title: "조용한 숲의 대화", sales: 3, revenue: 4800, date: "2025-04-01" },
-			];
-	
-			// 📊 차트 렌더링
-			document.addEventListener("DOMContentLoaded", function () {
-				const titles = bookSales.map(b => b.title);
-				const revenues = bookSales.map(b => b.revenue);
-				const salesCounts = bookSales.map(b => b.sales);
-	
-				// Bar Chart
-				new Chart(document.getElementById("revenueBarChart"), {
-					type: "bar",
-					data: {
-						labels: titles,
-						datasets: [{
-							label: "총매출 (원)",
-							backgroundColor: "#4e73df",
-							data: revenues,
-						}]
-					},
-					options: {
-						scales: {
-							y: {
-								beginAtZero: true,
-								ticks: {
-									callback: val => val.toLocaleString() + "원"
-								}
-							}
-						}
-					}
-				});
-	
-				// Pie Chart
-				new Chart(document.getElementById("salesPieChart"), {
-					type: "pie",
-					data: {
-						labels: titles,
-						datasets: [{
-							data: salesCounts,
-							backgroundColor: ["#1cc88a", "#36b9cc", "#f6c23e", "#e74a3b", "#858796", "#fd7e14"]
-						}]
-					}
-				});
-	
-				// Line Chart
-				new Chart(document.getElementById("dailyRevenueChart"), {
-					type: "line",
-					data: {
-						labels: dailyStats.map(d => d.date),
-						datasets: [{
-							label: "일일 매출 (원)",
-							data: dailyStats.map(d => d.revenue),
-							fill: false,
-							borderColor: "#e74a3b",
-							tension: 0.3
-						}]
-					},
-					options: {
-						scales: {
-							y: {
-								ticks: {
-									callback: val => val.toLocaleString() + "원"
-								}
-							}
-						}
-					}
-				});
-	
-				// 판매 로그 테이블
-				const tableBody = document.getElementById("salesLogTable");
-				salesLogs.forEach(log => {
-					tableBody.innerHTML += `
-						<tr>
-							<td>${log.title}</td>
-							<td>${log.sales}권</td>
-							<td>${log.revenue.toLocaleString()}원</td>
-							<td>${log.date}</td>
-						</tr>
-					`;
-				});
-			});
-		</script>
-  </body>
+<script>
+  const bookSales = [
+    <c:forEach var="book" items="${bookStats}" varStatus="i">
+      {
+        title: "${book.title}",
+        sales: ${book.sales},
+        revenue: ${book.revenue}
+      }<c:if test="${!i.last}">,</c:if>
+    </c:forEach>
+  ];
+
+  const dailyStats = [
+    <c:forEach var="day" items="${dailyStats}" varStatus="i">
+      {
+        date: "${day.sales_date}",
+        revenue: ${day.total_revenue}
+      }<c:if test="${!i.last}">,</c:if>
+    </c:forEach>
+  ];
+
+  document.addEventListener("DOMContentLoaded", function () {
+	const titles = bookSales.map(b => b.title.split('(')[0].trim());
+    const revenues = bookSales.map(b => b.revenue);
+    const salesCounts = bookSales.map(b => b.sales);
+
+    // Bar Chart
+    new Chart(document.getElementById("revenueBarChart"), {
+      type: "bar",
+      data: {
+        labels: titles,
+        datasets: [{
+          label: "총매출 (원)",
+          backgroundColor: "#4e73df",
+          data: revenues
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: val => val.toLocaleString() + "원"
+            }
+          }
+        }
+      }
+    });
+
+    // Pie Chart
+    new Chart(document.getElementById("salesPieChart"), {
+      type: "pie",
+      data: {
+        labels: titles,
+        datasets: [{
+          data: salesCounts,
+          backgroundColor: ["#1cc88a", "#36b9cc", "#f6c23e", "#e74a3b", "#858796", "#fd7e14"]
+        }]
+      }
+    });
+
+    // Line Chart
+    new Chart(document.getElementById("dailyRevenueChart"), {
+      type: "line",
+      data: {
+        labels: dailyStats.map(d => d.date),
+        datasets: [{
+          label: "일일 매출 (원)",
+          data: dailyStats.map(d => d.revenue),
+          fill: false,
+          borderColor: "#e74a3b",
+          tension: 0.3
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            ticks: {
+              callback: val => val.toLocaleString() + "원"
+            }
+          }
+        }
+      }
+    });
+  });
+</script>
+</body>
 </html>

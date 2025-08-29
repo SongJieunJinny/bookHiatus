@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+			"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bookGap.mapper.SalesMapper">
+	  <!-- 1. 도서별 총 판매량 및 매출 -->
+  <select id="getBookSales" resultType="map">
+    SELECT P.title AS title,
+           SUM(OD.ORDER_COUNT) AS sales,
+           SUM(OD.ORDER_PRICE) AS revenue
+    FROM ORDER_DETAIL OD
+    JOIN ORDERS O ON OD.ORDER_ID = O.ORDER_ID
+    JOIN BOOK B ON OD.BOOK_NO = B.BOOK_NO
+    JOIN PRODUCT_API P ON B.isbn = P.isbn
+    WHERE O.ORDER_STATUS = 3
+    GROUP BY P.title
+    ORDER BY revenue DESC
+  </select>
+
+  <!-- 2. 일자별 총매출 (일일 매출 라인 차트용) -->
+  <select id="getDailySales" resultType="map">
+    SELECT DATE(O.ORDER_DATE) AS sales_date,
+           SUM(O.TOTAL_PRICE) AS total_revenue
+    FROM ORDERS O
+    WHERE O.ORDER_STATUS = 3
+    GROUP BY DATE(O.ORDER_DATE)
+    ORDER BY sales_date
+  </select>
+
+  <!-- 3. 판매 로그 테이블용 -->
+  <select id="getSalesLog" resultType="com.bookGap.vo.SalesVO">
+	  SELECT P.title AS title,
+	         SUM(OD.ORDER_COUNT) AS sales,
+	         SUM(OD.ORDER_PRICE) AS revenue,
+	         DATE(O.ORDER_DATE) AS date
+	  FROM ORDER_DETAIL OD
+	  JOIN ORDERS O ON OD.ORDER_ID = O.ORDER_ID
+	  JOIN BOOK B ON OD.BOOK_NO = B.BOOK_NO
+	  JOIN PRODUCT_API P ON B.isbn = P.isbn
+	  WHERE O.ORDER_STATUS = 3
+	  GROUP BY P.title, DATE(O.ORDER_DATE)
+	  ORDER BY DATE(O.ORDER_DATE) DESC
+	</select>
+
+</mapper>

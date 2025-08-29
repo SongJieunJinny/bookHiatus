@@ -16,13 +16,12 @@ import com.bookGap.service.AddressService;
 import com.bookGap.vo.UserAddressVO;
 
 @Controller 
-@RequestMapping("/address")
 public class AddressController {
 	 @Autowired
 	    private AddressService addressService;
 	 
 	 
-	 @GetMapping("/list.do")
+	 @GetMapping("/address/list.do")
 	 @ResponseBody
 	 public List<UserAddressVO> getUserAddresses(Principal principal) {
 		    if (principal == null) return List.of();
@@ -35,7 +34,7 @@ public class AddressController {
 
 	    /** [회원] 배송지 추가 */
 	    
-	    @PostMapping("/add.do")
+	    @PostMapping("/address/add.do")
 	    @ResponseBody
 	    public String addUserAddress(@RequestBody UserAddressVO vo, Principal principal) {
 	        if (principal == null) return "NOT_LOGGED_IN";
@@ -45,7 +44,7 @@ public class AddressController {
 
 	    /** [회원] 배송지 삭제 */
 	   
-	    @PostMapping("/delete.do")
+	    @PostMapping("/address/delete.do")
 	    @ResponseBody
 	    public String deleteUserAddress(@RequestParam("addressId") int userAddressId, Principal principal) {
 	        if (principal == null) return "NOT_LOGGED_IN";
