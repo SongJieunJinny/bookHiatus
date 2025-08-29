@@ -280,7 +280,7 @@ public class OrderServiceImpl implements OrderService {
 
   @Override
   public OrderVO getGuestOrderByOrderId(int orderId) {
-	return orderDAO.getGuestOrderByOrderId(orderId);
-}
+	  return orderDAO.getGuestOrderByOrderId(orderId);
+  }
 
 }

@@ -328,6 +328,12 @@ $(document).ready(function () {
       alert("주문할 상품이 없습니다.");
       return;
     }
+    
+    let orderName = $(".orderDetailsTitle").first().text();
+    const remainingItems = $(".orderDetail").length - 1;
+    if (remainingItems > 0) {
+        orderName += " 외 " + remainingItems + "건";
+    }
 
     const orderData = { userId: currentUserId, 
 								        userAddressId: selectedAddress.data("address-id"),
@@ -338,27 +344,41 @@ $(document).ready(function () {
 								        totalPrice: parseInt($('.finalPaymentPrice').text().replace(/[^0-9]/g, ''), 10),
 								        
 								        paymentMethod: selectedPaymentMethod,
-								        orderItems: orderItems // 방금 위에서 만든 상품 배열을 여기에 담습니다.
+								        orderItems: orderItems, // 방금 위에서 만든 상품 배열을 여기에 담습니다.
+								        orderName: orderName
     };
 
-    $.ajax({ type: "POST",
-		         url: contextPath + "/order/create",
-		         contentType: "application/json",
-		         data: JSON.stringify(orderData),
-		         success: function(response){
-							      	  if(response.status === 'SUCCESS'){
-					                orderData.orderId = response.orderId;  // 주문 생성 성공 시, 받은 orderId를 orderData에 추가
-					                proceedToRealPayment(orderData);  // 실제 결제 함수 호출
-							          } else {
-							            alert("주문 실패: " + response.message);
-							          }
-					            },
-		         error: function(xhr) {
-				              alert("서버 통신 오류가 발생했습니다.");
-				              console.error("Error:", xhr.responseText);
-				            }
+    $.ajax({
+        type: "POST",
+        url: contextPath + "/payment/prepare", // ★ 새로 만든 API 주소로 변경
+        contentType: "application/json",
+        data: JSON.stringify(orderData),
+        success: function(response) {
+            if (response.status === 'SUCCESS') {
+                const tossPayments = TossPayments('test_ck_ZLKGPx4M3MG0eMKOzG94rBaWypv1');
+                tossPayments.requestPayment('카드', {
+                    amount: response.amount,
+                    orderId: "BG_" + response.paymentNo + "_" + new Date().getTime(),
+                    orderName: response.orderName,
+                    customerName: response.customerName,
+                    customerKey: response.customerKey,
+                    successUrl: window.location.origin + contextPath + "/payment/success",
+                    failUrl: window.location.origin + contextPath + "/payment/fail"
+                }).catch(function (error) {
+                    if (error.code !== 'USER_CANCEL') {
+                      alert('결제에 실패하였습니다. 오류: ' + error.message);
+                    }
+                });
+            } else {
+                alert("결제 준비 중 오류 발생: " + response.message);
+            }
+        },
+        error: function(xhr) {
+            alert("서버 통신 오류가 발생했습니다.");
+            console.error("Error:", xhr.responseText);
+        }
     });
-  });
+});
 
   //전체동의 로직 (주석 처리된 agree3Div 고려)
   $("#agreeAll").click(function () {
@@ -467,23 +487,7 @@ function proceedToRealPayment(orderData) {
         }
     });
 
-  } else if (paymentMethod === 'tosspay') {
-    const tossPayments = TossPayments('test_ck_ZLKGPx4M3MG0eMKOzG94rBaWypv1'); // 본인의 테스트 클라이언트 키
-
-    tossPayments.requestPayment('카드', { // '카드' 외 '계좌이체' 등 다른 수단 가능
-        amount: orderData.totalPrice,
-        orderId: "bookGap_" + orderData.orderId + "_" + new Date().getTime(), // 주문번호는 매번 고유해야 함
-        orderName: orderName,
-        customerName: currentUserName,
-        customerKey: orderData.userId, 
-        successUrl: window.location.origin + contextPath + "/payment/success/tosspay",
-        failUrl: window.location.origin + contextPath + "/payment/fail"
-    }).catch(function (error) {
-  	    if (error.code !== 'USER_CANCEL') {
-  	      alert('결제에 실패하였습니다. 오류: ' + error.message);
-  	    }
-    });
-  }
+  } 
 }
 
 // 장바구니 수량 업데이트
