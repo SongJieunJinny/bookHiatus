@@ -1,6 +1,7 @@
 package com.bookGap.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,10 @@ public class AdminScheduleDAO {
 	    // 일정 삭제
 	    public int deleteSchedule(int scheduleId) {
 	        return sqlSession.delete(namespace + "deleteSchedule", scheduleId);
+	    }
+	    
+	    public List<Map<String, Object>> getScheduleCountByWeekday() {
+	        return sqlSession.selectList(namespace + "getScheduleCountByWeekday");
 	    }
 
 }
