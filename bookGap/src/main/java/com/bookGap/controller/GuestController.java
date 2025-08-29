@@ -1,10 +1,15 @@
 package com.bookGap.controller;
 
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -77,40 +82,75 @@ public class GuestController {
   @PostMapping("/guest/guestOrderInfo.do")
   public String guestOrderInfo( @RequestParam("orderPassword") String orderPassword,
                                 @RequestParam("guestEmail") String guestEmail,
-                                Model model) {
+                                HttpServletResponse response, HttpSession session,
+                                Model model)throws Exception{
 
-    // 1. 입력값 검증 (null + 빈 문자열)
-    if(orderPassword == null || orderPassword.trim().isEmpty() || guestEmail == null || guestEmail.trim().isEmpty()){
-      model.addAttribute("msg", "비밀번호와 이메일을 모두 입력하세요.");
-      return "order/guestOrderForm";
+    System.out.println("===== guestOrderInfo.do 진입 =====");
+    System.out.println("전달받은 이메일: " + guestEmail);
+    System.out.println("전달받은 비밀번호: " + orderPassword);
+    
+    if (orderPassword == null || orderPassword.trim().isEmpty() || guestEmail == null || guestEmail.trim().isEmpty()){
+      response.setContentType("text/html; charset=UTF-8");
+      PrintWriter out = response.getWriter();
+      out.println("<script>alert('주문 시 입력했던 주문비밀번호와 이메일을 입력해주세요.'); history.back();</script>");
+      out.flush();
+      out.close();
+      return null; 
     }
 
-    // 2. 서비스 호출
     List<OrderVO> orders = orderService.findGuestOrdersByPasswordAndEmail(orderPassword, guestEmail);
-
-    // 3. 조회 결과 체크
-    if(orders == null || orders.isEmpty()){
-      model.addAttribute("msg", "조회된 주문이 없습니다.");
-      return "order/guestOrderForm";
+    
+    if (orders == null || orders.isEmpty()){
+      response.setContentType("text/html; charset=UTF-8");
+      PrintWriter out = response.getWriter();
+      out.println("<script>alert('조회된 주문이 없습니다.'); history.back();</script>");
+      out.flush();
+      out.close();
+      return null;  
     }
 
-    // 4. 정상적으로 결과 전달 (주문별 + 상품내역 포함됨)
-    System.out.println("조회된 주문 수: " + orders.size());
+    session.setAttribute("authGuestEmail", guestEmail);
+    session.setAttribute("authOrderPassword", orderPassword);
     model.addAttribute("guestOrders", orders);
     return "guest/guestOrderInfo";
   }
   
   //===================== 비회원 주문 상세 조회 =====================
   @GetMapping("/guest/guestOrderDetailsView.do")
-  public String guestOrderDetailsView(@RequestParam("orderId") int orderId, Model model) {
+  public String guestOrderDetailsView(@RequestParam("orderId") int orderId, HttpServletRequest request, 
+                                      HttpServletResponse response, HttpSession session, Model model)throws Exception{
 
+    String guestEmail = (String) session.getAttribute("authGuestEmail");
+    String orderPassword = (String) session.getAttribute("authOrderPassword");
+    
+    if (guestEmail == null || orderPassword == null){
+      response.setContentType("text/html; charset=UTF-8");
+      PrintWriter out = response.getWriter();
+      out.println("<script>");
+      out.println("alert('인증 정보가 만료되었습니다. 메인 페이지로 이동합니다.');");
+      String contextPath = request.getContextPath();
+      out.println("location.href = '" + contextPath + "/';"); 
+      out.println("</script>");
+      out.flush();
+      out.close();
+      return null; 
+    }
+    
     OrderVO order = orderService.getGuestOrderByOrderId(orderId);
 
-    if(order == null){
-      model.addAttribute("msg", "해당 주문 정보를 찾을 수 없습니다.");
-      return "order/guestOrderForm"; 
+    if (order == null){
+      response.setContentType("text/html; charset=UTF-8");
+      PrintWriter out = response.getWriter();
+      out.println("<script>alert('해당 주문 정보를 찾을 수 없습니다.'); history.back();</script>");
+      out.flush();
+      out.close();
+      return null; 
     }
+    
     model.addAttribute("order", order);
+    model.addAttribute("guestEmail", guestEmail);
+    model.addAttribute("orderPassword", orderPassword);
+    
     return "guest/guestOrderDetailsView"; 
   }
 

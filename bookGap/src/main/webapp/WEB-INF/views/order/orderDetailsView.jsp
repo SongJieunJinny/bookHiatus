@@ -19,35 +19,49 @@
     <div class="orderDetailViewTitle">Order Details</div>
 
     <!-- 주문 기본 정보 -->
+    <div class="orderDetailTitle">주문 정보</div>
     <div class="orderInfoBox">
       <p><strong>주문번호 : </strong> ${order.orderId}</p>
       <p><strong>주문일 : </strong> <fmt:formatDate value="${order.orderDate}" pattern="yyyy-MM-dd HH:mm"/></p>
       <p><strong>결제번호 : </strong> ${order.paymentNo}</p>
-      <p>
-        <strong>현재 상태 : </strong>
-        <c:choose>
-          <c:when test="${not empty order.refundStatus}">
-            <c:choose>
-              <c:when test="${order.refundStatus == 1}">환불요청</c:when>
-              <c:when test="${order.refundStatus == 2}">환불처리중</c:when>
-              <c:when test="${order.refundStatus == 3}">환불완료</c:when>
-              <c:when test="${order.refundStatus == 4}">환불거절</c:when>
-            </c:choose>
-          </c:when>
-          <c:otherwise>
-            <c:choose>
-              <c:when test="${order.orderStatus == 1}">배송준비중</c:when>
-              <c:when test="${order.orderStatus == 2}">배송중</c:when>
-              <c:when test="${order.orderStatus == 3}">배송완료</c:when>
-              <c:when test="${order.orderStatus == 4}">배송취소</c:when>
-            </c:choose>
-          </c:otherwise>
-        </c:choose>
-      </p>
     </div>
+    
+    <!-- 주문 상품 목록 -->
+		<div class="orderDetailTitle">배송 정보</div>
+		<div class="deliveryInfoBox">
+			<p><strong>수령인 : </strong> ${order.receiverName}</p>
+			<p><strong>연락처 : </strong> ${order.receiverPhone}</p>
+			<p><strong>주소 : </strong> ${order.receiverRoadAddress} ${order.receiverDetailAddress} (${order.receiverPostCode})</p>
+			<c:if test="${not empty order.courier}">
+	      <p><strong>택배사 : </strong> ${order.courier}</p>
+	    </c:if>
+	    <c:if test="${not empty order.invoice}">
+	      <p><strong>송장번호 : </strong> ${order.invoice}</p>
+	    </c:if>
+			<p><strong>주문상태 : </strong>
+				<c:choose>
+			    <c:when test="${not empty order.refundStatus}">
+			      <c:choose>
+			        <c:when test="${order.refundStatus == 1}">환불요청</c:when>
+			        <c:when test="${order.refundStatus == 2}">환불처리중</c:when>
+			        <c:when test="${order.refundStatus == 3}">환불완료</c:when>
+			        <c:when test="${order.refundStatus == 4}">환불거절</c:when>
+			      </c:choose>
+			    </c:when>
+			    <c:otherwise>
+			      <c:choose>
+			        <c:when test="${order.orderStatus == 1}">배송준비중</c:when>
+			        <c:when test="${order.orderStatus == 2}">배송중</c:when>
+			        <c:when test="${order.orderStatus == 3}">배송완료</c:when>
+			        <c:when test="${order.orderStatus == 4}">배송취소</c:when>
+			      </c:choose>
+			    </c:otherwise>
+			  </c:choose>
+			</p>
+		</div>
 
     <!-- 주문 상세 상품 목록 -->
-    <h3>상품 내역</h3>
+    <div class="orderDetailTitle">상품 내역</div>
     <table class="orderTable">
       <thead>
         <tr>
@@ -75,8 +89,8 @@
     </table>
 
     <!-- 환불 신청 폼 -->
-    <h3>환불 신청</h3>
-		<form class="refundForm" id="refundForm"  method="POST" action="<%=request.getContextPath()%>/refund/apply.do">
+    <div class="orderDetailTitle">환불 신청</div>
+		<form class="refundForm" id="refundForm" method="POST" action="<%=request.getContextPath()%>/refund/apply.do">
 			<div class="refundFormLine">
 			  <input type="hidden" name="orderId" value="${order.orderId}">
 			  <input type="hidden" name="paymentNo" value="${not empty order.payment ? order.payment.paymentNo : order.paymentNo}">
@@ -86,13 +100,14 @@
 			  
 			  <label>환불 사유</label>
 			  <textarea class="refundFormReason" name="refundReason" required ></textarea>
-			  
+			  <button class="refundFormButton" type="submit">환불 신청하기</button>
 			</div>
-		  <button class="refundFormButton" type="submit">환불 신청하기</button>
+		  
 		</form>
-		<div id="refundStatusBox" style="display: none;">
-        이미 환불을 신청한 주문입니다. 현재 상태: <strong id="refundStatusText"></strong>
+		<div id="refundStatusBox">
+      환불 신청 상태 : <strong id="refundStatusText"></strong>
     </div>
+    <button id="backMyOrder">주문화면 돌아가기</button>
   </div>
 </section>
 <jsp:include page="/WEB-INF/views/include/footer.jsp" />
@@ -102,6 +117,10 @@ $(document).ready(function() {
   initHeaderEvents();
   checkExistingRefund(); // 페이지 로드 시, 기존 환불 신청 내역 확인
 
+  $('#backMyOrder').click(function() {
+	  window.location.href = '<%=request.getContextPath()%>/order/myOrder.do';
+  });
+  
   $("#refundForm").submit(function(e) {
     e.preventDefault(); 
     
