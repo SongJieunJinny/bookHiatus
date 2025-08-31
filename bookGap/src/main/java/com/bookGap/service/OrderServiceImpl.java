@@ -20,39 +20,7 @@ import com.bookGap.vo.UserAddressVO;
 public class OrderServiceImpl implements OrderService {
   
   @Autowired private OrderDAO orderDAO;
-  @Autowired private GuestService guestService; 
-
-  @Transactional
-  @Override
-  public void placeOrder(OrderVO order, List<OrderDetailVO> details) {
-    orderDAO.insertOrder(order); // PK 생성
-    for (OrderDetailVO detail : details) {
-      detail.setOrderId(order.getOrderId()); // FK 세팅
-      orderDAO.insertOrderDetail(detail);
-    }
-  }
-  
-  @Transactional
-  @Override
-  public OrderVO createGuestOrder(Map<String, Object> orderData) throws Exception {
-    OrderVO newOrder = new OrderVO();
-    orderDAO.insertOrder(newOrder);
-
-    @SuppressWarnings("unchecked")
-    List<Map<String, Object>> items = (List<Map<String, Object>>) orderData.get("items");
-    List<OrderDetailVO> detailList = new ArrayList<>();
-    for (Map<String, Object> item : items) {
-      OrderDetailVO d = new OrderDetailVO();
-      d.setOrderId(newOrder.getOrderId());
-      d.setBookNo((Integer) item.get("bookNo"));
-      d.setOrderCount((Integer) item.get("quantity"));
-      d.setOrderPrice((Integer) item.get("priceAtPurchase"));
-      d.setRefundCheck(1); // 기본값: 환불 없음
-      detailList.add(d);
-    }
-    orderDAO.insertOrderDetailList(detailList);
-    return newOrder;
-  }
+  @Autowired private GuestService guestService;
   
   @Override
   public List<OrderVO> getOrdersByUserId(String userId) {
@@ -98,173 +66,7 @@ public class OrderServiceImpl implements OrderService {
   public boolean updateBookStock(String isbn, int quantity) {
     return orderDAO.updateBookStock(isbn, quantity);
   }
-  
-  @Override
-  @Transactional
-  public int createOrderWithDetails(Map<String, Object> orderData) throws IllegalStateException {
-    String userId = (String) orderData.get("userId");
-    Integer userAddressId = (Integer) orderData.get("userAddressId");
-    @SuppressWarnings("unchecked")
-    List<Map<String, Object>> items = (List<Map<String, Object>>) orderData.get("orderItems");
 
-    UserAddressVO deliveryAddress = orderDAO.findAddressByUserAddressId(userAddressId);
-    if(deliveryAddress == null){
-      throw new IllegalStateException("선택된 배송지 정보를 찾을 수 없습니다. (ID: " + userAddressId + ")");
-    }
-
-    int serverCalculatedTotalPrice = 0;
-    List<String> isbnList = new ArrayList<>();
-    for (Map<String, Object> item : items) isbnList.add((String) item.get("isbn"));
-
-    List<BookVO> booksInDb = orderDAO.selectBooksByIsbnList(isbnList);
-
-    for(Map<String, Object> item : items){
-      String isbn = (String) item.get("isbn");
-      Integer quantity = (Integer) item.get("quantity");
-      BookVO book = booksInDb.stream()
-                    .filter(b -> b.getIsbn().equals(isbn))
-                    .findFirst()
-                    .orElseThrow(() -> new IllegalStateException("주문 처리 중 상품 정보를 찾을 수 없습니다: " + isbn));
-      serverCalculatedTotalPrice += book.getProductInfo().getDiscount() * quantity;
-    }
-
-    serverCalculatedTotalPrice += (Integer) orderData.get("deliveryFee");
-    if(serverCalculatedTotalPrice != (Integer) orderData.get("totalPrice")){
-      System.out.println("WARN: 가격 검증 불일치. 서버:" + serverCalculatedTotalPrice +", 클라이언트:" + orderData.get("totalPrice"));
-    }
-
-    OrderVO newOrder = new OrderVO();
-    newOrder.setUserId(userId);
-    newOrder.setUserAddressId(userAddressId);
-    newOrder.setTotalPrice(serverCalculatedTotalPrice);
-    newOrder.setOrderStatus(1);
-    newOrder.setOrderType(1);
-    newOrder.setReceiverName(deliveryAddress.getUserName());
-    newOrder.setReceiverPhone(deliveryAddress.getUserPhone());
-    newOrder.setReceiverPostCode(deliveryAddress.getPostCode());
-    newOrder.setReceiverRoadAddress(deliveryAddress.getRoadAddress());
-    newOrder.setReceiverDetailAddress(deliveryAddress.getDetailAddress());
-    newOrder.setDeliveryRequest((String) orderData.get("deliveryRequest"));
-    orderDAO.insertOrder(newOrder);
-    int newOrderId = newOrder.getOrderId();
-
-    List<OrderDetailVO> orderDetailList = new ArrayList<>();
-    for(Map<String, Object> item : items){
-      String isbn = (String) item.get("isbn");
-      Integer quantity = (Integer) item.get("quantity");
-      BookVO currentBook = booksInDb.stream().filter(b -> b.getIsbn().equals(isbn)).findFirst().get();
-
-      if(!orderDAO.updateBookStock(isbn, quantity)){
-        throw new IllegalStateException("재고가 부족합니다: " + currentBook.getProductInfo().getTitle());
-      }
-
-      OrderDetailVO d = new OrderDetailVO();
-      d.setOrderId(newOrderId);
-      d.setBookNo(currentBook.getBookNo());
-      d.setOrderCount(quantity);
-      d.setOrderPrice(currentBook.getProductInfo().getDiscount());
-      d.setRefundCheck(0);
-      orderDetailList.add(d);
-    }
-    if (!orderDetailList.isEmpty()) orderDAO.insertOrderDetailList(orderDetailList);
-
-    return newOrderId;
-  }
-
-  @Override
-  @Transactional
-  public Map<String, Object> createGuestOrderWithDetails(Map<String, Object> orderData) throws Exception {
-    String guestEmail = (String) orderData.get("guestEmail");
-    String guestName  = (String) orderData.get("guestName");
-    String guestPhone = (String) orderData.get("guestPhone");
-
-    if (guestEmail == null || guestName == null || guestPhone == null) {
-      throw new IllegalStateException("비회원 주문 생성 시 필수 정보(이름/전화/이메일)가 누락되었습니다.");
-    }
-
-    // 1. 게스트 등록 or 기존 정보 사용
-    GuestVO guest = guestService.getGuestByEmail(guestEmail);
-    String guestId;
-    if(guest == null){
-      guestId = "G-" + System.currentTimeMillis();
-      guest = new GuestVO();
-      guest.setGuestId(guestId);
-      guest.setGuestName(guestName);
-      guest.setGuestPhone(guestPhone);
-      guest.setGuestEmail(guestEmail);
-      guestService.registerGuest(guest);
-    }else{
-      guestId = guest.getGuestId();
-    }
-
-    // 2. 주문 생성
-    OrderVO newOrder = new OrderVO();
-    newOrder.setOrderType(2);  // 비회원
-    newOrder.setGuestId(guestId);
-    newOrder.setOrderPassword((String) orderData.get("orderPassword"));
-    newOrder.setReceiverName((String) orderData.get("receiverName"));
-    newOrder.setReceiverPhone((String) orderData.get("receiverPhone"));
-    newOrder.setReceiverPostCode((String) orderData.get("receiverPostCode"));
-    newOrder.setReceiverRoadAddress((String) orderData.get("receiverRoadAddress"));
-    newOrder.setReceiverDetailAddress((String) orderData.get("receiverDetailAddress"));
-    newOrder.setDeliveryRequest((String) orderData.get("deliveryRequest"));
-    newOrder.setOrderStatus(1);
-
-    // 3. 금액 검증
-    @SuppressWarnings("unchecked")
-    List<Map<String, Object>> items = (List<Map<String, Object>>) orderData.get("orderItems");
-
-    List<String> isbnList = new ArrayList<>();
-    for (Map<String, Object> item : items) isbnList.add((String) item.get("isbn"));
-    List<BookVO> booksInDb = orderDAO.selectBooksByIsbnList(isbnList);
-
-    int serverCalculatedTotalPrice = 0;
-    for(Map<String, Object> item : items){
-      String isbn = (String) item.get("isbn");
-      int quantity = (Integer) item.get("quantity");
-      BookVO book = booksInDb.stream()
-          .filter(b -> b.getIsbn().equals(isbn))
-          .findFirst()
-          .orElseThrow(() -> new IllegalStateException("상품 없음: " + isbn));
-      serverCalculatedTotalPrice += book.getProductInfo().getDiscount() * quantity;
-    }
-    serverCalculatedTotalPrice += (serverCalculatedTotalPrice >= 50000 ? 0 : 3000);
-
-    newOrder.setTotalPrice(serverCalculatedTotalPrice);
-    
-    // 4. 주문 저장
-    orderDAO.insertOrder(newOrder);
-    int orderId = newOrder.getOrderId();
-    
-    // 5. 주문 상세 저장 + 재고 차감
-    List<OrderDetailVO> orderDetailList = new ArrayList<>();
-    for(Map<String, Object> item : items){
-      String isbn = (String) item.get("isbn");
-      int quantity = (Integer) item.get("quantity");
-      BookVO currentBook = booksInDb.stream().filter(b -> b.getIsbn().equals(isbn)).findFirst().get();
-
-      if(!orderDAO.updateBookStock(isbn, quantity)){
-        throw new IllegalStateException("재고 부족: " + currentBook.getProductInfo().getTitle());
-      }
-
-      OrderDetailVO d = new OrderDetailVO();
-      d.setOrderId(orderId);
-      d.setBookNo(currentBook.getBookNo());
-      d.setOrderCount(quantity);
-      d.setOrderPrice(currentBook.getProductInfo().getDiscount());
-      d.setRefundCheck(0);
-      orderDetailList.add(d);
-    }
-    orderDAO.insertOrderDetailList(orderDetailList);
-
-    // 6. 반환값
-    Map<String, Object> result = new HashMap<>();
-    result.put("orderId", orderId);
-    result.put("guestId", guestId);
-    result.put("orderName", orderData.get("orderName"));
-    result.put("totalPrice", serverCalculatedTotalPrice);
-    return result;
-  }
   
   @Override
   public int getTotalOrderCount(String userId) {
@@ -289,6 +91,198 @@ public class OrderServiceImpl implements OrderService {
   @Override
   public OrderVO getGuestOrderByOrderId(int orderId) {
 	  return orderDAO.getGuestOrderByOrderId(orderId);
+  }
+  
+  private String newOrderKey() {
+	return "ODR_" + java.util.UUID.randomUUID().toString().replace("-", "");
+  }
+
+  @Transactional
+  @Override
+  public void placeOrder(OrderVO order, List<OrderDetailVO> details) {
+    if (order.getOrderKey() == null || order.getOrderKey().isEmpty()) {
+      order.setOrderKey(newOrderKey());
+    }
+    // 스키마 필수값 보정(필요 시)
+    if (order.getOrderStatus() == 0) order.setOrderStatus(1);
+    if (order.getOrderType() == 0)   order.setOrderType(order.getUserId()!=null?1:2);
+
+    orderDAO.insertOrder(order);
+    for (OrderDetailVO d : details) {
+      d.setOrderId(order.getOrderId());
+      orderDAO.insertOrderDetail(d);
+    }
+  }
+  
+  @Transactional
+  @Override
+  public OrderVO createGuestOrder(Map<String, Object> orderData) throws Exception {
+    OrderVO newOrder = new OrderVO();
+    newOrder.setOrderKey(newOrderKey());
+    newOrder.setOrderType(2);
+    newOrder.setOrderStatus(1);
+    newOrder.setTotalPrice(((Number)orderData.getOrDefault("totalPrice",0)).intValue());
+    newOrder.setReceiverName((String) orderData.get("receiverName"));
+    newOrder.setReceiverPhone((String) orderData.get("receiverPhone"));
+    newOrder.setReceiverPostCode((String) orderData.get("receiverPostCode"));
+    newOrder.setReceiverRoadAddress((String) orderData.get("receiverRoadAddress"));
+    newOrder.setReceiverDetailAddress((String) orderData.get("receiverDetailAddress"));
+    newOrder.setDeliveryRequest((String) orderData.get("deliveryRequest"));
+    orderDAO.insertOrder(newOrder);
+
+    @SuppressWarnings("unchecked")
+    List<Map<String,Object>> items = (List<Map<String,Object>>) orderData.get("items");
+    List<OrderDetailVO> list = new ArrayList<>();
+    for (Map<String,Object> it : items) {
+      OrderDetailVO d = new OrderDetailVO();
+      d.setOrderId(newOrder.getOrderId());
+      d.setBookNo(((Number)it.get("bookNo")).intValue());
+      d.setOrderCount(((Number)it.get("quantity")).intValue());
+      d.setOrderPrice(((Number)it.get("priceAtPurchase")).intValue());
+      d.setRefundCheck(0);
+      list.add(d);
+    }
+    if (!list.isEmpty()) orderDAO.insertOrderDetailList(list);
+    return newOrder;
+  }
+  
+  @Transactional
+  @Override
+  public int createOrderWithDetails(Map<String,Object> orderData) {
+    String userId = (String) orderData.get("userId");
+    Integer userAddressId = (Integer) orderData.get("userAddressId");
+    @SuppressWarnings("unchecked")
+    List<Map<String,Object>> items = (List<Map<String,Object>>) orderData.get("orderItems");
+
+    UserAddressVO addr = orderDAO.findAddressByUserAddressId(userAddressId);
+    if (addr == null) throw new IllegalStateException("선택된 배송지 정보를 찾을 수 없습니다. (ID: " + userAddressId + ")");
+
+    int total = 0;
+    List<String> isbnList = new ArrayList<>();
+    for (Map<String,Object> it : items) isbnList.add((String) it.get("isbn"));
+    List<BookVO> books = orderDAO.selectBooksByIsbnList(isbnList);
+    for (Map<String,Object> it : items) {
+      String isbn = (String) it.get("isbn");
+      int qty = ((Number)it.get("quantity")).intValue();
+      BookVO b = books.stream().filter(v->v.getIsbn().equals(isbn)).findFirst()
+              .orElseThrow(() -> new IllegalStateException("주문 처리 중 상품 정보를 찾을 수 없습니다: " + isbn));
+      total += b.getProductInfo().getDiscount() * qty;
+    }
+    total += ((Number)orderData.get("deliveryFee")).intValue();
+
+    OrderVO o = new OrderVO();
+    o.setUserId(userId);
+    o.setUserAddressId(userAddressId);
+    o.setOrderKey(newOrderKey());
+    o.setTotalPrice(total);
+    o.setOrderStatus(1);
+    o.setOrderType(1);
+    o.setReceiverName(addr.getUserName());
+    o.setReceiverPhone(addr.getUserPhone());
+    o.setReceiverPostCode(addr.getPostCode());
+    o.setReceiverRoadAddress(addr.getRoadAddress());
+    o.setReceiverDetailAddress(addr.getDetailAddress());
+    o.setDeliveryRequest((String) orderData.get("deliveryRequest"));
+    orderDAO.insertOrder(o);
+
+    List<OrderDetailVO> ds = new ArrayList<>();
+    for (Map<String,Object> it : items) {
+      String isbn = (String) it.get("isbn");
+      int qty = ((Number)it.get("quantity")).intValue();
+      BookVO b = books.stream().filter(v->v.getIsbn().equals(isbn)).findFirst().get();
+      if (!orderDAO.updateBookStock(isbn, qty)) {
+        throw new IllegalStateException("재고가 부족합니다: " + b.getProductInfo().getTitle());
+      }
+      OrderDetailVO d = new OrderDetailVO();
+      d.setOrderId(o.getOrderId());
+      d.setBookNo(b.getBookNo());
+      d.setOrderCount(qty);
+      d.setOrderPrice(b.getProductInfo().getDiscount());
+      d.setRefundCheck(0);
+      ds.add(d);
+    }
+    if (!ds.isEmpty()) orderDAO.insertOrderDetailList(ds);
+    return o.getOrderId();
+  }
+
+  @Transactional
+  @Override
+  public Map<String,Object> createGuestOrderWithDetails(Map<String,Object> orderData) throws Exception {
+    String guestEmail = (String) orderData.get("guestEmail");
+    String guestName  = (String) orderData.get("guestName");
+    String guestPhone = (String) orderData.get("guestPhone");
+    if (guestEmail==null || guestName==null || guestPhone==null) {
+      throw new IllegalStateException("비회원 주문 생성 시 필수 정보(이름/전화/이메일)가 누락되었습니다.");
+    }
+
+    GuestVO guest = guestService.getGuestByEmail(guestEmail);
+    String guestId;
+    if (guest == null) {
+      guestId = "G-" + System.currentTimeMillis();
+      guest = new GuestVO();
+      guest.setGuestId(guestId);
+      guest.setGuestName(guestName);
+      guest.setGuestPhone(guestPhone);
+      guest.setGuestEmail(guestEmail);
+      guestService.registerGuest(guest);
+    } else guestId = guest.getGuestId();
+
+    @SuppressWarnings("unchecked")
+    List<Map<String,Object>> items = (List<Map<String,Object>>) orderData.get("orderItems");
+    List<String> isbnList = new ArrayList<>();
+    for (Map<String,Object> it : items) isbnList.add((String) it.get("isbn"));
+    List<BookVO> books = orderDAO.selectBooksByIsbnList(isbnList);
+
+    int total = 0;
+    for (Map<String,Object> it : items) {
+      String isbn = (String) it.get("isbn");
+      int qty = ((Number)it.get("quantity")).intValue();
+      BookVO b = books.stream().filter(v->v.getIsbn().equals(isbn)).findFirst()
+              .orElseThrow(() -> new IllegalStateException("상품 없음: " + isbn));
+      total += b.getProductInfo().getDiscount() * qty;
+    }
+    total += (total >= 50000 ? 0 : 3000);
+
+    OrderVO o = new OrderVO();
+    o.setOrderType(2);
+    o.setGuestId(guestId);
+    o.setOrderKey(newOrderKey());
+    o.setOrderPassword((String) orderData.get("orderPassword"));
+    o.setReceiverName((String) orderData.get("receiverName"));
+    o.setReceiverPhone((String) orderData.get("receiverPhone"));
+    o.setReceiverPostCode((String) orderData.get("receiverPostCode"));
+    o.setReceiverRoadAddress((String) orderData.get("receiverRoadAddress"));
+    o.setReceiverDetailAddress((String) orderData.get("receiverDetailAddress"));
+    o.setDeliveryRequest((String) orderData.get("deliveryRequest"));
+    o.setOrderStatus(1);
+    o.setTotalPrice(total);
+    orderDAO.insertOrder(o);
+
+    List<OrderDetailVO> ds = new ArrayList<>();
+    for (Map<String,Object> it : items) {
+      String isbn = (String) it.get("isbn");
+      int qty = ((Number)it.get("quantity")).intValue();
+      BookVO b = books.stream().filter(v->v.getIsbn().equals(isbn)).findFirst().get();
+      if (!orderDAO.updateBookStock(isbn, qty)) {
+        throw new IllegalStateException("재고 부족: " + b.getProductInfo().getTitle());
+      }
+      OrderDetailVO d = new OrderDetailVO();
+      d.setOrderId(o.getOrderId());
+      d.setBookNo(b.getBookNo());
+      d.setOrderCount(qty);
+      d.setOrderPrice(b.getProductInfo().getDiscount());
+      d.setRefundCheck(0);
+      ds.add(d);
+    }
+    if (!ds.isEmpty()) orderDAO.insertOrderDetailList(ds);
+
+    Map<String,Object> result = new HashMap<>();
+    result.put("orderId", o.getOrderId());
+    result.put("guestId", guestId);
+    result.put("orderKey", o.getOrderKey());
+    result.put("orderName", orderData.get("orderName"));
+    result.put("totalPrice", total);
+    return result;
   }
 
 }

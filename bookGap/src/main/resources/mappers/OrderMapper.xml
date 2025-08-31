@@ -40,7 +40,6 @@
     <result property="orderType"             column="ORDER_TYPE"/>
     <result property="userId"                column="O_USER_ID"/>
     <result property="guestId"               column="O_GUEST_ID"/>
-    <result property="cartNo"                column="CART_NO"/>
     <result property="userAddressId"         column="USER_ADDRESS_ID"/>
     <result property="receiverName"          column="RECEIVER_NAME"/>
     <result property="receiverPhone"         column="RECEIVER_PHONE"/>
@@ -56,6 +55,7 @@
     <result property="paymentNo"             column="P_PAYMENT_NO"/>
     <result property="courier"               column="COURIER"/>
     <result property="invoice"               column="INVOICE"/>
+    <result property="orderKey"              column="ORDER_KEY"/>
 
 	  <!-- Payment 매핑 -->
 	  <association property="payment" javaType="com.bookGap.vo.PaymentVO">
@@ -85,20 +85,20 @@
 
   <!-- ================= INSERT / UPDATE / DELETE ================= -->
 
-  <insert id="insertOrder" parameterType="com.bookGap.vo.OrderVO" 
+	<insert id="insertOrder" parameterType="com.bookGap.vo.OrderVO"
         useGeneratedKeys="true" keyProperty="orderId">
 	  INSERT INTO ORDERS
 	  <trim prefix="(" suffix=")" suffixOverrides=",">
 	    ORDER_DATE,
 	    ORDER_STATUS,
 	    TOTAL_PRICE,
+	    ORDER_TYPE,
 	    RECEIVER_NAME,
 	    RECEIVER_PHONE,
 	    RECEIVER_POST_CODE,
 	    RECEIVER_ROAD_ADDRESS,
 	    RECEIVER_DETAIL_ADDRESS,
 	    DELIVERY_REQUEST,
-	    ORDER_TYPE,
 	    <if test="userId != null and userId != ''">
 	      USER_ID,
 	      USER_ADDRESS_ID,
@@ -109,19 +109,19 @@
 	    <if test="orderPassword != null and orderPassword != ''">
 	      ORDER_PASSWORD,
 	    </if>
+	    ORDER_KEY
 	  </trim>
-	  VALUES
 	  <trim prefix="(" suffix=")" suffixOverrides=",">
 	    NOW(),
 	    #{orderStatus},
 	    #{totalPrice},
+	    #{orderType},
 	    #{receiverName},
 	    #{receiverPhone},
 	    #{receiverPostCode},
 	    #{receiverRoadAddress},
 	    #{receiverDetailAddress},
 	    #{deliveryRequest},
-	    #{orderType},
 	    <if test="userId != null and userId != ''">
 	      #{userId},
 	      #{userAddressId},
@@ -132,6 +132,7 @@
 	    <if test="orderPassword != null and orderPassword != ''">
 	      #{orderPassword},
 	    </if>
+	    #{orderKey}
 	  </trim>
 	</insert>
 
@@ -255,7 +256,7 @@
 	<select id="getOrdersPaging" parameterType="map" resultMap="OrderResultMap">
     SELECT
       o.ORDER_ID  AS O_ORDER_ID, o.ORDER_DATE  AS ORDER_DATE, o.ORDER_STATUS  AS ORDER_STATUS, o.TOTAL_PRICE  AS TOTAL_PRICE, o.ORDER_TYPE  AS ORDER_TYPE, o.USER_ID  AS O_USER_ID, o.COURIER, o.INVOICE,
-      o.CART_NO, o.USER_ADDRESS_ID, o.RECEIVER_NAME, o.RECEIVER_PHONE, o.RECEIVER_POST_CODE, o.RECEIVER_ROAD_ADDRESS, o.RECEIVER_DETAIL_ADDRESS, o.DELIVERY_REQUEST, o.REFUND_STATUS,
+      o.ORDER_KEY AS ORDER_KEY, o.USER_ADDRESS_ID, o.RECEIVER_NAME, o.RECEIVER_PHONE, o.RECEIVER_POST_CODE, o.RECEIVER_ROAD_ADDRESS, o.RECEIVER_DETAIL_ADDRESS, o.DELIVERY_REQUEST, o.REFUND_STATUS,
       p.PAYMENT_NO  AS P_PAYMENT_NO, p.AMOUNT  AS P_AMOUNT, p.PAYMENT_METHOD  AS P_PAYMENT_METHOD, p.STATUS  AS P_STATUS,
       p.CREATED_AT  AS P_CREATED_AT, p.ORDER_ID  AS P_ORDER_ID, p.USER_ID  AS P_USER_ID,
       od.ORDER_DETAIL_NO  AS ORDER_DETAIL_NO, od.ORDER_COUNT, od.ORDER_PRICE  AS OD_ORDER_PRICE, od.REFUND_CHECK, od.BOOK_NO  AS OD_BOOK_NO, od.ORDER_ID  AS OD_ORDER_ID,
@@ -276,7 +277,7 @@
   <select id="getOrderById" parameterType="int" resultMap="OrderResultMap">
 	  SELECT
       o.ORDER_ID  AS O_ORDER_ID, o.ORDER_DATE, o.ORDER_STATUS, o.TOTAL_PRICE, o.USER_ID  AS O_USER_ID, o.RECEIVER_NAME,
-      o.RECEIVER_PHONE, o.RECEIVER_POST_CODE, o.RECEIVER_ROAD_ADDRESS, o.RECEIVER_DETAIL_ADDRESS, o.DELIVERY_REQUEST, o.REFUND_STATUS, o.COURIER, o.INVOICE,
+      o.ORDER_KEY AS ORDER_KEY, o.RECEIVER_PHONE, o.RECEIVER_POST_CODE, o.RECEIVER_ROAD_ADDRESS, o.RECEIVER_DETAIL_ADDRESS, o.DELIVERY_REQUEST, o.REFUND_STATUS, o.COURIER, o.INVOICE,
       p.PAYMENT_NO  AS P_PAYMENT_NO, p.AMOUNT  AS P_AMOUNT, p.PAYMENT_METHOD  AS P_PAYMENT_METHOD, p.STATUS  AS P_STATUS,
       p.CREATED_AT  AS P_CREATED_AT, p.ORDER_ID  AS P_ORDER_ID, p.USER_ID  AS P_USER_ID,
       od.ORDER_DETAIL_NO, od.ORDER_COUNT, od.ORDER_PRICE  AS OD_ORDER_PRICE, od.REFUND_CHECK, od.BOOK_NO  AS OD_BOOK_NO, od.ORDER_ID  AS OD_ORDER_ID,
@@ -295,7 +296,7 @@
   <select id="getOrdersByUserId" parameterType="string" resultMap="OrderResultMap">
     SELECT
       o.ORDER_ID  AS O_ORDER_ID, o.ORDER_DATE  AS ORDER_DATE, o.ORDER_STATUS  AS ORDER_STATUS, o.TOTAL_PRICE  AS TOTAL_PRICE, o.ORDER_TYPE  AS ORDER_TYPE, o.USER_ID  AS O_USER_ID, o.COURIER, o.INVOICE,
-      o.CART_NO, o.USER_ADDRESS_ID, o.RECEIVER_NAME, o.RECEIVER_PHONE, o.RECEIVER_POST_CODE, o.RECEIVER_ROAD_ADDRESS, o.RECEIVER_DETAIL_ADDRESS, o.DELIVERY_REQUEST, o.REFUND_STATUS,
+      o.ORDER_KEY AS ORDER_KEY, o.USER_ADDRESS_ID, o.RECEIVER_NAME, o.RECEIVER_PHONE, o.RECEIVER_POST_CODE, o.RECEIVER_ROAD_ADDRESS, o.RECEIVER_DETAIL_ADDRESS, o.DELIVERY_REQUEST, o.REFUND_STATUS,
       p.PAYMENT_NO  AS P_PAYMENT_NO, p.AMOUNT  AS P_AMOUNT, p.PAYMENT_METHOD  AS P_PAYMENT_METHOD, p.STATUS  AS P_STATUS,
       p.CREATED_AT  AS P_CREATED_AT, p.ORDER_ID  AS P_ORDER_ID, p.USER_ID  AS P_USER_ID,
       od.ORDER_DETAIL_NO  AS ORDER_DETAIL_NO, od.ORDER_COUNT, od.ORDER_PRICE  AS OD_ORDER_PRICE, od.REFUND_CHECK, od.BOOK_NO  AS OD_BOOK_NO, od.ORDER_ID  AS OD_ORDER_ID,
@@ -323,7 +324,7 @@
   <select id="getGuestOrderByOrderId" parameterType="int" resultMap="OrderResultMap">
     SELECT
         o.ORDER_ID AS O_ORDER_ID, o.ORDER_DATE AS ORDER_DATE, o.ORDER_STATUS AS ORDER_STATUS, o.TOTAL_PRICE AS TOTAL_PRICE, o.RECEIVER_NAME,
-        o.RECEIVER_PHONE, o.RECEIVER_POST_CODE, o.RECEIVER_ROAD_ADDRESS, o.RECEIVER_DETAIL_ADDRESS, o.DELIVERY_REQUEST, o.REFUND_STATUS, o.COURIER, o.INVOICE,
+        o.ORDER_KEY AS ORDER_KEY, o.RECEIVER_PHONE, o.RECEIVER_POST_CODE, o.RECEIVER_ROAD_ADDRESS, o.RECEIVER_DETAIL_ADDRESS, o.DELIVERY_REQUEST, o.REFUND_STATUS, o.COURIER, o.INVOICE,
         g.GUEST_NAME AS GUEST_NAME, g.GUEST_PHONE AS GUEST_PHONE, g.GUEST_EMAIL AS GUEST_EMAIL,
         p.PAYMENT_NO AS P_PAYMENT_NO, p.AMOUNT AS P_AMOUNT, p.PAYMENT_METHOD AS P_PAYMENT_METHOD, p.STATUS AS P_STATUS,
         p.CREATED_AT AS P_CREATED_AT, p.ORDER_ID AS P_ORDER_ID, p.GUEST_ID AS P_GUEST_ID,
@@ -344,7 +345,7 @@
 	<select id="findGuestOrdersByPasswordAndEmail" parameterType="map" resultMap="OrderResultMap">
 		SELECT
 				o.ORDER_ID AS O_ORDER_ID, o.ORDER_DATE AS ORDER_DATE, o.ORDER_STATUS AS ORDER_STATUS, o.TOTAL_PRICE AS TOTAL_PRICE, o.RECEIVER_NAME,
-				o.RECEIVER_PHONE, o.RECEIVER_POST_CODE, o.RECEIVER_ROAD_ADDRESS, o.RECEIVER_DETAIL_ADDRESS, o.DELIVERY_REQUEST, o.REFUND_STATUS, o.COURIER, o.INVOICE,
+				o.ORDER_KEY AS ORDER_KEY, o.RECEIVER_PHONE, o.RECEIVER_POST_CODE, o.RECEIVER_ROAD_ADDRESS, o.RECEIVER_DETAIL_ADDRESS, o.DELIVERY_REQUEST, o.REFUND_STATUS, o.COURIER, o.INVOICE,
 				g.GUEST_NAME AS GUEST_NAME, g.GUEST_PHONE AS GUEST_PHONE, g.GUEST_EMAIL AS GUEST_EMAIL,
 				p.PAYMENT_NO AS P_PAYMENT_NO, p.AMOUNT AS P_AMOUNT, p.PAYMENT_METHOD AS P_PAYMENT_METHOD, p.STATUS AS P_STATUS,
 				p.CREATED_AT AS P_CREATED_AT, p.ORDER_ID AS P_ORDER_ID, p.USER_ID AS P_USER_ID, p.GUEST_ID AS P_GUEST_ID,
