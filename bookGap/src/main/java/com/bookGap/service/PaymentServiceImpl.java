@@ -114,156 +114,100 @@ public class PaymentServiceImpl implements PaymentService{
   
   @Override
   @Transactional
-  public Map<String, Object> prepareAndCreateTossOrder(Map<String, Object> orderData,
-                                                       Principal principal,
+  public Map<String, Object> prepareAndCreateTossOrder(Map<String, Object> orderData, Principal principal,
                                                        HttpServletRequest request) throws Exception {
-    Map<String,Object> resp = new HashMap<>();
-    OrderVO newOrder = null;
 
-    String customerKey, customerName;
+    // 1. 주문 ID 유효성 검사 (가장 중요한 입력값)
     Integer orderId = (Integer) orderData.get("orderId");
+    if (orderId == null) { throw new IllegalArgumentException("결제를 준비하려면 주문 ID(orderId)가 반드시 필요합니다."); }
 
-    String baseUrl = request.getScheme() + "://" + request.getServerName()
-        + ((request.getServerPort()==80||request.getServerPort()==443)?"":":"+request.getServerPort())
-        + request.getContextPath();
-    String successUrl = baseUrl + "/payment/success";
-    String failUrl    = baseUrl + "/payment/fail";
-
-    if (orderId == null) {
-      if (principal != null) throw new Exception("회원 주문 생성 오류: orderId 누락");
-
-      // 게스트 식별
-      String guestEmail = (String) orderData.get("guestEmail");
-      String guestNameIn = (String) orderData.get("guestName");
-      String guestPhoneIn = (String) orderData.get("guestPhone");
-      if (guestEmail==null||guestNameIn==null||guestPhoneIn==null) throw new Exception("비회원 필수 정보 누락");
-
-      GuestVO guest = guestService.getGuestByEmail(guestEmail);
-      String guestId;
-      if (guest == null) {
-        guestId = "G-" + System.currentTimeMillis();
-        guest = new GuestVO();
-        guest.setGuestId(guestId);
-        guest.setGuestName(guestNameIn);
-        guest.setGuestPhone(guestPhoneIn);
-        guest.setGuestEmail(guestEmail);
-        guestService.registerGuest(guest);
-      } else guestId = guest.getGuestId();
-      customerKey = guestId; customerName = guestNameIn;
-
-      // 금액 검증
-      @SuppressWarnings("unchecked")
-      List<Map<String,Object>> items = (List<Map<String,Object>>) orderData.get("orderItems");
-      if (items==null || items.isEmpty()) throw new Exception("주문 상품 없음");
-
-      List<String> isbnList = new ArrayList<>();
-      for (Map<String,Object> it : items) isbnList.add((String) it.get("isbn"));
-      List<BookVO> books = orderDAO.selectBooksByIsbnList(isbnList);
-
-      int total = 0;
-      for (Map<String,Object> it : items) {
-        String isbn = (String) it.get("isbn");
-        int qty = ((Number)it.get("quantity")).intValue();
-        BookVO b = books.stream().filter(v->v.getIsbn().equals(isbn)).findFirst()
-                .orElseThrow(() -> new Exception("DB에 없는 상품: " + isbn));
-        total += b.getProductInfo().getDiscount() * qty;
-      }
-      total += (total >= 50000 ? 0 : 3000);
-      int clientTotal = ((Number)orderData.get("totalPrice")).intValue();
-      if (total != clientTotal) throw new Exception("가격 정보 불일치");
-
-      // 주문 저장 (ORDER_KEY 필수)
-      newOrder = new OrderVO();
-      newOrder.setOrderType(2);
-      newOrder.setGuestId(customerKey);
-      newOrder.setOrderPassword((String) orderData.get("orderPassword"));
-      newOrder.setReceiverName((String) orderData.get("receiverName"));
-      newOrder.setReceiverPhone((String) orderData.get("receiverPhone"));
-      newOrder.setReceiverPostCode((String) orderData.get("receiverPostCode"));
-      newOrder.setReceiverRoadAddress((String) orderData.get("receiverRoadAddress"));
-      newOrder.setReceiverDetailAddress((String) orderData.get("receiverDetailAddress"));
-      newOrder.setDeliveryRequest((String) orderData.get("deliveryRequest"));
-      newOrder.setOrderStatus(1);
-      newOrder.setTotalPrice(total);
-      newOrder.setOrderKey("ODR_" + java.util.UUID.randomUUID().toString().replace("-", ""));
-      orderDAO.insertOrder(newOrder);
-      orderId = newOrder.getOrderId();
-
-      // 상세 + 재고
-      List<OrderDetailVO> ds = new ArrayList<>();
-      for (Map<String,Object> it : items) {
-        String isbn = (String) it.get("isbn");
-        int qty = ((Number)it.get("quantity")).intValue();
-        BookVO b = books.stream().filter(v->v.getIsbn().equals(isbn)).findFirst().get();
-        if (!orderDAO.updateBookStock(isbn, qty)) throw new Exception("재고 부족: " + b.getProductInfo().getTitle());
-        OrderDetailVO d = new OrderDetailVO();
-        d.setOrderId(orderId); d.setBookNo(b.getBookNo()); d.setOrderCount(qty);
-        d.setOrderPrice(b.getProductInfo().getDiscount()); d.setRefundCheck(0);
-        ds.add(d);
-      }
-      if (!ds.isEmpty()) orderDAO.insertOrderDetailList(ds);
-
-    } else {
-      customerKey = (principal != null) ? principal.getName() : "UNKNOWN";
-      customerName = (String) orderData.getOrDefault("customerName", "고객");
+    // 2. DB에서 주문 정보 조회 (회원/비회원 모두 조회)
+    OrderVO order = orderDAO.getOrderById(orderId);
+    if(order == null){
+      order = orderDAO.getGuestOrderByOrderId(orderId); // 비회원 주문도 확인
+      if(order == null){ throw new Exception("존재하지 않는 주문입니다: " + orderId); }
     }
 
-    int finalTotal = (newOrder != null) ? newOrder.getTotalPrice()
-                                        : orderDAO.getOrderById(orderId).getTotalPrice();
+    // 3. 결제에 필요한 주요 정보 설정
+    final int finalTotal = order.getTotalPrice();
+    String customerKey;
+    String customerName;
 
+    if(order.getOrderType() == 1){ // 회원 주문의 경우
+      customerKey = order.getUserId();
+      customerName = order.getReceiverName(); // DB에 저장된 수령인 이름 사용
+    }else{ // 비회원 주문의 경우
+      customerKey = order.getGuestId();
+      customerName = order.getReceiverName(); // DB에 저장된 비회원 수령인 이름 사용
+    }
+
+    // 4. PAYMENTS 테이블에 결제 대기 정보 INSERT
     PaymentVO p = new PaymentVO();
     p.setOrderId(orderId);
     p.setAmount(new java.math.BigDecimal(finalTotal));
-    p.setStatus(1);
-    p.setPaymentMethod(1);
-    if (principal != null) p.setUserId(principal.getName()); else p.setGuestId(customerKey);
+    p.setStatus(1);        // 1: 결제 대기
+    p.setPaymentMethod(1); // 1: TossPay
+    
+    // 주문 타입에 따라 userId 또는 guestId 설정
+    if(order.getOrderType() == 1){
+      p.setUserId(customerKey);
+    }else{
+      p.setGuestId(customerKey);
+    }
+    
     paymentDAO.insertPayment(p);
+    int paymentNo = p.getPaymentNo(); // DB에서 생성된 PK (payment_no)
 
-    int paymentNo = p.getPaymentNo();
-    String unifiedOrderId = "BG_" + paymentNo;
+    String unifiedOrderId = "BG_" + String.format("%06d", paymentNo);
+
+    // 5. TOSS_REQUESTS 테이블에 결제 요청 정보 INSERT
+    String baseUrl = request.getScheme() + "://" + request.getServerName()
+        + ((request.getServerPort()==80||request.getServerPort()==443)?"":":"+request.getServerPort())
+        + request.getContextPath();
 
     TossRequestVO tr = new TossRequestVO();
     tr.setPaymentNo(paymentNo);
     tr.setCustomerKey(customerKey);
-    tr.setOrderName((String) orderData.get("orderName"));
+    tr.setOrderName((String) orderData.get("orderName")); // 프론트에서 정제된 상품명
     tr.setSuccessUrl(baseUrl + "/payment/success");
     tr.setFailUrl(baseUrl + "/payment/fail");
     tr.setOrderId(unifiedOrderId);
     tr.setAmount(finalTotal);
     paymentDAO.insertTossRequest(tr);
 
-    Map<String,Object> out = new HashMap<>();
-    out.put("status","SUCCESS");
-    out.put("paymentNo", paymentNo);
-    out.put("orderId", unifiedOrderId);
-    out.put("customerKey", customerKey);
-    out.put("customerName", customerName);
-    out.put("amount", finalTotal);
-    out.put("orderName", (String) orderData.get("orderName"));
-    return out;
+    // 6. 프론트엔드(JavaScript)로 보낼 최종 응답 데이터 구성
+    Map<String, Object> responseMap = new HashMap<>();
+    responseMap.put("status", "SUCCESS");
+    responseMap.put("orderId", unifiedOrderId); // Toss Payments SDK에 전달할 고유 ID
+    responseMap.put("amount", finalTotal);
+    responseMap.put("customerKey", customerKey);
+    responseMap.put("customerName", customerName);
+    responseMap.put("orderName", (String) orderData.get("orderName"));
+
+    return responseMap;
   }
 
   @Override
   @Transactional
   public PaymentVO confirmTossPayment(String paymentKey, String tossOrderId, Long amount) throws Exception {
-      if (tossOrderId == null || !tossOrderId.startsWith("BG_")) {
-        throw new Exception("잘못된 주문 ID 형식: " + tossOrderId);
-    }
+    if (tossOrderId == null || !tossOrderId.startsWith("BG_")) { throw new Exception("잘못된 주문 ID 형식: " + tossOrderId); }
+    
     final int paymentNo;
-    try {
-        paymentNo = Integer.parseInt(tossOrderId.substring(3)); // "BG_" 이후 숫자
-    } catch (NumberFormatException e) {
-        throw new Exception("결제번호 파싱 실패: " + tossOrderId);
+    
+    try{
+      paymentNo = Integer.parseInt(tossOrderId.substring(3)); // "BG_" 이후 숫자
+    }catch(NumberFormatException e) {
+      throw new Exception("결제번호 파싱 실패: " + tossOrderId);
     }
 
-    // 2) 결제 금액 검증
+    // 결제 금액 검증
     PaymentVO payment = paymentDAO.getPaymentByNo(paymentNo);
     if (payment == null) throw new Exception("결제 내역 없음: " + paymentNo);
     if (payment.getAmount() == null || payment.getAmount().compareTo(BigDecimal.valueOf(amount)) != 0) {
         throw new Exception("금액 불일치");
     }
 
-    // 3) 토스 승인 요청
+    // 토스 승인 요청
     HttpHeaders headers = new HttpHeaders();
     String encodedAuth = Base64.getEncoder().encodeToString((TOSS_SECRET_KEY + ":").getBytes("UTF-8"));
     headers.set("Authorization", "Basic " + encodedAuth);
@@ -278,13 +222,13 @@ public class PaymentServiceImpl implements PaymentService{
               TOSS_API_HOST + "/v1/payments/confirm",
               requestEntity,
               String.class
-      );
+    );
 
-    if (!response.getStatusCode().is2xxSuccessful()) {
+    if(!response.getStatusCode().is2xxSuccessful()){
       throw new Exception("토스 결제 최종 승인 실패: " + response.getStatusCode());
     }
 
-    // 4) DB 반영
+    // DB 반영
     Map<String, Object> updateParams = new HashMap<>();
     updateParams.put("paymentNo", paymentNo);
     updateParams.put("status", 2); // 결제 완료

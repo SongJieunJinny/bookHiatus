@@ -60,63 +60,50 @@ public class PaymentController {
   public KakaoReadyResponse kakaopayReady(@RequestBody KakaoPayRequestVO req,
                                           HttpSession session, Principal principal) {
     try{
-      log.info(String.format(
-        "[KAKAO READY][REQ] orderId=%s, partnerOrderId=%s, partnerUserId=%s, itemName=%s, qty=%s, total=%s",
-        req.getOrderId(), req.getPartnerOrderId(), req.getPartnerUserId(),
-        req.getItemName(), req.getQuantity(), req.getTotalAmount()));
-
-      // partner_user_id 보완
-      if((req.getPartnerUserId() == null || req.getPartnerUserId().trim().isEmpty()) && principal != null){
-        req.setPartnerUserId(principal.getName());
-        log.warn(String.format("[KAKAO READY] partner_user_id missing → fallback principal=%s", req.getPartnerUserId()));
-      }
+      log.info("[KAKAO READY][REQ] 요청 수신: orderId={}", req.getOrderId());
       
-      if(req.getPartnerUserId() == null || req.getPartnerUserId().trim().isEmpty()){
-        throw new RuntimeException("partner_user_id 누락");}
+      if (req.getOrderId() == null) throw new IllegalArgumentException("주문 ID(orderId)가 누락되었습니다.");
+      
+      String partnerUserId = (principal != null) ? principal.getName() : "guest";
+      if (principal != null) req.setPartnerUserId(partnerUserId);
 
-      if (req.getOrderId() == null) throw new RuntimeException("order_id 누락");
-
-      // 주문에서 필수값 산출
       OrderVO order = orderService.getOrderById(req.getOrderId());
-      if (order == null) throw new RuntimeException("주문 없음: " + req.getOrderId());
+      if (order == null) throw new RuntimeException("존재하지 않는 주문입니다: " + req.getOrderId());
+
+      final String partnerOrderId = order.getOrderKey();
+      if(partnerOrderId == null || partnerOrderId.trim().isEmpty()){
+          log.error("[KAKAO READY][FATAL] DB에서 조회한 주문의 orderKey가 null입니다. (orderId={})", order.getOrderId());
+          throw new IllegalStateException("결제에 필요한 고유 주문키(orderKey)가 생성되지 않았습니다.");
+      }
 
       final int totalAmount = order.getTotalPrice();
-      if (totalAmount <= 0) throw new RuntimeException("total_amount invalid(DB)");
+      if (totalAmount <= 0) throw new RuntimeException("결제 금액이 0보다 작거나 같습니다.");
 
       int qty = 0;
-      String itemName = "BOOK틈 주문";
+      String itemName = "BOOK틈 주문상품";
       if(order.getOrderDetails() != null && !order.getOrderDetails().isEmpty()){
-        for (OrderDetailVO od : order.getOrderDetails()) qty += od.getOrderCount();
-        String firstTitle = null;
-        try{
-          firstTitle = order.getOrderDetails().get(0).getBook().getProductInfo().getTitle();
-        }catch(Exception ignore){}
-        if (firstTitle != null && !firstTitle.isEmpty()) {
-          itemName = (order.getOrderDetails().size() == 1) ? firstTitle:firstTitle + " 외 " + (order.getOrderDetails().size() - 1) + "권";
-        }
+          qty = order.getOrderDetails().stream().mapToInt(OrderDetailVO::getOrderCount).sum();
+          String firstTitle = order.getOrderDetails().get(0).getBook().getProductInfo().getTitle();
+          itemName = (order.getOrderDetails().size() == 1) ? firstTitle : firstTitle + " 외 " + (order.getOrderDetails().size() - 1) + "건";
       }
       
       if (qty <= 0) qty = 1;
 
-      final String partnerOrderId = order.getOrderKey(); // 주문의 ORDER_KEY 사용
-
-      // DB 저장용 req 보정
-      req.setTotalAmount(totalAmount);
-      req.setItemName(itemName);
-      req.setQuantity(qty);
-      req.setPartnerOrderId(partnerOrderId);
-
-      // PAYMENTS 선 저장
       PaymentVO payment = new PaymentVO();
       payment.setAmount(BigDecimal.valueOf(totalAmount));
       payment.setPaymentMethod(2);
       payment.setOrderId(order.getOrderId());
       payment.setStatus(1);
+      payment.setUserId(order.getUserId());
+      payment.setGuestId(order.getGuestId());
       paymentService.insertPayment(payment);
       int paymentNo = payment.getPaymentNo();
 
-      // KAKAOPAY_REQUESTS 선 기록
       req.setPaymentNo(paymentNo);
+      req.setPartnerOrderId(partnerOrderId);
+      req.setTotalAmount(totalAmount);
+      req.setItemName(itemName);
+      req.setQuantity(qty);
       req.setCid(CID);
       req.setApprovalUrl("http://localhost:8080/controller/payment/success/kakaopay");
       req.setCancelUrl("http://localhost:8080/controller/payment/fail?code=cancel");
@@ -124,14 +111,12 @@ public class PaymentController {
       req.setTaxFreeAmount(0);
       paymentService.insertKakaoRequest(req);
 
-      log.info(String.format(
-        "[KAKAO READY][DB] paymentNo=%d, partnerOrderId=%s, partnerUserId=%s, itemName=%s",paymentNo, partnerOrderId, req.getPartnerUserId(), itemName));
+      log.info("[KAKAO READY][DB] paymentNo={} 생성 완료.", paymentNo);
 
-      // 카카오 ready 호출
-      Map<String,Object> params = new HashMap<>();
+      Map<String, Object> params = new HashMap<>();
       params.put("cid", CID);
       params.put("partner_order_id", partnerOrderId);
-      params.put("partner_user_id", req.getPartnerUserId());
+      params.put("partner_user_id", partnerUserId);
       params.put("item_name", itemName);
       params.put("quantity", qty);
       params.put("total_amount", totalAmount);
@@ -144,14 +129,13 @@ public class PaymentController {
       headers.set("Authorization", "SECRET_KEY " + KAKAO_SECRET_KEY);
       headers.setContentType(MediaType.APPLICATION_JSON);
 
+      HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(params, headers);
+      
       ResponseEntity<JsonNode> res = restTemplate.postForEntity(
-        KAKAO_OPEN_API_URL + "/ready",
-        new HttpEntity<>(params, headers),
-        JsonNode.class);
-      if(!res.getStatusCode().is2xxSuccessful()){
-        throw new RuntimeException("카카오페이 결제 준비 실패: " + res.getStatusCode());}
+          KAKAO_OPEN_API_URL + "/ready", requestEntity, JsonNode.class);
+      
+      if(!res.getStatusCode().is2xxSuccessful()){ throw new RuntimeException("카카오페이 결제 준비 API 호출 실패: " + res.getStatusCode() + " - " + res.getBody()); }
 
-      // tid 업데이트 & 세션
       String tid = res.getBody().get("tid").asText();
       String nextRedirectUrl = res.getBody().get("next_redirect_pc_url").asText();
 
@@ -162,14 +146,15 @@ public class PaymentController {
 
       session.setAttribute("paymentNo", paymentNo);
       session.setAttribute("tid", tid);
-      session.setAttribute("partner_user_id", req.getPartnerUserId());
+      session.setAttribute("partner_user_id", partnerUserId);
 
-      log.info(String.format("[KAKAO READY][OK] paymentNo=%d, tid=%s, redirect=%s", paymentNo, tid, nextRedirectUrl));
+      log.info("[KAKAO READY][OK] 결제 준비 성공. paymentNo={}, tid={}, redirectUrl={}", paymentNo, tid, nextRedirectUrl);
+
       return new KakaoReadyResponse(tid, nextRedirectUrl);
 
     }catch(Exception e){
-      log.error("Kakao ready 실패", e);
-      throw new RuntimeException("카카오 결제 준비 중 오류: " + e.getMessage());
+      log.error("[KAKAO READY][FAIL] 카카오 결제 준비 중 심각한 오류 발생", e);
+      throw new RuntimeException(e.getMessage());
     }
   }
 

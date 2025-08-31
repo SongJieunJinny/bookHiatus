@@ -146,63 +146,69 @@ public class OrderServiceImpl implements OrderService {
     return newOrder;
   }
   
-  @Transactional
   @Override
-  public int createOrderWithDetails(Map<String,Object> orderData) {
-    String userId = (String) orderData.get("userId");
+  @Transactional
+  public int createOrderWithDetails(Map<String, Object> orderData) throws IllegalStateException {
+
     Integer userAddressId = (Integer) orderData.get("userAddressId");
+    if (userAddressId == null) {
+        throw new IllegalStateException("배송지 정보(userAddressId)가 누락되었습니다.");
+    }
+    
+    // [핵심 수정] userAddressId로 전체 배송지 정보 조회
+    UserAddressVO address = orderDAO.findAddressByUserAddressId(userAddressId);
+    if (address == null) {
+        throw new IllegalStateException("존재하지 않는 배송지입니다.");
+    }
+    
+    // OrderVO 객체 생성 및 기본 정보 설정
+    OrderVO order = new OrderVO();
+    order.setUserId((String) orderData.get("userId"));
+    order.setOrderType(1);
+    order.setTotalPrice(((Number) orderData.get("totalPrice")).intValue());
+    order.setDeliveryRequest((String) orderData.get("deliveryRequest"));
+    order.setOrderStatus(1);  
+
+    order.setUserAddressId(address.getUserAddressId());
+    order.setReceiverName(address.getUserName()); // UserAddressVO의 userName -> ORDERS의 receiverName
+    order.setReceiverPhone(address.getUserPhone());
+    order.setReceiverPostCode(address.getPostCode());
+    order.setReceiverRoadAddress(address.getRoadAddress());
+    order.setReceiverDetailAddress(address.getDetailAddress());
+    
+    // 고유한 주문 키(orderKey) 생성 및 설정
+    String orderKey = "ODR_" + java.util.UUID.randomUUID().toString().replace("-", "");
+    order.setOrderKey(orderKey);
+    
+    // 주문 마스터 정보(ORDERS)를 DB에 저장 (이때 orderId가 생성됨)
+    orderDAO.insertOrder(order);
+    int generatedOrderId = order.getOrderId(); 
+
+    // 주문 상세 정보(ORDER_DETAIL) 처리
     @SuppressWarnings("unchecked")
-    List<Map<String,Object>> items = (List<Map<String,Object>>) orderData.get("orderItems");
+    List<Map<String, Object>> items = (List<Map<String, Object>>) orderData.get("orderItems");
+    if(items == null || items.isEmpty()){ throw new IllegalStateException("주문 상품 정보가 없습니다."); }
 
-    UserAddressVO addr = orderDAO.findAddressByUserAddressId(userAddressId);
-    if (addr == null) throw new IllegalStateException("선택된 배송지 정보를 찾을 수 없습니다. (ID: " + userAddressId + ")");
+    List<OrderDetailVO> detailList = new ArrayList<>();
+    for (Map<String, Object> item : items) {
+      String isbn = (String) item.get("isbn");
+      int quantity = ((Number) item.get("quantity")).intValue();
 
-    int total = 0;
-    List<String> isbnList = new ArrayList<>();
-    for (Map<String,Object> it : items) isbnList.add((String) it.get("isbn"));
-    List<BookVO> books = orderDAO.selectBooksByIsbnList(isbnList);
-    for (Map<String,Object> it : items) {
-      String isbn = (String) it.get("isbn");
-      int qty = ((Number)it.get("quantity")).intValue();
-      BookVO b = books.stream().filter(v->v.getIsbn().equals(isbn)).findFirst()
-              .orElseThrow(() -> new IllegalStateException("주문 처리 중 상품 정보를 찾을 수 없습니다: " + isbn));
-      total += b.getProductInfo().getDiscount() * qty;
+      if (!orderDAO.updateBookStock(isbn, quantity)) { throw new IllegalStateException("재고가 부족한 상품이 포함되어 있습니다. (ISBN: " + isbn + ")"); }
+      BookVO book = orderDAO.findBookByIsbn(isbn);
+      if (book == null) { throw new IllegalStateException("존재하지 않는 상품입니다. (ISBN: " + isbn + ")"); }
+      OrderDetailVO detail = new OrderDetailVO();
+      detail.setOrderId(generatedOrderId);
+      detail.setBookNo(book.getBookNo());
+      detail.setOrderCount(quantity);
+      detail.setOrderPrice(book.getProductInfo().getDiscount()); 
+      detail.setRefundCheck(0);
+      detailList.add(detail);
     }
-    total += ((Number)orderData.get("deliveryFee")).intValue();
-
-    OrderVO o = new OrderVO();
-    o.setUserId(userId);
-    o.setUserAddressId(userAddressId);
-    o.setOrderKey(newOrderKey());
-    o.setTotalPrice(total);
-    o.setOrderStatus(1);
-    o.setOrderType(1);
-    o.setReceiverName(addr.getUserName());
-    o.setReceiverPhone(addr.getUserPhone());
-    o.setReceiverPostCode(addr.getPostCode());
-    o.setReceiverRoadAddress(addr.getRoadAddress());
-    o.setReceiverDetailAddress(addr.getDetailAddress());
-    o.setDeliveryRequest((String) orderData.get("deliveryRequest"));
-    orderDAO.insertOrder(o);
-
-    List<OrderDetailVO> ds = new ArrayList<>();
-    for (Map<String,Object> it : items) {
-      String isbn = (String) it.get("isbn");
-      int qty = ((Number)it.get("quantity")).intValue();
-      BookVO b = books.stream().filter(v->v.getIsbn().equals(isbn)).findFirst().get();
-      if (!orderDAO.updateBookStock(isbn, qty)) {
-        throw new IllegalStateException("재고가 부족합니다: " + b.getProductInfo().getTitle());
-      }
-      OrderDetailVO d = new OrderDetailVO();
-      d.setOrderId(o.getOrderId());
-      d.setBookNo(b.getBookNo());
-      d.setOrderCount(qty);
-      d.setOrderPrice(b.getProductInfo().getDiscount());
-      d.setRefundCheck(0);
-      ds.add(d);
-    }
-    if (!ds.isEmpty()) orderDAO.insertOrderDetailList(ds);
-    return o.getOrderId();
+    
+    if(!detailList.isEmpty()){ orderDAO.insertOrderDetailList(detailList); }
+    
+    return generatedOrderId;
   }
 
   @Transactional

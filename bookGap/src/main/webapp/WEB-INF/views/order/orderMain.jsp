@@ -311,24 +311,30 @@ $(document).ready(function () {
 									      quantity: parseInt($(this).find(".orderItemQuantity").val())
 									    });
     });
+    
     if(orderItems.length === 0){ alert("주문할 상품이 없습니다."); return; }
     
-    let orderName = $(".orderDetailsTitle").first().text();
+    // 원본 상품명 가져오기
+    let originalOrderName = $(".orderDetailsTitle").first().text();
     const remainingItems = $(".orderDetail").length - 1;
-    if (remainingItems > 0) {  orderName += " 외 " + remainingItems + "건";  }
+    if (remainingItems > 0) {   originalOrderName += " 외 " + remainingItems + "건";   }
 
-    const orderData = { userId: currentUserId, 
-							    	    userAddressId: selectedAddress.data("address-id"),
+    // 토스페이 정책에 맞게 특수문자 제거 및 길이 제한
+    const sanitizedOrderName = originalOrderName
+        .replace(/[^\u3131-\u314E\u314F-\u3163\uAC00-\uD7A3\w\s-]/g, ' ')
+        .trim()
+        .substring(0, 99);
+
+    const orderData = { userId: currentUserId,  
+    										userAddressId: selectedAddress.data("address-id"),
 							    	    orderPrice: parseInt($('.Price').text().replace(/[^0-9]/g, ''), 10),
 							    	    deliveryRequest: $('.orderMainRequestInput').val(),
 							    	    deliveryFee: parseInt($('.deliveryFee').text().replace(/[^0-9]/g, ''), 10),
 							    	    totalPrice: parseInt($('.finalPaymentPrice').text().replace(/[^0-9]/g, ''), 10),
 							    	    paymentMethod: selectedPaymentMethod,
 							    	    orderItems: orderItems,
-							    	    orderName: orderName };
+							    	    orderName: sanitizedOrderName };
 
-    
-    
     $.ajax({ type: "POST",
         url: contextPath + "/order/create",
         contentType: "application/json",

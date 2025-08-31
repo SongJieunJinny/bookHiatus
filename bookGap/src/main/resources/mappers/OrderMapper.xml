@@ -85,55 +85,57 @@
 
   <!-- ================= INSERT / UPDATE / DELETE ================= -->
 
-	<insert id="insertOrder" parameterType="com.bookGap.vo.OrderVO"
-        useGeneratedKeys="true" keyProperty="orderId">
-	  INSERT INTO ORDERS
-	  <trim prefix="(" suffix=")" suffixOverrides=",">
-	    ORDER_DATE,
-	    ORDER_STATUS,
-	    TOTAL_PRICE,
-	    ORDER_TYPE,
-	    RECEIVER_NAME,
-	    RECEIVER_PHONE,
-	    RECEIVER_POST_CODE,
-	    RECEIVER_ROAD_ADDRESS,
-	    RECEIVER_DETAIL_ADDRESS,
-	    DELIVERY_REQUEST,
-	    <if test="userId != null and userId != ''">
-	      USER_ID,
-	      USER_ADDRESS_ID,
-	    </if>
-	    <if test="guestId != null and guestId != ''">
-	      GUEST_ID,
-	    </if>
-	    <if test="orderPassword != null and orderPassword != ''">
-	      ORDER_PASSWORD,
-	    </if>
-	    ORDER_KEY
-	  </trim>
-	  <trim prefix="(" suffix=")" suffixOverrides=",">
-	    NOW(),
-	    #{orderStatus},
-	    #{totalPrice},
-	    #{orderType},
-	    #{receiverName},
-	    #{receiverPhone},
-	    #{receiverPostCode},
-	    #{receiverRoadAddress},
-	    #{receiverDetailAddress},
-	    #{deliveryRequest},
-	    <if test="userId != null and userId != ''">
-	      #{userId},
-	      #{userAddressId},
-	    </if>
-	    <if test="guestId != null and guestId != ''">
-	      #{guestId},
-	    </if>
-	    <if test="orderPassword != null and orderPassword != ''">
-	      #{orderPassword},
-	    </if>
-	    #{orderKey}
-	  </trim>
+	<insert id="insertOrder" parameterType="com.bookGap.vo.OrderVO" useGeneratedKeys="true" keyProperty="orderId">
+	    INSERT INTO ORDERS
+	    <trim prefix="(" suffix=")" suffixOverrides=",">
+	        ORDER_DATE,
+	        ORDER_STATUS,
+	        TOTAL_PRICE,
+	        ORDER_TYPE,
+	        RECEIVER_NAME,
+	        RECEIVER_PHONE,
+	        RECEIVER_POST_CODE,
+	        RECEIVER_ROAD_ADDRESS,
+	        RECEIVER_DETAIL_ADDRESS,
+	        DELIVERY_REQUEST,
+	        <if test="userId != null and userId != ''">
+	            USER_ID,
+	            USER_ADDRESS_ID,
+	        </if>
+	        <if test="guestId != null and guestId != ''">
+	            GUEST_ID,
+	        </if>
+	        <if test="orderPassword != null and orderPassword != ''">
+	            ORDER_PASSWORD,
+	        </if>
+	        ORDER_KEY
+	    </trim>
+	    
+	    <!-- [핵심 수정] VALUES 키워드를 추가하고 값을 나열합니다. -->
+	    VALUES
+	    <trim prefix="(" suffix=")" suffixOverrides=",">
+	        NOW(),
+	        #{orderStatus},
+	        #{totalPrice},
+	        #{orderType},
+	        #{receiverName},
+	        #{receiverPhone},
+	        #{receiverPostCode},
+	        #{receiverRoadAddress},
+	        #{receiverDetailAddress},
+	        #{deliveryRequest},
+	        <if test="userId != null and userId != ''">
+	            #{userId},
+	            #{userAddressId},
+	        </if>
+	        <if test="guestId != null and guestId != ''">
+	            #{guestId},
+	        </if>
+	        <if test="orderPassword != null and orderPassword != ''">
+	            #{orderPassword},
+	        </if>
+	        #{orderKey}
+	    </trim>
 	</insert>
 
   <insert id="insertOrderDetail" parameterType="com.bookGap.vo.OrderDetailVO">
@@ -276,13 +278,13 @@
   <!-- 회원 단건 주문 -->
   <select id="getOrderById" parameterType="int" resultMap="OrderResultMap">
 	  SELECT
-      o.ORDER_ID  AS O_ORDER_ID, o.ORDER_DATE, o.ORDER_STATUS, o.TOTAL_PRICE, o.USER_ID  AS O_USER_ID, o.RECEIVER_NAME,
-      o.ORDER_KEY AS ORDER_KEY, o.RECEIVER_PHONE, o.RECEIVER_POST_CODE, o.RECEIVER_ROAD_ADDRESS, o.RECEIVER_DETAIL_ADDRESS, o.DELIVERY_REQUEST, o.REFUND_STATUS, o.COURIER, o.INVOICE,
-      p.PAYMENT_NO  AS P_PAYMENT_NO, p.AMOUNT  AS P_AMOUNT, p.PAYMENT_METHOD  AS P_PAYMENT_METHOD, p.STATUS  AS P_STATUS,
+      o.ORDER_ID  AS O_ORDER_ID,  o.ORDER_DATE,  o.ORDER_STATUS,  o.TOTAL_PRICE,  o.ORDER_TYPE, o.USER_ID  AS O_USER_ID, o.RECEIVER_NAME, o.ORDER_KEY  AS ORDER_KEY,  o.RECEIVER_PHONE, 
+      o.RECEIVER_POST_CODE,  o.RECEIVER_ROAD_ADDRESS,  o.RECEIVER_DETAIL_ADDRESS,  o.DELIVERY_REQUEST,  o.REFUND_STATUS,  o.COURIER,  o.INVOICE,
+      p.PAYMENT_NO  AS P_PAYMENT_NO,  p.AMOUNT  AS P_AMOUNT,  p.PAYMENT_METHOD  AS P_PAYMENT_METHOD,  p.STATUS  AS P_STATUS,
       p.CREATED_AT  AS P_CREATED_AT, p.ORDER_ID  AS P_ORDER_ID, p.USER_ID  AS P_USER_ID,
-      od.ORDER_DETAIL_NO, od.ORDER_COUNT, od.ORDER_PRICE  AS OD_ORDER_PRICE, od.REFUND_CHECK, od.BOOK_NO  AS OD_BOOK_NO, od.ORDER_ID  AS OD_ORDER_ID,
-      b.BOOK_NO, b.isbn, b.BOOK_RDATE, b.BOOK_TRANS, b.BOOK_STOCK, b.BOOK_STATE, b.BOOK_CATEGORY, b.BOOK_IMGURL, b.BOOK_INDEX, b.PUBLISHER_BOOK_REVIEW,
-      api.isbn AS API_isbn, api.TITLE, api.AUTHOR, api.PUBLISHER, api.PUBDATE, api.DISCOUNT, api.DESCRIPTION, api.LINK, api.IMAGE,
+      od.ORDER_DETAIL_NO,  od.ORDER_COUNT,  od.ORDER_PRICE  AS OD_ORDER_PRICE,  od.REFUND_CHECK,  od.BOOK_NO  AS OD_BOOK_NO,  od.ORDER_ID  AS OD_ORDER_ID,
+      b.BOOK_NO, b.isbn, b.BOOK_RDATE, b.BOOK_TRANS, b.BOOK_STOCK, b.BOOK_STATE,  b.BOOK_CATEGORY, b.BOOK_IMGURL, b.BOOK_INDEX, b.PUBLISHER_BOOK_REVIEW,
+      api.isbn  AS API_isbn,  api.TITLE,  api.AUTHOR,  api.PUBLISHER,  api.PUBDATE,  api.DISCOUNT,  api.DESCRIPTION,  api.LINK,  api.IMAGE,
     (SELECT COUNT(*) FROM COMMENT c WHERE c.isbn = b.isbn) AS COMMENT_COUNT
     FROM orders o
     LEFT JOIN payments p      ON o.ORDER_ID = p.ORDER_ID
@@ -323,7 +325,7 @@
   <!-- 비회원 단건 주문 조회 -->
   <select id="getGuestOrderByOrderId" parameterType="int" resultMap="OrderResultMap">
     SELECT
-        o.ORDER_ID AS O_ORDER_ID, o.ORDER_DATE AS ORDER_DATE, o.ORDER_STATUS AS ORDER_STATUS, o.TOTAL_PRICE AS TOTAL_PRICE, o.RECEIVER_NAME,
+        o.ORDER_ID AS O_ORDER_ID, o.ORDER_DATE AS ORDER_DATE, o.ORDER_STATUS AS ORDER_STATUS, o.TOTAL_PRICE AS TOTAL_PRICE, o.RECEIVER_NAME, o.GUEST_ID AS O_GUEST_ID, 
         o.ORDER_KEY AS ORDER_KEY, o.RECEIVER_PHONE, o.RECEIVER_POST_CODE, o.RECEIVER_ROAD_ADDRESS, o.RECEIVER_DETAIL_ADDRESS, o.DELIVERY_REQUEST, o.REFUND_STATUS, o.COURIER, o.INVOICE,
         g.GUEST_NAME AS GUEST_NAME, g.GUEST_PHONE AS GUEST_PHONE, g.GUEST_EMAIL AS GUEST_EMAIL,
         p.PAYMENT_NO AS P_PAYMENT_NO, p.AMOUNT AS P_AMOUNT, p.PAYMENT_METHOD AS P_PAYMENT_METHOD, p.STATUS AS P_STATUS,

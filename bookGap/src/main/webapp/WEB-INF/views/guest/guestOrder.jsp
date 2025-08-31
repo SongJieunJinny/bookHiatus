@@ -301,9 +301,16 @@ $(document).ready(function() {
       });
     </c:forEach>
 
-    let orderName = $(".orderDetailsTitle").first().text();
+    // 원본 상품명 가져오기
+    let originalOrderName = $(".orderDetailsTitle").first().text();
     const remainingItems = items.length - 1;
-    if (remainingItems > 0) { orderName += " 외 " + remainingItems + "건"; }
+    if (remainingItems > 0) { originalOrderName += " 외 " + remainingItems + "건"; }
+    
+    // 토스페이 정책에 맞게 특수문자 제거 및 길이 제한
+    const sanitizedOrderName = originalOrderName
+        .replace(/[^\u3131-\u314E\u314F-\u3163\uAC00-\uD7A3\w\s-]/g, ' ')
+        .trim()
+        .substring(0, 99);
     
     const guestOrderData = { guestName: $('#ordererName').val(),
 												     guestPhone: $('#ordererPhone').val(),
@@ -317,7 +324,7 @@ $(document).ready(function() {
 												     deliveryRequest: $('#deliveryRequest').val(),
 												     totalPrice: parseInt($('.finalPrice').data('price')),
 												     orderItems: items,
-												     orderName: orderName };
+												     orderName: sanitizedOrderName };
     
     console.log("서버로 전송할 데이터:", guestOrderData);
 

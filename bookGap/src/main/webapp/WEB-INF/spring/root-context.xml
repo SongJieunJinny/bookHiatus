@@ -35,5 +35,19 @@
 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
 	    <property name="basePackage" value="com.bookGap.mapper"/>
 	</bean>
+	
+	<!-- 외부 API(카카오, 토스 등) 통신을 위한 RestTemplate 빈 등록 -->
+  <bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
+    <property name="messageConverters">
+      <list>
+        <!-- 문자열(String) 처리를 위한 컨버터 (UTF-8 인코딩 설정) -->
+        <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+          <constructor-arg value="UTF-8" />
+        </bean>
+        <!-- JSON 처리를 위한 컨버터 (Jackson 라이브러리 사용) -->
+        <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter" />
+      </list>
+    </property>
+  </bean>
 		
 </beans>
