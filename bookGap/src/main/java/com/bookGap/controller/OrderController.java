@@ -184,20 +184,31 @@ public class OrderController {
   
   @GetMapping("/order/orderComplete.do")
   public String orderComplete(@RequestParam("paymentNo") int paymentNo, Model model) {
-	  PaymentVO payment = paymentService.getPaymentByNo(paymentNo);
-	 // log.info("[orderComplete] request paymentNo = {}", paymentNo);
 
-	   // System.out.println("payment"+payment);
-	   // System.out.println("getPaymenNo"+payment.getPaymentNo());
-	    // 예: 주문번호로 주문상세 및 배송지 조회
-	    OrderVO order = orderService.getOrderById(payment.getOrderId());
-	    
-	    System.out.println("getPaymenNo"+order.getOrderId());
+    PaymentVO payment = paymentService.getPaymentByNo(paymentNo);
+    if(payment == null){
+      model.addAttribute("errorMessage", "존재하지 않는 결제 정보입니다. (paymentNo: " + paymentNo + ")");
+      return "error/errorPage"; // 또는 다른 적절한 에러 페이지
+    }
 
-	    model.addAttribute("payment", payment);
-	    model.addAttribute("order", order);
-        model.addAttribute("paymentNo", paymentNo);
-      return "order/orderComplete";  // --> /WEB-INF/views/order/orderComplete.jsp
+    OrderVO order;
+    if(payment.getUserId() != null && !payment.getUserId().trim().isEmpty()){
+      order = orderService.getOrderById(payment.getOrderId());  //'회원 주문'을 조회
+    }else{
+      order = orderService.getGuestOrderByOrderId(payment.getOrderId());  ////'비회원 주문'을 조회
+    }
+
+    if(order == null){  // 안전장치: 어떤 이유로든 주문 정보가 조회되지 않은 경우 에러 처리
+      model.addAttribute("errorMessage", "결제에 해당하는 주문 정보를 찾을 수 없습니다. (orderId: " + payment.getOrderId() + ")");
+      return "error/errorPage";
+    }
+
+    System.out.println("주문 완료 페이지 진입 성공, 주문 번호: " + order.getOrderId());  // 이 시점부터 'order' 변수는 null이 아님을 보장
+
+    model.addAttribute("payment", payment);
+    model.addAttribute("order", order);
+    
+    return "order/orderComplete";
   }
   
   // 주문 상세 화면 이동

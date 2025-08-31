@@ -301,14 +301,18 @@ public class PaymentController {
   public String tossPaymentSuccess(@RequestParam String paymentKey,
                                    @RequestParam(name = "orderId") String tossOrderId,
                                    @RequestParam Long amount,
-                                   Model model) {
-    try{
-      PaymentVO completedPayment = paymentService.confirmTossPayment(paymentKey, tossOrderId, amount);
-      return "redirect:/order/orderComplete.do?paymentNo=" + completedPayment.getPaymentNo();
-    }catch(Exception e){
-      e.printStackTrace();
-      model.addAttribute("errorMessage", e.getMessage());
-      return "redirect:/payment/fail?message=approval_failed";
+                                   Model model, Principal principal) {
+    try {
+        PaymentVO completedPayment = paymentService.confirmTossPayment(paymentKey, tossOrderId, amount);
+
+        return "redirect:/order/orderComplete.do?paymentNo=" + completedPayment.getPaymentNo();
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        model.addAttribute("errorMessage", e.getMessage());
+        model.addAttribute("errorCode", "TOSS_APPROVAL_FAILED");
+        
+        return "redirect:/payment/fail?message=" + e.getMessage();
     }
   }
   
