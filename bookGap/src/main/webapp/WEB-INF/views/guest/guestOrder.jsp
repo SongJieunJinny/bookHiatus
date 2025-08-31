@@ -9,7 +9,7 @@
 	<meta charset="UTF-8">
 	<title>guestOrder</title>
 	<script src="<%=request.getContextPath()%>/resources/js/jquery-3.7.1.js"></script>
-	<script src="https://js.tosspayments.com/v1/payment-widget"></script> 
+	<script src="https://js.tosspayments.com/v1"></script> 
 	<link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/resources/css/index.css"/>
 	<link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/resources/css/guest/guest.css"/>
 </head>
@@ -327,10 +327,11 @@ $(document).ready(function() {
 			       data: JSON.stringify(guestOrderData),
 			       success: function(res){
 						            if(res.status === 'SUCCESS'){
-						            	guestOrderData.orderId = "BG_" + res.paymentNo;  
-					                guestOrderData.paymentNo = res.paymentNo;
-					                guestOrderData.guestId = res.guestId;
-					                proceedToRealPayment(guestOrderData);
+						            	  guestOrderData.orderId = res.orderId;
+						            	  guestOrderData.guestId = res.guestId;
+						            	  guestOrderData.orderName = res.orderName;
+						            	  guestOrderData.totalPrice = res.totalPrice;
+						            	  proceedToRealPayment(guestOrderData);
 						            }else{
 						              alert("주문 실패: " + res.message);
 						            }
@@ -348,11 +349,11 @@ function proceedToRealPayment(orderData) {
       url: contextPath + "/payment/ready/kakaopay",
       contentType: "application/json",
       data: JSON.stringify({
-    	  partner_order_id: orderData.orderId,
-        partner_user_id: orderData.guestId,
-        item_name: orderData.orderName,
-        quantity: orderData.orderItems.reduce((sum, item) => sum + item.quantity, 0),
-        total_amount: orderData.totalPrice
+    	  orderId: orderData.orderId,
+    	  partner_user_id: (orderData.guestId || 'guest'),
+    	  itemName: orderData.orderName,
+    	  quantity: orderData.orderItems.reduce((sum, item) => sum + item.quantity, 0),
+        totalAmount: orderData.totalPrice
       }),
       success: (res) => window.location.href = res.next_redirect_pc_url,
       error: () => alert("카카오페이 결제 준비에 실패했습니다.")
@@ -368,7 +369,7 @@ function proceedToRealPayment(orderData) {
           const tossPayments = TossPayments('test_ck_ZLKGPx4M3MG0eMKOzG94rBaWypv1');
           tossPayments.requestPayment('카드', {
         	    amount: res.amount,
-              orderId: "BG_" + res.paymentNo,   // ✅ BG_paymentNo
+        	    orderId: res.orderId, 
               orderName: res.orderName,
               customerName: res.customerName,
               customerKey: res.customerKey,

@@ -1,6 +1,7 @@
 package com.bookGap.vo;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonAlias;
 
 public class KakaoPayRequestVO {
   
@@ -12,6 +13,9 @@ public class KakaoPayRequestVO {
   private String failUrl;
   private String tid;
   private String pgToken;
+  
+  @JsonAlias({"order_id"})
+  private Integer orderId;
   
   // --- JSON으로 받는 필드들에 @JsonProperty 어노테이션 추가 ---
 
@@ -120,4 +124,7 @@ public class KakaoPayRequestVO {
   public void setPgToken(String pgToken) {
     this.pgToken = pgToken;
   }
+  
+  public Integer getOrderId(){ return orderId; }
+  public void setOrderId(Integer orderId){ this.orderId = orderId; }
 }

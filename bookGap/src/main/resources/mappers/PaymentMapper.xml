@@ -74,8 +74,8 @@
 
   <!-- ========== 토스페이먼츠 관련 로직 ========== -->
   <insert id="insertTossRequest" parameterType="com.bookGap.vo.TossRequestVO">
-	  INSERT INTO TOSS_REQUESTS (PAYMENT_NO, customer_key, order_name, success_url, fail_url)
-	  VALUES (#{paymentNo}, #{customerKey}, #{orderName}, #{successUrl}, #{failUrl})
+	  INSERT INTO TOSS_REQUESTS (PAYMENT_NO, customer_key, order_name, success_url, fail_url, order_id, amount)
+	  VALUES (#{paymentNo}, #{customerKey}, #{orderName}, #{successUrl}, #{failUrl}, #{orderId}, #{amount})
   </insert>
   
   <update id="updateTossPaymentKey" parameterType="com.bookGap.vo.TossRequestVO">

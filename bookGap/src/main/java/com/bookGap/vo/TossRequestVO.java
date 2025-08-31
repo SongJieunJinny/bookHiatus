@@ -7,6 +7,8 @@ public class TossRequestVO {
   private String successUrl;  //결제성공URL
   private String failUrl;  //결제실패URL
   private String paymentKey;  //결제승인키
+  private String orderId;  //토스 orderId
+  private int amount;  //결제금액
   
   public int getPaymentNo() {
     return paymentNo;
@@ -43,6 +45,18 @@ public class TossRequestVO {
   }
   public void setPaymentKey(String paymentKey) {
     this.paymentKey = paymentKey;
+  }
+  public String getOrderId() {
+	return orderId;
+  }
+  public void setOrderId(String orderId) {
+	this.orderId = orderId;
+  }
+  public int getAmount() {
+	return amount;
+  }
+  public void setAmount(int amount) {
+	this.amount = amount;
   }
 
 }

@@ -29,27 +29,27 @@ import com.bookGap.service.OrderService;
 import com.bookGap.service.PaymentService;
 import com.bookGap.vo.KakaoPayCancelVO;
 import com.bookGap.vo.KakaoPayRequestVO;
+import com.bookGap.vo.OrderDetailVO;
+import com.bookGap.vo.OrderVO;
 import com.bookGap.vo.PaymentVO;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Controller
 @RequestMapping("/payment")
 public class PaymentController {
-	private static final Logger log = LoggerFactory.getLogger(PaymentController.class);
+  private static final Logger log = LoggerFactory.getLogger(PaymentController.class);
+  
   @Autowired private PaymentService paymentService;
   @Autowired private OrderService orderService;
-
   @Autowired private RestTemplate restTemplate;
-  @Autowired private ObjectMapper objectMapper;
-  
-  //카카오페이 서버와 통신하기 위한 고정 값들
+
+  //KakaoPay 고정값
   private static final String KAKAO_OPEN_API_URL = "https://open-api.kakaopay.com/online/v1/payment";
   private static final String KAKAO_SECRET_KEY = "DEVCE7E1EDE6956AA24B1D1393F4F22F917E4725"; // [중요] 본인의 카카오 Admin 키를 넣으세요
   private static final String CID = "TC0ONETIME"; // 테스트용 가맹점 코드
   
-  // ========== 토스페이먼츠 관련 ==========
+  //Toss 고정값
   private static final String TOSS_API_HOST = "https://api.tosspayments.com";
   private static final String TOSS_SECRET_KEY = "test_sk_6BYq7GWPVv97k2edaZ6n3NE5vbo1"; // [중요] 본인의 시크릿 키로 교체 (sk_test_...)
      
@@ -57,90 +57,135 @@ public class PaymentController {
   /** 카카오페이 결제 준비 */
   @PostMapping("/ready/kakaopay")
   @ResponseBody
-  public KakaoReadyResponse kakaopayReady(@RequestBody KakaoPayRequestVO requestVO, HttpSession session, Principal principal) {
-    
-    try {
-      // 1) PAYMENTS 저장
-      PaymentVO payment = new PaymentVO();
-      payment.setAmount(BigDecimal.valueOf(requestVO.getTotalAmount()));
-      payment.setPaymentMethod(2); // 카카오
+  public KakaoReadyResponse kakaopayReady(@RequestBody KakaoPayRequestVO req,
+                                          HttpSession session, Principal principal) {
+    try{
+      log.info(String.format(
+        "[KAKAO READY][REQ] orderId=%s, partnerOrderId=%s, partnerUserId=%s, itemName=%s, qty=%s, total=%s",
+        req.getOrderId(), req.getPartnerOrderId(), req.getPartnerUserId(),
+        req.getItemName(), req.getQuantity(), req.getTotalAmount()));
 
-      // ✅ partner_order_id 는 "BG_" + paymentNo 이므로, 여기서는 paymentNo 자체를 DB orderId로 쓰면 됨
+      // partner_user_id 보완
+      if((req.getPartnerUserId() == null || req.getPartnerUserId().trim().isEmpty()) && principal != null){
+        req.setPartnerUserId(principal.getName());
+        log.warn(String.format("[KAKAO READY] partner_user_id missing → fallback principal=%s", req.getPartnerUserId()));
+      }
+      
+      if(req.getPartnerUserId() == null || req.getPartnerUserId().trim().isEmpty()){
+        throw new RuntimeException("partner_user_id 누락");}
+
+      if (req.getOrderId() == null) throw new RuntimeException("order_id 누락");
+
+      // 주문에서 필수값 산출
+      OrderVO order = orderService.getOrderById(req.getOrderId());
+      if (order == null) throw new RuntimeException("주문 없음: " + req.getOrderId());
+
+      final int totalAmount = order.getTotalPrice();
+      if (totalAmount <= 0) throw new RuntimeException("total_amount invalid(DB)");
+
+      int qty = 0;
+      String itemName = "BOOK틈 주문";
+      if(order.getOrderDetails() != null && !order.getOrderDetails().isEmpty()){
+        for (OrderDetailVO od : order.getOrderDetails()) qty += od.getOrderCount();
+        String firstTitle = null;
+        try{
+          firstTitle = order.getOrderDetails().get(0).getBook().getProductInfo().getTitle();
+        }catch(Exception ignore){}
+        if (firstTitle != null && !firstTitle.isEmpty()) {
+          itemName = (order.getOrderDetails().size() == 1) ? firstTitle:firstTitle + " 외 " + (order.getOrderDetails().size() - 1) + "권";
+        }
+      }
+      
+      if (qty <= 0) qty = 1;
+
+      final String partnerOrderId = order.getOrderKey(); // 주문의 ORDER_KEY 사용
+
+      // DB 저장용 req 보정
+      req.setTotalAmount(totalAmount);
+      req.setItemName(itemName);
+      req.setQuantity(qty);
+      req.setPartnerOrderId(partnerOrderId);
+
+      // PAYMENTS 선 저장
+      PaymentVO payment = new PaymentVO();
+      payment.setAmount(BigDecimal.valueOf(totalAmount));
+      payment.setPaymentMethod(2);
+      payment.setOrderId(order.getOrderId());
+      payment.setStatus(1);
       paymentService.insertPayment(payment);
       int paymentNo = payment.getPaymentNo();
-     
-      // 2) ★ KAKAOPAY_REQUESTS 선(先) INSERT
-      requestVO.setPaymentNo(paymentNo);
-      requestVO.setCid(CID);
-      requestVO.setPartnerOrderId("BG_" + paymentNo); // ✅ partner_order_id 통일
-      requestVO.setApprovalUrl("http://localhost:8080/controller/payment/success/kakaopay");
-      requestVO.setCancelUrl("http://localhost:8080/controller/payment/cancel");
-      requestVO.setFailUrl("http://localhost:8080/controller/payment/fail");
-      
-      paymentService.insertKakaoRequest(requestVO);
-    
-      // 3) 카카오 ready 호출
-      Map<String, Object> params = new HashMap<>();
+
+      // KAKAOPAY_REQUESTS 선 기록
+      req.setPaymentNo(paymentNo);
+      req.setCid(CID);
+      req.setApprovalUrl("http://localhost:8080/controller/payment/success/kakaopay");
+      req.setCancelUrl("http://localhost:8080/controller/payment/fail?code=cancel");
+      req.setFailUrl("http://localhost:8080/controller/payment/fail?code=fail");
+      req.setTaxFreeAmount(0);
+      paymentService.insertKakaoRequest(req);
+
+      log.info(String.format(
+        "[KAKAO READY][DB] paymentNo=%d, partnerOrderId=%s, partnerUserId=%s, itemName=%s",paymentNo, partnerOrderId, req.getPartnerUserId(), itemName));
+
+      // 카카오 ready 호출
+      Map<String,Object> params = new HashMap<>();
       params.put("cid", CID);
-      params.put("partner_order_id", requestVO.getPartnerOrderId());
-      params.put("partner_user_id", requestVO.getPartnerUserId());
-      params.put("item_name", requestVO.getItemName());
-      params.put("quantity", requestVO.getQuantity());
-      params.put("total_amount", requestVO.getTotalAmount());
+      params.put("partner_order_id", partnerOrderId);
+      params.put("partner_user_id", req.getPartnerUserId());
+      params.put("item_name", itemName);
+      params.put("quantity", qty);
+      params.put("total_amount", totalAmount);
       params.put("tax_free_amount", 0);
-      params.put("approval_url", "http://localhost:8080/controller/payment/success/kakaopay");
-      params.put("cancel_url", "http://localhost:8080/controller/payment/cancel");
-      params.put("fail_url", "http://localhost:8080/controller/payment/fail");
-    
+      params.put("approval_url", req.getApprovalUrl());
+      params.put("cancel_url", req.getCancelUrl());
+      params.put("fail_url", req.getFailUrl());
+
       HttpHeaders headers = new HttpHeaders();
       headers.set("Authorization", "SECRET_KEY " + KAKAO_SECRET_KEY);
       headers.setContentType(MediaType.APPLICATION_JSON);
-    
-      ResponseEntity<JsonNode> response = restTemplate.postForEntity(
+
+      ResponseEntity<JsonNode> res = restTemplate.postForEntity(
         KAKAO_OPEN_API_URL + "/ready",
         new HttpEntity<>(params, headers),
-        JsonNode.class
-      );
-    
-      if (!response.getStatusCode().is2xxSuccessful()) {
-        throw new RuntimeException("카카오페이 결제 준비 실패: " + response.getStatusCode());
-      }
-    
-      // 4) ★ tid 업데이트
-      JsonNode body = response.getBody();
-      String tid = body.get("tid").asText();
-      String nextRedirectUrl = body.get("next_redirect_pc_url").asText();
-    
-      KakaoPayRequestVO updateVO = new KakaoPayRequestVO();
-      updateVO.setPaymentNo(paymentNo);
-      updateVO.setTid(tid);
-      paymentService.updateKakaoTid(updateVO);
-    
-      // 세션
+        JsonNode.class);
+      if(!res.getStatusCode().is2xxSuccessful()){
+        throw new RuntimeException("카카오페이 결제 준비 실패: " + res.getStatusCode());}
+
+      // tid 업데이트 & 세션
+      String tid = res.getBody().get("tid").asText();
+      String nextRedirectUrl = res.getBody().get("next_redirect_pc_url").asText();
+
+      KakaoPayRequestVO upd = new KakaoPayRequestVO();
+      upd.setPaymentNo(paymentNo);
+      upd.setTid(tid);
+      paymentService.updateKakaoTid(upd);
+
       session.setAttribute("paymentNo", paymentNo);
       session.setAttribute("tid", tid);
-      session.setAttribute("partner_user_id", requestVO.getPartnerUserId());
-    
+      session.setAttribute("partner_user_id", req.getPartnerUserId());
+
+      log.info(String.format("[KAKAO READY][OK] paymentNo=%d, tid=%s, redirect=%s", paymentNo, tid, nextRedirectUrl));
       return new KakaoReadyResponse(tid, nextRedirectUrl);
-      
-    } catch (Exception e) {
+
+    }catch(Exception e){
+      log.error("Kakao ready 실패", e);
       throw new RuntimeException("카카오 결제 준비 중 오류: " + e.getMessage());
     }
   }
 
-  /** 카카오페이 승인 */
   @GetMapping("/success/kakaopay")
   public String kakaopaySuccess(@RequestParam("pg_token") String pgToken, HttpSession session) {
-    Integer paymentNo = (Integer) session.getAttribute("paymentNo");
-    String tid = (String) session.getAttribute("tid");
+    Integer paymentNo    = (Integer) session.getAttribute("paymentNo");
+    String tid           = (String) session.getAttribute("tid");
     String partnerUserId = (String) session.getAttribute("partner_user_id");
-    
     if (paymentNo == null || tid == null || partnerUserId == null) return "redirect:/order/error";
 
-    Map<String, Object> params = new HashMap<>();
+    String partnerOrderId = paymentService.selectKakaoRequest(paymentNo).getPartnerOrderId();
+
+    Map<String,Object> params = new HashMap<>();
     params.put("cid", CID);
     params.put("tid", tid);
-    params.put("partner_order_id", "BG_" + paymentNo);
+    params.put("partner_order_id", partnerOrderId);
     params.put("partner_user_id", partnerUserId);
     params.put("pg_token", pgToken);
 
@@ -148,23 +193,20 @@ public class PaymentController {
     headers.set("Authorization", "SECRET_KEY " + KAKAO_SECRET_KEY);
     headers.setContentType(MediaType.APPLICATION_JSON);
 
-    try {
-        ResponseEntity<JsonNode> response = restTemplate.postForEntity(
-          KAKAO_OPEN_API_URL + "/approve",
-          new HttpEntity<>(params, headers),
-          JsonNode.class
-        );
-        if (response.getStatusCode().is2xxSuccessful()) {
-          paymentService.updatePaymentStatus(paymentNo, 2);
-
-          session.removeAttribute("paymentNo");
-          session.removeAttribute("tid");
-          session.removeAttribute("partner_user_id");
-
-          return "redirect:/order/orderComplete.do?paymentNo=" + paymentNo;
-        }
-        return "redirect:/payment/fail";
-    } catch (Exception e) {
+    try{
+      ResponseEntity<JsonNode> response = restTemplate.postForEntity(
+        KAKAO_OPEN_API_URL + "/approve",
+        new HttpEntity<>(params, headers),
+        JsonNode.class);
+      if(response.getStatusCode().is2xxSuccessful()){
+        paymentService.updatePaymentStatus(paymentNo, 2);
+        session.removeAttribute("paymentNo");
+        session.removeAttribute("tid");
+        session.removeAttribute("partner_user_id");
+        return "redirect:/order/orderComplete.do?paymentNo=" + paymentNo;
+      }
+      return "redirect:/payment/fail";
+    }catch(Exception e){
       e.printStackTrace();
       return "redirect:/payment/fail";
     }
@@ -173,20 +215,16 @@ public class PaymentController {
   @PostMapping("/kakao/cancelPayment.do")
   @ResponseBody
   public ResponseEntity<?> cancelKakao(@RequestBody Map<String, Object> body) {
-    try {
+    try{
       int refundNo = (Integer) body.get("refundNo");
 
       // 1. 환불 번호로 결제 정보 조회
       PaymentVO payment = paymentService.selectPaymentByRefundNo(refundNo);
-      if (payment == null) {
-        return ResponseEntity.badRequest().body("결제 정보 없음");
-      }
+      if(payment == null){ return ResponseEntity.badRequest().body("결제 정보 없음"); }
 
       // 2. TID 조회
       KakaoPayRequestVO kakaoRequest = paymentService.selectKakaoRequest(payment.getPaymentNo());
-      if (kakaoRequest == null) {
-        return ResponseEntity.badRequest().body("카카오 요청 정보 없음");
-      }
+      if(kakaoRequest == null){ return ResponseEntity.badRequest().body("카카오 요청 정보 없음"); }
 
       // 3. 요청 파라미터 구성
       Map<String, Object> params = new HashMap<>();
@@ -205,10 +243,9 @@ public class PaymentController {
       // 4. 카카오 API 호출
       ResponseEntity<JsonNode> response = restTemplate.postForEntity(
         KAKAO_OPEN_API_URL + "/cancel",
-        request, JsonNode.class
-      );
+        request, JsonNode.class);
 
-      if (response.getStatusCode().is2xxSuccessful()) {
+      if(response.getStatusCode().is2xxSuccessful()){
         // 5. 환불 이력 저장
         JsonNode responseBody = response.getBody();
 
@@ -221,39 +258,38 @@ public class PaymentController {
         cancelVO.setCancelTaxFree(0);
 
         paymentService.insertKakaoCancel(cancelVO);  // 서비스단이지만 매퍼 직접 주입해도 됨
-        
         paymentService.updatePaymentStatus(payment.getPaymentNo(), 3);
 
         return ResponseEntity.ok("success");
-        } else {
+        }else{
           return ResponseEntity.status(500).body("카카오페이 환불 실패: " + response.getStatusCode());
         }
-    } catch (Exception e) {
+    }catch(Exception e){
       e.printStackTrace();
       return ResponseEntity.status(500).body("오류 발생: " + e.getMessage());
     }
   }
   
   public static class KakaoReadyResponse {
-    private String tid;
+	private String tid;
+	
+	@JsonProperty("next_redirect_pc_url")
+	private String nextRedirectPcUrl;
 
-    @JsonProperty("next_redirect_pc_url")
-    private String nextRedirectPcUrl;
-
-    public KakaoReadyResponse() {}
-
-    public KakaoReadyResponse(String tid, String nextRedirectPcUrl) {
-      this.tid = tid;
-      this.nextRedirectPcUrl = nextRedirectPcUrl;
-    }
-
-    public String getTid() { return tid; }
-    public void setTid(String tid) { this.tid = tid; }
-
-    public String getNextRedirectPcUrl() { return nextRedirectPcUrl; }
-    public void setNextRedirectPcUrl(String nextRedirectPcUrl) {
-      this.nextRedirectPcUrl = nextRedirectPcUrl;
-    }
+	public KakaoReadyResponse() {}
+	
+	public KakaoReadyResponse(String tid, String nextRedirectPcUrl) {
+	  this.tid = tid; this.nextRedirectPcUrl = nextRedirectPcUrl;
+	}
+	
+	public String getTid() { return tid; }
+	
+	public void setTid(String tid) { this.tid = tid; }
+	
+	public String getNextRedirectPcUrl() { return nextRedirectPcUrl; }
+	
+	public void setNextRedirectPcUrl(String nextRedirectPcUrl) { this.nextRedirectPcUrl = nextRedirectPcUrl; }
+  
   }
   
   /* ------------------------------------------------------------------------ 토스 ------------------------------------------------------------------- */
@@ -261,15 +297,14 @@ public class PaymentController {
   /* 토스 결제 준비를 위한 전용 API (회원/비회원 공통) */
   @PostMapping("/prepare")
   @ResponseBody
-  public Map<String, Object> prepareTossPayment(@RequestBody Map<String, Object> orderData, 
-                                                Principal principal, 
+  public Map<String, Object> prepareTossPayment(@RequestBody Map<String, Object> orderData,
+                                                Principal principal,
                                                 HttpServletRequest request) {
-    try {
-      // 서비스에서 주문 + 결제(PAYMENTS) 생성 후 응답 내려줌
+    try{
       return paymentService.prepareAndCreateTossOrder(orderData, principal, request);
-    } catch (Exception e) {
+    }catch(Exception e){
       e.printStackTrace();
-      Map<String, Object> response = new HashMap<>();
+      Map<String,Object> response = new HashMap<>();
       response.put("status", "FAIL");
       response.put("message", "결제 준비 중 오류: " + e.getMessage());
       return response;
@@ -282,10 +317,10 @@ public class PaymentController {
                                    @RequestParam(name = "orderId") String tossOrderId,
                                    @RequestParam Long amount,
                                    Model model) {
-    try {
+    try{
       PaymentVO completedPayment = paymentService.confirmTossPayment(paymentKey, tossOrderId, amount);
       return "redirect:/order/orderComplete.do?paymentNo=" + completedPayment.getPaymentNo();
-    } catch (Exception e) {
+    }catch(Exception e){
       e.printStackTrace();
       model.addAttribute("errorMessage", e.getMessage());
       return "redirect:/payment/fail?message=approval_failed";
@@ -300,7 +335,7 @@ public class PaymentController {
     model.addAttribute("errorMessage", "결제에 실패했습니다.");
     model.addAttribute("errorCode", code);
     model.addAttribute("errorDetail", message);
-    return "payment/paymentFail"; 
+    return "payment/paymentFail";
   }
 
   

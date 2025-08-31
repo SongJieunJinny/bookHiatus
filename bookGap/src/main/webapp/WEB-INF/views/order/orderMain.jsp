@@ -438,11 +438,11 @@ function proceedToRealPayment(orderData) {
       url: contextPath + "/payment/ready/kakaopay", // Controller에 만든 API 주소
       contentType: "application/json",
       data: JSON.stringify({
-      	  partner_order_id: "BG_" + orderData.orderId,  // Controller와 VO에 맞게 파라미터 전달
-          partner_user_id: orderData.userId,
-          item_name: orderName,
+    	    orderId: orderData.orderId,
+    	    partner_user_id: (currentUserId || 'guest'),   // 보여줄용, 원하면 order_id 그대로 써도 됨
+          itemName: orderName,
           quantity: orderData.orderItems.reduce((acc, item) => acc + item.quantity, 0),
-          total_amount: orderData.totalPrice
+          totalAmount: orderData.totalPrice
       }),
       success: function(response) {
         window.location.href = response.next_redirect_pc_url;
@@ -462,8 +462,8 @@ function proceedToRealPayment(orderData) {
 		        if (response.status === 'SUCCESS') {
 		            const tossPayments = TossPayments('test_ck_ZLKGPx4M3MG0eMKOzG94rBaWypv1');
 		            tossPayments.requestPayment('카드', {
-		                amount: response.amount,
-		                orderId: "BG_" + response.paymentNo, 
+		            	  amount: response.amount,
+		            	  orderId: response.orderId, 
 		                orderName: response.orderName,
 		                customerName: response.customerName,
 		                customerKey: response.customerKey,

@@ -27,6 +27,7 @@ public class OrderVO {
   private PaymentVO payment; 
   private String courier; // 택배사
   private String invoice; // 송장번호
+  private String orderKey;
 
   //===================== 게스트주문필요 필드 =====================
   private String guestName;
@@ -286,5 +287,8 @@ public class OrderVO {
   public void setRefundStatus(Integer refundStatus) {
     this.refundStatus = refundStatus;
   }
+
+  public String getOrderKey() { return orderKey; }
+  public void setOrderKey(String orderKey) { this.orderKey = orderKey; }
   
 }
