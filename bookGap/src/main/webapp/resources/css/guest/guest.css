@@ -463,7 +463,7 @@ input[type="checkbox"] {
 
 }
 
-/* ------------------------------------------guestDeliveryInfo------------------------------------------ */
+/* --------------------------------------------------------------guestOrderInfo--------------------------------------------------------------- */
 
 #guestDeliveryInfoNav{
   width: 100%;
@@ -646,141 +646,83 @@ input[type="checkbox"] {
 .status-refund-3 { color: #4caf50; font-weight:bold; } /* 완료 */
 .status-refund-4 { color: #f44336; font-weight:bold; } /* 거절 */
 .readonly { background:#f5f5f5; }
-/* ============================================= */
-/* 노트북/데스크톱 (1025px ~ 1440px)              */
-/* ============================================= */
-@media (max-width: 1440px) {
-  section {
-    width: 95%; /* 콘텐츠 영역을 조금 더 넓힘 */
-  }
-  .layout {
-    width: 90%;
-  }
-}
 
-/* ============================================= */
-/* 태블릿 (769px ~ 1024px)                       */
-/* ============================================= */
-@media (max-width: 1024px) {
-  /* 3단 레이아웃을 1단(세로)으로 변경 */
-  #guestOrderFormDiv {
-    flex-direction: column;
-    align-items: center;
-    gap: 40px;
-  }
-
-  #guestOrderNav, #guestOrderSection, #guestOrderAside {
-    flex-basis: 100%;
-    width: 100%;
-    max-width: 600px; /* 너무 넓어지는 것을 방지하여 가독성 유지 */
-  }
-
-  /* 태블릿에서는 전체 너비를 사용하도록 설정 */
-  .layout {
-    width: 100%;
-  }
-
-  .guestInfoTableContainer, .guestInfoTableAddressContainer {
-     width: 100%;
-     justify-content: center;
-  }
-
-  /* 결제 버튼 크기 조정 */
-  .payBtn {
-    width: 60%;
-    max-width: 400px; /* 최대 너비 제한 */
-    padding: 12px;
-  }
-}
-
-/* ============================================= */
-/* 모바일 (1px ~ 768px)                         */
-/* ============================================= */
+/* ===========================
+   📱 모바일 ≤768px
+   =========================== */
 @media (max-width: 768px) {
-  /* 모바일에 맞는 폰트 크기로 조정 */
-  body {
-    font-size: clamp(14px, 2.5vw, 16px);
-  }
-  #order {
-    font-size: 24px;
-  }
-  .tableCategory, .SectionTitle {
-    font-size: 20px;
-  }
-  
-  /* 입력 필드 레이블과 인풋을 세로로 쌓음 */
-  .guestInfoTableContainer, .guestInfoTableAddressContainer {
-    flex-direction: column;
-    align-items: stretch; /* 자식 요소들을 컨테이너 너비에 맞춤 */
-    gap: 8px;
-    width: 100%; /* 좌우 여백을 섹션에서 관리하도록 100% 설정 */
-    margin: 15px auto;
-  }
-  
-  .guestInfoCategory, .guestInfoCategoryAddress {
-    text-align: left; /* 라벨 왼쪽 정렬 */
-    align-self: flex-start;
-  }
+  section{width:100%;margin:0;padding:12px}
 
-  .guestInfoTableInput, .guestInfoCategoryAddressDiv {
-    width: 100%; /* 입력 필드를 꽉 채움 */
-  }
-  
-  /* 우편번호 찾기 레이아웃 조정 */
-  .guestInfoTableAddressContainerDiv {
-    width: 100%;
-    gap: 10px;
-  }
-  .guestInfoTablePostInput {
-    width: 65%;
-  }
-  .guestInfoTablePostButton {
-    width: 30%;
-    padding: 10px;
-    font-size: 14px; /* 버튼 텍스트 크기 고정 */
-  }
-  
-  /* 주문 상세 정보 세로 배치 */
-  .orderDetailDiv {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-  .orderDetails {
-    margin-top: 15px;
-    align-items: center;
-  }
-  .orderImg {
-    width: 40vw; /* 화면 너비에 비례하여 조정 */
-    max-width: 150px;
-  }
-  
-  /* 동의 영역의 밑줄 제거 및 토글 버튼 위치 조정 */
-  .agree1Div label,
-  .label-toggle-wrapper {
-      border-bottom: none;
-      padding-bottom: 0;
-  }
-   .label-toggle-wrapper {
-    flex-wrap: wrap;
-    position: relative;
-    padding-right: 35px; /* 토글 버튼 공간 확보 */
-  }
-  .agreeToggleBtn {
-    position: absolute;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
-  }
+  /* 헤더/본문 여백 정리 */
+  #guestDeliveryInfo{font-size:22px;margin:8px 0 16px}
 
-  /* 결제 버튼을 크고 누르기 쉽게 만듬 */
-  .payBtn {
-    width: 90%;
-    font-size: 18px;
-    padding: 15px;
-  }
+  /* 박스 폭 꽉 채우기 */
+  .guestDeliveryInfoDiv1{width:100%;margin:0 auto 14px}
+  .guestDeliveryInfoDiv2{width:100%;border-width:1px}
+  .guestDeliveryInfoDivLine{border-bottom-width:6px}
+
+  /* 라인형 정보 → 세로 스택 */
+  .guestOrderInfo,
+  .guestOrderNum{display:flex;flex-direction:column;align-items:flex-start;gap:6px;margin:10px 12px;font-size:16px}
+
+  /* 주문 카드 */
+  #guestDeliveryInfoEnd{width:100%;margin:10px 0 20px}
+  .guestOrderPayComplDiv1{width:100%;margin:0}
+  .guestOrderPayComplDiv2{width:100%;margin:10px 0;border-width:1px;font-size:16px;padding:6px 0}
+
+  .orderPayComplLine{height:auto;min-height:32px;padding:8px 12px;justify-content:flex-end}
+
+  .orderItem{display:flex;flex-direction:column;align-items:center;gap:10px;padding:12px}
+  #guestOrderPayComplImg{width:42vw;max-width:160px;height:auto;margin:0}
+  .guestOrderPayCompl{width:100%;justify-content:center}
+  .guestOrderPayComplInfoDiv1{width:100%;gap:6px;margin-bottom: 5%;}
+  .guestOrderPayComplInfoDiv2{margin:8px 0 0 0;font-size:18px}
+
+  .orderQuantity{color:#777}
+  .orderStatus{font-weight:700}
 }
-/* ------------------------------------------guestOrderDetailsView------------------------------------------ */
+
+/* ===========================
+   📗 태블릿 769–1024px
+   =========================== */
+@media (min-width: 769px) and (max-width: 1024px) {
+  section{width:95%;margin:2% auto 0}
+
+  .guestDeliveryInfoDiv1{width:92%;margin:0 auto 1px}
+  .guestDeliveryInfoDiv2{padding:4px 0}
+
+  .guestOrderInfo,
+  .guestOrderNum{gap:10px;flex-wrap:wrap;justify-content:space-between;margin:12px 16px;font-size:17px}
+
+  #guestDeliveryInfoEnd{width:100%;margin:14px 0 26px}
+  .guestOrderPayComplDiv1{width:92%;margin:0 auto;margin-bottom: 5%;}
+  .guestOrderPayComplDiv2{width:100%;padding:8px 0}
+
+  .orderPayComplLine{padding:10px 14px}
+
+  .orderItem{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px}
+  #guestOrderPayComplImg{width:22%;max-width:220px;height:auto}
+  .guestOrderPayCompl{flex:1}
+  .guestOrderPayComplInfoDiv1{width:100%}
+}
+
+/* ===========================
+   💻 노트북 1025–1440px
+   =========================== */
+@media (min-width: 1025px) and (max-width: 1440px) {
+  section{width:95%;margin:2% auto 0}
+
+  .guestDeliveryInfoDiv1{width:86%;margin-left:auto;margin-right:auto}
+  #guestDeliveryInfoEnd{width:100%}
+  .guestOrderPayComplDiv1{width:86%; margin-left:auto; margin-right:auto; margin-bottom: 5%;}
+  .guestOrderPayComplDiv2{padding:10px 0}
+
+  .orderItem{gap:20px;padding:16px}
+  #guestOrderPayComplImg{width:15%;max-width:260px}
+  .guestOrderPayComplInfoDiv2{font-size:20px}
+}
+
+/* --------------------------------------------------------------------guestOrderDetailsView----------------------------------------------------------- */
 .orderDetailView {
 	width:90%; margin:20px auto;
 }
@@ -894,4 +836,65 @@ input[type="checkbox"] {
 	background:#333; 
 	color: white;
 	cursor: pointer;
+}
+/* ===== 📱 모바일 ≤768px ===== */
+@media (max-width: 768px) {
+  section{width:100%;margin:0;padding:12px}
+
+  .orderDetailView{width:100%;margin:14px auto}
+  .orderDetailViewTitle{font-size:20px;margin:10px 0}
+
+  .guestOrderDetailsTitle{font-size:18px;margin:12px 0 8px}
+  .orderInfoBox,.deliveryInfoBox{padding:12px;font-size:14px}
+
+  /* 표는 가로스크롤로 보이게 */
+  .orderTable{display:block;width:100%;overflow-x:auto;border-collapse:separate}
+  .orderTable thead th{white-space:nowrap;font-size:14px}
+  .orderTable td,.orderTable th{padding:8px}
+  .orderTable img{max-width:60px}
+
+  .guestRefundFormLine{padding:12px}
+  .guestRefundFormReason{min-height:90px;font-size:14px}
+  .guestRefundInfoForm{font-size:13px}
+
+  .guestRefundFormButton,
+  #backGuestOrderInfo{
+    width:100%;max-width:none;height:44px;margin:12px 0 0 0;font-size:16px
+  }
+}
+
+/* ===== 📗 태블릿 769–1024px ===== */
+@media (min-width: 769px) and (max-width: 1024px) {
+  section{width:95%;margin:2% auto 0}
+
+  .orderDetailView{width:95%}
+  .orderDetailViewTitle{font-size:22px}
+
+  .guestOrderDetailsTitle{font-size:20px}
+  .orderInfoBox,.deliveryInfoBox{padding:14px}
+
+  .orderTable{width:100%;font-size: 15px;}
+  .orderTable td,.orderTable th{padding:10px}
+  .orderTable img{max-width:72px}
+
+  .guestRefundFormButton,
+  #backGuestOrderInfo{
+    width:20%;min-width:220px;height:46px;margin-left:35%;font-size:17px
+  }
+}
+
+/* ===== 💻 노트북 1025–1440px ===== */
+@media (min-width: 1025px) and (max-width: 1440px) {
+  section{width:95%;margin:2% auto 0}
+
+  .orderDetailView{width:90%}
+  .orderDetailViewTitle{font-size:24px}
+
+  .orderTable img{max-width:80px}
+  .orderTable td,.orderTable th{padding:12px}
+
+  .guestRefundFormButton,
+  #backGuestOrderInfo{
+    width:28%;min-width:240px;height:48px;margin-left:36%;font-size:18px
+  }
 }
