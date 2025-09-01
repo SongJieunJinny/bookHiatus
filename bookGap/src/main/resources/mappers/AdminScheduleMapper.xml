@@ -34,7 +34,7 @@
     <delete id="deleteSchedule" parameterType="int">
         DELETE FROM SCHEDULE WHERE SCHEDULE_ID = #{scheduleId}
     </delete>
-    
+     
     <select id="getScheduleCountByWeekday" resultType="map">
 		  SELECT 
 		    CASE DAYOFWEEK(START_DATE)
