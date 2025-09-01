@@ -2,6 +2,7 @@ package com.bookGap.controller;
 
 import java.math.BigDecimal;
 import java.security.Principal;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,6 +33,8 @@ import com.bookGap.vo.KakaoPayRequestVO;
 import com.bookGap.vo.OrderDetailVO;
 import com.bookGap.vo.OrderVO;
 import com.bookGap.vo.PaymentVO;
+import com.bookGap.vo.TossCancelVO;
+import com.bookGap.vo.TossRequestVO;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -327,7 +330,58 @@ public class PaymentController {
     return "payment/paymentFail";
   }
 
-  
+  @PostMapping("/toss/cancelPayment.do")
+  @ResponseBody
+  public ResponseEntity<?> cancelToss(@RequestBody Map<String, Object> body) {
+      try {
+          int refundNo = (Integer) body.get("refundNo");
+
+          // 1. 환불 번호로 결제 정보 조회
+          PaymentVO payment = paymentService.selectPaymentByRefundNo(refundNo);
+          if (payment == null) return ResponseEntity.badRequest().body("결제 정보 없음");
+
+          // 2. TOSS 요청 정보 조회
+          TossRequestVO tossRequest = paymentService.findTossRequestByPaymentNo(payment.getPaymentNo());
+          if (tossRequest == null || tossRequest.getPaymentKey() == null) {
+              return ResponseEntity.badRequest().body("Toss 결제 정보 없음");
+          }
+
+          // 3. HTTP 헤더 구성
+          HttpHeaders headers = new HttpHeaders();
+          String secretKey = "test_sk_6BYq7GWPVv97k2edaZ6n3NE5vbo1"; // 시크릿 키
+          String encodedAuth = Base64.getEncoder().encodeToString((secretKey + ":").getBytes("UTF-8"));
+          headers.set("Authorization", "Basic " + encodedAuth);
+          headers.setContentType(MediaType.APPLICATION_JSON);
+
+          // 4. 요청 파라미터 구성
+          Map<String, Object> params = new HashMap<>();
+          params.put("cancelReason", "관리자 환불");
+
+          HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(params, headers);
+
+          // 5. Toss 환불 API 호출
+          String url = "https://api.tosspayments.com/v1/payments/" + tossRequest.getPaymentKey() + "/cancel";
+          ResponseEntity<String> response = new RestTemplate().postForEntity(url, requestEntity, String.class);
+
+          // 6. 성공 여부 처리
+          if (response.getStatusCode().is2xxSuccessful()) {
+              TossCancelVO cancelVO = new TossCancelVO();
+              cancelVO.setPaymentNo(payment.getPaymentNo());
+              cancelVO.setPaymentKey(tossRequest.getPaymentKey());
+              cancelVO.setCancelReason("관리자 환불");
+
+              paymentService.insertTossCancel(cancelVO);
+              paymentService.updatePaymentStatus(payment.getPaymentNo(), 3); // 3 = 환불 완료
+
+              return ResponseEntity.ok("success");
+          } else {
+              return ResponseEntity.status(500).body("토스페이 환불 실패: " + response.getStatusCode());
+          }
+      } catch (Exception e) {
+          e.printStackTrace();
+          return ResponseEntity.status(500).body("오류 발생: " + e.getMessage());
+      }
+  }
   /* ----------------------------------------------------fail, cancel 매핑 추가--------------------------------------------------- */
 
  /* @GetMapping("/fail")
