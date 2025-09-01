@@ -41,10 +41,9 @@ public class RefundServiceImpl implements RefundService{
     params.put("paymentNo", paymentNo);
     return refundDAO.getRefundByOrderAndPayment(params);
   }
-  
+
   @Override
   public void updateRefundStatusToRequest(int orderId) {
     refundDAO.updateRefundStatusToRequest(orderId);
   }
-
 }

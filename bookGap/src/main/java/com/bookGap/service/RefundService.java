@@ -15,6 +15,7 @@ public interface RefundService {
   /* 주문ID + 결제ID 기준 환불 조회 */
   public RefundVO getRefundByOrderAndPayment(int orderId, int paymentNo);
   
+  /* 환불 신청 시 ORDERS 테이블 REFUND_STATUS = 1 로 변경 */
   public void updateRefundStatusToRequest(int orderId);
 
 }
