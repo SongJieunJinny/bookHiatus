@@ -94,12 +94,19 @@
 			<div class="refundFormLine">
 			  <input type="hidden" name="orderId" value="${order.orderId}">
 			  <input type="hidden" name="paymentNo" value="${not empty order.payment ? order.payment.paymentNo : order.paymentNo}">
-			  
-			  <label>메일 입력</label>
-			  <br><input class="refundFormMail" type="email" name="refundMail" required><br>
-			  
+
 			  <label>환불 사유</label>
 			  <textarea class="refundFormReason" name="refundReason" required ></textarea>
+			  
+			  <label>환불 안내</label>
+			  <div class="refundInfoForm">
+			  - 상품취소 시 취소수수료가 부과될 경우 환불될 금액에서 차감 후 나머지 금액을 환불 해 드립니다.<br>
+			  - 단, 사용된 결제수단에 따라 예치금으로 환불 될 수 있습니다.<br>
+			  - 카드이용 후 취소요청 시 카드사 정책에 따라 환불기간 소요될 수 있습니다.<br>
+			  - 부분취소로 무료배송 기준 금액이 미만일 경우 배송비가 발생할 수 있으며 이 경우 배송비를 제한 후 환불 됩니다.<br>
+			  - 반품/교환 시 단순변심에 의한 배송비 발생 시 해당 배송비를 제한 후 환불 됩니다.
+			  </div>
+			  
 			  <button class="refundFormButton" type="submit">환불 신청하기</button>
 			</div>
 		  

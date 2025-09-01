@@ -24,17 +24,16 @@ public class RefundController {
   @PostMapping("/apply.do")
   @ResponseBody
   public ResponseEntity<String> applyRefund(RefundVO refundVO) {
-    try {
-      if (refundVO.getOrderId() == null || refundVO.getPaymentNo() == null) {
+    try{
+      if(refundVO.getOrderId() == null || refundVO.getPaymentNo() == null){
         return ResponseEntity.badRequest().body("필수 데이터 누락");
-      }
-      if (refundVO.getRefundMail() == null || refundVO.getRefundMail().trim().isEmpty()) {
-        return ResponseEntity.badRequest().body("메일 주소 누락");
       }
 
       refundService.applyRefundAndUpdateStatus(refundVO);
-        return ResponseEntity.ok("success");
-    } catch (Exception e) {
+
+      return ResponseEntity.ok("success");
+
+    }catch(Exception e){
       e.printStackTrace(); // 서버 콘솔에 상세 로그 출력
       return ResponseEntity.status(500).body("fail");
     }
@@ -54,6 +53,5 @@ public class RefundController {
                                   @RequestParam("paymentNo") int paymentNo) {
     return refundService.getRefundByOrderAndPayment(orderId, paymentNo);
   }
-
 
 }

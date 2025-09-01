@@ -5,9 +5,9 @@
   <!-- 환불 신청 -->
   <insert id="applyRefund" parameterType="com.bookGap.vo.RefundVO">
     INSERT INTO REFUND
-    (ORDER_ID, PAYMENT_NO, REFUND_REASON, REFUND_MAIL, REFUND_STATUS)
+    (ORDER_ID, PAYMENT_NO, REFUND_REASON, REFUND_STATUS)
     VALUES
-    (#{orderId}, #{paymentNo}, #{refundReason}, #{refundMail}, 1)
+    (#{orderId}, #{paymentNo}, #{refundReason}, 1)
   </insert>
   
   <!-- 환불 신청 시 ORDERS 테이블 REFUND_STATUS = 1 로 변경 -->
@@ -20,7 +20,7 @@
   <!-- 환불 신청 내역을 고객 화면에서 조회 -->
   <select id="selectRefundListByOrderId" resultType="com.bookGap.vo.RefundVO">
 	  SELECT REFUND_NO, ORDER_ID, PAYMENT_NO, REFUND_REASON,
-	         REFUND_MAIL, REFUND_STATUS, CREATED_AT
+	         REFUND_STATUS, CREATED_AT
 	  FROM REFUND
 	  WHERE ORDER_ID = #{orderId}
 	  ORDER BY CREATED_AT DESC
@@ -38,5 +38,5 @@
     WHERE ORDER_ID = #{orderId}
       AND PAYMENT_NO = #{paymentNo}
   </select>
-  
+
 </mapper>
