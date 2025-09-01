@@ -381,7 +381,7 @@ public class PaymentController {
           e.printStackTrace();
           return ResponseEntity.status(500).body("오류 발생: " + e.getMessage());
       }
-  }
+  } 
   /* ----------------------------------------------------fail, cancel 매핑 추가--------------------------------------------------- */
 
  /* @GetMapping("/fail")
