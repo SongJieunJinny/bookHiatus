@@ -49,26 +49,35 @@
 		INSERT INTO BOARD( USER_ID 
 											,BOARD_TITLE 
 											,BOARD_CONTENT 
-											,BOARD_TYPE 
+											,BOARD_TYPE
+											,BOOK_NO 
 											)VALUES( 
 											#{userId} 
 										 ,#{boardTitle} 
 										 ,#{boardContent} 
-										 ,#{boardType} )
+										 ,#{boardType}
+										 ,#{bookNo} )
 	</insert>
 	
 	<!--  view mapper  -->
 	<select id="selectOne" parameterType="int" resultType="com.bookGap.vo.BoardVO"> 
-		SELECT BOARD_NO AS boardNo, 
-					 BOARD_TITLE AS boardTitle, 
-					 BOARD_CONTENT AS boardContent, 
-					 BOARD_TYPE AS boardType, 
-					 BOARD_RDATE AS boardRdate, 
+		SELECT BOARD_NO          AS boardNo, 
+					 BOARD_TITLE       AS boardTitle, 
+					 BOARD_CONTENT     AS boardContent, 
+					 BOARD_TYPE        AS boardType, 
+					 BOARD_RDATE       AS boardRdate, 
 					 DATE_FORMAT(BOARD_RDATE, '%Y.%m.%d %H:%i') AS formattedBoardRdate, 
-					 u.USER_ID AS userId 
-			FROM BOARD b JOIN USER u 
-	      ON b.USER_ID = u.USER_ID 
-		 WHERE b.BOARD_NO = #{boardNo} 
+					 u.USER_ID         AS userId,
+					 (SELECT COUNT(*) FROM ECOMMENT e WHERE e.BOARD_NO = b.BOARD_NO AND e.ECOMMENT_STATE = 1) AS eCommentCount,
+					 bk.BOOK_NO        AS bookNo,
+					 p.IMAGE           AS bookImgUrl,
+					 p.TITLE           AS bookTitle,
+					 p.AUTHOR          AS bookAuthor
+			FROM BOARD b 
+			JOIN USER u ON b.USER_ID = u.USER_ID 
+			LEFT JOIN BOOK bk ON b.BOOK_NO = bk.BOOK_NO
+	    LEFT JOIN PRODUCT_API p ON bk.isbn = p.isbn
+		 WHERE b.BOARD_NO = #{boardNo}
 	</select>
 			
 	<update id="updateHit" parameterType="int">

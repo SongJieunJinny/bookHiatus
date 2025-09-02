@@ -6,20 +6,24 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.bookGap.service.BoardService;
+import com.bookGap.service.BookService;
 import com.bookGap.util.PagingUtil;
 import com.bookGap.vo.BoardVO;
+import com.bookGap.vo.BookVO;
 import com.bookGap.vo.SearchVO;
 
 @Controller
 public class BoardController {
 
-	@Autowired 
-    private BoardService boardService;
+	@Autowired private BoardService boardService;
+	@Autowired private BookService bookService;
 	
 	/*-----------------------------------------------------------------------------------------------------*/
 	/* GET noticeList */
@@ -27,9 +31,7 @@ public class BoardController {
 	public String noticeList(Model model, SearchVO searchVO,
 							             @RequestParam(value="nowpage",required = false,defaultValue="1")int nowpage) {
 	  
-	  if(searchVO.getBoardType()== null){
-  		searchVO.setBoardType(1); // 공지사항 타입 기본값
-	  }
+	  if(searchVO.getBoardType()== null){ searchVO.setBoardType(1); }
 	  
 	  int total = boardService.boardListSearch(searchVO);
 	  
@@ -93,12 +95,10 @@ public class BoardController {
 	  boardService.updateHit(boardNo); // 조회수 증가
 	  BoardVO vo = boardService.selectOne(boardNo);
 
-	  if(vo == null){
-      System.out.println("해당 게시글이 없습니다. boardNo=" + boardNo);
-      return "redirect:/noticeList.do";
-	  }
+	  if(vo == null){ return "redirect:/noticeList.do"; }
 
 	  model.addAttribute("vo", vo);
+	  
 	  return "board/noticeView";
 	}
 	
@@ -108,14 +108,8 @@ public class BoardController {
 	  String loginUser = principal.getName(); // 로그인 사용자 ID
 	  BoardVO vo = boardService.selectOne(boardNo); // 게시글 조회
 
-	  if(vo == null){
-		// 게시글이 존재하지 않을 경우 목록으로 리디렉트
-	    return "redirect:noticeList.do";
-	  }
-	  if(!loginUser.equals(vo.getUserId())){
-	    // 작성자와 로그인 사용자가 다르면 리디렉트
-	    return "redirect:noticeList.do?BoardType=" + vo.getBoardType();
-	  }
+	  if(vo == null){ return "redirect:noticeList.do"; }// 게시글이 존재하지 않을 경우 목록으로 리디렉트
+	  if(!loginUser.equals(vo.getUserId())){ return "redirect:noticeList.do?BoardType=" + vo.getBoardType(); }// 작성자와 로그인 사용자가 다르면 리디렉트
 
 	  model.addAttribute("vo", vo); // 뷰에 게시글 정보 전달
 	  return "board/noticeModify"; // 수정 폼 JSP
@@ -210,14 +204,8 @@ public class BoardController {
 	  String loginUser = principal.getName(); // 로그인 사용자 ID
 	  BoardVO vo = boardService.selectOne(boardNo); // 게시글 조회
 
-	  if(vo == null){
-		// 게시글이 존재하지 않을 경우 목록으로 리디렉트
-	    return "redirect:qnaList.do";
-	  }
-	  if(!loginUser.equals(vo.getUserId())){
-	    // 작성자와 로그인 사용자가 다르면 리디렉트
-	    return "redirect:qnaList.do?BoardType=" + vo.getBoardType();
-	  }
+	  if(vo == null){ return "redirect:qnaList.do"; }// 게시글이 존재하지 않을 경우 목록으로 리디렉트
+	  if(!loginUser.equals(vo.getUserId())){ return "redirect:qnaList.do?BoardType=" + vo.getBoardType(); }// 작성자와 로그인 사용자가 다르면 리디렉트
 
 	  model.addAttribute("vo", vo); // 뷰에 게시글 정보 전달
 	  return "board/qnaModify"; // 수정 폼 JSP
@@ -243,10 +231,7 @@ public class BoardController {
 	  
 	  BoardVO vo = boardService.selectOne(boardNo);
 
-	  if(vo == null){
-      System.out.println("해당 게시글이 없습니다. boardNo=" + boardNo);
-      return "redirect:/qnaList.do";
-	  }
+	  if(vo == null){ return "redirect:/qnaList.do"; }// 게시글이 존재하지 않을 경우 목록으로 리디렉트
 
 	  model.addAttribute("vo", vo);
 	  return "board/qnaView";
@@ -268,9 +253,7 @@ public class BoardController {
 	public String eventList(Model model, SearchVO searchVO,
 							            @RequestParam(value="nowpage",required = false,defaultValue="1")int nowpage) {
 	  
-	  if(searchVO.getBoardType()== null){
-	    searchVO.setBoardType(3); // 공지사항 타입 기본값
-	  }
+	  if(searchVO.getBoardType()== null){ searchVO.setBoardType(3); }
 	  
 	  int total = boardService.boardListSearch(searchVO);
 	  
@@ -301,31 +284,23 @@ public class BoardController {
 	
 	/* GET eventWrite */
 	@RequestMapping(value="/eventWrite.do", method = RequestMethod.GET)
-	public String eventWrite(Model model, @RequestParam("boardType") int boardType) {
-	  
-	  model.addAttribute("boardType", boardType);
-	  
+	public String eventWrite() {
 	  return "board/eventWrite";
 	}
 	
-	/* POST eventWrite */
+	/* POST eventWriteOk */
 	@RequestMapping(value = "/eventWriteOk.do", method = RequestMethod.POST)
-	public String eventWriteOk(BoardVO boardVO, Principal principal,
-	                           @RequestParam("boardTitle") String boardTitle,
-	                           @RequestParam("boardContent") String boardContent) {
+	public String eventWriteOk(BoardVO boardVO, Principal principal) {
 
 	  boardVO.setUserId(principal.getName());
-	  boardVO.setBoardTitle(boardTitle);
-	  boardVO.setBoardContent(boardContent);
-	  // boardType은 VO로 자동 들어옴
 
 	  int result = boardService.insert(boardVO);
-	  
+
 	  if(result > 0){
-	    return "redirect:eventList.do?boardNo=" + boardVO.getBoardNo() + "&boardType=" + boardVO.getBoardType();
-	  }else{
-	    return "redirect:eventWrite.do?boardType=" + boardVO.getBoardType();
-	  }
+      return "redirect:eventList.do";
+    }else{
+      return "redirect:eventWrite.do?boardType=3";
+    }
 	}
 
 	/* GET qnaModify */
@@ -334,14 +309,8 @@ public class BoardController {
 	  String loginUser = principal.getName(); // 로그인 사용자 ID
 	  BoardVO vo = boardService.selectOne(boardNo); // 게시글 조회
 
-	  if(vo == null){
-		// 게시글이 존재하지 않을 경우 목록으로 리디렉트
-	    return "redirect:eventList.do";
-	  }
-	  if(!loginUser.equals(vo.getUserId())){
-	    // 작성자와 로그인 사용자가 다르면 리디렉트
-	    return "redirect:eventList.do?BoardType=" + vo.getBoardType();
-	  }
+	  if(vo == null){ return "redirect:eventList.do"; }// 게시글이 존재하지 않을 경우 목록으로 리디렉트
+	  if(!loginUser.equals(vo.getUserId())){ return "redirect:eventList.do?BoardType=" + vo.getBoardType(); }// 작성자와 로그인 사용자가 다르면 리디렉트
 
 	  model.addAttribute("vo", vo); // 뷰에 게시글 정보 전달
 	  return "board/eventModify"; // 수정 폼 JSP
@@ -365,13 +334,10 @@ public class BoardController {
   @RequestMapping(value="/eventView.do", method = RequestMethod.GET)
   public String eventView(Model model, @RequestParam("boardNo") int boardNo) {
     
-	boardService.updateHit(boardNo); // 조회수 증가
+	  boardService.updateHit(boardNo); // 조회수 증가
     BoardVO vo = boardService.selectOne(boardNo);
 
-    if(vo == null){
-      System.out.println("해당 게시글이 없습니다. boardNo=" + boardNo);
-      return "redirect:/eventList.do";
-    }
+    if(vo == null){ return "redirect:/eventList.do"; }// 게시글이 존재하지 않을 경우 목록으로 리디렉트
 
     model.addAttribute("vo", vo);
     return "board/eventView";
@@ -386,12 +352,26 @@ public class BoardController {
     return "redirect:eventList.do";
   }
 	
+  /*-----------------------------------------------------------------------------------------------------*/
+  
+  /* GET showSearchBookPopup */
+  @GetMapping("/popup/searchBook.do")
+  public String showSearchBookPopup() {
+      return "popup/bookSearch";
+  }
+
+  /* GET searchBooks */
+  @GetMapping("/api/searchBooks.do")
+  @ResponseBody
+  public List<BookVO> searchBooks(@RequestParam("keyword") String keyword) {
+      List<BookVO> bookList = bookService.searchBooksForPopup(keyword); 
+      return bookList;
+  }
+  
 	/* 특수문자 input */
 	private String restoreSanitizedInput(String input){
 	  
-    if(input == null) {
-      return null;
-    }
+    if(input == null){ return null; }
     input = input
       .replaceAll("&lt;", "<")
       .replaceAll("&gt;", ">")

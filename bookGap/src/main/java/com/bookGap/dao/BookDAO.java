@@ -71,5 +71,9 @@ public class BookDAO {
   public List<ProductApiVO> selectPopularBooks(SearchVO vo) {
 	    return sqlSession.selectList(namespace + "selectPopularBooks", vo);
 	}
+  
+  public List<BookVO> searchBooksForPopup(String keyword) {
+    return sqlSession.selectList(namespace + "searchBooksForPopup", keyword);
+  }
 
 }
