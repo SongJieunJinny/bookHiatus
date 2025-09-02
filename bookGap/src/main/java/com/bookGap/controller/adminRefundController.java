@@ -31,7 +31,7 @@ public class adminRefundController {
 	    return "admin/adminRefund";
 	  }
 
-	  // 상세
+	  // 상세 
 	  @GetMapping("/admin/adminRefund/getRefundDetail.do")
 	  @ResponseBody
 	  public RefundVO getRefundDetail(@RequestParam("refundNo") int refundNo) {

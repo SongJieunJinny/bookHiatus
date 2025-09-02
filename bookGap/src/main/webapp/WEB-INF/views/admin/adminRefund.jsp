@@ -349,7 +349,7 @@ $(function () {
           }
         });
         return;
-      } else if (paymentMethod === 2) {
+      } else if (paymentMethod === 2) { 
         // 카카오페이 취소
         $.ajax({
           url: "<%=request.getContextPath()%>/payment/kakao/cancelPayment.do",
