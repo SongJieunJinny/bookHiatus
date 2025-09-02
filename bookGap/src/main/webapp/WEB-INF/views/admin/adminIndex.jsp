@@ -202,7 +202,15 @@
 			            datasets: [{
 			              label: '일정 개수',
 			              data: _schedData,     // 일정 건수
-			              backgroundColor: '#1cc88a'
+			              backgroundColor: [
+			            	  '#6c757d', // 어두운 회색
+			            	  '#adb5bd', // 중간 회색
+			            	  '#ced4da', // 밝은 회색
+			            	  '#dee2e6', // 더 밝은 회색
+			            	  '#e9ecef', // 거의 흰색에 가까운 회색
+			            	  '#f8f9fa', // 매우 연한 회색
+			            	  '#495057'  // 딥 그레이
+			            	]
 			            }]
 			          },
 			          options: {
