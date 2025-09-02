@@ -14,6 +14,14 @@
 <script src="https://js.tosspayments.com/v1"></script>
 </head>
 <body>
+<sec:authorize access="isAuthenticated()">
+  <script>
+    const isLoggedIn = true;
+  </script>
+</sec:authorize>
+<sec:authorize access="isAnonymous()">
+  <script>const isLoggedIn = false;</script>
+</sec:authorize>
   <jsp:include page="/WEB-INF/views/include/header.jsp" />
   <section>
     <div id="orderMainHead">
@@ -492,14 +500,6 @@ function proceedToRealPayment(orderData) {
 	  } 
 }
 
-// 장바구니 수량 업데이트
-function updateCartCount() {
-  let cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
-  let cartCountElement = $("#cart-count"); // jQuery 셀렉터 사용
-  if (cartCountElement.length) {
-    cartCountElement.text(cartItems.length).css("visibility", cartItems.length > 0 ? "visible" : "hidden");
-  }
-}
 
 // 총 금액 계산 및 표시 함수
 function calculateTotal() {
