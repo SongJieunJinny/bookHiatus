@@ -11,6 +11,30 @@
 	<script src="<%=request.getContextPath()%>/resources/js/jquery-3.7.1.js"></script>
 	<link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/resources/css/index.css"/>
 	<link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/resources/css/board/event.css"/>
+  <style>
+      /* eventView.jsp에서 책 정보를 보여주기 위한 추가 스타일 */
+      .book-info-view {
+          display: flex;
+          gap: 20px; /* 이미지와 텍스트 사이 간격 */
+          padding: 2% 3% 3% 3%;
+      }
+      .book-info-view img {
+          width: 120px;
+          height: auto;
+          border: 1px solid #eee;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      }
+      .book-info-view .book-details h3 {
+          margin: 0 0 10px;
+          font-size: 1.1em;
+          border-bottom: 2px solid #f0f0f0;
+          padding-bottom: 5px;
+      }
+      .book-info-view .book-details p {
+          margin: 5px 0;
+          font-size: 0.95em;
+      }
+  </style>
 </head>
 <body>
 <sec:authorize access="isAuthenticated()">
@@ -36,7 +60,19 @@
             	<fmt:formatDate value="${vo.boardRdate}" pattern="yyyy-MM-dd" />
             </span>
           </div>
-          <div id="contentViewDiv">
+          
+          <c:if test="${not empty vo.bookNo and vo.bookNo > 0}">
+            <div class="book-info-view">
+              <img src="${vo.bookImgUrl}" alt="이벤트 도서 표지">
+              <div class="book-details">
+                <h3>이벤트 도서 정보</h3>
+                <p><strong>도서명:</strong> ${vo.bookTitle}</p>
+                <p><strong>저자:</strong> ${vo.bookAuthor}</p>
+              </div>
+            </div>
+          </c:if>
+          
+          <div id="contentViewDiv">         
             <div id="contentView">${vo.boardContent}</div>
           </div>
         </div><br>
@@ -45,7 +81,7 @@
 				  <c:if test="${sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal.userAuthority eq 'ROLE_ADMIN'}">
 				    <form name="deletefrm" action="eventDelete.do" method="post">
 				      <input type="hidden" name="boardNo" value="${vo.boardNo}">
-				      <button id="deleteView" onclick="return confirmDelete();">삭제하기</button>
+				      <button id="deleteView" onclick="confirmDelete();">삭제하기</button>
 				    </form>
 				    <a href="eventModify.do?boardNo=${vo.boardNo}" style="text-decoration: none;">
 				    	<button id="modifyView">수정하기</button>
@@ -261,12 +297,10 @@
 			    <div id="eventComments">
 			      <div id="commentLayout">
 			        <div id="eventCommentTitle">
-			        	EVENT<a href="eventView.do?boardNo=${eventVo.boardNo}&boardType=3">${eventVo.boardTitle}
-		          		<c:if test="${eventVo.eCommentCount > 0}">
-										<span style="color:#FF5722;">(${eventVo.eCommentCount})</span>
-									</c:if>
-								</a>
-			        </div>
+						     EVENT<c:if test="${vo.eCommentCount > 0}">
+						       <span style="color:#FF5722;">(${vo.eCommentCount})</span>
+						     </c:if>
+							</div>
 			      </div>
 			      <div id="reviewView">
 			        <div id="eventComment">
@@ -297,11 +331,10 @@
   });
   
 	</script>
-		<script>
-  function confirmDelete() {
-    let isConfirmed = confirm("정말 삭제하시겠습니까?"); 
-    if (isConfirmed) {
-      document.deletefrm.submit(); // 삭제 요청 실행
+	<script>
+	function confirmDelete() {
+    if (confirm("정말 삭제하시겠습니까?")) {
+      document.deletefrm.submit();
     }
   }
 	</script>

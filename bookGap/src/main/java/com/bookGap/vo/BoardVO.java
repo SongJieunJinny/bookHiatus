@@ -3,10 +3,6 @@ package com.bookGap.vo;
 import java.sql.Timestamp;
 
 public class BoardVO extends UserInfoVO{
-	/* board list에 보이는 displayNo */
-	private int displayNo;
-	
-	/* board 테이블 */
 	private int boardNo; //게시글번호
 	private String boardTitle; //게시글제목
 	private String boardContent; //게시글내용
@@ -14,21 +10,17 @@ public class BoardVO extends UserInfoVO{
 	private int boardState; //활성화여부(1활성화, 2비활성화)
 	private Timestamp boardRdate;//등록일자
 	private String formattedBoardRdate;
-
 	private int boardType; //게시글종류(NOTICE, QnA, EVENT)
 	private String userId; //아이디 
-	
-	/* attach 테이블 */
-	private int attachNo; //파일번호
-	private String attachName; //파일이름
-	private String fakeAttachName; //변경된파일이름
-	
+
+	/* board list에 보이는 displayNo */
+  private int displayNo;
+  
 	/* qcomment 테이블 */
 	private int qCommentNo; //댓글번호
 	private String qCommentContent; //댓글내용
 	private String qCommentState; //활성화여부(1활성화, 2비활성화)
 	private Timestamp qCommentRdate; //등록일자
-	
 	private int qCommentCount; //댓글 갯수
 	
 	/* ecomment 테이블 */
@@ -36,10 +28,54 @@ public class BoardVO extends UserInfoVO{
 	private String eCommentContent; //댓글내용
 	private String eCommentState; //활성화여부(1활성화, 2비활성화)
 	private Timestamp eCommentRdate; //등록일자
-	
 	private int eCommentCount; //댓글 갯수
+	 
+  /* attach 테이블 */
+  private int attachNo; //파일번호
+  private String attachName; //파일이름
+  private String fakeAttachName; //변경된파일이름
+  
+  /* book 테이블 */
+  private Integer bookNo;
+  private String bookImgUrl; // 책 이미지 URL
+  private String bookTitle;  // 책 제목 (JOIN 결과)
+  private String bookAuthor; 
 
-	public int getDisplayNo() {
+	/* ------------------------getter&setter----------------------------- */
+	
+	public Integer getBookNo() {
+    return bookNo;
+  }
+
+  public void setBookNo(Integer bookNo) {
+    this.bookNo = bookNo;
+  }
+
+  public String getBookImgUrl() {
+    return bookImgUrl;
+  }
+
+  public void setBookImgUrl(String bookImgUrl) {
+    this.bookImgUrl = bookImgUrl;
+  }
+  
+	public String getBookTitle() {
+    return bookTitle;
+  }
+
+  public void setBookTitle(String bookTitle) {
+    this.bookTitle = bookTitle;
+  }
+  
+  public String getBookAuthor() {
+    return bookAuthor;
+  }
+
+  public void setBookAuthor(String bookAuthor) {
+    this.bookAuthor = bookAuthor;
+  }
+
+  public int getDisplayNo() {
 		return displayNo;
 	}
 

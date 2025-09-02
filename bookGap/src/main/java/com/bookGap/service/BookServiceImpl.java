@@ -80,5 +80,10 @@ public class BookServiceImpl implements BookService{
   public List<ProductApiVO> getPopularBooks(SearchVO searchVO) {
       return bookDAO.selectPopularBooks(searchVO);
   }
+  
+  @Override
+  public List<BookVO> searchBooksForPopup(String keyword) {
+    return bookDAO.searchBooksForPopup(keyword);
+  }
 
 }
