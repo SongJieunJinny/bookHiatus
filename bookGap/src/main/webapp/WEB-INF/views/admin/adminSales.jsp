@@ -54,13 +54,13 @@ a{color: black;}
               <div class="col-lg-6">
                 <div class="card mb-4">
                   <div class="card-header"><i class="fas fa-chart-bar me-1"></i>Bar Sales</div>
-                  <div class="card-body"><canvas id="revenueBarChart" width="100%" height="50"></canvas></div>
+                  <div class="card-body"><canvas id="revenueBarChart" width="100%" height=" 400px"></canvas></div>
                 </div>
               </div>
               <div class="col-lg-6">
                 <div class="card mb-4">
                   <div class="card-header"><i class="fas fa-chart-pie me-1"></i>Pie Sales</div>
-                  <div class="card-body"><canvas id="salesPieChart" width="100%" height="50"></canvas></div>
+                  <div class="card-body"><canvas id="salesPieChart" width="100%" height=" 400px"></canvas></div>
                 </div>
               </div>
             </div>
@@ -128,11 +128,20 @@ a{color: black;}
         labels: titles,
         datasets: [{
           label: "총매출 (원)",
-          backgroundColor: "#4e73df",
+          backgroundColor: [
+        	  '#6c757d', // 어두운 회색
+        	  '#adb5bd', // 중간 회색
+        	  '#ced4da', // 밝은 회색
+        	  '#dee2e6', // 더 밝은 회색
+        	  '#e9ecef', // 거의 흰색에 가까운 회색
+        	  '#f8f9fa', // 매우 연한 회색
+        	  '#495057'  // 딥 그레이
+        	],
           data: revenues
         }]
       },
       options: {
+    	maintainAspectRatio: false,
         scales: {
           y: {
             beginAtZero: true,
@@ -151,9 +160,20 @@ a{color: black;}
         labels: titles,
         datasets: [{
           data: salesCounts,
-          backgroundColor: ["#1cc88a", "#36b9cc", "#f6c23e", "#e74a3b", "#858796", "#fd7e14"]
+          backgroundColor: [
+        	  "#A8DADC",  // 민트 파스텔
+        	  "#FBC4AB",  // 살구 파스텔
+        	  "#FFCAD4",  // 연핑크
+        	  "#CDB4DB",  // 연보라
+        	  "#B5EAD7",  // 연녹색
+        	  "#FFF1BD"   // 연노랑
+        	]
         }]
-      }
+      },
+      options: {
+    	    maintainAspectRatio: false,
+    	    responsive: true
+    	  }
     });
 
     // Line Chart

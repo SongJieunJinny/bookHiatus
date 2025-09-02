@@ -11,8 +11,7 @@
 <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/resources/css/index.css"/>
 <style>
 section {
-	width: 90%;
-	margin: 5% auto;
+	width: 100%;
 	height: auto;
 }
 .BookStore{
@@ -20,10 +19,10 @@ section {
 }
 .BookStoreName{
 	font-family: Arial, sans-serif;
-	margin-top: 3%;
+	margin-top: 2%;
 	margin-bottom: 1%;
 	text-align: center;
-	font-size: 25px;	
+	font-size: 28px;	
 }
 .BookStoreNameLine{
     border-top: solid 4px #ccc;
@@ -33,7 +32,7 @@ section {
 .BookStoreIntroduction{
     width: 50%;
     font-family: Arial, sans-serif;
-    margin-top: 8%;
+    margin-top: 5%;
     margin-left: auto;
     margin-right: auto; 
     text-align: center; 
@@ -64,7 +63,7 @@ section {
 <div class="BookStoreName">북틈 소개</div>
      <div class="BookStoreNameLine"></div>
 		<div class="BookStore">
-	       <div id="map" style="width: 40%; height: 400px; margin-top: 10%; margin-bottom: 10%; margin-left: 5%;"></div>
+	       <div id="map" style="width: 40%; height: 400px; margin-top: 7%; margin-bottom: 2%; margin-left: 7%;"></div>
 			<div class="BookStoreIntroduction">
 		    <h2>"책 속에서 발견하는 작은 틈, 그곳에서 시작되는 이야기"</h2>
 		    <span>책은 생각의 틈을 만들어 줍니다. 그리고 우리는 그 틈에서 새로운 시선과 가능성을 발견합니다. </span>
