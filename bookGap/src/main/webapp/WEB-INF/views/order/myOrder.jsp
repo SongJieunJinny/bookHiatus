@@ -13,6 +13,14 @@
 <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/resources/css/book/order.css"/>
 </head>
 <body>
+<sec:authorize access="isAuthenticated()">
+  <script>
+    const isLoggedIn = true;
+  </script>
+</sec:authorize>
+<sec:authorize access="isAnonymous()">
+  <script>const isLoggedIn = false;</script>
+</sec:authorize>
 <jsp:include page="/WEB-INF/views/include/header.jsp" />
 <section>
   <div id="navOrderDetails">
@@ -223,14 +231,7 @@ function goOrderDetailsView(orderId) {
 	location.href = "<%=request.getContextPath()%>/order/orderDetailsView.do?orderId=" + orderId;
 }
 
-//✅ 장바구니 수량 업데이트
-function updateCartCount() {
-  let cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
-  let cartCountElement = $("#cart-count"); // jQuery 셀렉터 사용
-  if (cartCountElement.length) {
-    cartCountElement.text(cartItems.length).css("visibility", cartItems.length > 0 ? "visible" : "hidden");
-  }
-}
+
 </script>
 </body>
 </html>

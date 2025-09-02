@@ -13,6 +13,14 @@
 <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/resources/css/book/order.css"/>
 </head>
 <body>
+<sec:authorize access="isAuthenticated()">
+  <script>
+    const isLoggedIn = true;
+  </script>
+</sec:authorize>
+<sec:authorize access="isAnonymous()">
+  <script>const isLoggedIn = false;</script>
+</sec:authorize>
 <jsp:include page="/WEB-INF/views/include/header.jsp" />
 <section>
   <div class="orderDetailView">
@@ -222,15 +230,6 @@ function getRefundStatusText(status) {
     case 3: return "환불완료";
     case 4: return "환불거절";
     default: return "상태 미확인";
-  }
-}
-
-// ✅ 장바구니 수량 업데이트 (기존 코드와 동일)
-function updateCartCount() {
-  let cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
-  let cartCountElement = $("#cart-count");
-  if (cartCountElement.length) {
-    cartCountElement.text(cartItems.length).css("visibility", cartItems.length > 0 ? "visible" : "hidden");
   }
 }
 </script>
