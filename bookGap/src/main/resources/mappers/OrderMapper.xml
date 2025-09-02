@@ -372,4 +372,17 @@
     SELECT COUNT(*) FROM ORDERS WHERE USER_ID = #{userId}
   </select>
 
+  <!-- 주문 취소하기 버튼을 눌렀을 때 업데이트하는 쿼리 -->
+  <update id="updateOrderRefundStatus" parameterType="map">
+    UPDATE ORDERS
+       SET REFUND_STATUS = #{status}
+     WHERE ORDER_ID = #{orderId}
+  </update>
+  
+  <!-- 주문의 주 상태(ORDER_STATUS)를 업데이트하는 쿼리 -->
+  <update id="updateOrderStatus" parameterType="map">
+    UPDATE ORDERS
+       SET ORDER_STATUS = #{status}
+     WHERE ORDER_ID = #{orderId}
+  </update>
 </mapper>

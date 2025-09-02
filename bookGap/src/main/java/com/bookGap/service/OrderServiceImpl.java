@@ -66,7 +66,6 @@ public class OrderServiceImpl implements OrderService {
   public boolean updateBookStock(String isbn, int quantity) {
     return orderDAO.updateBookStock(isbn, quantity);
   }
-
   
   @Override
   public int getTotalOrderCount(String userId) {

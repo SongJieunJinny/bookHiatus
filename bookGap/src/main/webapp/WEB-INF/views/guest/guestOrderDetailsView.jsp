@@ -39,7 +39,7 @@
 	    <c:if test="${not empty order.invoice}">
 	      <p><strong>송장번호 : </strong> ${order.invoice}</p>
 	    </c:if>
-			<p><strong>주문상태 : </strong>
+			<p><strong>배송상태 : </strong>
 				<c:choose>
 			    <c:when test="${not empty order.refundStatus}">
 			      <c:choose>
@@ -54,7 +54,8 @@
 			        <c:when test="${order.orderStatus == 1}">배송준비중</c:when>
 			        <c:when test="${order.orderStatus == 2}">배송중</c:when>
 			        <c:when test="${order.orderStatus == 3}">배송완료</c:when>
-			        <c:when test="${order.orderStatus == 4}">배송취소</c:when>
+			        <c:when test="${order.orderStatus == 4}">주문취소</c:when>
+			        <c:when test="${order.orderStatus == 5}">교환 및 반품</c:when>
 			      </c:choose>
 			    </c:otherwise>
 			  </c:choose>
@@ -90,30 +91,47 @@
     </table>
 
     <!-- 환불 신청 폼 -->
-    <div class="guestOrderDetailsTitle">환불 신청</div>
-    <input type="hidden" id="guestEmailForRedirect" value="${guestEmail}">
-    <input type="hidden" id="orderPasswordForRedirect" value="${orderPassword}">
-    <form class="guestRefundForm" id="guestRefundForm" method="POST" action="<%=request.getContextPath()%>/refund/apply.do">
-    <div class="guestRefundFormLine">
-		  <input type="hidden" name="orderId" value="${order.orderId}">
-		  <input type="hidden" name="paymentNo" value="${not empty order.payment ? order.payment.paymentNo : order.paymentNo}">
-		
-		  <label>환불 사유</label><br>
-		  <textarea class="guestRefundFormReason" name="refundReason" required></textarea><br><br>
-
-			<label>환불 안내</label>
-			  <div class="guestRefundInfoForm">
-			  - 상품취소 시 취소수수료가 부과될 경우 환불될 금액에서 차감 후 나머지 금액을 환불 해 드립니다.<br>
-			  - 단, 사용된 결제수단에 따라 예치금으로 환불 될 수 있습니다.<br>
-			  - 카드이용 후 취소요청 시 카드사 정책에 따라 환불기간 소요될 수 있습니다.<br>
-			  - 부분취소로 무료배송 기준 금액이 미만일 경우 배송비가 발생할 수 있으며 이 경우 배송비를 제한 후 환불 됩니다.<br>
-			  - 반품/교환 시 단순변심에 의한 배송비 발생 시 해당 배송비를 제한 후 환불 됩니다.
-			  </div>
-
-			<button class="guestRefundFormButton" type="submit">환불 신청하기</button>
-		</div> 
-		  
-		</form>
+    <div class="guestOrderDetailsTitle">
+	    <c:choose>
+	      <c:when test="${order.orderStatus == 1}"> 주문 취소 </c:when>
+	      <c:otherwise> 환불 신청 </c:otherwise>
+	    </c:choose>
+    </div>
+    <c:if test="${order.orderStatus != 4 && (order.refundStatus == null or order.refundStatus == 0)}">
+	    <input type="hidden" id="guestEmailForRedirect" value="${guestEmail}">
+	    <input type="hidden" id="orderPasswordForRedirect" value="${orderPassword}">
+	    <form class="guestRefundForm" id="guestRefundForm" method="POST" action="<%=request.getContextPath()%>/refund/apply.do">
+	    <div class="guestRefundFormLine">
+			  <input type="hidden" name="orderId" value="${order.orderId}">
+			  <input type="hidden" name="paymentNo" value="${not empty order.payment ? order.payment.paymentNo : order.paymentNo}">
+			
+			  <label>
+			    <c:choose>
+	          <c:when test="${order.orderStatus == 1}"> 취소 이유 </c:when>
+	          <c:otherwise> 환불 사유 </c:otherwise>
+		      </c:choose>
+			  </label><br>
+			  <textarea class="guestRefundFormReason" name="refundReason" required></textarea><br><br>
+	
+				<label>환불 및 취소 안내</label>
+				  <div class="guestRefundInfoForm">
+				  - 상품취소 시 취소수수료가 부과될 경우 환불될 금액에서 차감 후 나머지 금액을 환불 해 드립니다.<br>
+				  - 단, 사용된 결제수단에 따라 예치금으로 환불 될 수 있습니다.<br>
+				  - 카드이용 후 취소요청 시 카드사 정책에 따라 환불기간 소요될 수 있습니다.<br>
+				  - 부분취소로 무료배송 기준 금액이 미만일 경우 배송비가 발생할 수 있으며 이 경우 배송비를 제한 후 환불 됩니다.<br>
+				  - 반품/교환 시 단순변심에 의한 배송비 발생 시 해당 배송비를 제한 후 환불 됩니다.
+				  </div>
+	
+				<button class="guestRefundFormButton" type="submit">
+				  <c:choose>
+	          <c:when test="${order.orderStatus == 1}"> 주문 취소하기 </c:when>
+	          <c:otherwise> 환불 신청하기 </c:otherwise>
+          </c:choose>
+        </button>
+			</div> 
+			  
+			</form>
+		</c:if>
 		<div id="refundStatusBox" style="display: none;">
       환불 신청 상태 : <strong id="refundStatusText"></strong>
     </div>

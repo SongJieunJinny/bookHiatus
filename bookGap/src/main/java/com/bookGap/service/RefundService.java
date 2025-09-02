@@ -1,5 +1,6 @@
 package com.bookGap.service;
 
+import java.security.Principal;
 import java.util.List;
 
 import com.bookGap.vo.RefundVO;
@@ -17,5 +18,8 @@ public interface RefundService {
   
   /* 환불 신청 시 ORDERS 테이블 REFUND_STATUS = 1 로 변경 */
   public void updateRefundStatusToRequest(int orderId);
+  
+  /* 주문 취소하기" 버튼을 눌렀을 때 실행 */
+  public void processImmediateCancelByUser(RefundVO refundVO, Principal principal) throws Exception;
 
 }

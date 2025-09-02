@@ -103,7 +103,23 @@ public class OrderDAO {
   }
   
   public int getTotalOrderCount(String userId) {
-	return sqlSession.selectOne(NS + "getTotalOrderCount", userId);
+	  return sqlSession.selectOne(NS + "getTotalOrderCount", userId);
+  }
+  
+  /* 주문 취소하기" 버튼을 눌렀을 때 실행 */
+  public void updateOrderRefundStatus(int orderId, int status) {
+    Map<String, Object> params = new HashMap<>();
+    params.put("orderId", orderId);
+    params.put("status", status);
+    sqlSession.update(NS + "updateOrderRefundStatus", params); 
+  }
+  
+  /* 주문의 주 상태(ORDER_STATUS)를 업데이트 */
+  public void updateOrderStatus(int orderId, int status) {
+    Map<String, Object> params = new HashMap<>();
+    params.put("orderId", orderId);
+    params.put("status", status);
+    sqlSession.update(NS + "updateOrderStatus", params);
   }
 
 }
