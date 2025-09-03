@@ -45,7 +45,7 @@ erDiagram
     int GUEST_POST_CODE
     varchar GUEST_ROAD_ADDRESS
     varchar GUEST_DETAIL_ADDRESS
-    varchar GUEST_ID PK, FK
+    varchar GUEST_ID PK
   }
 
   PRODUCT_API {
@@ -112,7 +112,7 @@ erDiagram
     varchar COURIER
     varchar INVOICE
     tinyint REFUND_STATUS
-    varchar ORDER_KEY UNIQUE
+    varchar ORDER_KEY  "unique"
   }
 
   ORDER_DETAIL {
@@ -130,7 +130,7 @@ erDiagram
     tinyint payment_method
     tinyint status
     timestamp created_at
-    int ORDER_ID UNIQUE FK
+    int ORDER_ID FK
     varchar USER_ID
     varchar GUEST_ID FK
   }
@@ -205,8 +205,8 @@ erDiagram
   }
 
   RECOMMEND_BOOK {
-    int BOOK_NO PK, FK
-    varchar RECOMMEND_TYPE PK
+    int BOOK_NO
+    varchar RECOMMEND_TYPE
     timestamp RECOMMEND_DATE
     text RECOMMEND_COMMENT
   }
@@ -224,48 +224,49 @@ erDiagram
   %% =========================
   %% RELATIONSHIPS
   %% =========================
-  USER ||--o{ USER_ADDRESS : "has"
-  GUEST ||--|| GUEST_ADDRESS : "has address"
+  USER ||--o{ USER_ADDRESS : has
+  GUEST ||--|| GUEST_ADDRESS : has
 
-  PRODUCT_API ||--o{ BOOK : "by ISBN"
-  BOOK ||--o{ BOARD : "referenced by"
-  USER ||--o{ BOARD : "writes"
+  PRODUCT_API ||--o{ BOOK : by_isbn
+  BOOK ||--o{ BOARD : referenced_by
+  USER ||--o{ BOARD : writes
 
-  BOARD ||--o{ ATTACH : "has"
-  BOOK ||--o{ ATTACH : "has"
+  BOARD ||--o{ ATTACH : has
+  BOOK ||--o{ ATTACH : has
 
-  USER ||--o{ ORDERS : "places (optional FK)"
-  GUEST ||--o{ ORDERS : "places"
-  USER_ADDRESS ||--o{ ORDERS : "ship to"
+  USER ||--o{ ORDERS : places
+  GUEST ||--o{ ORDERS : places
+  USER_ADDRESS ||--o{ ORDERS : ship_to
 
-  ORDERS ||--|{ ORDER_DETAIL : "contains"
-  BOOK ||--o{ ORDER_DETAIL : "ordered"
+  ORDERS ||--|{ ORDER_DETAIL : contains
+  BOOK ||--o{ ORDER_DETAIL : ordered
 
-  ORDERS ||--|| PAYMENTS : "paid by (1:1 via ORDER_ID)"
-  GUEST ||--o{ PAYMENTS : "payer"
-  PAYMENTS ||--o{ PAYMENT_LOGS : "logs"
-  ORDERS ||--o{ REFUND : "has"
-  PAYMENTS ||--o{ REFUND : "refunded"
+  ORDERS ||--|| PAYMENTS : paid_by  "1:1 via ORDER_ID"
+  GUEST ||--o{ PAYMENTS : payer
+  PAYMENTS ||--o{ PAYMENT_LOGS : logs
+  ORDERS ||--o{ REFUND : has
+  PAYMENTS ||--o{ REFUND : refunded
 
-  BOOK ||--o{ COMMENT : "commented"
-  USER ||--o{ COMMENT : "writes"
-  BOOK ||--o{ COMMENT_RATING : "rated"
-  USER ||--o{ COMMENT_RATING : "rates"
-  COMMENT ||--o{ COMMENT_RATING : "has"
+  BOOK ||--o{ COMMENT : commented
+  USER ||--o{ COMMENT : writes
+  BOOK ||--o{ COMMENT_RATING : rated
+  USER ||--o{ COMMENT_RATING : rates
+  COMMENT ||--o{ COMMENT_RATING : has
 
-  COMMENT ||--o{ LOVE : "liked by"
-  BOOK ||--o{ LOVE : "on isbn"
-  USER ||--o{ LOVE : "likes"
+  COMMENT ||--o{ LOVE : liked_by
+  BOOK ||--o{ LOVE : on_isbn
+  USER ||--o{ LOVE : likes
 
-  COMMENT ||--o{ COMPLAIN : "reported"
-  USER ||--o{ COMPLAIN : "files"
+  COMMENT ||--o{ COMPLAIN : reported
+  USER ||--o{ COMPLAIN : files
 
-  BOARD ||--o{ ECOMMENT : "event comments"
-  USER ||--o{ ECOMMENT : "writes"
-  BOARD ||--o{ QCOMMENT : "qna comments"
-  USER ||--o{ QCOMMENT : "writes"
+  BOARD ||--o{ ECOMMENT : event_comments
+  USER ||--o{ ECOMMENT : writes
+  BOARD ||--o{ QCOMMENT : qna_comments
+  USER ||--o{ QCOMMENT : writes
 
-  BOOK ||--o{ RECOMMEND_BOOK : "recommended"
+  BOOK ||--o{ RECOMMEND_BOOK : recommended  "composite (BOOK_NO, TYPE)"
+
 
 
 ```
