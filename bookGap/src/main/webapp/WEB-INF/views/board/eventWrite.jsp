@@ -88,12 +88,15 @@ $(document).ready(function() {
 	});
   
   $("#searchBookBtn").on("click", function() {
-    const popupUrl = "<%=request.getContextPath()%>/popup/searchBook.do";
+	  const popupUrl = "<%= request.getContextPath() %>/popup/bookPopup.do";
     const width = 600;
     const height = 700;
-    const left = (window.screen.width) - (width);
-    const top = (window.screen.height) - (height);
-    window.open(popupUrl, "bookSearchPopup", `width=${width},height=${height},left=${left},top=${top}`);
+    const left = (window.screen.width / 2) - (width / 2); 
+    const top = (window.screen.height / 2) - (height / 2);
+    
+    console.log("팝업을 엽니다:", popupUrl);
+    
+    window.open(popupUrl, "bookPopup", `width=${width},height=${height},left=${left},top=${top}`);
   });
 });
 </script>

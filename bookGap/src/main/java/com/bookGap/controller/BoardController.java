@@ -2,6 +2,7 @@ package com.bookGap.controller;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -355,18 +356,18 @@ public class BoardController {
   /*-----------------------------------------------------------------------------------------------------*/
   
   /* GET showSearchBookPopup */
-  @GetMapping("/popup/searchBook.do")
+  @GetMapping("/popup/bookPopup.do")
   public String showSearchBookPopup() {
-      return "popup/bookSearch";
+      return "popup/bookPopup";
   }
 
   /* GET searchBooks */
   @GetMapping("/api/searchBooks.do")
   @ResponseBody
-  public List<BookVO> searchBooks(@RequestParam("keyword") String keyword) {
-      List<BookVO> bookList = bookService.searchBooksForPopup(keyword); 
-      return bookList;
-  }
+  public List<Map<String, Object>> searchBooks(@RequestParam("keyword") String keyword) {
+    List<Map<String, Object>> bookList = bookService.searchBooksForPopup(keyword); 
+    return bookList;
+}
   
 	/* 특수문자 input */
 	private String restoreSanitizedInput(String input){

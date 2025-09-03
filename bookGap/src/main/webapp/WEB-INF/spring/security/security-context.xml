@@ -35,6 +35,11 @@
 		<!-- 로그인은 했으나 경로 접근 권한 없을시 호출 객체 설정 -->
 		<security:access-denied-handler ref="userDeniedHandler"/>
 		
+		<!-- X-Frame-Options 헤더를 설정하여 같은 도메인 내의 팝업창/iframe을 허용합니다. -->
+		<security:headers>
+      <security:frame-options policy="SAMEORIGIN" />
+    </security:headers>
+		
 	</security:http>
 	
 	<bean id="userLoginSuccessHandler" class="com.bookGap.service.UserLoginSuccessHandler" />

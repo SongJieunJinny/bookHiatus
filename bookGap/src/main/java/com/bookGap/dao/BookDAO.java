@@ -1,6 +1,7 @@
 package com.bookGap.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,7 +73,7 @@ public class BookDAO {
 	    return sqlSession.selectList(namespace + "selectPopularBooks", vo);
 	}
   
-  public List<BookVO> searchBooksForPopup(String keyword) {
+  public List<Map<String, Object>> searchBooksForPopup(String keyword) {
     return sqlSession.selectList(namespace + "searchBooksForPopup", keyword);
   }
 
