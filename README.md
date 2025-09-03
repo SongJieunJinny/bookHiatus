@@ -12,7 +12,7 @@
 - [명세서 API Reference](#명세서-api-reference)
 - [서비스화면](#서비스화면)
 - [팀원(역할/깃계정)](#팀원역할깃계정)
-
+--
 ##ERD
 
 ```mermaid
