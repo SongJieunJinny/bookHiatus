@@ -23,7 +23,7 @@
   <jsp:include page="/WEB-INF/views/include/header.jsp" />
   <section>
   	<div id="noticeMain">
-      <div id="notice">공지사항</div>
+      <div id="notice">NOTICE</div>
       <div id="noticeList">
       	<div id="noticeSearchFormDiv">
           <div id="noticeSearchForm">
