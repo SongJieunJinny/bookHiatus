@@ -118,12 +118,22 @@ section {
 }
 #titleMemo{
   border: 1px solid black;
-  border-radius: 15px;
+  border-radius: 8px;
   width: 70%;
-  height: 10px;
-  padding: 1.8%;
+  height: 40px;
+  padding: 10px 15px;
   font-size: 18px;
   margin-left: 1%;
+}
+#searchBookBtn {
+  border: 1px solid #333;
+  background-color: #fff;
+  color: #333;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 10px 15px;
+  margin-left: 0%;
 }
 #eventWriteContentTable{
   display: flex;

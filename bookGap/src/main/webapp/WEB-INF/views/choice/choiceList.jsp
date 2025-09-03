@@ -46,7 +46,7 @@
         <div class="bookAll">
             <div class="bookTitleName">
                 <c:choose>
-                    <c:when test="${recommendType eq ''}">전체 추천도서 </c:when>
+                    <c:when test="${recommendType eq ''}">RECOMMEND</c:when>
                     <c:otherwise>${recommendType}</c:otherwise>
                 </c:choose>
             </div>
