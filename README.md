@@ -1,6 +1,7 @@
 # bookHiatus
 
 ##ERD
+```mermaid
 erDiagram
   USER {
     varchar USER_ID PK
@@ -264,3 +265,4 @@ erDiagram
   USER ||--o{ QCOMMENT : "writes"
 
   BOOK ||--o{ RECOMMEND_BOOK : "recommended"
+```
