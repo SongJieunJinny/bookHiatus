@@ -44,5 +44,7 @@ public interface OrderService {
   
   //비회원 단건 조회 인증
   public List<OrderVO> findGuestOrdersByPasswordAndEmail(String orderPassword, String guestEmail);
+  //사용자 주문취소 업데이트 
+  public  void updateOrderStatus(int orderId, int status);
   
 }
