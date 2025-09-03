@@ -32,6 +32,13 @@
       <p><strong>주문번호 : </strong> ${order.orderId}</p>
       <p><strong>주문일 : </strong> <fmt:formatDate value="${order.orderDate}" pattern="yyyy-MM-dd HH:mm"/></p>
       <p><strong>결제번호 : </strong> ${order.paymentNo}</p>
+     <p><strong>결제수단 : </strong>
+		  <c:choose>
+			  <c:when test="${not empty order.payment && order.payment.paymentMethod == 1}">토스</c:when>
+			  <c:when test="${not empty order.payment && order.payment.paymentMethod == 2}">카카오페이</c:when>
+			  <c:otherwise>결제수단 정보 없음</c:otherwise>
+		  </c:choose>
+     </p>
     </div>
     
     <!-- 주문 상품 목록 -->
@@ -127,16 +134,18 @@
 				  - 반품/교환 시 단순변심에 의한 배송비 발생 시 해당 배송비를 제한 후 환불 됩니다.
 				  </div>
 				  
-				  <button class="refundFormButton" type="submit">
-				    <c:choose>
-	            <c:when test="${order.orderStatus == 1}"> 주문 취소하기 </c:when>
-	            <c:otherwise> 환불 신청하기 </c:otherwise>
-	          </c:choose>
-	        </button>
+					<c:choose>
+						<c:when test="${order.orderStatus == 1 && (order.refundStatus == null || order.refundStatus == 0)}">
+							<button id="cancelOrderBtn" class="refundFormButton" type="button">주문 취소하기</button>
+						</c:when>
+						<c:otherwise>
+							<button class="refundFormButton" type="submit">환불 신청하기</button>
+						</c:otherwise>
+					</c:choose>
 				</div>
-	
 			</form>
 		</c:if>
+		
 		<div id="refundStatusBox">
       환불 신청 상태 : <strong id="refundStatusText"></strong>
     </div>
@@ -232,6 +241,36 @@ function getRefundStatusText(status) {
     default: return "상태 미확인";
   }
 }
+
+$("#cancelOrderBtn").click(function () {
+	  if (!confirm("정말 주문을 취소하시겠습니까?")) return;
+
+	  const paymentNo = "${order.paymentNo}";
+	  const orderId = "${order.orderId}";
+	  const paymentMethod = "${order.payment.paymentMethod}"; // 1: 토스, 2: 카카오
+
+	  const endpoint = (paymentMethod === "1")
+	    ? "<%=request.getContextPath()%>/payment/toss/cancelPayment.do"
+	    : "<%=request.getContextPath()%>/payment/kakao/cancelPayment.do";
+
+	  fetch(endpoint, {
+	    method: "POST",
+	    headers: { "Content-Type": "application/json" },
+	    body: JSON.stringify({ orderId: orderId, paymentNo: paymentNo })  
+	  })
+	    .then(res => res.text())
+	    .then(result => {
+	      if (result === "success") {
+	        alert("주문이 성공적으로 취소되었습니다.");
+	        location.href = "<%=request.getContextPath()%>/order/myOrder.do";
+	      } else {
+	        alert("주문 취소 실패: " + result);
+	      }
+	    })
+	    .catch(err => {
+	      alert("오류 발생: " + err.message);
+	    });
+	});
 </script>
 </body>
 </html>

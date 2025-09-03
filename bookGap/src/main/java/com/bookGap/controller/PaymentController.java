@@ -200,62 +200,77 @@ public class PaymentController {
     }
   }
   
-  @PostMapping("/kakao/cancelPayment.do")
+  @PostMapping(value = "/kakao/cancelPayment.do", produces = "text/plain;charset=UTF-8")
   @ResponseBody
   public ResponseEntity<?> cancelKakao(@RequestBody Map<String, Object> body) {
-    try{
-      int refundNo = (Integer) body.get("refundNo");
+      try {
+          PaymentVO payment = null;
+          String cancelReason = "관리자 환불";
 
-      // 1. 환불 번호로 결제 정보 조회
-      PaymentVO payment = paymentService.selectPaymentByRefundNo(refundNo);
-      if(payment == null){ return ResponseEntity.badRequest().body("결제 정보 없음"); }
+          if (body.containsKey("refundNo")) {
+        	  int refundNo = (Integer) body.get("refundNo");
+              payment = paymentService.selectPaymentByRefundNo(refundNo);
+          } else if (body.containsKey("paymentNo") && body.containsKey("orderId")) {
+        	  int paymentNo = Integer.parseInt(body.get("paymentNo").toString());
+        	  int orderId = Integer.parseInt(body.get("orderId").toString());
+        	  payment = paymentService.getPaymentByNo(paymentNo);
+              if (payment == null || payment.getOrderId() != orderId) {
+                  return ResponseEntity.badRequest().body("결제 정보 불일치");
+              }
+              cancelReason = "사용자 주문취소";
+          } else {
+              return ResponseEntity.badRequest().body("요청 파라미터 부족");
+          }
 
-      // 2. TID 조회
-      KakaoPayRequestVO kakaoRequest = paymentService.selectKakaoRequest(payment.getPaymentNo());
-      if(kakaoRequest == null){ return ResponseEntity.badRequest().body("카카오 요청 정보 없음"); }
+          if (payment == null) return ResponseEntity.badRequest().body("결제 정보 없음");
 
-      // 3. 요청 파라미터 구성
-      Map<String, Object> params = new HashMap<>();
-      params.put("cid", CID);
-      params.put("tid", kakaoRequest.getTid());
-      params.put("cancel_amount", payment.getAmount().intValue());
-      params.put("cancel_tax_free_amount", 0);
-      params.put("cancel_reason", "관리자 환불");
+          KakaoPayRequestVO kakaoRequest = paymentService.selectKakaoRequest(payment.getPaymentNo());
+          if (kakaoRequest == null) return ResponseEntity.badRequest().body("카카오 요청 정보 없음");
 
-      HttpHeaders headers = new HttpHeaders();
-      headers.set("Authorization", "SECRET_KEY " + KAKAO_SECRET_KEY);
-      headers.setContentType(MediaType.APPLICATION_JSON);
+          // 카카오 API 요청
+          Map<String, Object> params = new HashMap<>();
+          params.put("cid", CID);
+          params.put("tid", kakaoRequest.getTid());
+          params.put("cancel_amount", payment.getAmount().intValue());
+          params.put("cancel_tax_free_amount", 0);
+          params.put("cancel_reason", cancelReason);
 
-      HttpEntity<Map<String, Object>> request = new HttpEntity<>(params, headers);
+          HttpHeaders headers = new HttpHeaders();
+          headers.set("Authorization", "SECRET_KEY " + KAKAO_SECRET_KEY);
+          headers.setContentType(MediaType.APPLICATION_JSON);
 
-      // 4. 카카오 API 호출
-      ResponseEntity<JsonNode> response = restTemplate.postForEntity(
-        KAKAO_OPEN_API_URL + "/cancel",
-        request, JsonNode.class);
+          HttpEntity<Map<String, Object>> request = new HttpEntity<>(params, headers);
+          ResponseEntity<JsonNode> response = restTemplate.postForEntity(
+              KAKAO_OPEN_API_URL + "/cancel", request, JsonNode.class);
 
-      if(response.getStatusCode().is2xxSuccessful()){
-        // 5. 환불 이력 저장
-        JsonNode responseBody = response.getBody();
+          if (response.getStatusCode().is2xxSuccessful()) {
+              // 1. 결제 상태 업데이트
+              paymentService.updatePaymentStatus(payment.getPaymentNo(), 3); // 환불 완료
 
-        KakaoPayCancelVO cancelVO = new  KakaoPayCancelVO();
-        cancelVO.setPaymentNo(payment.getPaymentNo());
-        cancelVO.setCancelAmount(payment.getAmount().intValue());
-        cancelVO.setCancelReason("관리자 환불");
-        cancelVO.setCid(CID);
-        cancelVO.setTid(kakaoRequest.getTid());
-        cancelVO.setCancelTaxFree(0);
+              // 2. 카카오 환불 이력 저장
+              KakaoPayCancelVO cancelVO = new KakaoPayCancelVO();
+              cancelVO.setPaymentNo(payment.getPaymentNo());
+              cancelVO.setCancelAmount(payment.getAmount().intValue());
+              cancelVO.setCancelReason(cancelReason);
+              cancelVO.setCid(CID);
+              cancelVO.setTid(kakaoRequest.getTid());
+              cancelVO.setCancelTaxFree(0);
+              paymentService.insertKakaoCancel(cancelVO);
 
-        paymentService.insertKakaoCancel(cancelVO);  // 서비스단이지만 매퍼 직접 주입해도 됨
-        paymentService.updatePaymentStatus(payment.getPaymentNo(), 3);
+              // 3. 주문 상태 업데이트 (사용자 요청일 때만)
+              if (!body.containsKey("refundNo")) {
+            	  int orderId = Integer.parseInt(body.get("orderId").toString());
+                  orderService.updateOrderStatus(orderId, 4); // 4 = 주문취소
+              }
 
-        return ResponseEntity.ok("success");
-        }else{
-          return ResponseEntity.status(500).body("카카오페이 환불 실패: " + response.getStatusCode());
-        }
-    }catch(Exception e){
-      e.printStackTrace();
-      return ResponseEntity.status(500).body("오류 발생: " + e.getMessage());
-    }
+              return ResponseEntity.ok("success");
+          } else {
+              return ResponseEntity.status(500).body("카카오페이 환불 실패");
+          }
+      } catch (Exception e) {
+          e.printStackTrace();
+          return ResponseEntity.status(500).body("오류 발생: " + e.getMessage());
+      }
   }
   
   public static class KakaoReadyResponse {
@@ -330,58 +345,83 @@ public class PaymentController {
     return "payment/paymentFail";
   }
 
-  @PostMapping("/toss/cancelPayment.do")
+  @PostMapping(value = "/toss/cancelPayment.do", produces = "text/plain;charset=UTF-8")
   @ResponseBody
   public ResponseEntity<?> cancelToss(@RequestBody Map<String, Object> body) {
-      try {
-          int refundNo = (Integer) body.get("refundNo");
+    try {
+      PaymentVO payment = null;
+      String cancelReason = "관리자 환불";
 
-          // 1. 환불 번호로 결제 정보 조회
-          PaymentVO payment = paymentService.selectPaymentByRefundNo(refundNo);
-          if (payment == null) return ResponseEntity.badRequest().body("결제 정보 없음");
+      // 1) 관리자 환불 경로 (refundNo 기반)
+      if (body.containsKey("refundNo")) {
+        int refundNo = Integer.parseInt(body.get("refundNo").toString());
+        payment = paymentService.selectPaymentByRefundNo(refundNo);
 
-          // 2. TOSS 요청 정보 조회
-          TossRequestVO tossRequest = paymentService.findTossRequestByPaymentNo(payment.getPaymentNo());
-          if (tossRequest == null || tossRequest.getPaymentKey() == null) {
-              return ResponseEntity.badRequest().body("Toss 결제 정보 없음");
-          }
+      // 2) 사용자 주문취소 경로 (paymentNo + orderId 기반)
+      } else if (body.containsKey("paymentNo") && body.containsKey("orderId")) {
+        int paymentNo = Integer.parseInt(body.get("paymentNo").toString());
+        int orderId   = Integer.parseInt(body.get("orderId").toString());
 
-          // 3. HTTP 헤더 구성
-          HttpHeaders headers = new HttpHeaders();
-          String secretKey = "test_sk_6BYq7GWPVv97k2edaZ6n3NE5vbo1"; // 시크릿 키
-          String encodedAuth = Base64.getEncoder().encodeToString((secretKey + ":").getBytes("UTF-8"));
-          headers.set("Authorization", "Basic " + encodedAuth);
-          headers.setContentType(MediaType.APPLICATION_JSON);
+        // 결제 단건 조회 (mapper: getPaymentByNo)
+        payment = paymentService.getPaymentByNo(paymentNo);
+        if (payment == null || payment.getOrderId() != orderId) {
+          return ResponseEntity.badRequest().body("결제 정보 불일치");
+        }
+        cancelReason = "사용자 주문취소";
 
-          // 4. 요청 파라미터 구성
-          Map<String, Object> params = new HashMap<>();
-          params.put("cancelReason", "관리자 환불");
-
-          HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(params, headers);
-
-          // 5. Toss 환불 API 호출
-          String url = "https://api.tosspayments.com/v1/payments/" + tossRequest.getPaymentKey() + "/cancel";
-          ResponseEntity<String> response = new RestTemplate().postForEntity(url, requestEntity, String.class);
-
-          // 6. 성공 여부 처리
-          if (response.getStatusCode().is2xxSuccessful()) {
-              TossCancelVO cancelVO = new TossCancelVO();
-              cancelVO.setPaymentNo(payment.getPaymentNo());
-              cancelVO.setPaymentKey(tossRequest.getPaymentKey());
-              cancelVO.setCancelReason("관리자 환불");
-
-              paymentService.insertTossCancel(cancelVO);
-              paymentService.updatePaymentStatus(payment.getPaymentNo(), 3); // 3 = 환불 완료
-
-              return ResponseEntity.ok("success");
-          } else {
-              return ResponseEntity.status(500).body("토스페이 환불 실패: " + response.getStatusCode());
-          }
-      } catch (Exception e) {
-          e.printStackTrace();
-          return ResponseEntity.status(500).body("오류 발생: " + e.getMessage());
+      } else {
+        return ResponseEntity.badRequest().body("요청 파라미터 부족");
       }
-  }  
+
+      if (payment == null) return ResponseEntity.badRequest().body("결제 정보 없음");
+
+      // 3) 토스 결제 요청 정보 조회 (payment_no → payment_key 필요)
+      TossRequestVO tossRequest = paymentService.findTossRequestByPaymentNo(payment.getPaymentNo());
+      if (tossRequest == null || tossRequest.getPaymentKey() == null) {
+        return ResponseEntity.badRequest().body("Toss 결제 정보 없음");
+      }
+
+      // 4) 토스 취소 API 호출
+      HttpHeaders headers = new HttpHeaders();
+      String encodedAuth = Base64.getEncoder().encodeToString((TOSS_SECRET_KEY + ":").getBytes("UTF-8"));
+      headers.set("Authorization", "Basic " + encodedAuth);
+      headers.setContentType(MediaType.APPLICATION_JSON);
+
+      Map<String, Object> params = new HashMap<>();
+      params.put("cancelReason", cancelReason);
+      // 필요 시 부분취소 금액 지정: params.put("cancelAmount", payment.getAmount().intValue());
+
+      HttpEntity<Map<String, Object>> request = new HttpEntity<>(params, headers);
+      String url = TOSS_API_HOST + "/v1/payments/" + tossRequest.getPaymentKey() + "/cancel";
+      ResponseEntity<JsonNode> response = restTemplate.postForEntity(url, request, JsonNode.class);
+
+      if (response.getStatusCode().is2xxSuccessful()) {
+        // 5) 결제 상태 갱신 (3=환불완료)
+        paymentService.updatePaymentStatus(payment.getPaymentNo(), 3);
+
+        // 6) 환불 이력 저장
+        TossCancelVO cancelVO = new TossCancelVO();
+        cancelVO.setPaymentNo(payment.getPaymentNo());
+        cancelVO.setPaymentKey(tossRequest.getPaymentKey());
+        cancelVO.setCancelReason(cancelReason);
+        paymentService.insertTossCancel(cancelVO);
+
+        // 7) 사용자 경로라면 주문상태도 취소(4)로 업데이트
+        if (!body.containsKey("refundNo")) {
+          int orderId = Integer.parseInt(body.get("orderId").toString());
+          orderService.updateOrderStatus(orderId, 4);
+        }
+
+        return ResponseEntity.ok("success");
+      } else {
+        return ResponseEntity.status(500).body("토스페이 환불 실패");
+      }
+
+    } catch (Exception e) {
+      e.printStackTrace();
+      return ResponseEntity.status(500).body("오류 발생: " + e.getMessage());
+    }
+  }
   /* ----------------------------------------------------fail, cancel 매핑 추가--------------------------------------------------- */
 
  /* @GetMapping("/fail")
