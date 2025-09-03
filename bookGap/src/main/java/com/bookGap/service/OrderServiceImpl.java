@@ -92,6 +92,11 @@ public class OrderServiceImpl implements OrderService {
 	  return orderDAO.getGuestOrderByOrderId(orderId);
   }
   
+  @Override
+  public void updateOrderStatus(int orderId, int status) {
+	  orderDAO.updateOrderStatus(orderId, status); 
+  }
+  
   private String newOrderKey() {
 	return "ODR_" + java.util.UUID.randomUUID().toString().replace("-", "");
   }
