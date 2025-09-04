@@ -285,3 +285,347 @@ erDiagram
 
 
 ```
+
+
+---
+## 프로젝트 파일 구조
+
+```text
+bookGap/
+├─ pom.xml
+├─ .classpath
+├─ .project
+├─ project_structure.txt
+├─ build/
+│  └─ classes/
+├─ .settings/
+│  ├─ org.eclipse.jst.j2ee.ejb.annotations.xdoclet.prefs
+│  ├─ org.eclipse.wst.jsdt.ui.superType.container
+│  ├─ org.eclipse.jdt.core.prefs
+│  ├─ .jsdtscope
+│  ├─ org.eclipse.ltk.core.refactoring.prefs
+│  ├─ org.eclipse.wst.validation.prefs
+│  ├─ org.springframework.ide.eclipse.xml.namespaces.prefs
+│  ├─ org.eclipse.wst.common.component
+│  ├─ org.eclipse.wst.jsdt.ui.superType.name
+│  └─ org.eclipse.wst.common.project.facet.core.xml
+│
+├─ src/
+│  ├─ test/
+│  │  └─ java/
+│  │
+│  └─ main/
+│     ├─ resources/
+│     │  ├─ mybatis_config.xml
+│     │  ├─ log4j.xml
+│     │  └─ mappers/
+│     │     ├─ ProductApiMapper.xml
+│     │     ├─ CartMapper.xml
+│     │     ├─ CommentMapper.xml
+│     │     ├─ GuestMapper.xml
+│     │     ├─ ComplainMapper.xml
+│     │     ├─ CommentLoveMapper.xml
+│     │     ├─ OrderMapper.xml
+│     │     ├─ MypageMapper.xml
+│     │     ├─ BookMapper.xml
+│     │     ├─ RecommendBookMapper.xml
+│     │     ├─ RefundMapper.xml
+│     │     ├─ CommentRatingMapper.xml
+│     │     ├─ AddressMapper.xml
+│     │     ├─ UserMapper.xml
+│     │     ├─ PaymentMapper.xml
+│     │     ├─ AdminScheduleMapper.xml
+│     │     ├─ AdminOrderMapper.xml
+│     │     ├─ ECommentMapper.xml
+│     │     ├─ QCommentMapper.xml
+│     │     ├─ SalesMapper.xml
+│     │     ├─ AdminRefundMapper.xml
+│     │     └─ BoardMapper.xml
+│     │
+│     ├─ webapp/
+│     │  ├─ imgs/
+│     │  │  └─ default.png
+│     │  ├─ resources/
+│     │  │  ├─ css/
+│     │  │  │  ├─ styles.css
+│     │  │  │  ├─ index.css
+│     │  │  │  ├─ board/
+│     │  │  │  │  ├─ event.css
+│     │  │  │  │  ├─ notice.css
+│     │  │  │  │  └─ qna.css
+│     │  │  │  ├─ user/
+│     │  │  │  │  ├─ mypage.css
+│     │  │  │  │  ├─ join.css
+│     │  │  │  │  ├─ login.css
+│     │  │  │  │  └─ findPw.css
+│     │  │  │  └─ guest/
+│     │  │  │     └─ guest.css
+│     │  │  │  └─ book/
+│     │  │  │     ├─ cart.css
+│     │  │  │     ├─ order.css
+│     │  │  │     ├─ bookList.css
+│     │  │  │     ├─ bookView.css
+│     │  │  │     ├─ bookSearch.css
+│     │  │  │     └─ choiceList.css
+│     │  │  ├─ js/
+│     │  │  │  ├─ datatables-simple-demo.js
+│     │  │  │  ├─ scripts.js
+│     │  │  │  ├─ cart-utils.js
+│     │  │  │  └─ jquery-3.7.1.js
+│     │  │  ├─ img/
+│     │  │  │  ├─ kakaopay.jpg
+│     │  │  │  ├─ tosspay.png
+│     │  │  │  └─ icon/
+│     │  │  │     ├─ collapse.png
+│     │  │  │     ├─ login.png
+│     │  │  │     ├─ expand.png
+│     │  │  │     ├─ cart.png
+│     │  │  │     ├─ address.png
+│     │  │  │     ├─ logout.png
+│     │  │  │     ├─ megaphone.png
+│     │  │  │     ├─ search.png
+│     │  │  │     ├─ heart.png
+│     │  │  │     ├─ left.png
+│     │  │  │     ├─ date.png
+│     │  │  │     ├─ logo.png
+│     │  │  │     ├─ menu-dot.png
+│     │  │  │     ├─ edit.png
+│     │  │  │     ├─ setting.png
+│     │  │  │     ├─ right.png
+│     │  │  │     └─ marker.png
+│     │  │  └─ assets/
+│     │  │     ├─ demo/
+│     │  │     │  ├─ chart-bar-demo.js
+│     │  │     │  ├─ datatables-demo.js
+│     │  │     │  ├─ chart-area-demo.js
+│     │  │     │  └─ chart-pie-demo.js
+│     │  │     └─ img/
+│     │  │        ├─ error-404-monochrome.svg
+│     │  │        └─ ._error-404-monochrome.svg
+│     │  ├─ META-INF/
+│     │  │  └─ MANIFEST.MF
+│     │  └─ WEB-INF/
+│     │     ├─ lib/
+│     │     ├─ web.xml
+│     │     ├─ views/
+│     │     │  ├─ order/
+│     │     │  │  ├─ orderMain.jsp
+│     │     │  │  ├─ orderComplete.jsp
+│     │     │  │  ├─ myOrder.jsp
+│     │     │  │  └─ orderDetailsView.jsp
+│     │     │  ├─ popup/
+│     │     │  │  └─ bookSearch.jsp
+│     │     │  ├─ board/
+│     │     │  │  ├─ eventList.jsp
+│     │     │  │  ├─ qnaWrite.jsp
+│     │     │  │  ├─ qnaModify.jsp
+│     │     │  │  ├─ qnaList.jsp
+│     │     │  │  ├─ noticeView.jsp
+│     │     │  │  ├─ noticeList.jsp
+│     │     │  │  ├─ qnaView.jsp
+│     │     │  │  ├─ noticeModify.jsp
+│     │     │  │  ├─ noticeWrite.jsp
+│     │     │  │  ├─ eventWrite.jsp
+│     │     │  │  ├─ eventModify.jsp
+│     │     │  │  └─ eventView.jsp
+│     │     │  ├─ include/
+│     │     │  │  ├─ header.jsp
+│     │     │  │  ├─ adminFooter.jsp
+│     │     │  │  ├─ adminHeader.jsp
+│     │     │  │  ├─ footer.jsp
+│     │     │  │  └─ adminNav.jsp
+│     │     │  ├─ admin/
+│     │     │  │  ├─ adminRecommendBooks.jsp
+│     │     │  │  ├─ adminBook.jsp
+│     │     │  │  ├─ adminUserOrderInfo.jsp
+│     │     │  │  ├─ err404.jsp
+│     │     │  │  ├─ adminInventoryManagement.jsp
+│     │     │  │  ├─ adminSchedule.jsp
+│     │     │  │  ├─ adminRefund.jsp
+│     │     │  │  ├─ adminSales.jsp
+│     │     │  │  ├─ adminUserInfo.jsp
+│     │     │  │  ├─ err401.jsp
+│     │     │  │  ├─ adminIndex.jsp
+│     │     │  │  ├─ err500.jsp
+│     │     │  │  ├─ adminGuestOrderInfo.jsp
+│     │     │  │  └─ adminReportManagement.jsp
+│     │     │  ├─ choice/
+│     │     │  │  └─ choiceList.jsp
+│     │     │  ├─ user/
+│     │     │  │  ├─ mypage.jsp
+│     │     │  │  ├─ mypageInfo.jsp
+│     │     │  │  ├─ deleteMembership.jsp
+│     │     │  │  ├─ join.jsp
+│     │     │  │  └─ findPw.jsp
+│     │     │  ├─ product/
+│     │     │  │  ├─ bookView.jsp
+│     │     │  │  ├─ bookSearch.jsp
+│     │     │  │  ├─ cart.jsp
+│     │     │  │  └─ bookList.jsp
+│     │     │  ├─ guest/
+│     │     │  │  ├─ guestOrder.jsp
+│     │     │  │  ├─ guestOrderDetailsView.jsp
+│     │     │  │  └─ guestOrderInfo.jsp
+│     │     │  ├─ about.jsp
+│     │     │  └─ home.jsp
+│     │     └─ spring/
+│     │        ├─ email-context.xml
+│     │        ├─ root-context.xml
+│     │        ├─ security/
+│     │        │  └─ security-context.xml
+│     │        └─ appServlet/
+│     │           └─ servlet-context.xml
+│     │
+│     └─ java/
+│        └─ com/bookGap/
+│           ├─ vo/
+│           │  ├─ ComplainVO.java
+│           │  ├─ SalesVO.java
+│           │  ├─ UserInfoVO.java
+│           │  ├─ GuestVO.java
+│           │  ├─ TossRequestVO.java
+│           │  ├─ RefundUpdateRequestVO.java
+│           │  ├─ AdminOrderUpdateRequestVO.java
+│           │  ├─ ProductApiVO.java
+│           │  ├─ RecommendBookVO.java
+│           │  ├─ CommentRatingVO.java
+│           │  ├─ UserVO.java
+│           │  ├─ BoardVO.java
+│           │  ├─ PaymentVO.java
+│           │  ├─ TossCancelVO.java
+│           │  ├─ OrderDetailVO.java
+│           │  ├─ OrderVO.java
+│           │  ├─ QCommentVO.java
+│           │  ├─ NaverBookResponse.java
+│           │  ├─ OrderItemVO.java
+│           │  ├─ ComplainSummaryVO.java
+│           │  ├─ MypageVO.java
+│           │  ├─ KakaoPayRequestVO.java
+│           │  ├─ CartVO.java
+│           │  ├─ ECommentVO.java
+│           │  ├─ RefundVO.java
+│           │  ├─ KakaoPayCancelVO.java
+│           │  ├─ ScheduleVO.java
+│           │  ├─ SearchVO.java
+│           │  ├─ CommentLoveVO.java
+│           │  ├─ UserAddressVO.java
+│           │  ├─ BookVO.java
+│           │  └─ CommentVO.java
+│           ├─ util/
+│           │  ├─ StringUtils.java
+│           │  └─ PagingUtil.java
+│           ├─ config/
+│           │  └─ AppConfig.java
+│           ├─ dao/
+│           │  ├─ CommentLoveDAO.java
+│           │  ├─ CommentDAO.java
+│           │  ├─ AdminSalesDAO.java
+│           │  ├─ BoardDAO.java
+│           │  ├─ RefundDAO.java
+│           │  ├─ UserDAO.java
+│           │  ├─ ECommentDAO.java
+│           │  ├─ ProductApiDAO.java
+│           │  ├─ AdminRefundDAO.java
+│           │  ├─ AddressDAO.java
+│           │  ├─ AdminBookDAO.java
+│           │  ├─ CartDAO.java
+│           │  ├─ RecommendBookDAO.java
+│           │  ├─ ComplainDAO.java
+│           │  ├─ OrderDAO.java
+│           │  ├─ CommentRatingDAO.java
+│           │  ├─ PaymentDAO.java
+│           │  ├─ AdminOrderDAO.java
+│           │  ├─ AdminScheduleDAO.java
+│           │  ├─ MypageDAO.java
+│           │  ├─ GuestDAO.java
+│           │  ├─ QCommentDAO.java
+│           │  └─ BookDAO.java
+│           ├─ scheduler/
+│           │  └─ InventoryScheduler.java
+│           ├─ controller/
+│           │  ├─ MypageController.java
+│           │  ├─ OrderController.java
+│           │  ├─ AdminSalesController.java
+│           │  ├─ AdminIndexController.java
+│           │  ├─ AdminReportManagementController.java
+│           │  ├─ CommentController.java
+│           │  ├─ CommentLoveController.java
+│           │  ├─ ProductApiController.java
+│           │  ├─ CartController.java
+│           │  ├─ ChoiceController.java
+│           │  ├─ AddressController.java
+│           │  ├─ QCommentController.java
+│           │  ├─ GlobalModelAttribute.java
+│           │  ├─ AdminOrderController.java
+│           │  ├─ AboutController.java
+│           │  ├─ AdminUserInfoController.java
+│           │  ├─ AdminScheduleController.java
+│           │  ├─ BoardController.java
+│           │  ├─ AdminRecommendController.java
+│           │  ├─ SearchController.java
+│           │  ├─ AdminBookController.java
+│           │  ├─ ECommentController.java
+│           │  ├─ adminRefundController.java
+│           │  ├─ KakaoLoginController.java
+│           │  ├─ RefundController.java
+│           │  ├─ BookController.java
+│           │  ├─ HomeController.java
+│           │  ├─ AdminInventoryManagementController.java
+│           │  ├─ HeaderController.java
+│           │  ├─ PaymentController.java
+│           │  ├─ CommentRatingController.java
+│           │  ├─ UserController.java
+│           │  └─ GuestController.java
+│           ├─ filter/
+│           │  └─ LoggingFilter.java
+│           └─ service/
+│              ├─ AdminScheduleService.java
+│              ├─ RecommendBookServiceImpl.java
+│              ├─ GuestServiceImpl.java
+│              ├─ AdminOrderInfoService.java
+│              ├─ CommentRatingServiceImpl.java
+│              ├─ AdminBookServiceImpl.java
+│              ├─ UserService.java
+│              ├─ UserLoginSuccessHandler.java
+│              ├─ OrderServiceImpl.java
+│              ├─ MypageServiceImpl.java
+│              ├─ AdminUserInfoServiceImpl.java
+│              ├─ CommentLoveServiceImpl.java
+│              ├─ AdminSalesServiceImpl.java
+│              ├─ CartServiceImpl.java
+│              ├─ CartService.java
+│              ├─ UserAuthenticationService.java
+│              ├─ AdminBookService.java
+│              ├─ AddressServiceImpl.java
+│              ├─ ECommentServiceImpl.java
+│              ├─ CommentService.java
+│              ├─ AdminOrderInfoServiceImpl.java
+│              ├─ BookServiceImpl.java
+│              ├─ OrderService.java
+│              ├─ ComplainService.java
+│              ├─ ComplainServiceImpl.java
+│              ├─ AdminRefundServiceImpl.java
+│              ├─ RefundService.java
+│              ├─ UserDeniedHandler.java
+│              ├─ QCommentService.java
+│              ├─ KakaoUserDetails.java
+│              ├─ CommentServiceImpl.java
+│              ├─ AdminScheduleServiceImpl.java
+│              ├─ PaymentService.java
+│              ├─ ProductApiServiceImpl.java
+│              ├─ ECommentService.java
+│              ├─ MypageService.java
+│              ├─ UserLoginFailureHandler.java
+│              ├─ GuestService.java
+│              ├─ BoardServiceImpl.java
+│              ├─ RecommendBookService.java
+│              ├─ AdminRefundService.java
+│              ├─ AdminUserInfoService.java
+│              ├─ UserServiceImpl.java
+│              ├─ CommentLoveService.java
+│              ├─ RefundServiceImpl.java
+│              ├─ AddressService.java
+│              ├─ PaymentServiceImpl.java
+
+
+```
