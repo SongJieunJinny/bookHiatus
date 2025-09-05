@@ -1,6 +1,7 @@
 package com.bookGap.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.bookGap.vo.BookVO;
 import com.bookGap.vo.ProductApiVO;
@@ -27,6 +28,6 @@ public interface BookService {
    // 제목 또는 저자명으로 검색된 도서의 전체 개수 조회
    int getBookTotalCountByKeyword(SearchVO searchVO);
    List<ProductApiVO> getPopularBooks(SearchVO searchVO);
-   List<BookVO> searchBooksForPopup(String keyword);
+   List<Map<String, Object>> searchBooksForPopup(String keyword);
 
 }

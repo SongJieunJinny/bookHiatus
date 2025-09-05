@@ -12,12 +12,6 @@
 	<link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/resources/css/board/event.css"/>
 	
 	<style>
-      /* 책 선택 영역을 위한 추가 스타일 */
-      #searchBookBtn {
-          border: 1px solid #333; background-color: #fff; color: #333;
-          font-size: 16px; border-radius: 8px; cursor: pointer;
-          padding: 10px 15px; margin-left: 1%;
-      }
       #searchBookBtn:hover { background-color: #f0f0f0; }
       #selectedBookArea {
           display: flex; align-items: center; gap: 15px;
@@ -88,12 +82,15 @@ $(document).ready(function() {
 	});
   
   $("#searchBookBtn").on("click", function() {
-    const popupUrl = "<%=request.getContextPath()%>/popup/searchBook.do";
+	  const popupUrl = "<%= request.getContextPath() %>/popup/bookPopup.do";
     const width = 600;
     const height = 700;
-    const left = (window.screen.width) - (width);
-    const top = (window.screen.height) - (height);
-    window.open(popupUrl, "bookSearchPopup", `width=${width},height=${height},left=${left},top=${top}`);
+    const left = (window.screen.width / 2) - (width / 2); 
+    const top = (window.screen.height / 2) - (height / 2);
+    
+    console.log("팝업을 엽니다:", popupUrl);
+    
+    window.open(popupUrl, "bookPopup", `width=${width},height=${height},left=${left},top=${top}`);
   });
 });
 </script>

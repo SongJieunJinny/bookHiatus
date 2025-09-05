@@ -15,19 +15,20 @@ section {
 	height: auto;
 }
 .BookStore{
-    display: flex;
+  display: flex;
+}
+.aboutDiv{
+	margin-top: 3%;
+	margin-bottom: 1%;
 }
 .BookStoreName{
-	font-family: Arial, sans-serif;
-	margin-top: 2%;
-	margin-bottom: 1%;
 	text-align: center;
-	font-size: 28px;	
+	font-size: 35px;	
 }
 .BookStoreNameLine{
     border-top: solid 4px #ccc;
-    width: 11%;
-    margin-left: 44.5%;
+    width: 8%;
+    margin-left: 46%;
 }
 .BookStoreIntroduction{
     width: 50%;
@@ -60,18 +61,20 @@ section {
 </sec:authorize>
 <jsp:include page="/WEB-INF/views/include/header.jsp" />
 <section>
-<div class="BookStoreName">북틈 소개</div>
-     <div class="BookStoreNameLine"></div>
-		<div class="BookStore">
-	       <div id="map" style="width: 40%; height: 400px; margin-top: 7%; margin-bottom: 2%; margin-left: 7%;"></div>
-			<div class="BookStoreIntroduction">
-		    <h2>"책 속에서 발견하는 작은 틈, 그곳에서 시작되는 이야기"</h2>
-		    <span>책은 생각의 틈을 만들어 줍니다. 그리고 우리는 그 틈에서 새로운 시선과 가능성을 발견합니다. </span>
-		    <span>저희 북틈은 조용하지만 깊이 있는 이야기들이 머무는 공간입니다.</span>
-		    <span>바쁜 일상 속에서 잠시 멈추고 사색하며, 책을 통해 질문하고 길을 찾을 수 있도록 돕는 곳.</span>
-		    <span>책과 책 사이, 그리고 삶과 삶 사이의 작은 틈에서 당신만의 시간을 발견해 보세요.</span>
-			</div>
+	<div class="aboutDiv">
+		<div class="BookStoreName">ABOUT</div>
+		<div class="BookStoreNameLine"></div>
+	</div>
+	<div class="BookStore">
+       <div id="map" style="width: 40%; height: 400px; margin-top: 3%; margin-bottom: 2%; margin-left: 7%;"></div>
+		<div class="BookStoreIntroduction">
+	    <h2>"책 속에서 발견하는 작은 틈, 그곳에서 시작되는 이야기"</h2>
+	    <span>책은 생각의 틈을 만들어 줍니다. 그리고 우리는 그 틈에서 새로운 시선과 가능성을 발견합니다. </span>
+	    <span>저희 북틈은 조용하지만 깊이 있는 이야기들이 머무는 공간입니다.</span>
+	    <span>바쁜 일상 속에서 잠시 멈추고 사색하며, 책을 통해 질문하고 길을 찾을 수 있도록 돕는 곳.</span>
+	    <span>책과 책 사이, 그리고 삶과 삶 사이의 작은 틈에서 당신만의 시간을 발견해 보세요.</span>
 		</div>
+	</div>
 </section>
  <jsp:include page="/WEB-INF/views/include/footer.jsp" />
 <script>

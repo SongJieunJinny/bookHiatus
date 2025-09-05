@@ -27,12 +27,6 @@
 	    <result property="link"         column="LINK"/>
 	  </association>
 	</resultMap>
-	<resultMap id="popupSearchResultMap" type="com.bookGap.vo.BookVO">
-    <result property="bookNo"     column="bookNo"/>
-    <result property="bookImgUrl" column="bookImgUrl"/>
-    <result property="title"      column="title"/>
-    <result property="author"     column="author"/>
-  </resultMap>
 	
 	 <!-- 도서 등록 -->
 		<insert id="insertBook" parameterType="BookVO">
@@ -240,7 +234,7 @@ INNER JOIN PRODUCT_API p ON b.isbn = p.isbn
 	  LIMIT #{start}, #{perPage}
 	</select>
 	
-	<select id="searchBooksForPopup" parameterType="String" resultMap="popupSearchResultMap">
+	<select id="searchBooksForPopup" parameterType="String" resultType="map">
     SELECT b.BOOK_NO        AS bookNo,
            p.IMAGE          AS bookImgUrl,
            p.TITLE          AS title,
