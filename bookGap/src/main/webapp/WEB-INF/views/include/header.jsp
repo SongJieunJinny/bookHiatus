@@ -25,7 +25,7 @@
 			
 			<div id="menuAbout" class="menuItem"><!--0322상화 추가시작--><a href="<%=request.getContextPath()%>/about.do">ABOUT</a><!--0322상화 추가끝--></div>
 			<div id="menuEvent" class="menuItem"><!--0221지은 추가시작--><a href="<%=request.getContextPath()%>/eventList.do">EVENT</a><!--0221지은 추가끝--></div>
-			<div id="menuChoice" class="menuItem"><!--0322상화 추가시작--><a href="<%=request.getContextPath()%>/choice/choiceList.do">CHOICE</a><!--0322상화 추가끝--></div>
+			<div id="menuChoice" class="menuItem"><!--0322상화 추가시작--><a href="<%=request.getContextPath()%>/choice/choiceList.do">RECOMMEND</a><!--0322상화 추가끝--></div>
 			<div id="menuCommunity" class="menuItem">COMMUNITY
 				<!-- COMMUNITY카테고리 메뉴 -->
 				<div id="communityCategory">
@@ -84,11 +84,11 @@
 			
 			<div id="menuAbout" class="menuItem"><!--0322상화 추가시작--><a href="<%=request.getContextPath()%>/about.do">ABOUT</a><!--0322상화 추가끝--></div>
 			<div id="menuEvent" class="menuItem"><!--0221지은 추가시작--><a href="<%=request.getContextPath()%>/eventList.do">EVENT</a><!--0221지은 추가끝--></div>
-			<div id="menuChoice" class="menuItem"><!--0322상화 추가시작--><a href="<%=request.getContextPath()%>/choice/choiceList.do">CHOICE</a><!--0322상화 추가끝--></div>
+			<div id="menuChoice" class="menuItem"><!--0322상화 추가시작--><a href="<%=request.getContextPath()%>/choice/choiceList.do">RECOMMEND</a><!--0322상화 추가끝--></div>
 			<div id="menuCommunity" class="menuItem">COMMUNITY
 				<!-- COMMUNITY카테고리 메뉴 -->
 				<div id="communityCategory">
-					<a href="<%= request.getContextPath() %>/noticeList.do">공지사항</a>
+					<a href="<%= request.getContextPath() %>/noticeList.do">NOTICE</a>
 					<a href="<%= request.getContextPath() %>/qnaList.do?boardType=2">Q&A</a>
 				</div>
 			</div>

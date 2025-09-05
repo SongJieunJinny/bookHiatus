@@ -1,6 +1,7 @@
 package com.bookGap.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -82,7 +83,7 @@ public class BookServiceImpl implements BookService{
   }
   
   @Override
-  public List<BookVO> searchBooksForPopup(String keyword) {
+  public List<Map<String, Object>> searchBooksForPopup(String keyword) {
     return bookDAO.searchBooksForPopup(keyword);
   }
 
