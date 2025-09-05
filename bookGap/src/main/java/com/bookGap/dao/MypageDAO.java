@@ -28,4 +28,16 @@ public class MypageDAO {
 		return sqlSession.update(name_space+"userPwUpdate",mypageVO);
 	}
 	
+	public int countDefaultAddressByUserId(String userId) {
+	    return sqlSession.selectOne(name_space + "countDefaultAddressByUserId", userId);
+	}
+
+	public int updateDefaultAddress(MypageVO vo) {
+	    return sqlSession.update(name_space + "updateDefaultAddress", vo);
+	}
+
+	public int insertDefaultAddress(MypageVO vo) {
+	    return sqlSession.insert(name_space + "insertDefaultAddress", vo);
+	}
+	
 }

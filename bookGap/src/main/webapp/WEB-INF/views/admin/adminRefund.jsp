@@ -396,7 +396,7 @@ $(function () {
             selectedRow.find("td").eq(2).text(textMap[refundStatus] || "-");
           }
 
-          alert("해당 주문 상품의 환불이 완료되었습니다.");
+          alert("해당 주문 상품의 환불 상태 변경이  완료되었습니다.");
           bootstrap.Modal.getInstance($("#orderModal")[0]).hide();
         },
         error: function () {

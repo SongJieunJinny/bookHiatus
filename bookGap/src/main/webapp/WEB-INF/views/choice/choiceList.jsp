@@ -20,14 +20,7 @@
     font-size: 14px;
     color: #666;
 }
-/* 추천 타입 셀렉트박스 영역 정렬 */
-.selectBoxWrapper {
-    display: flex;
-    justify-content: flex-end;  /* 오른쪽 정렬 */
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 20px;
-}
+
 </style>
 </head>
 <body>
@@ -55,7 +48,7 @@
         <!-- 추천 타입 필터 버튼 -->
       <div class="filterButtons selectBoxWrapper">
 		    <label for="recommendTypeSelect">추천 타입 선택:</label>
-		    <select id="recommendTypeSelect" class="form-select" style="width: 150px; height: 30px;">
+		    <select id="recommendTypeSelect" class="form-select" style="width: 150px; height: 35px;">
 		        <option value="" ${recommendType eq '' ? 'selected' : ''}>전체</option>
 		        <c:forEach var="type" items="${recommendTypes}">
 		            <option value="${type}" ${recommendType eq type ? 'selected' : ''}>${type}</option>
