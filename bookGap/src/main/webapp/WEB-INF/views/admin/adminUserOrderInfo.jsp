@@ -403,7 +403,7 @@
 			      // 서버가 "success" 문자열을 주거나 {success:true}를 줘도 대응
 			      const ok = (res === "success") || (typeof res === "object" && res?.success);
 			      if (!ok) {
-			        alert("업데이트 실패");
+			        alert("업데이트에  실패했습니다.");
 			        return;
 			      }
 			
@@ -413,7 +413,7 @@
 			        selectedRow.find("td").eq(2).text(orderStatusTextMap[orderStatus] || "-");
 			      }
 			
-			      alert("저장되었습니다.");
+			      alert("변경 내용이 저장되었습니다.");
 			      const modalInstance = bootstrap.Modal.getInstance($("#orderModal")[0]);
 			      modalInstance.hide();
 			    },

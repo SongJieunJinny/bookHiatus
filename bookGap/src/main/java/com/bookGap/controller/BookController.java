@@ -26,7 +26,7 @@ public class BookController {
 	                       Model model) {
 
 	    searchVO.setNowPage(nowpage);
-	    searchVO.setPerPage(16); // 페이지당 항목 수
+	    searchVO.setPerPage(15); // 페이지당 항목 수
 	    searchVO.setCategory(category); // 카테고리 필터용
 	    searchVO.setSort(sort); 
 

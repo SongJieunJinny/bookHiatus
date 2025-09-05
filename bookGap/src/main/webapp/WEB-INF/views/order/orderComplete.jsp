@@ -127,7 +127,6 @@
   <div class="oc-card oc-summary">
     <h3>결제 정보</h3>
     <ul>
-      <li>결제 번호: ${payment.paymentNo}</li>
       <li>결제 수단:
         <span class="oc-badge">
           <c:choose>
@@ -144,6 +143,7 @@
   <div class="oc-card">
     <h3>주문한 상품</h3>
     <ul class="oc-items">
+      <li >주문 번호: ${order.orderKey}</li>
       <c:forEach var="item" items="${order.orderDetails}">
         <li class="oc-item">
           <div class="oc-thumb">

@@ -101,7 +101,8 @@
 	  SELECT * FROM USER WHERE USER_ID = #{userId}
 	</select>
 	
-	
+
+
 	<update id="updateUser" parameterType="userInfoVO">
 		UPDATE USER
 		SET 
@@ -112,6 +113,8 @@
 			NOTE = #{note}
 		WHERE USER_ID = #{userId}
 	</update>
+	
+
 	
 	<update id="userPwUpdate" parameterType="com.bookGap.vo.UserInfoVO">
 		UPDATE USER 

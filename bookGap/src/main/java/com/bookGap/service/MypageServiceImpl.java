@@ -3,6 +3,7 @@ package com.bookGap.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.bookGap.vo.MypageVO;
 import com.bookGap.dao.MypageDAO;
@@ -29,9 +30,22 @@ public class MypageServiceImpl implements MypageService{
     }
 
 	@Override
+	@Transactional
 	public int userUpdate(MypageVO mypageVO) {
-		return mypageDAO.userUpdate(mypageVO);
+	    // USER 테이블 업데이트
+	    int updated = mypageDAO.userUpdate(mypageVO);
+
+	    // 주소 업서트
+	    int count = mypageDAO.countDefaultAddressByUserId(mypageVO.getUserId());
+	    if (count > 0) {
+	        mypageDAO.updateDefaultAddress(mypageVO);
+	    } else {
+	        mypageDAO.insertDefaultAddress(mypageVO);
+	    }
+
+	    return updated;
 	}
+
 
 	@Override
 	public int userPwUpdate(MypageVO mypageVO) {

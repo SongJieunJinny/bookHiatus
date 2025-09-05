@@ -8,7 +8,7 @@ public class MypageVO {
 	private String userEmail; //이메일
 	private int userState; //가입여부(1 가입상태, 2 탈퇴상태)
 	private String userJoinDate; //가입일
-	private int postCode; //배송지주소(우편번호)
+	private String postCode;//배송지주소(우편번호)
 	private String roadAddress; //배송지주소(도로명주소)
 	private String detailAddress; //배송지주소(상세주소)
 	private String oauthProvider; // 로그인 제공자
@@ -93,11 +93,11 @@ public class MypageVO {
 		this.userJoinDate = userJoinDate;
 	}
 
-	public int getPostCode() {
+	public String getPostCode() {
 		return postCode;
 	}
 
-	public void setPostCode(int postCode) {
+	public void setPostCode(String postCode) {
 		this.postCode = postCode;
 	}
 
