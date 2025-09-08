@@ -5,6 +5,7 @@
 - [프로젝트 진행기간](#프로젝트-진행기간)
 - [개요](#개요)
 - [주요기능](#주요기능)
+- [Tech & Conventions](#tech--conventions) 
 - [트러블슈팅](#트러블슈팅)
 - [기술스택](#기술스택)
 - [ERD](#erd)
@@ -13,8 +14,23 @@
 - [서비스화면](#서비스화면)
 - [팀원(역할/깃계정)](#팀원역할깃계정)
 
-
 --- 
+## 주요기능
+
+- 사용자 기능: 도서 목록/상세, 리뷰, 장바구니·주문
+- 관리자 기능: 도서/추천/재고/주문·배송/환불/신고/매출/일정/회원 관리
+- 대시보드 및 통계 시각화 제공
+- [상세](../../wiki/상세)
+--- 
+## Tech & Conventions
+- **사용자 영역(User-facing)**: JSP, JSTL(`c:`), Spring Security Tags(`sec:`), jQuery(Ajax)
+- **관리자 영역(Admin)**: **Bootstrap 5 기반 관리자 레이아웃** + jQuery + simple-datatables + Chart.js + FullCalendar
+- **공통 레이아웃**: `adminHeader.jsp`, `adminNav.jsp`, `adminFooter.jsp`
+- **외부 연동**: Naver Book 검색 API(도서 등록 자동화), Toss/KakaoPay 결제취소 API(환불 처리)
+- **UX 강화**: 데이터 검증(송장 영숫자, 배송상태 전이 조건), 금액·날짜 포맷(`toLocaleString`, `Date.toLocaleString("ko-KR")`), 반응형 테이블, 차트 시각화
+  
+--- 
+
 ## ERD
 
 ```mermaid
@@ -650,9 +666,9 @@ src/
 
 ## 👤 Team Members (역할/깃계정)
 
-| Name | Role | GitHub | Main Modules | One-liner | 상세  |
-|---|---|---|---|---|---|
-| 김상화 | Full-stack Developer | [@gimsanghwa](https://github.com/kimsanghw) | 사용자 기능(목록/상세/장바구니/리뷰/추천/소개), **관리자 기능(도서/추천/재고/주문·배송(회원/비회원)/환불/신고/매출/일정/회원)**, 대시보드/차트 | “사용자 경험부터 운영 도구까지 전 과정 구현” |  [상세](../../wiki/상세)  |
+| Name | Role | GitHub | Main Modules | One-liner |
+|---|---|---|---|---|
+| 김상화 | Full-stack Developer | [@gimsanghwa](https://github.com/kimsanghw) | 사용자 기능(목록/상세/장바구니/리뷰/추천/소개), **관리자 기능(도서/추천/재고/주문·배송(회원/비회원)/환불/신고/매출/일정/회원)**, 대시보드/차트 | “사용자 경험부터 운영 도구까지 전 과정 구현” |
 
 ---
 
