@@ -25,37 +25,47 @@ public class BookController {
 	                       SearchVO searchVO,
 	                       Model model) {
 
-	    searchVO.setNowPage(nowpage);
-	    searchVO.setPerPage(15); // 페이지당 항목 수
-	    searchVO.setCategory(category); // 카테고리 필터용
-	    searchVO.setSort(sort); 
-
-	    //System.out.println("Current Page: " + nowpage);
-	    //System.out.println("Per Page: " + searchVO.getPerPage());
-	    //System.out.println("Category: " + category);
-
-	    int total = (category != null && !category.isEmpty())
-	                ? bookService.getTotalByCategory(searchVO)
-	                : bookService.getTotalBookCount(searchVO);
-	    //System.out.println("Total books: " + total);
-
-	    searchVO.setTotal(total);
-	    searchVO.calcStartEnd(nowpage, searchVO.getPerPage());
-	    searchVO.calcLastPage(total, searchVO.getPerPage());
-	    searchVO.calcStartEndPage(nowpage, searchVO.getCntPage());
-	    
-	    List<ProductApiVO> selectBookList;
-	    if ("popular".equals(sort)) {
-	        selectBookList = bookService.getPopularBooks(searchVO); // 인기순
-	    } else {
-	        selectBookList = (category != null && !category.isEmpty())
-	                         ? bookService.getBooksByCategoryPaging(searchVO)
-	                         : bookService.getBooksPaging(searchVO); // 최신순
+	    // 1) category 정규화 (빈문자 → null)
+	    if (category != null && category.trim().isEmpty()) {
+	        category = null;
 	    }
 
-	    //System.out.println("Start Index: " + searchVO.getStart());
-	    //System.out.println("End Index: " + searchVO.getEnd());
+	    // 2) 기본 페이징 파라미터
+	    searchVO.setNowPage(nowpage);
+	    searchVO.setPerPage(15);
+	    searchVO.setCategory(category);
+	    searchVO.setSort(sort);
 
+	    int total;
+	    List<ProductApiVO> selectBookList;
+
+	    // 3) 정렬 분기
+	    if ("popular".equalsIgnoreCase(sort)) {
+	        // 인기 정렬: 전체/카테고리 인기 모두 여기서 처리
+	        total = bookService.getPopularTotalCount(searchVO);   // ★ 인기 기준 total
+	        searchVO.setTotal(total);
+	        searchVO.calcStartEnd(nowpage, searchVO.getPerPage());
+	        searchVO.calcLastPage(total, searchVO.getPerPage());
+	        searchVO.calcStartEndPage(nowpage, searchVO.getCntPage());
+
+	        selectBookList = bookService.getPopularBooks(searchVO); // ★ 인기 목록
+	    } else {
+	        // 최신 정렬: 카테고리 여부에 따라 total과 목록 분리
+	        total = (category != null)
+	                ? bookService.getTotalByCategory(searchVO)
+	                : bookService.getTotalBookCount(searchVO);
+
+	        searchVO.setTotal(total);
+	        searchVO.calcStartEnd(nowpage, searchVO.getPerPage());
+	        searchVO.calcLastPage(total, searchVO.getPerPage());
+	        searchVO.calcStartEndPage(nowpage, searchVO.getCntPage());
+
+	        selectBookList = (category != null)
+	                ? bookService.getBooksByCategoryPaging(searchVO)
+	                : bookService.getBooksPaging(searchVO);
+	    }
+
+	    // 4) 공통 모델 세팅
 	    List<String> categories = bookService.getDistinctCategories();
 
 	    model.addAttribute("selectBookList", selectBookList);
@@ -63,7 +73,7 @@ public class BookController {
 	    model.addAttribute("paging", searchVO);
 	    model.addAttribute("searchType", searchVO.getSearchType());
 	    model.addAttribute("searchValue", searchVO.getSearchValue());
-	    model.addAttribute("category", category);
+	    model.addAttribute("category", category); // null이면 JSP에서 '모든 책'로 표시
 	    model.addAttribute("sort", sort);
 
 	    return "product/bookList";

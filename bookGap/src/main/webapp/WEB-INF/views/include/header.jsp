@@ -504,7 +504,7 @@ function updateCartCount() {
 
 	  if (typeof isLoggedIn !== "undefined" && isLoggedIn) {
 	    $.get(contextPath + "/product/getCartCount.do", function(count) {
-	      console.log("서버에서 받은 장바구니 개수:", count);
+	     // console.log("서버에서 받은 장바구니 개수:", count);
 	      const cartCount = parseInt(count, 10) || 0;
 
 	      if (cartCountElement) {

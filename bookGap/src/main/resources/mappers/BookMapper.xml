@@ -219,19 +219,46 @@ INNER JOIN PRODUCT_API p ON b.isbn = p.isbn
 	</select>
 	
 	
-	<select id="selectPopularBooks" parameterType="SearchVO" resultType="com.bookGap.vo.ProductApiVO">
-	  SELECT 
-	    p.isbn,
-	    p.title,
-	    p.image,
-	    p.discount,
-	    IFNULL(SUM(od.ORDER_COUNT), 0) AS total_sales
-	  FROM BOOK b
-	  JOIN PRODUCT_API p ON b.isbn = p.isbn
-	  LEFT JOIN ORDER_DETAIL od ON od.BOOK_NO = b.BOOK_NO
-	  GROUP BY p.isbn
-	  ORDER BY total_sales DESC
-	  LIMIT #{start}, #{perPage}
+<!-- 목록: 전체/카테고리 인기 공용 -->
+	<select id="selectPopularBooks" parameterType="com.bookGap.vo.SearchVO"  resultType="com.bookGap.vo.ProductApiVO">
+		  SELECT 
+		    p.isbn,
+		    p.title,
+		    p.image,
+		    p.discount,
+		    s.total_sales,
+		    s.last_added
+		  FROM (
+		      SELECT 
+		        b.isbn,
+		        IFNULL(SUM(od.ORDER_COUNT), 0) AS total_sales,
+		        MAX(b.BOOK_RDATE)              AS last_added
+		      FROM BOOK b
+		      LEFT JOIN ORDER_DETAIL od ON od.BOOK_NO = b.BOOK_NO
+		      <where>
+		        <if test="category != null and category != ''">
+		          b.BOOK_CATEGORY = #{category}   <!-- 값 있으면 카테고리 인기 -->
+		        </if>                             <!-- 값 없으면 전체 인기 -->
+		      </where>
+		      GROUP BY b.isbn
+		  ) s
+		  JOIN PRODUCT_API p ON p.isbn = s.isbn
+		  ORDER BY s.total_sales DESC, s.last_added DESC
+		  LIMIT #{start}, #{perPage}
+	</select>
+	
+	<!-- total: 페이징 정확히 하려면 필요 -->
+	<select id="getPopularTotalCount" parameterType="com.bookGap.vo.SearchVO" resultType="int">
+		  SELECT COUNT(*) FROM (
+		    SELECT b.isbn
+		    FROM BOOK b
+		    <where>
+		      <if test="category != null and category != ''">
+		        b.BOOK_CATEGORY = #{category}
+		      </if>
+		    </where>
+		    GROUP BY b.isbn
+		  ) x
 	</select>
 	
 	<select id="searchBooksForPopup" parameterType="String" resultType="map">

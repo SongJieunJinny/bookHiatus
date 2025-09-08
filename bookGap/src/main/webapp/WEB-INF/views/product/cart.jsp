@@ -133,20 +133,6 @@ function normalizeCartItems(items) {
         }
     });
     return Object.values(merged);
-    
-  const raw = localStorage.getItem("cartItems");
-  let cartItems = [];
-  try {
-    const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed)) {
-      cartItems = parsed;
-    } else if (typeof parsed === 'object' && parsed !== null) {
-      cartItems = Object.values(parsed).filter(item => typeof item === 'object');
-    }
-  } catch (e) {
-     console.error("localStorage 파싱 오류", e);
-  }
-  return cartItems;
 
 }
 
@@ -423,138 +409,150 @@ function bindCartEvents() {
 function fetchAndUpdateCart() {
     $.get(contextPath + "/product/getCartByUser.do", function (data) {
         dbCartItems = Array.isArray(data) ? data : [];
-        renderCartItems(); // 최신 데이터로 다시 렌더링
+        renderCartItems();
     });
 }
 
 $(document).ready(function () {
-    if (document.getElementById("loginBtn")) {
-        initHeaderEvents();
-    }
-    if (isLoggedIn) {
-        syncLocalCartToDB(); // 로그인 시 로컬 장바구니 DB 동기화
-    }
+  if (document.getElementById("loginBtn")) {
+    initHeaderEvents();
+  }
+
+  if (isLoggedIn) {
+    $.when(syncLocalCartToDB())    
+      .then(function () {               
+        return $.get(contextPath + "/product/getCartByUser.do").then(function (data) {
+          dbCartItems = Array.isArray(data) ? data : [];
+        });
+      })
+      .then(function () {                
+        renderCartItems();
+      })
+      .then(function () {               
+        updateCartCount();
+        updateCartMessage();
+      });
+  } else {
     renderCartItems();
     updateCartCount();
-    setTimeout(updateCartMessage, 100);
-
-
+    updateCartMessage();
+  }
 });
 
 	  
-		//주문하기 버튼 
-		$("#orderBtn").on("click", function () {
-		    const selectedItems = $(".cartItemCheckbox:checked");
-		
-		    if (selectedItems.length < 1) {
-		        alert("주문할 상품을 선택해주세요.");
-		        return;
-		    }
-		
-		    if (typeof isLoggedIn !== "undefined" && isLoggedIn) {
-		
-		        // 배송지 확인
-		        const selectedAddress = $("input[name='address']:checked").val();
-		        if (!selectedAddress) {
-		            alert("배송지를 선택해주세요.");
-		            return;
-		        }
-		
-		        // 1. 선택된 항목 수집 → 서버에 재고 확인
-		        const orderList = [];
-		        selectedItems.each(function () {
-		            const cartItem = $(this).closest(".cartItem");
-		            orderList.push({
-		                isbn: cartItem.data("isbn"),
-		                quantity: parseInt(cartItem.find(".num").val(), 10)
-		            });
-		        });
-		
-		        $.ajax({
-		            url: contextPath + "/product/checkStockBeforeOrder.do",
-		            method: "POST",
-		            contentType: "application/json",
-		            data: JSON.stringify(orderList),
-		            success: function (result) {
-		            	 //console.log("[재고 확인 응답]:", result);
-		                if (result.status === "OK") {
-		                    // 2. 재고 확인 성공 → 기존 로직 실행 (form 생성 & 제출)
-		                    const form = document.createElement("form");
-		                    form.method = "POST";
-		                    form.action = contextPath + "/order/orderMain.do";
-		
-		                    // 총 결제 금액
-		                    const totalPriceText = $("#finalPrice").text().replace(/[^0-9]/g, "");
-		                    const inputTotal = document.createElement("input");
-		                    inputTotal.type = "hidden";
-		                    inputTotal.name = "totalPrice";
-		                    inputTotal.value = totalPriceText;
-		                    form.appendChild(inputTotal);
-		
-		                    // userId
-		                    const inputUser = document.createElement("input");
-		                    inputUser.type = "hidden";
-		                    inputUser.name = "userId";
-		                    inputUser.value = "<c:out value='${userId}'/>";
-		                    form.appendChild(inputUser);
-		
-		                    // 배송지 ID
-		                    const inputAddr = document.createElement("input");
-		                    inputAddr.type = "hidden";
-		                    inputAddr.name = "userAddressId";
-		                    inputAddr.value = selectedAddress;
-		                    form.appendChild(inputAddr);
-		
-		                    // 장바구니 항목
-		                    selectedItems.each(function () {
-		                        const cartItem = $(this).closest(".cartItem");
-		                        const isbn = cartItem.data("isbn");
-		                        const cartNo = cartItem.data("id");
-		                        const quantity = cartItem.find(".num").val();
-		
-		                        if (isbn && quantity) {
-		                            form.appendChild($("<input>", { type: "hidden", name: "isbns", value: isbn })[0]);
-		                            form.appendChild($("<input>", { type: "hidden", name: "quantities", value: quantity })[0]);
-		                            form.appendChild($("<input>", { type: "hidden", name: "cartNos", value: cartNo })[0]);
-		                        }
-		                    });
-		                    
-		                    
-		                    selectedItems.each(function () {
-		                        const cartItem = $(this).closest(".cartItem");
-		                        const cartNo = cartItem.data("id");
-		
-		                        if (isLoggedIn && cartNo) {
-		                            $.post(contextPath + "/product/deleteCart.do", { cartNo });
-		                        }
-		                    });
-		
-		                    document.body.appendChild(form);
-		                    form.submit();
-		                } else {
-		                    // 재고 부족 시 사용자에게 안내
-		                	 // 상태 또는 재고 문제로 실패
-		                    const title = result.bookTitle || "도서";
-		                    const remaining = result.remaining ?? 0;
-		
-		                    if (result.reason === "OUT_OF_STOCK") {
-		                        alert("'" + title + "' 도서는 품절 상태로 구매하실 수 없습니다.");
-		                    } else if (result.reason === "NOT_ENOUGH_STOCK") {
-		                        alert("'" + title + "' 도서의 재고가 부족합니다. (남은 수량: " + remaining + ")");
-		                    } else {
-		                        alert("'" + title + "' 도서를 구매할 수 없습니다.");
-		                    }
-		                }
-		            },
-		            error: function () {
-		                alert("재고 확인 중 오류가 발생했습니다. 다시 시도해주세요.");
-		            }
-		        });
-		    } else {
-		        alert("로그인이 필요합니다.");
-		        $("#menuLogin").click();
-		    }
-		});
+//주문하기 버튼 
+$("#orderBtn").on("click", function () {
+    const selectedItems = $(".cartItemCheckbox:checked");
+
+    if (selectedItems.length < 1) {
+        alert("주문할 상품을 선택해주세요.");
+        return;
+    }
+
+    if (typeof isLoggedIn !== "undefined" && isLoggedIn) {
+
+        // 배송지 확인
+        const selectedAddress = $("input[name='address']:checked").val();
+        if (!selectedAddress) {
+            alert("배송지를 선택해주세요.");
+            return;
+        }
+
+        // 1. 선택된 항목 수집 → 서버에 재고 확인
+        const orderList = [];
+        selectedItems.each(function () {
+            const cartItem = $(this).closest(".cartItem");
+            orderList.push({
+                isbn: cartItem.data("isbn"),
+                quantity: parseInt(cartItem.find(".num").val(), 10)
+            });
+        });
+
+        $.ajax({
+            url: contextPath + "/product/checkStockBeforeOrder.do",
+            method: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(orderList),
+            success: function (result) {
+            	 //console.log("[재고 확인 응답]:", result);
+                if (result.status === "OK") {
+                    // 2. 재고 확인 성공 → 기존 로직 실행 (form 생성 & 제출)
+                    const form = document.createElement("form");
+                    form.method = "POST";
+                    form.action = contextPath + "/order/orderMain.do";
+
+                    // 총 결제 금액
+                    const totalPriceText = $("#finalPrice").text().replace(/[^0-9]/g, "");
+                    const inputTotal = document.createElement("input");
+                    inputTotal.type = "hidden";
+                    inputTotal.name = "totalPrice";
+                    inputTotal.value = totalPriceText;
+                    form.appendChild(inputTotal);
+
+                    // userId
+                    const inputUser = document.createElement("input");
+                    inputUser.type = "hidden";
+                    inputUser.name = "userId";
+                    inputUser.value = "<c:out value='${userId}'/>";
+                    form.appendChild(inputUser);
+
+                    // 배송지 ID
+                    const inputAddr = document.createElement("input");
+                    inputAddr.type = "hidden";
+                    inputAddr.name = "userAddressId";
+                    inputAddr.value = selectedAddress;
+                    form.appendChild(inputAddr);
+
+                    // 장바구니 항목
+                    selectedItems.each(function () {
+                        const cartItem = $(this).closest(".cartItem");
+                        const isbn = cartItem.data("isbn");
+                        const cartNo = cartItem.data("id");
+                        const quantity = cartItem.find(".num").val();
+
+                        if (isbn && quantity) {
+                            form.appendChild($("<input>", { type: "hidden", name: "isbns", value: isbn })[0]);
+                            form.appendChild($("<input>", { type: "hidden", name: "quantities", value: quantity })[0]);
+                            form.appendChild($("<input>", { type: "hidden", name: "cartNos", value: cartNo })[0]);
+                        }
+                    });
+                    
+                    
+                    selectedItems.each(function () {
+                        const cartItem = $(this).closest(".cartItem");
+                        const cartNo = cartItem.data("id");
+
+                        if (isLoggedIn && cartNo) {
+                            $.post(contextPath + "/product/deleteCart.do", { cartNo });
+                        }
+                    });
+
+                    document.body.appendChild(form);
+                    form.submit();
+                } else {
+                    // 재고 부족 시 사용자에게 안내
+                	 // 상태 또는 재고 문제로 실패
+                    const title = result.bookTitle || "도서";
+                    const remaining = result.remaining ?? 0;
+
+                    if (result.reason === "OUT_OF_STOCK") {
+                        alert("'" + title + "' 도서는 품절 상태로 구매하실 수 없습니다.");
+                    } else if (result.reason === "NOT_ENOUGH_STOCK") {
+                        alert("'" + title + "' 도서의 재고가 부족합니다. (남은 수량: " + remaining + ")");
+                    } else {
+                        alert("'" + title + "' 도서를 구매할 수 없습니다.");
+                    }
+                }
+            },
+            error: function () {
+                alert("재고 확인 중 오류가 발생했습니다. 다시 시도해주세요.");
+            }
+        });
+    } else {
+        alert("로그인이 필요합니다.");
+        $("#menuLogin").click();
+    }
+});
 
 </script>
 <script>		
@@ -861,42 +859,47 @@ function updateDeliveryInfoWithText(addressText) {
 </script>
 <script>
 function syncLocalCartToDB() {
-    if (sessionStorage.getItem("cartSynced")) {
-        return;
-    }
+	  // 이미 동기화했다면: 빈 resolved Promise 반환
+	  if (sessionStorage.getItem("cartSynced")) {
+	    return Promise.resolve(); // ← 항상 Promise
+	  }
 
-    const localItems = getCartItemsFromLocalStorage();
+	  const localItems = getCartItemsFromLocalStorage();
 
-    if (!localItems.length) {
-        localStorage.removeItem("cartItems"); 
-        updateCartCount();
-        renderCartItems();
-        return Promise.resolve();
-    }
+	  // 동기화할 게 없으면: 정리 후 resolved
+	  if (!localItems.length) {
+	    localStorage.removeItem("cartItems");
+	    updateCartCount();   // UI 정리
+	    renderCartItems();
+	    return Promise.resolve(); // ← 항상 Promise
+	  }
 
-    const payload = localItems
-        .filter(i => (i.quantity || i.count || 1) > 0)
-        .map(i => ({
-            userId: i.userId || '',
-            bookNo: i.bookNo,
-            count: i.quantity || i.count || 1
-        }));
+	  const payload = localItems
+	    .filter(i => (i.quantity || i.count || 1) > 0)
+	    .map(i => ({
+	      userId: i.userId || '',
+	      bookNo: i.bookNo,
+	      count: i.quantity || i.count || 1
+	    }));
 
-    return $.ajax({
-        url: contextPath + "/product/syncCart.do",
-        type: "POST",
-        contentType: "application/json",
-        data: JSON.stringify(payload),
-        success: function () {
-            sessionStorage.setItem("cartSynced", true); // 동기화된 상태 저장
-            localStorage.removeItem("cartItems"); // 동기화 후 삭제
-            fetchAndUpdateCart(); // 최신 DB 기준 렌더링
-        },
-        error: function (xhr) {
-            console.error("동기화 실패", xhr.responseText);
-        }
-    });
-}
+	  // 여기서 jqXHR 반환
+	  return $.ajax({
+	    url: contextPath + "/product/syncCart.do",
+	    type: "POST",
+	    contentType: "application/json",
+	    data: JSON.stringify(payload)
+	  }).then(function () {
+	    sessionStorage.setItem("cartSynced", true);
+	    localStorage.removeItem("cartItems");
+	    // ★ 서버 최신 데이터 재조회(jqXHR) 반환하여 다음 단계에서 기다릴 수 있게
+	    return $.get(contextPath + "/product/getCartByUser.do");
+	  }).then(function (data) {
+	    dbCartItems = Array.isArray(data) ? data : [];
+	  }).catch(function (xhr) {
+	    console.error("동기화 실패", xhr?.responseText || xhr);
+	    // 실패해도 다음 단계 진행은 가능하도록 resolve
+	  });
+	}
 </script>
 </body>
 </html>

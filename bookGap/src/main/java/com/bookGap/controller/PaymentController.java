@@ -101,6 +101,8 @@ public class PaymentController {
       payment.setGuestId(order.getGuestId());
       paymentService.insertPayment(payment);
       int paymentNo = payment.getPaymentNo();
+      
+      paymentService.logPayment(paymentNo, "[KAKAO][READY] 결제 레코드 생성, amount=" + totalAmount);
 
       req.setPaymentNo(paymentNo);
       req.setPartnerOrderId(partnerOrderId);
@@ -113,6 +115,8 @@ public class PaymentController {
       req.setFailUrl("http://localhost:8080/controller/payment/fail?code=fail");
       req.setTaxFreeAmount(0);
       paymentService.insertKakaoRequest(req);
+      
+      paymentService.logPayment(paymentNo, "[KAKAO][READY] KAKAOPAY_REQUESTS 저장, partnerOrderId=" + partnerOrderId);
 
       log.info("[KAKAO READY][DB] paymentNo={} 생성 완료.", paymentNo);
 
@@ -146,6 +150,8 @@ public class PaymentController {
       upd.setPaymentNo(paymentNo);
       upd.setTid(tid);
       paymentService.updateKakaoTid(upd);
+      
+      paymentService.logPayment(paymentNo, "[KAKAO][READY][OK] tid=" + tid + ", redirect=" + nextRedirectUrl);
 
       session.setAttribute("paymentNo", paymentNo);
       session.setAttribute("tid", tid);
@@ -188,6 +194,9 @@ public class PaymentController {
         JsonNode.class);
       if(response.getStatusCode().is2xxSuccessful()){
         paymentService.updatePaymentStatus(paymentNo, 2);
+        
+        paymentService.logPayment(paymentNo, "[KAKAO][APPROVE] 승인 완료, pg_token=" + pgToken);
+        
         session.removeAttribute("paymentNo");
         session.removeAttribute("tid");
         session.removeAttribute("partner_user_id");
@@ -262,6 +271,8 @@ public class PaymentController {
             	  int orderId = Integer.parseInt(body.get("orderId").toString());
                   orderService.updateOrderStatus(orderId, 4); // 4 = 주문취소
               }
+              
+              paymentService.logPayment(payment.getPaymentNo(),  "[KAKAO][CANCEL] 환불 완료, reason=" + cancelReason + ", amount=" + payment.getAmount());
 
               return ResponseEntity.ok("success");
           } else {
@@ -411,6 +422,8 @@ public class PaymentController {
           int orderId = Integer.parseInt(body.get("orderId").toString());
           orderService.updateOrderStatus(orderId, 4);
         }
+        
+        paymentService.logPayment(payment.getPaymentNo(), "[TOSS][CANCEL] 환불 완료, reason=" + cancelReason);
 
         return ResponseEntity.ok("success");
       } else {
