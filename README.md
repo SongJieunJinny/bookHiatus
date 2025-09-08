@@ -870,13 +870,7 @@ src/
 ```
 
 --- 
-
-## 👤 Team Members (역할/깃계정)
-
-| Name   | Role                | GitHub | Main Modules | One-liner | Detail |
-|--------|---------------------|--------|--------------|-----------|--------|
-| 김상화 | Full-stack Developer | [@gimsanghwa](https://github.com/kimsanghw) | 사용자 기능(목록/상세/장바구니/추천/소개), **관리자 기능(도서/추천/재고/주문·배송/환불/신고/매출/일정/회원)**, 대시보드/차트 | “사용자 경험부터 운영 도구까지 전 과정 구현” | - **Front-end**: JSP + jQuery, Bootstrap 기반 UI/UX 개발<br>- **Back-end**: Spring MVC + MyBatis + MySQL, API 연동(Naver Book, Kakao, TossPay)<br>- **운영자 기능**: 환불·신고 처리 자동화, 재고/주문 관리, 매출 차트 시각화<br>- **보안/인증**: Spring Security 적용(로그인/접근 제어), Kakao 소셜 로그인 |
-| 송지은## Config / Meta (Settings, Build, Mapper & Spring Config)
+## Config / Meta (Settings, Build, Mapper & Spring Config)
 
 ```text
 . (project root)
