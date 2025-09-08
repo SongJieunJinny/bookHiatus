@@ -30,6 +30,98 @@
 - **UX 강화**: 데이터 검증(송장 영숫자, 배송상태 전이 조건), 금액·날짜 포맷(`toLocaleString`, `Date.toLocaleString("ko-KR")`), 반응형 테이블, 차트 시각화
   
 --- 
+## 트러블슈팅
+
+# 트러블슈팅 심화 정리
+다음 3가지는 이번 장바구니 페이지의 핵심 안정화 포인트입니다.
+
+- **A. `updateCartCount()`는 한 곳에서만 정의/사용**
+- **B. 로그인 시 `동기화 → 서버재조회 → 렌더 → 카운트` 순서 보장**
+- **C. `normalizeCartItems`의 죽은 코드 제거**
+
+---
+
+## A) `updateCartCount()`는 한 곳에서만 정의/사용
+
+### 문제 배경
+- 페이지/헤더/별도 스크립트에 **중복 정의**되거나, 담기/삭제 시 **제각각 직접 갱신**하면서
+  헤더 `#cart-count`와 본문 타이틀(예: `#cartCountTitle`) 숫자가 **엇갈림**.
+- 헤더와 본문에 **ID 중복**(`cart-count`)이 있으면 또 어긋남.
+
+### ✅ 해결 원칙
+- **하나의 함수**에서 로그인/비로그인 **분기 포함**해 **표시 요소 2곳**(헤더·본문)을 동시에 갱신.
+- **호출 지점 표준화**: 초기 진입 / 렌더 직후 / 추가·삭제·수량 변경 직후 / 동기화 완료 직후.
+- **ID 중복 금지**: 헤더는 `#cart-count`만, 본문은 `#cartCountTitle`(또는 하나로 통일)만.
+
+### ⛔ Before (흩어진 갱신)
+```js
+// 1) 어떤 곳은 로컬 길이로
+$("#cart-count").text((JSON.parse(localStorage.getItem("cartItems"))||[]).length);
+
+// 2) 어떤 곳은 서버 카운트로
+$.get(contextPath + "/product/getCartCount.do", function (count) {
+  $("#cart-count").text(parseInt(count,10)||0);
+});
+
+// 3) 담기/삭제 핸들러에서 각자 직접 텍스트 변경(호출 누락/중복 발생)
+
+```
+
+### ✅ After (단일 함수 + 표준 호출)
+```js
+function updateCartCount() {
+  const elHeader = document.getElementById("cart-count");     // 헤더
+  const elTitle  = document.getElementById("cartCountTitle"); // 본문
+  if (!elHeader && !elTitle) return;
+
+  if (typeof isLoggedIn !== "undefined" && isLoggedIn) {
+    $.get(contextPath + "/product/getCartCount.do", function(count) {
+      const n = parseInt(count, 10) || 0;
+      if (elHeader) {
+        elHeader.textContent = n;
+        elHeader.style.visibility = n > 0 ? "visible" : "hidden";
+      }
+      if (elTitle) elTitle.textContent = "장바구니(" + n + ")";
+    }).fail(function(err){
+      console.error("장바구니 개수 불러오기 실패", err);
+    });
+  } else {
+    let items = JSON.parse(localStorage.getItem("cartItems")) || [];
+    if (!Array.isArray(items)) items = Object.values(items).filter(o => typeof o === 'object');
+    const n = items.length;
+    if (elHeader) {
+      elHeader.textContent = n;
+      elHeader.style.visibility = n > 0 ? "visible" : "hidden";
+    }
+    if (elTitle) elTitle.textContent = "장바구니(" + n + ")";
+  }
+}
+
+// 표준 호출 지점
+$(document).ready(function(){
+  updateCartCount();         // 초기
+});
+renderCartItems(); updateCartCount(); // 렌더 직후
+// 담기/삭제/수량 변경/동기화 완료 직후에도 동일 함수 호출
+체크리스트
+ updateCartCount()는 한 곳에서만 정의/사용.
+ 헤더: #cart-count 1개, 본문: #cartCountTitle 1개(중복/혼용 금지).
+ 렌더·삭제·수량 변경·동기화 완료 후마다 updateCartCount() 호출.
+ B) 로그인 시 동기화 → 서버재조회 → 렌더 → 카운트 순서 보장
+문제 배경
+로그인 직후 로컬→서버 동기화가 끝나기 전에 렌더/카운트를 먼저 실행 → 값이 깜빡이거나 뒤늦게 변경.
+핵심 해결 원칙
+반드시 아래 순서 고정:
+syncLocalCartToDB()
+fetchAndUpdateCart() (서버 최신 데이터 재조회)
+renderCartItems()
+updateCartCount() / updateCartMessage()
+```
+### 체크리스트
+- updateCartCount()는 한 곳에서만 정의/사용(공통 스크립트).
+- 헤더 #cart-count 1개, 본문 #cartCountTitle 1개(중복/혼용 금지).
+- 렌더·삭제·수량 변경·동기화 완료 후마다 updateCartCount() 호출.
+
 
 ## ERD
 
