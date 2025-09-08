@@ -647,3 +647,9 @@ src/
 ```
 
 --- 
+
+## 👥 Team at a Glance (My Contribution)
+
+| Name | Role | GitHub | Main Modules | One-liner |
+|---|---|---|---|---|
+| 김상화 | Frontend & Integration | [@gimsanghwa](https://github.com/gimsanghwa) | 도서 상세(`bookView.jsp`), 장바구니(`cart.jsp`), 도서 목록(`bookList.jsp`), 추천(`choiceList.jsp`), 소개(`about.jsp`) + 리뷰/댓글/신고 기능, 장바구니 ↔ DB 동기화, 주소 모달, UI 토글(펼쳐보기/접기) | “사용자 경험과 인터랙션 중심의 JSP 구현 및 프론트-백엔드 연동 담당” |
