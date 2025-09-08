@@ -55,6 +55,11 @@ public class BookDAO {
     return bookNo != null ? bookNo.intValue() : 0;
 	}
 	
+	
+    public int getPopularTotalCount(SearchVO vo) {
+        return sqlSession.selectOne(namespace + "getPopularTotalCount", vo);
+    }
+	
 	public List<ProductApiVO> getNewBooks(){
 		return sqlSession.selectList(namespace + "getNewBooks");
 	}

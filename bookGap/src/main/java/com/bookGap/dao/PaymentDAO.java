@@ -1,5 +1,6 @@
 package com.bookGap.dao;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
@@ -28,6 +29,13 @@ public class PaymentDAO {
   public void updatePaymentStatus(Map<String, Object> paramMap) {
     sqlSession.update(namespace + "updatePaymentStatus", paramMap);
   }
+  
+  public void insertPaymentLog(int paymentNo, String logMessage) {
+	  Map<String, Object> p = new HashMap<>();
+	  p.put("paymentNo", paymentNo);
+	  p.put("logMessage", logMessage);
+	  sqlSession.insert(namespace + "insertPaymentLog", p);
+	}
 
   // ========== 카카오페이 ==========
   public void insertKakaoRequest(KakaoPayRequestVO kakaoPayRequestVO) {

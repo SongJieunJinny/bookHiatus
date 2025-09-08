@@ -235,6 +235,7 @@
 											</div>
 								
 											<div class="text-end">
+												<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
 												<button class="btn btn-dark" onclick="saveComplain()">저장</button>
 											</div>
 										</div>
@@ -303,8 +304,8 @@ $(document).on("click", ".viewBtn", function () {
 });
   
 function renderReportDetailPage(page) {
-	console.log("fullList", fullList);
-	console.log("총 페이지 수:", Math.ceil(fullList.length / pageSize));
+	//console.log("fullList", fullList);
+	//console.log("총 페이지 수:", Math.ceil(fullList.length / pageSize));
 	  const start = (page - 1) * pageSize;
 	  const end = start + pageSize;
 	  const pageList = fullList.slice(start, end);

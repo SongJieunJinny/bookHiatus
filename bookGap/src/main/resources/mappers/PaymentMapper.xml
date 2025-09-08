@@ -116,5 +116,11 @@
 	<select id="selectKakaoRequest" parameterType="int" resultType="com.bookGap.vo.KakaoPayRequestVO">
 	    SELECT * FROM KAKAOPAY_REQUESTS WHERE PAYMENT_NO = #{paymentNo}
 	</select>
+	
+	<!-- 결제 로그 기록 -->
+	<insert id="insertPaymentLog" parameterType="map">
+	  INSERT INTO PAYMENT_LOGS (PAYMENT_NO, LOG_MESSAGE)
+	  VALUES (#{paymentNo}, #{logMessage})
+	</insert>
   
 </mapper>

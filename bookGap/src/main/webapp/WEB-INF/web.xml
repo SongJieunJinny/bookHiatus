@@ -67,8 +67,27 @@
 	</servlet-mapping>
 	
 	<servlet-mapping>
-    <servlet-name>default</servlet-name>
-    <url-pattern>/favicon.ico</url-pattern>
-</servlet-mapping>
+	    <servlet-name>default</servlet-name>
+	    <url-pattern>/favicon.ico</url-pattern>
+	</servlet-mapping>
+	
+	<error-page>
+	  <error-code>401</error-code>
+	  <location>/admin/err401.do</location>
+	</error-page>
+	
+	<error-page>
+	  <error-code>404</error-code>
+	  <location>/admin/err404.do</location>
+	</error-page>
+	<error-page>
+	  <error-code>500</error-code>
+	  <location>/admin/err500.do</location>
+	</error-page>
+	<!-- (선택) 모든 예외를 500 처리 -->
+	<error-page>
+	  <exception-type>java.lang.Exception</exception-type>
+	  <location>/admin/err500.do</location>
+	</error-page>
 
 </web-app>

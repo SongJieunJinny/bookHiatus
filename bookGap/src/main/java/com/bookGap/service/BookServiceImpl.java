@@ -41,6 +41,11 @@ public class BookServiceImpl implements BookService{
 	 public List<ProductApiVO> getBooksByCategoryPaging(SearchVO vo) {
 	     return bookDAO.selectBooksByCategoryPaging(vo);
 	 }
+	 
+	 @Override
+	    public int getPopularTotalCount(SearchVO vo) {
+	        return bookDAO.getPopularTotalCount(vo);
+	    }
 
 	 @Override
 	 public int getTotalBookCount(SearchVO vo) {

@@ -54,6 +54,11 @@ public class PaymentServiceImpl implements PaymentService{
     paramMap.put("status", status);
     paymentDAO.updatePaymentStatus(paramMap);
   }
+  
+  @Override
+  public void logPayment(int paymentNo, String message) {
+    paymentDAO.insertPaymentLog(paymentNo, message);
+  }
 
   //카카오페이
   @Override
@@ -174,6 +179,8 @@ public class PaymentServiceImpl implements PaymentService{
     
     paymentDAO.insertPayment(p);
     int paymentNo = p.getPaymentNo();
+    
+    logPayment(paymentNo, "[TOSS][PREPARE] 결제 레코드 생성, amount=" + finalTotal);
 
     // 5. 토스페이 정책에 맞는 orderId 생성 (6자 이상 보장)
     String unifiedOrderId = "BG_" + String.format("%06d", paymentNo);
@@ -192,6 +199,8 @@ public class PaymentServiceImpl implements PaymentService{
     tr.setOrderId(unifiedOrderId);
     tr.setAmount(finalTotal);
     paymentDAO.insertTossRequest(tr);
+    
+    logPayment(paymentNo, "[TOSS][PREPARE] TOSS_REQUESTS 저장, orderId=" + unifiedOrderId);
 
     // 7. 프론트엔드로 응답 반환
     Map<String, Object> responseMap = new HashMap<>();
@@ -251,11 +260,14 @@ public class PaymentServiceImpl implements PaymentService{
     updateParams.put("paymentNo", paymentNo);
     updateParams.put("status", 2); // 결제 완료
     paymentDAO.updatePaymentStatus(updateParams);
+    
 
     TossRequestVO tossRequest = new TossRequestVO();
     tossRequest.setPaymentNo(paymentNo);
     tossRequest.setPaymentKey(paymentKey);
     paymentDAO.updateTossPaymentKey(tossRequest);
+    
+    logPayment(paymentNo, "[TOSS][CONFIRM] 승인 완료, paymentKey=" + paymentKey + ", amount=" + amount);
 
     return payment;
   }

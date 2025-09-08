@@ -15,6 +15,8 @@ public interface PaymentService {
   //공통 결제
   public void insertPayment(PaymentVO paymentVO);
   public void updatePaymentStatus(int paymentNo, int status);
+  
+  public  void logPayment(int paymentNo, String message);
 
   // 카카오페이
   public void insertKakaoRequest(KakaoPayRequestVO kakaoPayRequestVO);
