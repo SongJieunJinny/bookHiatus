@@ -648,8 +648,90 @@ src/
 
 --- 
 
-## 👥 Team at a Glance (My Contribution)
+## 👤 My Contribution 
 
 | Name | Role | GitHub | Main Modules | One-liner |
 |---|---|---|---|---|
-| 김상화 | Frontend & Integration | [@gimsanghwa](https://github.com/gimsanghwa) | 도서 상세(`bookView.jsp`), 장바구니(`cart.jsp`), 도서 목록(`bookList.jsp`), 추천(`choiceList.jsp`), 소개(`about.jsp`) + 리뷰/댓글/신고 기능, 장바구니 ↔ DB 동기화, 주소 모달, UI 토글(펼쳐보기/접기) | “사용자 경험과 인터랙션 중심의 JSP 구현 및 프론트-백엔드 연동 담당” |
+| 김상화 | Full-stack Developer | [@gimsanghwa](https://github.com/gimsanghwa) | 사용자 기능(목록/상세/장바구니/리뷰/추천/소개), **관리자 기능(도서/추천/재고/주문·배송(회원/비회원)/환불/신고/매출/일정/회원)**, 대시보드/차트 | “사용자 경험부터 운영 도구까지 전 과정 구현” |
+
+---
+
+### 🛠 Tech & Conventions
+- **사용자 영역(User-facing)**: JSP, JSTL(`c:`), Spring Security Tags(`sec:`), jQuery(Ajax)
+- **관리자 영역(Admin)**: **Bootstrap 5 기반 관리자 레이아웃** + jQuery + simple-datatables + Chart.js + FullCalendar
+- 공통 레이아웃: `adminHeader.jsp`, `adminNav.jsp`, `adminFooter.jsp`
+- 외부 연동: Naver Book 검색 API, 결제취소 API(Toss/KakaoPay)
+- UX 강화: 데이터 검증(송장 영숫자, 배송상태 전이 조건), 금액 포맷(`toLocaleString`), 반응형 테이블, 차트 시각화
+
+---
+
+## 🚀 User-facing (주요 기능)
+- **도서 목록/상세/추천/소개**: 정렬·필터·페이지네이션, 접기/펼치기 UX, 이미지·가격 포맷팅
+- **리뷰**: 작성/수정/삭제/신고, 별점 오버레이, 좋아요 토글, 페이징
+- **장바구니/주문**: 로컬스토리지↔DB 동기화, 선택 주문, 배송비/합계 자동계산, 주소 모달
+
+---
+
+## 🛠 Admin (운영자 기능)
+### 📊 대시보드 (`adminIndex.jsp`)
+- 운영 카테고리 진입점(도서/추천/재고/회원/주문/환불/신고)
+- **Chart.js**: 매출(Line)·일정(Bar) 차트 시각화
+
+### 📚 도서 관리 (`adminBook.jsp`)
+- 도서 등록/수정/삭제, **Naver Book API 검색 자동입력**
+- 숨김 컬럼으로 상세정보(번역가/발행일/목차/서평) 보관
+- Ajax CRUD (`/admin/books/bookInsert`, `bookUpdate`, `bookDelete`)
+
+### ⭐ 추천 도서 관리 (`adminRecommendBooks.jsp`)
+- 타입 필터 버튼, **직접 타입 입력(custom)** 지원
+- 인라인 수정(타입/코멘트), 삭제
+- Ajax: `/admin/recommend/add`, `update`, `delete`
+
+### 📦 재고 관리 (`adminInventoryManagement.jsp`)
+- 재고 수량/판매상태(판매중·품절) **인라인 즉시 저장**
+- Ajax: `/admin/books/updateInventory`
+
+### 🚚 주문·배송 관리 – 비회원 (`adminGuestOrderInfo.jsp`)
+- 목록 + **상세 모달**(주문/배송/상품/결제요약)
+- 배송중/완료 전환 시 **택배사·송장 필수**, 송장 영숫자 검증
+- Ajax: `/admin/adminGuestOrderInfo/getGuestOrderDetail`, `/updateGuestOrder`
+
+### 👤 주문·배송 관리 – 회원 (`adminUserOrderInfo.jsp`)
+- 비회원과 동일 UX/검증 규칙, 회원 주문 API 바인딩
+- Ajax: `/admin/adminUserOrderInfo/getOrderDetail`, `/updateUserOrder`
+
+### 💳 환불 관리 (`adminRefund.jsp`)
+- 환불 상세 모달: 상태 변경 + **결제수단별 취소 API 자동 호출**
+- Toss: `/payment/toss/cancelPayment`  
+- Kakao: `/payment/kakao/cancelPayment`  
+- 최종 상태 업데이트: `/admin/adminRefund/updateRefundStatus`
+
+### 🚨 신고 관리 (`adminReportManagement.jsp`)
+- 신고 요약 리스트 + **상세 모달 페이징(클라이언트 페이지네이션)**
+- 신고 단건별 상태·메모 인라인 편집, 댓글 상태 반영
+- Ajax: `/admin/getComplainDetail`, `/admin/updateComplainStatus`
+
+### 💹 매출 관리 (`adminSales.jsp`)
+- **Chart.js**  
+  - Bar: 도서별 총매출  
+  - Pie: 판매수량  
+  - Line: 일별 매출  
+- 판매 로그 테이블 연동
+
+### 📅 일정 관리 (`adminSchedule.jsp`)
+- FullCalendar: 월/주/일 뷰, 드래그 기반 일정 등록/수정/삭제
+- Ajax: `/admin/schedule/list`, `/insert`, `/update`, `/delete`
+
+### 👥 회원 관리 (`adminUserInfo.jsp`)
+- 행 클릭 → **인라인 에디팅 모달**(텍스트↔입력 전환, 라디오 enabled)
+- 저장 시 테이블 즉시 반영
+- Ajax: `/admin/updateUser`
+
+---
+
+## 🔎 UX & 안정성 포인트
+- 상태 전이 가드: 배송중/완료 전환 시 송장 필수, 환불 완료 시 결제취소 API 호출
+- 테이블: simple-datatables 라벨 커스터마이즈(placeholder/noRows/info), 반응형 컬럼 숨김
+- 데이터 일관성: 서버 응답 `"success"`/`{success:true}` 모두 처리
+- 금액/날짜 포맷: `toLocaleString()`, `Date.toLocaleString("ko-KR")`
+  
