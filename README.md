@@ -21,7 +21,9 @@
 - 관리자 기능: 도서/추천/재고/주문·배송/환불/신고/매출/일정/회원 관리
 - 대시보드 및 통계 시각화 제공
 - [상세](../../wiki/상세)
+  
 --- 
+
 ## 기술 및 컨벤션
 - **사용자 영역(User-facing)**: JSP, JSTL(`c:`), Spring Security Tags(`sec:`), jQuery(Ajax)
 - **관리자 영역(Admin)**: **Bootstrap 5 기반 관리자 레이아웃** + jQuery + simple-datatables + Chart.js + FullCalendar
@@ -122,6 +124,103 @@ updateCartCount() / updateCartMessage()
 - 헤더 #cart-count 1개, 본문 #cartCountTitle 1개(중복/혼용 금지).
 - 렌더·삭제·수량 변경·동기화 완료 후마다 updateCartCount() 호출.
 
+## B) 로그인 시 동기화 → 서버재조회 → 렌더 → 카운트 순서 보장
+### 문제 배경
+- 로그인 직후 로컬→서버 동기화가 끝나기 전에 렌더/카운트를 먼저 실행 → 값이 깜빡이거나 뒤늦게 변경.
+
+### 핵심 해결 원칙
+- syncLocalCartToDB()
+- fetchAndUpdateCart() (서버 최신 데이터 재조회)
+- renderCartItems()
+- updateCartCount() / updateCartMessage()
+
+###  ⛔ Before (순서 뒤섞임)
+```js
+$(document).ready(function () {
+  renderCartItems();
+  updateCartCount();
+  if (isLoggedIn) {
+    syncLocalCartToDB();      // 나중에 동기화 → 값이 뒤늦게 바뀜
+    fetchAndUpdateCart();
+  }
+});
+```
+### ✅ After (체이닝으로 순서 보장)
+```js
+$(document).ready(function () {
+  if (isLoggedIn) {
+    $.when(syncLocalCartToDB())                    // 1) 로컬 → 서버 동기화
+      .always(function () {
+        return $.get(contextPath + "/product/getCartByUser.do"); // 2) 서버 최신 데이터 조회
+      })
+      .done(function (data) {
+        dbCartItems = Array.isArray(data) ? data : [];
+        renderCartItems();                         // 3) 렌더
+      })
+      .always(function () {
+        updateCartCount();                         // 4) 카운트/메시지
+        updateCartMessage();
+      });
+  } else {
+    renderCartItems();
+    updateCartCount();
+    updateCartMessage();
+  }
+});
+```
+
+### C) normalizeCartItems 죽은 코드 제거
+### 문제 배경
+- return 이후에 LocalStorage 재파싱 블록이 남아 있어, 실제로는 절대 실행되지 않는 죽은 코드가 포함.
+- 가독성/유지보수성 저하 및 오해 유발.
+### Before (조기 return 아래 죽은 코드)
+```js
+function normalizeCartItems(items) {
+    const merged = {};
+    items.forEach(item => {
+        const key = item.bookNo || item.isbn || item.id;
+        const quantity = Number(item.quantity || item.count || 1);
+
+        if (quantity < 1) return; // 0개는 렌더링 안 함
+
+        if (!merged[key]) {
+            merged[key] = { ...item, quantity: quantity };
+        } else {
+            merged[key].quantity += quantity;
+        }
+    });
+    return Object.values(merged);
+    
+  const raw = localStorage.getItem("cartItems");
+  let cartItems = [];
+  try {
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) {
+      cartItems = parsed;
+    } else if (typeof parsed === 'object' && parsed !== null) {
+      cartItems = Object.values(parsed).filter(item => typeof item === 'object');
+    }
+  } catch (e) {
+     console.error("localStorage 파싱 오류", e);
+  }
+  return cartItems;
+
+}
+```
+### After (합산 로직만 유지)
+```js
+function normalizeCartItems(items) {
+  const merged = {};
+  items.forEach(item => {
+    const key = item.bookNo || item.isbn || item.id;
+    const quantity = Number(item.quantity || item.count || 1);
+    if (!key || quantity < 1) return;      // 키 없거나 0 이하는 스킵
+    if (!merged[key]) merged[key] = { ...item, quantity };
+    else merged[key].quantity += quantity; // 중복 항목 수량 합산
+  });
+  return Object.values(merged);
+}
+```
 
 ## ERD
 
