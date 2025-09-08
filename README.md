@@ -5,7 +5,7 @@
 - [프로젝트 진행기간](#프로젝트-진행기간)
 - [개요](#개요)
 - [주요기능](#주요기능)
-- [Tech & Conventions](#tech--conventions) 
+- [기술 및 컨벤션](#기술-및-컨벤션) 
 - [트러블슈팅](#트러블슈팅)
 - [기술스택](#기술스택)
 - [ERD](#erd)
@@ -22,7 +22,7 @@
 - 대시보드 및 통계 시각화 제공
 - [상세](../../wiki/상세)
 --- 
-## Tech & Conventions
+## 기술 및 컨벤션
 - **사용자 영역(User-facing)**: JSP, JSTL(`c:`), Spring Security Tags(`sec:`), jQuery(Ajax)
 - **관리자 영역(Admin)**: **Bootstrap 5 기반 관리자 레이아웃** + jQuery + simple-datatables + Chart.js + FullCalendar
 - **공통 레이아웃**: `adminHeader.jsp`, `adminNav.jsp`, `adminFooter.jsp`
