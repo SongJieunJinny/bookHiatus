@@ -112,19 +112,7 @@ $(document).ready(function(){
 });
 renderCartItems(); updateCartCount(); // 렌더 직후
 // 담기/삭제/수량 변경/동기화 완료 직후에도 동일 함수 호출
-체크리스트
- updateCartCount()는 한 곳에서만 정의/사용.
- 헤더: #cart-count 1개, 본문: #cartCountTitle 1개(중복/혼용 금지).
- 렌더·삭제·수량 변경·동기화 완료 후마다 updateCartCount() 호출.
- B) 로그인 시 동기화 → 서버재조회 → 렌더 → 카운트 순서 보장
-문제 배경
-로그인 직후 로컬→서버 동기화가 끝나기 전에 렌더/카운트를 먼저 실행 → 값이 깜빡이거나 뒤늦게 변경.
-핵심 해결 원칙
-반드시 아래 순서 고정:
-syncLocalCartToDB()
-fetchAndUpdateCart() (서버 최신 데이터 재조회)
-renderCartItems()
-updateCartCount() / updateCartMessage()
+
 ```
 ### 체크리스트
 - updateCartCount()는 한 곳에서만 정의/사용(공통 스크립트).
