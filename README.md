@@ -7,7 +7,7 @@
 - [주요기능](#주요기능)
 - [기술 및 컨벤션](#기술-및-컨벤션) 
 - [트러블슈팅](#트러블슈팅)
-- [기술스택](#기술스택)
+- [개발환경](#개발환경)
 - [ERD](#erd)
 - [프로젝트 파일 구조](#프로젝트-파일-구조)
 - [명세서 API Reference](#명세서-api-reference)
@@ -228,6 +228,15 @@ function normalizeCartItems(items) {
   return Object.values(merged);
 }
 ```
+--- 
+
+## 개발환경
+
+- JDK 1.8, MySQL 8.0, TOMCAT 9.0, SPRING FRAMEWORK 4.3.3.RELEASE, SPRING SECURITY 3.2.10.RELEASE, MyBatis 3.4.1
+- JAVA8, HTML5, CSS3, JSP4, JavaScript, jQuery, Ajax
+- SpringToolSuite 4, Visual Studio Code, ERMaster, MySQL (Workbench 8.0),GitHub, Notion
+  
+--- 
 
 ## ERD
 
@@ -867,6 +876,78 @@ src/
 | Name   | Role                | GitHub | Main Modules | One-liner | Detail |
 |--------|---------------------|--------|--------------|-----------|--------|
 | 김상화 | Full-stack Developer | [@gimsanghwa](https://github.com/kimsanghw) | 사용자 기능(목록/상세/장바구니/추천/소개), **관리자 기능(도서/추천/재고/주문·배송/환불/신고/매출/일정/회원)**, 대시보드/차트 | “사용자 경험부터 운영 도구까지 전 과정 구현” | - **Front-end**: JSP + jQuery, Bootstrap 기반 UI/UX 개발<br>- **Back-end**: Spring MVC + MyBatis + MySQL, API 연동(Naver Book, Kakao, TossPay)<br>- **운영자 기능**: 환불·신고 처리 자동화, 재고/주문 관리, 매출 차트 시각화<br>- **보안/인증**: Spring Security 적용(로그인/접근 제어), Kakao 소셜 로그인 |
+| 송지은## Config / Meta (Settings, Build, Mapper & Spring Config)
+
+```text
+. (project root)
+├─ pom.xml
+├─ project_structure.txt
+├─ .classpath
+├─ .project
+├─ .settings/
+│ ├─ .jsdtscope
+│ ├─ org.eclipse.jdt.core.prefs
+│ ├─ org.eclipse.jst.j2ee.ejb.annotations.xdoclet.prefs
+│ ├─ org.eclipse.ltk.core.refactoring.prefs
+│ ├─ org.eclipse.wst.common.component
+│ ├─ org.eclipse.wst.common.project.facet.core.xml
+│ ├─ org.eclipse.wst.jsdt.ui.superType.container
+│ ├─ org.eclipse.wst.jsdt.ui.superType.name
+│ ├─ org.eclipse.wst.validation.prefs
+│ └─ org.springframework.ide.eclipse.xml.namespaces.prefs
+├─ build/
+│ ├─ classes
+src/
+├─ main/
+│ ├─ resources/
+│ │ ├─ log4j.xml
+│ │ ├─ mappers/
+│ │ │ ├─ AddressMapper.xml
+│ │ │ ├─ AdminOrderMapper.xml
+│ │ │ ├─ AdminRefundMapper.xml
+│ │ │ ├─ AdminScheduleMapper.xml
+│ │ │ ├─ BoardMapper.xml
+│ │ │ ├─ BookMapper.xml
+│ │ │ ├─ CartMapper.xml
+│ │ │ ├─ CommentLoveMapper.xml
+│ │ │ ├─ CommentMapper.xml
+│ │ │ ├─ CommentRatingMapper.xml
+│ │ │ ├─ ComplainMapper.xml
+│ │ │ ├─ ECommentMapper.xml
+│ │ │ ├─ GuestMapper.xml
+│ │ │ ├─ MypageMapper.xml
+│ │ │ ├─ OrderMapper.xml
+│ │ │ ├─ PaymentMapper.xml
+│ │ │ ├─ ProductApiMapper.xml
+│ │ │ ├─ QCommentMapper.xml
+│ │ │ ├─ RecommendBookMapper.xml
+│ │ │ ├─ RefundMapper.xml
+│ │ │ ├─ SalesMapper.xml
+│ │ │ └─ UserMapper.xml
+│ │ ├─ mybatis_config.xml
+│ ├─ webapp/
+│ │ ├─ META-INF/
+│ │ │ └─ MANIFEST.MF
+│ │ ├─ WEB-INF/
+│ │ │ ├─ lib/
+│ │ │ ├─ spring/
+│ │ │ │ ├─ appServlet/
+│ │ │ │ │ └─ servlet-context.xml
+│ │ │ │ ├─ root-context.xml
+│ │ │ │ └─ security/
+│ │ │ │ └─ security-context.xml
+
+```
+
+--- 
+
+## 👤 Team Members (역할/깃계정)
+
+| Name   | Role                | GitHub | Main Modules | One-liner | Detail |
+|--------|---------------------|--------|--------------|-----------|--------|
+| 김상화 | Full-stack Developer | [@gimsanghwa](https://github.com/kimsanghw) | 사용자 기능(목록/상세/장바구니/추천/소개), **관리자 기능(도서/추천/재고/주문·배송/환불/신고/매출/일정/회원)**, 대시보드/차트 | “사용자 경험부터 운영 도구까지 전 과정 구현” | - **Front-end**: JSP + jQuery, Bootstrap 기반 UI/UX 개발<br>- **Back-end**: Spring MVC + MyBatis + MySQL, API 연동(Naver Book, Kakao, TossPay)<br>- **운영자 기능**: 환불·신고 처리 자동화, 재고/주문 관리, 매출 차트 시각화<br>- **보안/인증**: Spring Security 적용(로그인/접근 제어), Kakao 소셜 로그인 |
+| 송지은 | Full-stack Developer | [@SongJieunJinny](https://github.com/SongJieunJinny) | 게시판(공지사항, Q&A, 이벤트) 개설 및 검색 기능 등, **회원 기능: 회원가입 /Spring Security 기반 로그인 /마이페이지(주문 내역, 정보 수정) /Naver Mail API 연동 비밀번호 찾기**, **비회원 기능: 고유 주문키(UUID)를 발급하여 조회하는 안전한 비회원 주문/조회 시스템**, 공통 기능: 회원/비회원 Toss Payments, Kakao Pay API 연동 결제 및 환불 처리 | “전체적인 회원,비회원 사용자 작동 과정 구현” | - **Front-end**: JSP + jQuery, Bootstrap 기반 UI/UX 개발<br>- **Back-end**: Spring MVC + MyBatis + MySQL, API 연동(Naver Mail (SMTP), Kakao, TossPay)<br>- **회원 기능 상세**: Spring Security를 통한 인증/인가 관리 및 BCrypt를 이용한 비밀번호 암호화 처리, 회원별 주문 목록 조회 및 페이징, 상품별 주문 및 배송상태 확인 기능 구현 <br>- **비회원 기능 상세**: 주문 시 UUID 기반의 고유 주문키를 발급하고, 결제 완료 페이지에서 사용자에게 명확히 안내, 조회 시 이메일/비밀번호 대신 주문키를 기본 식별자로 사용하여 개인정보 노출 및 데이터 충돌 문제 해결 |
+
 
 
 
