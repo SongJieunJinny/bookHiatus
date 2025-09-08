@@ -51,7 +51,7 @@
               <td>
               	<a href="eventView.do?boardNo=${evo.boardNo}&boardType=3">${evo.boardTitle}
 	              	<c:if test="${evo.eCommentCount > 0}">
-										<span style="color:#FF5722;">(${evo.eCommentCount })</span>
+										<span style="color:#FF5722;">(${evo.eCommentCount})</span>
 									</c:if>
 								</a>
               </td>

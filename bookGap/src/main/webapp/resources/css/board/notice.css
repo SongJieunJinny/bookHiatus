@@ -48,14 +48,15 @@ td a{
   margin: 1% 0% 1% 0%;
 }
 #writeButton{
-  border: 1px solid black;
-  background-color: black;
-  color: white;
-  font-size: 18px;
-  border-radius: 8px;
-  cursor: pointer;
-  text-align: center;
-  padding: 0.4% 0.7% 0.4% 0.7%;
+	border: 1px solid black;
+	background-color: black;
+	color: white;
+	font-size: 18px;
+	border-radius: 8px;
+	cursor: pointer;
+	text-align: center;
+	width: 10%;
+	padding: 0.5% 1%;
 }
 #noticeSearchFormDiv{
   width: 100%;
@@ -389,6 +390,9 @@ td a{
   }
   .paging-link{
     font-size: 16px;
+  }
+  #writeButton{
+    width: 15%;
   }
 }
 /* 노트북 (1280px) */

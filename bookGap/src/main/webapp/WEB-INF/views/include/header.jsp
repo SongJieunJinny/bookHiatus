@@ -180,20 +180,25 @@
 		 		<div id="guestMain">
 		      <div id="guestMainDiv">
 		        <div id="guestInput">
-		          <input id="orderPw" type="password" name="orderPassword" placeholder="주문 비밀번호"><br>
+		          <input id="orderPw" type="password" name="orderKey" placeholder="주문번호"><br>
 		          <input id="guestEmail" type="email" name="guestEmail" placeholder="주문 이메일">
 		        </div>
 		        <button id="guestBtn" type="submit">CHECK</button>
 		      </div>
 		    </div>
 		    <div id="guestInfoDiv">
-		      <div id="guestInfo1">※ 메일로 보내드린 주문번호를 정확히 기재해 주세요.</div>
+		      <div id="guestInfo1">※ 주문 완료 시 안내받은 주문번호를 정확히 기재해 주세요.</div>
 		      <div id="guestInfo2">※ 비회원 주문내역, 결제 취소등 확인 가능합니다.</div>
 		    </div>
     	</form>
  		</div>
  	</div>
 </div>
+<c:if test="${not empty errorMessage}">
+  <script>
+    alert("${errorMessage}");
+  </script>
+</c:if>
 <script src="${pageContext.request.contextPath}/resources/js/jquery-3.7.1.js"></script>
 <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
 <script type="text/javascript">

@@ -19,7 +19,7 @@
     <div id="guestDeliveryInfoHeadDiv">
       <div id="guestDeliveryInfo">GUEST DELIVERY INFO</div>
     </div>
-    <c:forEach var="order" items="${guestOrders}" varStatus="status">
+    <c:if test="${not empty order}">
 	    <div id="guestDeliveryInfoMid">
 	      <!-- 주문자 정보 -->
 	      <div class="guestDeliveryInfoDiv1">
@@ -102,7 +102,7 @@
 	        </div>
 	      </div>
 	    </div>
-    </c:forEach>
+    </c:if>
   </div>
 </section>
 <jsp:include page="/WEB-INF/views/include/footer.jsp" />

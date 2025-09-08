@@ -95,13 +95,10 @@ public class OrderDAO {
   }
   
   //비회원 주문 전체 조회
-  public List<OrderVO> findGuestOrdersByPasswordAndEmail(String orderPassword, String guestEmail) {
-    Map<String, Object> p = new HashMap<>();
-    p.put("orderPassword", orderPassword);
-    p.put("guestEmail", guestEmail);
-    return sqlSession.selectList(NS + "findGuestOrdersByPasswordAndEmail", p);
+  public OrderVO findGuestOrderByKey(String orderKey) {
+    return sqlSession.selectOne(NS + "findGuestOrderByKey", orderKey);
   }
-  
+
   public int getTotalOrderCount(String userId) {
 	  return sqlSession.selectOne(NS + "getTotalOrderCount", userId);
   }

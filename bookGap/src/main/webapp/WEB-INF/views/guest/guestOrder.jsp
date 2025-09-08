@@ -334,11 +334,7 @@ $(document).ready(function() {
 			       data: JSON.stringify(guestOrderData),
 			       success: function(res){
 						            if(res.status === 'SUCCESS'){
-						            	  guestOrderData.orderId = res.orderId;
-						            	  guestOrderData.guestId = res.guestId;
-						            	  guestOrderData.orderName = res.orderName;
-						            	  guestOrderData.totalPrice = res.totalPrice;
-						            	  proceedToRealPayment(guestOrderData);
+						            	proceedToRealPayment(res, guestOrderData);
 						            }else{
 						              alert("주문 실패: " + res.message);
 						            }
@@ -349,7 +345,7 @@ $(document).ready(function() {
 });
 
 //✅ 카카오/토스 둘 다 처리
-function proceedToRealPayment(orderData) {
+function proceedToRealPayment(res,orderData) {
   if (selectedPaymentMethod === 'kakaopay') {
     $.ajax({
       type: "POST",
@@ -366,17 +362,35 @@ function proceedToRealPayment(orderData) {
       error: () => alert("카카오페이 결제 준비에 실패했습니다.")
     });
   } else if (selectedPaymentMethod === 'tosspay') {
+	  
+	  const tossPrepareData = {
+	          orderId: res.numericOrderId,
+	          orderName: res.orderName,
+	          totalPrice: res.totalPrice,
+	          guestName: orderData.guestName,
+	          guestPhone: orderData.guestPhone,
+	          orderPassword: orderData.orderPassword,
+	          guestEmail: orderData.guestEmail,
+	          receiverName: orderData.receiverName,
+	          receiverPhone: orderData.receiverPhone,
+	          receiverPostCode: orderData.receiverPostCode,
+	          receiverRoadAddress: orderData.receiverRoadAddress,
+	          receiverDetailAddress: orderData.receiverDetailAddress,
+	          deliveryRequest: orderData.deliveryRequest,
+	          orderItems: orderData.orderItems
+	      };
+	  
 	  $.ajax({
       type: "POST",
       url: contextPath + "/payment/prepare",
       contentType: "application/json",
-      data: JSON.stringify(orderData),
+      data: JSON.stringify(tossPrepareData),
       success: function(res) {
         if (res.status === 'SUCCESS') {
           const tossPayments = TossPayments('test_ck_ZLKGPx4M3MG0eMKOzG94rBaWypv1');
           tossPayments.requestPayment('카드', {
         	    amount: res.amount,
-        	    orderId: res.orderId, 
+        	    orderId: res.orderId,
               orderName: res.orderName,
               customerName: res.customerName,
               customerKey: res.customerKey,

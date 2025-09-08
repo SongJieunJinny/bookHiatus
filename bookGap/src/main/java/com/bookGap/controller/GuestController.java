@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.bookGap.service.OrderService;
 import com.bookGap.vo.BookVO;
@@ -61,19 +62,25 @@ public class GuestController {
   // ===================== 비회원 주문 생성(API) =====================
   @PostMapping("/order/guest/create")
   @ResponseBody
-  public Map<String, Object> createGuestOrder(@RequestBody Map<String, Object> orderData) {
+  public Map<String, Object> createGuestOrder(@RequestBody Map<String, Object> orderData, HttpSession session) {
     Map<String, Object> resp = new HashMap<>();
-    try {
-      Map<String, Object> result = orderService.createGuestOrderWithDetails(orderData);
+    try{
+      OrderVO createdOrder = orderService.createGuestOrderWithDetails(orderData);
+      
       resp.put("status", "SUCCESS");
-      resp.put("orderId", result.get("orderId"));
-      resp.put("guestId", result.get("guestId"));
-      resp.put("orderName", result.get("orderName"));
-      resp.put("totalPrice", result.get("totalPrice"));
-    } catch (IllegalStateException e) {
+
+      resp.put("orderId", createdOrder.getOrderKey());
+      resp.put("guestId", createdOrder.getGuestId());
+      resp.put("orderName", orderData.get("orderName"));
+      resp.put("totalPrice", createdOrder.getTotalPrice());
+      resp.put("numericOrderId", createdOrder.getOrderId());
+
+      session.setAttribute("completedGuestOrderKey", createdOrder.getOrderKey());
+      
+    }catch (IllegalStateException e){
       resp.put("status", "FAIL");
       resp.put("message", e.getMessage());
-    } catch (Exception e) {
+    }catch (Exception e){
       e.printStackTrace();
       resp.put("status", "FAIL");
       resp.put("message", "비회원 주문 처리 중 오류가 발생했습니다.");
@@ -83,39 +90,21 @@ public class GuestController {
 
   //===================== 비회원 주문 조회 처리 =====================
   @PostMapping("/guest/guestOrderInfo.do")
-  public String guestOrderInfo( @RequestParam("orderPassword") String orderPassword,
-                                @RequestParam("guestEmail") String guestEmail,
-                                HttpServletResponse response, HttpSession session,
-                                Model model)throws Exception{
+  public String guestOrderInfo(@RequestParam("orderKey") String orderKey,
+                               @RequestParam("guestEmail") String guestEmail,
+                               Model model,
+                               RedirectAttributes redirectAttributes) {
 
-    System.out.println("===== guestOrderInfo.do 진입 =====");
-    System.out.println("전달받은 이메일: " + guestEmail);
-    System.out.println("전달받은 비밀번호: " + orderPassword);
-    
-    if (orderPassword == null || orderPassword.trim().isEmpty() || guestEmail == null || guestEmail.trim().isEmpty()){
-      response.setContentType("text/html; charset=UTF-8");
-      PrintWriter out = response.getWriter();
-      out.println("<script>alert('주문 시 입력했던 주문비밀번호와 이메일을 입력해주세요.'); history.back();</script>");
-      out.flush();
-      out.close();
-      return null; 
+    OrderVO order = orderService.findGuestOrderByKey(orderKey);
+
+    if(order != null && order.getGuestId().equalsIgnoreCase(guestEmail.trim())){
+      model.addAttribute("order", order);
+      return "guest/guestOrderDetailsView"; 
+
+    }else{
+      redirectAttributes.addFlashAttribute("errorMessage", "주문번호 또는 이메일 정보가 일치하지 않습니다.");
+      return "redirect:/"; // 조회 실패 시 사용자를 메인 페이지로 보냅니다.
     }
-
-    List<OrderVO> orders = orderService.findGuestOrdersByPasswordAndEmail(orderPassword, guestEmail);
-    
-    if (orders == null || orders.isEmpty()){
-      response.setContentType("text/html; charset=UTF-8");
-      PrintWriter out = response.getWriter();
-      out.println("<script>alert('조회된 주문이 없습니다.'); history.back();</script>");
-      out.flush();
-      out.close();
-      return null;  
-    }
-
-    session.setAttribute("authGuestEmail", guestEmail);
-    session.setAttribute("authOrderPassword", orderPassword);
-    model.addAttribute("guestOrders", orders);
-    return "guest/guestOrderInfo";
   }
   
   //===================== 비회원 주문 상세 조회 =====================

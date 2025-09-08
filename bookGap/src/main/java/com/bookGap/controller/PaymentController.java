@@ -63,20 +63,30 @@ public class PaymentController {
   public KakaoReadyResponse kakaopayReady(@RequestBody KakaoPayRequestVO req,
                                           HttpSession session, Principal principal) {
     try{
-      log.info("[KAKAO READY][REQ] 요청 수신: orderId={}", req.getOrderId());
+      log.info("[KAKAO READY][REQ] 요청 수신: orderId={}", req);
       
-      if (req.getOrderId() == null) throw new IllegalArgumentException("주문 ID(orderId)가 누락되었습니다.");
-      
-      String partnerUserId = (principal != null) ? principal.getName() : "guest";
-      if (principal != null) req.setPartnerUserId(partnerUserId);
+      String orderKey = req.getOrderId();
+      if(orderKey == null || orderKey.trim().isEmpty()){ throw new IllegalArgumentException("주문 ID(orderKey)가 누락되었습니다.");
+ }
 
-      OrderVO order = orderService.getOrderById(req.getOrderId());
-      if (order == null) throw new RuntimeException("존재하지 않는 주문입니다: " + req.getOrderId());
+      OrderVO order;
+      if(principal != null){
+        log.info("[KAKAO READY][AUTH] 회원 주문으로 처리합니다. userId={}", principal.getName());
+        order = orderService.findGuestOrderByKey(orderKey);
+      }else{
+        log.info("[KAKAO READY][AUTH] 비회원 주문으로 처리합니다.");
+        order = orderService.findGuestOrderByKey(orderKey);
+      }
+
+      if(order == null){ throw new RuntimeException("DB에서 해당 주문 정보를 찾을 수 없습니다: orderId=" + req.getOrderId()); }
+
+      final String partnerUserId = (principal != null) ? principal.getName() : order.getGuestId();
+      req.setPartnerUserId(partnerUserId);
 
       final String partnerOrderId = order.getOrderKey();
       if(partnerOrderId == null || partnerOrderId.trim().isEmpty()){
-          log.error("[KAKAO READY][FATAL] DB에서 조회한 주문의 orderKey가 null입니다. (orderId={})", order.getOrderId());
-          throw new IllegalStateException("결제에 필요한 고유 주문키(orderKey)가 생성되지 않았습니다.");
+        log.error("[KAKAO READY][FATAL] DB에서 조회한 주문의 orderKey가 null입니다. (orderId={})", order.getOrderId());
+        throw new IllegalStateException("결제에 필요한 고유 주문키(orderKey)가 생성되지 않았습니다.");
       }
 
       final int totalAmount = order.getTotalPrice();
@@ -168,44 +178,79 @@ public class PaymentController {
   }
 
   @GetMapping("/success/kakaopay")
-  public String kakaopaySuccess(@RequestParam("pg_token") String pgToken, HttpSession session) {
+  public String kakaopaySuccess(@RequestParam("pg_token") String pgToken, HttpSession session, Model model, Principal principal) {
     Integer paymentNo    = (Integer) session.getAttribute("paymentNo");
     String tid           = (String) session.getAttribute("tid");
     String partnerUserId = (String) session.getAttribute("partner_user_id");
-    if (paymentNo == null || tid == null || partnerUserId == null) return "redirect:/order/error";
-
-    String partnerOrderId = paymentService.selectKakaoRequest(paymentNo).getPartnerOrderId();
-
-    Map<String,Object> params = new HashMap<>();
-    params.put("cid", CID);
-    params.put("tid", tid);
-    params.put("partner_order_id", partnerOrderId);
-    params.put("partner_user_id", partnerUserId);
-    params.put("pg_token", pgToken);
-
-    HttpHeaders headers = new HttpHeaders();
-    headers.set("Authorization", "SECRET_KEY " + KAKAO_SECRET_KEY);
-    headers.setContentType(MediaType.APPLICATION_JSON);
+    
+    if(paymentNo == null || tid == null || partnerUserId == null){
+      model.addAttribute("errorMessage", "결제 정보가 만료되었거나 유효하지 않습니다.");
+      return "payment/paymentFail";
+    }
 
     try{
+      KakaoPayRequestVO kakaoRequest = paymentService.selectKakaoRequest(paymentNo);
+      if(kakaoRequest == null) { throw new Exception("카카오페이 요청 정보를 찾을 수 없습니다."); }
+      String partnerOrderId = kakaoRequest.getPartnerOrderId();
+  
+      // 카카오 API 요청을 위한 파라미터 준비
+      Map<String,Object> params = new HashMap<>();
+      params.put("cid", CID);
+      params.put("tid", tid);
+      params.put("partner_order_id", partnerOrderId);
+      params.put("partner_user_id", partnerUserId);
+      params.put("pg_token", pgToken);
+  
+      // HTTP 헤더 설정
+      HttpHeaders headers = new HttpHeaders();
+      headers.set("Authorization", "SECRET_KEY " + KAKAO_SECRET_KEY);
+      headers.setContentType(MediaType.APPLICATION_JSON);
+  
+      // RestTemplate으로 API 호출
       ResponseEntity<JsonNode> response = restTemplate.postForEntity(
-        KAKAO_OPEN_API_URL + "/approve",
-        new HttpEntity<>(params, headers),
-        JsonNode.class);
+          KAKAO_OPEN_API_URL + "/approve",
+          new HttpEntity<>(params, headers),
+          JsonNode.class
+      );
+    
+      // --- 결제 승인 성공 시 DB 상태를 업데이트하고 세션을 정리 ---
       if(response.getStatusCode().is2xxSuccessful()){
-        paymentService.updatePaymentStatus(paymentNo, 2);
         
-        paymentService.logPayment(paymentNo, "[KAKAO][APPROVE] 승인 완료, pg_token=" + pgToken);
-        
+        paymentService.updatePaymentStatus(paymentNo, 2); // DB의 결제 상태를 '완료(2)'로 변경
+
+        // 사용이 끝난 세션 정보는 즉시 삭제
         session.removeAttribute("paymentNo");
         session.removeAttribute("tid");
         session.removeAttribute("partner_user_id");
-        return "redirect:/order/orderComplete.do?paymentNo=" + paymentNo;
+        
+        // --- 회원/비회원을 구분하여 Model에 데이터를 담기 ---
+        String guestOrderKey = (String) session.getAttribute("completedGuestOrderKey");
+
+        if(guestOrderKey != null){  // [비회원]
+          model.addAttribute("orderKey", guestOrderKey);
+          model.addAttribute("order", orderService.findGuestOrderByKey(guestOrderKey));
+
+          session.removeAttribute("completedGuestOrderKey"); // 사용 후 즉시 제거
+        }else if(principal != null){  // [회원]
+          PaymentVO payment = paymentService.getPaymentByNo(paymentNo);
+
+          if(payment != null) {
+            model.addAttribute("order", orderService.getOrderById(payment.getOrderId()));
+            model.addAttribute("payment", payment);
+          }
+
+        }else{  // 비회원도 아니고 회원도 아닌 경우 (매우 드묾), 비정상 접근으로 간주
+          throw new Exception("사용자 인증 정보를 찾을 수 없습니다.");
+        }
+        return "order/orderComplete"; // -> /WEB-INF/views/order/orderComplete.jsp
       }
-      return "redirect:/payment/fail";
+
+      throw new Exception("카카오페이 최종 승인에 실패했습니다.");
+
     }catch(Exception e){
       e.printStackTrace();
-      return "redirect:/payment/fail";
+      model.addAttribute("errorMessage", "결제 처리 중 오류가 발생했습니다: " + e.getMessage());
+      return "payment/paymentFail"; 
     }
   }
   
@@ -330,18 +375,29 @@ public class PaymentController {
   public String tossPaymentSuccess(@RequestParam String paymentKey,
                                    @RequestParam(name = "orderId") String tossOrderId,
                                    @RequestParam Long amount,
-                                   Model model, Principal principal) {
-    try {
-        PaymentVO completedPayment = paymentService.confirmTossPayment(paymentKey, tossOrderId, amount);
+                                   Model model, HttpSession session) {
+    try{
+      PaymentVO completedPayment = paymentService.confirmTossPayment(paymentKey, tossOrderId, amount);
+  
+      String guestOrderKey = (String) session.getAttribute("completedGuestOrderKey");
+  
+      if(guestOrderKey != null){  // [비회원일 경우]
+        model.addAttribute("orderKey", guestOrderKey);
+        model.addAttribute("order", orderService.findGuestOrderByKey(guestOrderKey));
+        session.removeAttribute("completedGuestOrderKey");
+      }else{  // [회원일 경우]
+        model.addAttribute("order", orderService.getOrderById(completedPayment.getOrderId()));
+        model.addAttribute("payment", completedPayment);
+      }
+  
+      return "order/orderComplete";
 
-        return "redirect:/order/orderComplete.do?paymentNo=" + completedPayment.getPaymentNo();
-
-    } catch (Exception e) {
-        e.printStackTrace();
-        model.addAttribute("errorMessage", e.getMessage());
-        model.addAttribute("errorCode", "TOSS_APPROVAL_FAILED");
-        
-        return "redirect:/payment/fail?message=" + e.getMessage();
+    }catch (Exception e){
+      e.printStackTrace();
+      model.addAttribute("errorMessage", e.getMessage());
+      model.addAttribute("errorCode", "TOSS_APPROVAL_FAILED");
+      
+      return "redirect:/payment/fail?message=" + e.getMessage();
     }
   }
   

@@ -68,6 +68,7 @@
 					 BOARD_RDATE       AS boardRdate, 
 					 DATE_FORMAT(BOARD_RDATE, '%Y.%m.%d %H:%i') AS formattedBoardRdate, 
 					 u.USER_ID         AS userId,
+					 (SELECT COUNT(*) FROM QCOMMENT q WHERE q.BOARD_NO = b.BOARD_NO AND q.QCOMMENT_STATE = 1) AS qCommentCount,
 					 (SELECT COUNT(*) FROM ECOMMENT e WHERE e.BOARD_NO = b.BOARD_NO AND e.ECOMMENT_STATE = 1) AS eCommentCount,
 					 bk.BOOK_NO        AS bookNo,
 					 p.IMAGE           AS bookImgUrl,

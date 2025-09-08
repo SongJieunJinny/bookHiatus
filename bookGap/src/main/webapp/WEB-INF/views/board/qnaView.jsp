@@ -274,7 +274,9 @@
 				    <div id="qnaComments">
 				      <div id="commentLayout">
 				        <div id="qnaCommentTitle">
-				        	QnA
+				        	QnA<c:if test="${vo.qCommentCount > 0}">
+						       <span style="color:#FF5722;">(${vo.qCommentCount})</span>
+						     </c:if>
 				        </div>
 				      </div>
 				      <div id="reviewView">

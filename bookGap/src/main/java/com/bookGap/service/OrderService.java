@@ -34,7 +34,7 @@ public interface OrderService {
   
   public int createOrderWithDetails(Map<String, Object> orderData) throws IllegalStateException;
   
-  public Map<String, Object> createGuestOrderWithDetails(Map<String, Object> orderData) throws Exception;
+  public OrderVO createGuestOrderWithDetails(Map<String, Object> orderData) throws Exception;
   
   //회원 단건 주문 조회
   public OrderVO getOrderById(int orderId);
@@ -43,8 +43,9 @@ public interface OrderService {
   public OrderVO getGuestOrderByOrderId(int orderId);
   
   //비회원 단건 조회 인증
-  public List<OrderVO> findGuestOrdersByPasswordAndEmail(String orderPassword, String guestEmail);
+  public OrderVO findGuestOrderByKey(String orderKey);
+
   //사용자 주문취소 업데이트 
-  public  void updateOrderStatus(int orderId, int status);
+  public void updateOrderStatus(int orderId, int status);
   
 }
