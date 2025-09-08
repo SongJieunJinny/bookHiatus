@@ -15,7 +15,7 @@ public class KakaoPayRequestVO {
   private String pgToken;
   
   @JsonAlias({"order_id"})
-  private Integer orderId;
+  private String orderId;
   
   // --- JSON으로 받는 필드들에 @JsonProperty 어노테이션 추가 ---
 
@@ -125,6 +125,6 @@ public class KakaoPayRequestVO {
     this.pgToken = pgToken;
   }
   
-  public Integer getOrderId(){ return orderId; }
-  public void setOrderId(Integer orderId){ this.orderId = orderId; }
+  public String getOrderId(){ return orderId; }
+  public void setOrderId(String orderId){ this.orderId = orderId; }
 }

@@ -28,7 +28,7 @@
   h3 {
     font-size: 16px;
     font-weight: 700;
-    margin: 28px 0 12px;
+    margin: 10px 0 12px;
   }
 
   /* 공통 카드 */
@@ -104,6 +104,27 @@
   box-shadow: 0 2px 8px rgba(0,0,0,.07);
   background-color: #f9f9f9; /* hover 시 배경색 살짝 */
 }
+.guest-notice{
+  background: #fff;
+  border: 1px solid #eaeaea;
+  border-radius: 14px;
+  box-shadow: 0 2px 10px rgba(0,0,0,.04);
+  padding: 16px 18px;
+  margin-bottom: 14px;
+}
+#orderKeyInput{
+  width: 80%;
+  font-size: 15px;
+}
+#copyBtn{
+  width: 10%;
+  font-size: 15px;
+  border: 1px solid black;
+  background-color: black;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
   /* 반응형 */
   @media (max-width: 560px) {
     .oc-item { gap: 12px; }
@@ -124,61 +145,84 @@
 <section>
   <h2>주문이 성공적으로 완료되었습니다!</h2>
 
-  <div class="oc-card oc-summary">
-    <h3>결제 정보</h3>
-    <ul>
-      <li>결제 수단:
-        <span class="oc-badge">
-          <c:choose>
-            <c:when test="${payment.paymentMethod == 1}">토스페이</c:when>
-            <c:when test="${payment.paymentMethod == 2}">카카오페이</c:when>
-            <c:otherwise>기타</c:otherwise>
-          </c:choose>
-        </span>
-      </li>
-      <li>결제 금액: <fmt:formatNumber value="${payment.amount}" pattern="#,###" /> 원</li>
-    </ul>
-  </div>
+  <c:if test="${not empty orderKey}">
+	  <div class="guest-notice">
+	      <h3>비회원 주문번호 안내</h3>
+	      <p>
+	          주문조회 시 아래 주문번호가 반드시 필요합니다.<br>
+	          분실 시 조회가 어려우니 꼭 복사하여 보관해주세요.
+	      </p>
+	      <div class="order-key-display">
+	        <input type="text" value="${orderKey}" id="orderKeyInput" readonly>
+	        <button id="copyBtn" onclick="copyOrderKey()">복사</button>
+	      </div>
+	  </div>
+  </c:if>
+  
+  <c:if test="${not empty order}">
+    <c:if test="${not empty payment}">
+		  <div class="oc-card oc-summary">
+		    <h3>결제 정보</h3>
+		    <ul>
+		      <li>결제 수단:
+		        <span class="oc-badge">
+		          <c:choose>
+		            <c:when test="${payment.paymentMethod == 1}">토스페이</c:when>
+		            <c:when test="${payment.paymentMethod == 2}">카카오페이</c:when>
+		            <c:otherwise>기타</c:otherwise>
+		          </c:choose>
+		        </span>
+		      </li>
+		      <li>결제 금액: <fmt:formatNumber value="${payment.amount}" pattern="#,###" /> 원</li>
+		    </ul>
+		  </div>
+  	</c:if>
 
-  <div class="oc-card">
-    <h3>주문한 상품</h3>
-    <ul class="oc-items">
-      <li >주문 번호: ${order.orderKey}</li>
-      <c:forEach var="item" items="${order.orderDetails}">
-        <li class="oc-item">
-          <div class="oc-thumb">
-            <img src="${item.book.image}" alt="${item.book.title}">
-          </div>
-          <div class="oc-info">
-            <div class="oc-title">${item.book.title}</div>
-            <div class="oc-meta">${item.orderCount}권</div>
-          </div>
-        </li>
-      </c:forEach>
-    </ul>
-  </div>
+	  <div class="oc-card">
+	    <h3>주문한 상품</h3>
+	    <ul class="oc-items">
+	      <li >주문 번호: ${order.orderKey}</li>
+	      <c:forEach var="item" items="${order.orderDetails}">
+	        <li class="oc-item">
+	          <div class="oc-thumb">
+	            <img src="${item.book.image}" alt="${item.book.title}">
+	          </div>
+	          <div class="oc-info">
+	            <div class="oc-title">${item.book.title}</div>
+	            <div class="oc-meta">${item.orderCount}권</div>
+	          </div>
+	        </li>
+	      </c:forEach>
+	    </ul>
+	  </div>
 
-  <div class="oc-card oc-address">
-    <h3>배송지 정보</h3>
-    <ul>
-      <li>받는 분: ${order.receiverName}</li>
-      <li>연락처: ${order.receiverPhone}</li>
-      <li>주소: [${order.receiverPostCode}] ${order.receiverRoadAddress} ${order.receiverDetailAddress}</li>
-    </ul>
-  </div>
-
+	  <div class="oc-card oc-address">
+	    <h3>배송지 정보</h3>
+	    <ul>
+	      <li>받는 분: ${order.receiverName}</li>
+	      <li>연락처: ${order.receiverPhone}</li>
+	      <li>주소: [${order.receiverPostCode}] ${order.receiverRoadAddress} ${order.receiverDetailAddress}</li>
+	    </ul>
+	  </div>
+	  
+  </c:if>
+  
   <div class="oc-actions">
     <a class="oc-home" href="<c:url value='/' />">메인으로 돌아가기</a>
   </div>
+  
 </section>
 <jsp:include page="/WEB-INF/views/include/footer.jsp" />
 <script>
+function copyOrderKey() {
+  navigator.clipboard.writeText(document.getElementById("orderKeyInput").value)
+    .then(() => alert("주문번호가 클립보드에 복사되었습니다!"));
+}
 // 장바구니 개수 업데이트 함수
-  $(document).ready(function() {
+$(document).ready(function() {
 	updateCartCount(); // 장바구니 개수 업데이트
 	initHeaderEvents();
-  });
-
+});
 </script>
 </body>
 </html>

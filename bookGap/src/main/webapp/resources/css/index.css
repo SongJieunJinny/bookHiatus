@@ -564,11 +564,12 @@ footer{
   }
   #loginBtn, #guestBtn {
     font-size: 16px;
-    padding: 12px 26px;
+    padding: 48px 10px;
   }
   #kakaoLogin, #guestOrder {
     width: 70%;
     font-size: 16px;
+    padding: 5px 0px;
   }
 }
 
