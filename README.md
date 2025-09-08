@@ -652,7 +652,7 @@ src/
 
 | Name | Role | GitHub | Main Modules | One-liner | 상세  |
 |---|---|---|---|---|
-| 김상화 | Full-stack Developer | [@gimsanghwa](https://github.com/kimsanghw) | 사용자 기능(목록/상세/장바구니/리뷰/추천/소개), **관리자 기능(도서/추천/재고/주문·배송(회원/비회원)/환불/신고/매출/일정/회원)**, 대시보드/차트 | “사용자 경험부터 운영 도구까지 전 과정 구현” |  [상세](../../wiki/기술적-의사-결정)  |
+| 김상화 | Full-stack Developer | [@gimsanghwa](https://github.com/kimsanghw) | 사용자 기능(목록/상세/장바구니/리뷰/추천/소개), **관리자 기능(도서/추천/재고/주문·배송(회원/비회원)/환불/신고/매출/일정/회원)**, 대시보드/차트 | “사용자 경험부터 운영 도구까지 전 과정 구현” |  [상세](../../wiki/상세)  |
 
 ---
 
