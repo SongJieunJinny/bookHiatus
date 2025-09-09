@@ -8,11 +8,20 @@
 	<!-- 제외 url pattern -->
 	<security:http pattern="/resources/**" security="none" />
 	<security:http auto-config="true" use-expressions="true" create-session="ifRequired">
+	
+		<security:intercept-url pattern="/**" requires-channel="https"/>
 		<!-- permitAll태그는 모든 사용자에게 허용 -->
-		<security:intercept-url pattern="/" access="permitAll"/>
-		<security:intercept-url pattern="/order/orderMain.do" access="permitAll"/>
-		
-		
+		<security:intercept-url pattern="/" access="permitAll"/>	
+		<security:intercept-url pattern="/guest/guestOrder.do" access="permitAll"/>
+		<!-- 게스트 주문 생성은 POST만 허용 -->
+		<security:intercept-url pattern="/order/guest/create" method="POST" access="permitAll"/>
+		<!-- 게스트 주문 조회(번호+이메일로 조회) POST만 허용 -->
+		<security:intercept-url pattern="/guest/guestOrderInfo.do" method="POST" access="permitAll"/>
+		<!-- 게스트 주문 상세 페이지(조회 후 이동) -->
+		<security:intercept-url pattern="/guest/guestOrderDetailsView.do" access="permitAll"/>	
+				
+		<security:intercept-url pattern="/order/**" access="isAuthenticated()"/>
+
 		<!-- hasAnyRole 제시된 권한 중 하나라도 가지고 있으면 true 하나만 가지고 있으면 false -->
 		<security:intercept-url pattern="/user/**" access="hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_USER_KAKAO')"/>
 	    <security:intercept-url pattern="/mypage/**" access="hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_USER_KAKAO')"  />
@@ -35,10 +44,39 @@
 		<!-- 로그인은 했으나 경로 접근 권한 없을시 호출 객체 설정 -->
 		<security:access-denied-handler ref="userDeniedHandler"/>
 		
-		<!-- X-Frame-Options 헤더를 설정하여 같은 도메인 내의 팝업창/iframe을 허용합니다. -->
-		<security:headers>
-      <security:frame-options policy="SAMEORIGIN" />
-    </security:headers>
+
+	    <!-- ===== CSRF 보호 ===== -->
+	    <!-- 기본 값이면 로그인/POST/PUT/DELETE 요청에 CSRF 토큰 필요 -->
+		<security:csrf/>
+
+	    <!-- ===== 세션 보안 ===== -->
+	     <security:session-management session-fixation-protection="migrateSession" invalid-session-url="/login.do?expired">
+	      	<security:concurrency-control max-sessions="1" error-if-maximum-exceeded="true"/>
+	     </security:session-management>
+
+	    <!-- ===== 보안 헤더 ===== -->
+	    <security:headers>
+	      <!-- 동일 출처 프레임만 허용 -->
+	      <security:frame-options policy="SAMEORIGIN"/>
+	      <!-- MIME 스니핑 방지 -->
+	      <security:content-type-options/>
+	      <!-- 기본 XSS 필터(구형 브라우저용) -->
+	      <security:xss-protection block="true"/>
+	      <!-- HSTS: HTTPS 고정(1년) + 서브도메인 포함 -->
+	      <security:hsts include-subdomains="true" max-age-seconds="31536000"/>
+	      <!-- (선택) CSP: 리소스 로딩 출처를 엄격히 제한하고 싶을 때 활성화
+	      <security:content-security-policy policy-directives="
+	          default-src 'self';
+	          img-src 'self' data:;
+	          script-src 'self';
+	          style-src 'self' 'unsafe-inline';
+	          object-src 'none'"/>
+	      -->
+	      <!-- (선택) 캐시 제어: 민감 페이지 캐시 금지
+	      <security:cache-control/>
+	      -->
+	    </security:headers>
+
 		
 	</security:http>
 	
@@ -62,6 +100,6 @@
 		</security:authentication-provider>
 	</security:authentication-manager>
 	
-	
+	<security:global-method-security  pre-post-annotations="enabled"   secured-annotations="enabled"   jsr250-annotations="enabled"/>
 		
 </beans>
