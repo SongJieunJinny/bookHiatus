@@ -352,11 +352,11 @@ function proceedToRealPayment(res,orderData) {
       url: contextPath + "/payment/ready/kakaopay",
       contentType: "application/json",
       data: JSON.stringify({
-    	  orderId: orderData.orderId,
-    	  partner_user_id: (orderData.guestId || 'guest'),
-    	  itemName: orderData.orderName,
+    	  orderId: res.orderId,
+    	  partner_user_id: (res.guestId || 'guest'),
+    	  itemName: res.orderName,
     	  quantity: orderData.orderItems.reduce((sum, item) => sum + item.quantity, 0),
-        totalAmount: orderData.totalPrice
+        totalAmount: res.totalPrice
       }),
       success: (res) => window.location.href = res.next_redirect_pc_url,
       error: () => alert("카카오페이 결제 준비에 실패했습니다.")

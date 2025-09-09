@@ -21,15 +21,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.bookGap.service.GuestService;
 import com.bookGap.service.OrderService;
 import com.bookGap.vo.BookVO;
+import com.bookGap.vo.GuestVO;
 import com.bookGap.vo.OrderVO;
 
 @Controller
 public class GuestController {
   
-  @Autowired
-  private OrderService orderService;
+  @Autowired private OrderService orderService;
+  @Autowired private GuestService guestService;
 
 //===================== 비회원 주문 페이지로 이동 =====================
   @GetMapping("/guest/guestOrder.do")
@@ -95,15 +97,23 @@ public class GuestController {
                                Model model,
                                RedirectAttributes redirectAttributes) {
 
+    GuestVO guest = guestService.getGuestByEmail(guestEmail);
+    if(guest == null){
+      redirectAttributes.addFlashAttribute("errorMessage", "주문번호 또는 이메일 정보가 일치하지 않습니다.");
+      return "redirect:/";
+    }
+
     OrderVO order = orderService.findGuestOrderByKey(orderKey);
 
-    if(order != null && order.getGuestId().equalsIgnoreCase(guestEmail.trim())){
-      model.addAttribute("order", order);
-      return "guest/guestOrderDetailsView"; 
-
-    }else{
-      redirectAttributes.addFlashAttribute("errorMessage", "주문번호 또는 이메일 정보가 일치하지 않습니다.");
-      return "redirect:/"; // 조회 실패 시 사용자를 메인 페이지로 보냅니다.
+    // 3. [최종 비교] (주문이 있고) && (그 주문의 GUEST_ID가, 방금 이메일로 찾은 guest의 ID와 일치하는가?)
+    if (order != null && order.getGuestId().equals(guest.getGuestId())) {
+        
+        model.addAttribute("order", order);
+        model.addAttribute("guestEmail", guest.getGuestEmail()); 
+        return "guest/guestOrderDetailsView"; 
+    } else {
+        redirectAttributes.addFlashAttribute("errorMessage", "주문번호 또는 이메일 정보가 일치하지 않습니다.");
+        return "redirect:/";
     }
   }
   
