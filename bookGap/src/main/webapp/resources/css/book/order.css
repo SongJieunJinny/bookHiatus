@@ -1139,6 +1139,12 @@ font-size: 13px;
 	color: white;
 	cursor: pointer;
 }
+#refundStatusBox{
+	display:none;margin-top:16px;padding:12px;border:1px solid #ddd;border-radius:8px;background:#fafafa
+}
+#refundStatusText{
+	color:#333
+}
 /* ===========================
    📱 모바일 전용 ≤768px
    =========================== */
