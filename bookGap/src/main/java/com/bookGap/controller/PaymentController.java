@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -424,40 +425,61 @@ public class PaymentController {
   @PostMapping(value = "/toss/cancelPayment.do", produces = "text/plain;charset=UTF-8")
   @ResponseBody
   public ResponseEntity<?> cancelToss(@RequestBody Map<String, Object> body) {
-    try {
+    try{
       PaymentVO payment = null;
       String cancelReason = "관리자 환불";
 
-      // 1) 관리자 환불 경로 (refundNo 기반)
-      if (body.containsKey("refundNo")) {
+      // ----------------경로 분기: 관리자 환불, 사용자 주문취소---------------- //
+      if(body.containsKey("refundNo")){  //관리자 환불(refundNo)
         int refundNo = Integer.parseInt(body.get("refundNo").toString());
         payment = paymentService.selectPaymentByRefundNo(refundNo);
-
-      // 2) 사용자 주문취소 경로 (paymentNo + orderId 기반)
-      } else if (body.containsKey("paymentNo") && body.containsKey("orderId")) {
+      }else if(body.containsKey("paymentNo") && body.containsKey("orderId")){  //사용자 주문취소(paymentNo + orderId)
         int paymentNo = Integer.parseInt(body.get("paymentNo").toString());
         int orderId   = Integer.parseInt(body.get("orderId").toString());
 
-        // 결제 단건 조회 (mapper: getPaymentByNo)
         payment = paymentService.getPaymentByNo(paymentNo);
-        if (payment == null || payment.getOrderId() != orderId) {
-          return ResponseEntity.badRequest().body("결제 정보 불일치");
-        }
+        if(payment == null || payment.getOrderId() != orderId){ return ResponseEntity.badRequest().body("결제 정보 불일치"); }
         cancelReason = "사용자 주문취소";
-
-      } else {
+      }else{
         return ResponseEntity.badRequest().body("요청 파라미터 부족");
       }
 
       if (payment == null) return ResponseEntity.badRequest().body("결제 정보 없음");
 
-      // 3) 토스 결제 요청 정보 조회 (payment_no → payment_key 필요)
+      // ----------------TOSS_REQUESTS 조회---------------- //
       TossRequestVO tossRequest = paymentService.findTossRequestByPaymentNo(payment.getPaymentNo());
-      if (tossRequest == null || tossRequest.getPaymentKey() == null) {
-        return ResponseEntity.badRequest().body("Toss 결제 정보 없음");
+      if (tossRequest == null) return ResponseEntity.badRequest().body("Toss 결제 정보 없음");
+
+      String paymentKey = tossRequest.getPaymentKey();
+      if(paymentKey == null || paymentKey.isBlank()){
+
+        String orderIdForToss = tossRequest.getOrderId();
+        if(orderIdForToss == null || orderIdForToss.isBlank()) { orderIdForToss = "BG_" + String.format("%06d", payment.getPaymentNo()); }
+
+        HttpHeaders h = new HttpHeaders();
+        String basic = Base64.getEncoder().encodeToString((TOSS_SECRET_KEY + ":").getBytes("UTF-8"));
+        h.set("Authorization", "Basic " + basic);
+
+        ResponseEntity<JsonNode> findRes = restTemplate.exchange( TOSS_API_HOST + "/v1/payments/orders/" + orderIdForToss,
+                                                                  HttpMethod.GET,
+                                                                  new HttpEntity<>(h),
+                                                                  JsonNode.class );
+
+        if(!findRes.getStatusCode().is2xxSuccessful() || findRes.getBody() == null){ return ResponseEntity.status(500).body("Toss 결제 조회 실패"); }
+
+        String recoveredKey = findRes.getBody().path("paymentKey").asText(null);
+        if(recoveredKey == null || recoveredKey.isBlank()){ return ResponseEntity.status(500).body("Toss paymentKey 조회 실패"); }
+
+        TossRequestVO upd = new TossRequestVO();
+        upd.setPaymentNo(payment.getPaymentNo());
+        upd.setPaymentKey(recoveredKey);
+        paymentService.updateTossPaymentKey(upd);
+
+        paymentKey = recoveredKey;
+        tossRequest.setPaymentKey(recoveredKey);
       }
 
-      // 4) 토스 취소 API 호출
+      // ----------------취소 API 호출---------------- //
       HttpHeaders headers = new HttpHeaders();
       String encodedAuth = Base64.getEncoder().encodeToString((TOSS_SECRET_KEY + ":").getBytes("UTF-8"));
       headers.set("Authorization", "Basic " + encodedAuth);
@@ -465,37 +487,32 @@ public class PaymentController {
 
       Map<String, Object> params = new HashMap<>();
       params.put("cancelReason", cancelReason);
-      // 필요 시 부분취소 금액 지정: params.put("cancelAmount", payment.getAmount().intValue());
+      // 부분취소 시: params.put("cancelAmount", payment.getAmount().intValue());
 
-      HttpEntity<Map<String, Object>> request = new HttpEntity<>(params, headers);
-      String url = TOSS_API_HOST + "/v1/payments/" + tossRequest.getPaymentKey() + "/cancel";
-      ResponseEntity<JsonNode> response = restTemplate.postForEntity(url, request, JsonNode.class);
+      ResponseEntity<JsonNode> response = restTemplate.postForEntity( TOSS_API_HOST + "/v1/payments/" + paymentKey + "/cancel",
+                                                                      new HttpEntity<>(params, headers),
+                                                                      JsonNode.class );
 
-      if (response.getStatusCode().is2xxSuccessful()) {
-        // 5) 결제 상태 갱신 (3=환불완료)
-        paymentService.updatePaymentStatus(payment.getPaymentNo(), 3);
+      if (!response.getStatusCode().is2xxSuccessful()) { return ResponseEntity.status(500).body("토스페이 환불 실패"); }
 
-        // 6) 환불 이력 저장
-        TossCancelVO cancelVO = new TossCancelVO();
-        cancelVO.setPaymentNo(payment.getPaymentNo());
-        cancelVO.setPaymentKey(tossRequest.getPaymentKey());
-        cancelVO.setCancelReason(cancelReason);
-        paymentService.insertTossCancel(cancelVO);
+      // ----------------DB 반영---------------- //
+      paymentService.updatePaymentStatus(payment.getPaymentNo(), 3); // 3=환불완료
 
-        // 7) 사용자 경로라면 주문상태도 취소(4)로 업데이트
-        if (!body.containsKey("refundNo")) {
-          int orderId = Integer.parseInt(body.get("orderId").toString());
-          orderService.updateOrderStatus(orderId, 4);
-        }
-        
-        paymentService.logPayment(payment.getPaymentNo(), "[TOSS][CANCEL] 환불 완료, reason=" + cancelReason);
+      TossCancelVO cancelVO = new TossCancelVO();
+      cancelVO.setPaymentNo(payment.getPaymentNo());
+      cancelVO.setPaymentKey(paymentKey);
+      cancelVO.setCancelReason(cancelReason);
+      paymentService.insertTossCancel(cancelVO);
 
-        return ResponseEntity.ok("success");
-      } else {
-        return ResponseEntity.status(500).body("토스페이 환불 실패");
+      if(!body.containsKey("refundNo")){  // 사용자 경로면 주문상태도 취소(4)
+        int orderId = Integer.parseInt(body.get("orderId").toString());
+        orderService.updateOrderStatus(orderId, 4);
       }
 
-    } catch (Exception e) {
+      paymentService.logPayment(payment.getPaymentNo(), "[TOSS][CANCEL] 환불 완료, reason=" + cancelReason);
+      return ResponseEntity.ok("success");
+
+    }catch (Exception e){
       e.printStackTrace();
       return ResponseEntity.status(500).body("오류 발생: " + e.getMessage());
     }
