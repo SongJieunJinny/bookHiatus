@@ -221,27 +221,32 @@ public class OrderServiceImpl implements OrderService {
     String guestEmail = (String) orderData.get("guestEmail");
     String guestName  = (String) orderData.get("guestName");
     String guestPhone = (String) orderData.get("guestPhone");
+    
     if(guestEmail==null || guestName==null || guestPhone==null){ throw new IllegalStateException("비회원 주문 생성 시 필수 정보(이름/전화/이메일)가 누락되었습니다."); }
 
     GuestVO guest = guestService.getGuestByEmail(guestEmail);
-    String guestId;
+    String guestId; // 이 변수에는 항상 "G-..." 형태의 고유 ID가 담기게 됩니다.
+    
     if(guest == null){
-      guestId = "G-" + System.currentTimeMillis();
+      guestId = "G-" + System.currentTimeMillis(); // GUEST 테이블의 PK로 사용할 새 ID
       guest = new GuestVO();
       guest.setGuestId(guestId);
       guest.setGuestName(guestName);
       guest.setGuestPhone(guestPhone);
       guest.setGuestEmail(guestEmail);
       guestService.registerGuest(guest);
-    }else{
+    } else {
       guestId = guest.getGuestId();
     }
 
     @SuppressWarnings("unchecked")
     List<Map<String,Object>> items = (List<Map<String,Object>>) orderData.get("orderItems");
+    if(items == null || items.isEmpty()) { throw new IllegalStateException("주문 상품 정보가 없습니다."); }
+
     List<String> isbnList = new ArrayList<>();
     for (Map<String,Object> it : items) isbnList.add((String) it.get("isbn"));
     List<BookVO> books = orderDAO.selectBooksByIsbnList(isbnList);
+    
     int total = 0;
     for(Map<String,Object> it : items){
       String isbn = (String) it.get("isbn");
@@ -249,14 +254,16 @@ public class OrderServiceImpl implements OrderService {
       BookVO b = books.stream().filter(v->v.getIsbn().equals(isbn)).findFirst().orElseThrow(() -> new IllegalStateException("상품 없음: " + isbn));
       total += b.getProductInfo().getDiscount() * qty;
     }
+
     total += (total >= 50000 ? 0 : 3000); // 배송비 추가
 
-    // [핵심 수정] DB에 저장할 OrderVO 객체를 생성하고 값을 채웁니다.
     OrderVO orderToInsert = new OrderVO();
     orderToInsert.setOrderType(2); // 비회원
-    orderToInsert.setGuestId(guestId);
+    
+    orderToInsert.setGuestId(guestId); 
+    
     orderToInsert.setOrderKey(newOrderKey()); // 고유 키 생성
-    orderToInsert.setOrderPassword((String) orderData.get("orderPassword")); // (나중에 암호화 필요)
+    orderToInsert.setOrderPassword((String) orderData.get("orderPassword"));
     orderToInsert.setReceiverName((String) orderData.get("receiverName"));
     orderToInsert.setReceiverPhone((String) orderData.get("receiverPhone"));
     orderToInsert.setReceiverPostCode((String) orderData.get("receiverPostCode"));
@@ -265,18 +272,15 @@ public class OrderServiceImpl implements OrderService {
     orderToInsert.setDeliveryRequest((String) orderData.get("deliveryRequest"));
     orderToInsert.setOrderStatus(1); // 배송준비중
     orderToInsert.setTotalPrice(total);
-    
-    // DB에 주문 정보 INSERT
+
     orderDAO.insertOrder(orderToInsert);
 
-    // 주문 상세 정보 INSERT 로직 (기존 코드와 동일)
     List<OrderDetailVO> detailsList = new ArrayList<>();
     for(Map<String,Object> item : items){
       String isbn = (String) item.get("isbn");
       int qty = ((Number)item.get("quantity")).intValue();
       BookVO b = books.stream().filter(v->v.getIsbn().equals(isbn)).findFirst().get();
 
-      // 재고 차감
       if(!orderDAO.updateBookStock(isbn, qty)){ throw new IllegalStateException("재고가 부족합니다: " + b.getProductInfo().getTitle()); }
       
       OrderDetailVO detail = new OrderDetailVO();
@@ -287,7 +291,8 @@ public class OrderServiceImpl implements OrderService {
       detail.setRefundCheck(0);
       detailsList.add(detail);
     }
-    if(!detailsList.isEmpty()){ orderDAO.insertOrderDetailList(detailsList); }
+
+    if(!detailsList.isEmpty()){  orderDAO.insertOrderDetailList(detailsList); }
 
     return orderToInsert;
   }
