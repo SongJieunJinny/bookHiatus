@@ -23,5 +23,10 @@ public class GuestDAO {
   public GuestVO findGuestByEmail(String email) {
     return sqlSession.selectOne(name_space + "findGuestByEmail", email);
   }
+  
+  // guestId를 기준으로 이름과 연락처를 업데이트하는 쿼리
+  public int updateGuestInfo(GuestVO guestVO) {
+    return sqlSession.update(name_space + "updateGuestInfo", guestVO);
+  }
 
 }
