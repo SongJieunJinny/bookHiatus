@@ -22,8 +22,5 @@ public class ProductApiDAO {
 	        ProductApiVO result = sqlSession.selectOne("com.bookGap.mapper.ProductApiMapper.selectProductApiByIsbn", isbn);
 	        return result != null;
 	    }
-	    
-	   // public List<ProductApiVO> selectBookImg() {
-	    	// return sqlSession.selectList("com.bookGap.mapper.ProductApiMapper.selectBookImg");
-	   // }
+
 }

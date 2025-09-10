@@ -18,7 +18,6 @@ import com.bookGap.service.ComplainService;
 import com.bookGap.vo.CommentVO;
 import com.bookGap.vo.ComplainVO;
 
-
 @RequestMapping(value="/comment")
 @Controller
 public class CommentController {
