@@ -29,5 +29,13 @@
      WHERE GUEST_EMAIL = #{value}
      LIMIT 1
 	</select>
+	
+	<!-- guestId를 기준으로 이름과 연락처를 업데이트하는 쿼리 -->
+    <update id="updateGuestInfo" parameterType="com.bookGap.vo.GuestVO">
+        UPDATE GUEST
+           SET GUEST_NAME = #{guestName},
+               GUEST_PHONE = #{guestPhone}
+         WHERE GUEST_ID = #{guestId}
+    </update>
 
 </mapper>

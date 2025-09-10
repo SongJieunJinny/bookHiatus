@@ -25,13 +25,13 @@
     <div class="orderInfoBox">
       <p><strong>주문번호 : </strong>${order.orderKey}</p>
       <p><strong>주문일 : </strong> <fmt:formatDate value="${order.orderDate}" pattern="yyyy-MM-dd HH:mm"/></p>
-     <p><strong>결제수단 : </strong>
-		  <c:choose>
-			  <c:when test="${not empty order.payment && order.payment.paymentMethod == 1}">TossPay</c:when>
-			  <c:when test="${not empty order.payment && order.payment.paymentMethod == 2}">KakaoPay</c:when>
-			  <c:otherwise>결제수단 정보 없음</c:otherwise>
-		  </c:choose>
-     </p>
+      <p><strong>결제수단 : </strong>
+			  <c:choose>
+				  <c:when test="${not empty order.payment && order.payment.paymentMethod == 1}">TossPay</c:when>
+				  <c:when test="${not empty order.payment && order.payment.paymentMethod == 2}">KakaoPay</c:when>
+				  <c:otherwise>결제수단 정보 없음</c:otherwise>
+			  </c:choose>
+      </p>
     </div>
     
     <!-- 배송 정보 -->
