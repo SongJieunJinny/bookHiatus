@@ -21,10 +21,18 @@
     <!-- 주문 기본 정보 -->
     <div class="guestOrderDetailsTitle">주문 정보</div>
     <div class="orderInfoBox">
-      <p><strong>주문번호 :</strong> ${order.orderId}</p>
+      <p><strong>주문자명 :</strong> ${order.guestName}</p>
+      <p><strong>주문자 연락처 :</strong> ${order.guestPhone}</p>
+      <p><strong>주문자 이메일 :</strong> ${order.guestEmail}</p>
+      <p><strong>주문번호 :</strong> ${order.orderKey}</p>
       <p><strong>주문일 :</strong> <fmt:formatDate value="${order.orderDate}" pattern="yyyy-MM-dd HH:mm"/></p>
-      <p><strong>결제번호 :</strong> ${order.payment.paymentNo}</p>
-      <p><strong>이메일 :</strong> ${order.guestEmail}</p>
+      <p><strong>결제수단 : </strong>
+			  <c:choose>
+				  <c:when test="${not empty order.payment && order.payment.paymentMethod == 1}">TossPay</c:when>
+				  <c:when test="${not empty order.payment && order.payment.paymentMethod == 2}">KakaoPay</c:when>
+				  <c:otherwise>결제수단 정보 없음</c:otherwise>
+			  </c:choose>
+      </p>
     </div>
 
     <!-- 주문 상품 목록 -->
@@ -33,32 +41,31 @@
 			<p><strong>수령인 : </strong> ${order.receiverName}</p>
 			<p><strong>연락처 : </strong> ${order.receiverPhone}</p>
 			<p><strong>주소 : </strong> ${order.receiverRoadAddress} ${order.receiverDetailAddress} (${order.receiverPostCode})</p>
-			<c:if test="${not empty order.courier}">
-	      <p><strong>택배사 : </strong> ${order.courier}</p>
-	    </c:if>
-	    <c:if test="${not empty order.invoice}">
-	      <p><strong>송장번호 : </strong> ${order.invoice}</p>
-	    </c:if>
+			<c:if test="${not empty order.courier}"><p><strong>택배사 : </strong> ${order.courier}</p></c:if>
+	    <c:if test="${not empty order.invoice}"><p><strong>송장번호 : </strong> ${order.invoice}</p></c:if>
 			<p><strong>배송상태 : </strong>
-				<c:choose>
-			    <c:when test="${not empty order.refundStatus}">
-			      <c:choose>
-			        <c:when test="${order.refundStatus == 1}">환불요청</c:when>
-			        <c:when test="${order.refundStatus == 2}">환불처리중</c:when>
-			        <c:when test="${order.refundStatus == 3}">환불완료</c:when>
-			        <c:when test="${order.refundStatus == 4}">환불거절</c:when>
-			      </c:choose>
-			    </c:when>
-			    <c:otherwise>
-			      <c:choose>
-			        <c:when test="${order.orderStatus == 1}">배송준비중</c:when>
-			        <c:when test="${order.orderStatus == 2}">배송중</c:when>
-			        <c:when test="${order.orderStatus == 3}">배송완료</c:when>
-			        <c:when test="${order.orderStatus == 4}">주문취소</c:when>
-			        <c:when test="${order.orderStatus == 5}">교환 및 반품</c:when>
-			      </c:choose>
-			    </c:otherwise>
-			  </c:choose>
+				<span id="deliveryStatusText" class="status-refund-${order.refundStatus}">
+          <c:choose>
+            <c:when test="${not empty order.refundStatus and order.refundStatus > 0}">
+              <c:choose>
+                <c:when test="${order.refundStatus == 1 and order.orderStatus == 1}">주문취소 요청</c:when>
+                <c:when test="${order.refundStatus == 1}">환불요청</c:when>
+                <c:when test="${order.refundStatus == 2}">환불처리중</c:when>
+                <c:when test="${order.refundStatus == 3}">환불완료</c:when>
+                <c:when test="${order.refundStatus == 4}">환불거절</c:when>
+              </c:choose>
+            </c:when>
+            <c:otherwise>
+              <c:choose>
+                <c:when test="${order.orderStatus == 1}">배송준비중</c:when>
+                <c:when test="${order.orderStatus == 2}">배송중</c:when>
+                <c:when test="${order.orderStatus == 3}">배송완료</c:when>
+                <c:when test="${order.orderStatus == 4}">주문취소</c:when>
+                <c:when test="${order.orderStatus == 5}">교환 및 반품</c:when>
+              </c:choose>
+            </c:otherwise>
+          </c:choose>
+        </span>
 			</p>
 		</div>
 
@@ -77,10 +84,7 @@
       <tbody>
       <c:forEach var="item" items="${order.orderDetails}">
 			  <tr>
-			    <td>
-			      <img src="<c:out value='${empty item.book.productInfo.image ? "/resources/img/no_image.png" : item.book.productInfo.image}'/>"
-			           alt="${item.book.productInfo.title}" style="width:80px;"/>
-			    </td>
+			    <td><img src="<c:out value='${empty item.book.productInfo.image ? "/resources/img/no_image.png" : item.book.productInfo.image}'/>" alt="${item.book.productInfo.title}" style="width:80px;"/></td>
 			    <td>${item.book.productInfo.title}</td>
 			    <td>${item.book.productInfo.author} / ${item.book.productInfo.publisher}</td>
 			    <td>${item.orderCount}개</td>
@@ -97,6 +101,7 @@
 	      <c:otherwise> 환불 신청 </c:otherwise>
 	    </c:choose>
     </div>
+    
     <c:if test="${order.orderStatus != 4 && (order.refundStatus == null or order.refundStatus == 0)}">
 	    <input type="hidden" id="guestEmailForRedirect" value="${guestEmail}">
 	    <input type="hidden" id="orderPasswordForRedirect" value="${orderPassword}">
@@ -122,20 +127,20 @@
 				  - 반품/교환 시 단순변심에 의한 배송비 발생 시 해당 배송비를 제한 후 환불 됩니다.
 				  </div>
 	
-				<button class="guestRefundFormButton" type="submit">
-				  <c:choose>
-	          <c:when test="${order.orderStatus == 1}"> 주문 취소하기 </c:when>
-	          <c:otherwise> 환불 신청하기 </c:otherwise>
-          </c:choose>
-        </button>
-			</div> 
-			  
-			</form>
-		</c:if>
-		<div id="refundStatusBox" style="display: none;">
-      환불 신청 상태 : <strong id="refundStatusText"></strong>
+					<button class="guestRefundFormButton" type="submit">
+	          <c:choose>
+	            <c:when test="${order.orderStatus == 1}"> 주문 취소하기 </c:when>
+	            <c:otherwise> 환불 신청하기 </c:otherwise>
+	          </c:choose>
+	        </button>
+	      </div>
+	    </form>
+	  </c:if>
+
+		<div id="refundStatusBox">
+      상태 : <strong id="refundStatusText"></strong>
     </div>
-    <button id="backGuestOrderInfo">주문화면 돌아가기</button>
+    <button id="backGuestOrderInfo">메인화면으로 돌아가기</button>
   </div>
 </section>
 <jsp:include page="/WEB-INF/views/include/footer.jsp" />
@@ -144,47 +149,73 @@
 $(document).ready(function() {
   updateCartCount();
   initHeaderEvents();
-  checkExistingRefund();
   
-  $('#backGuestOrderInfo').click(function() {
-	  submitPostRedirect();
-  });  
+  const orderStatus = "${order.orderStatus}";
+  const refundStatus = "${order.refundStatus}";
   
+  //---------------------페이지 로딩 시 초기 상태 설정--------------------- //
+  if(refundStatus && Number(refundStatus) > 0){
+    showStatus(getRefundStatusText(Number(refundStatus), orderStatus));
+    $("#guestRefundForm").hide();
+  }else{
+    $("#refundStatusBox").hide();
+  }
+  
+  //---------------------주문 목록으로 돌아가기--------------------- //
+  $('#backGuestOrderInfo').on('click', function () { window.location.href = "<%= request.getContextPath() %>"; });  
+  
+  //---------------------"주문취소"와 "환불신청" 로직을 하나로 통합--------------------- //
   $("#guestRefundForm").submit(function(e){
     e.preventDefault(); 
-    if (!confirm("정말로 환불을 신청하시겠습니까?")) { return; }
+    
+    const $form = $(this);
+    const $button = $form.find('.guestRefundFormButton');
+    const originalButtonText = $button.text();
+
+    const paymentNo = $form.find('input[name="paymentNo"]').val();
+    if(!paymentNo || paymentNo === '0'){
+      alert("결제 정보가 유효하지 않아 신청할 수 없습니다.");
+      return;
+    }
+
+    const confirmMessage = (orderStatus == 1) 
+      ? "주문을 취소하시겠습니까? 관리자 확인 후 처리됩니다." 
+      : "정말로 환불을 신청하시겠습니까?";
+        
+    if (!confirm(confirmMessage)) return;
+
+    $button.prop('disabled', true).text('처리 중...');
     const formData = new URLSearchParams(new FormData(this)).toString();
-    fetch(this.action, {
-      method: "POST",
-      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-      body: formData 
-    })
-    .then(response => {
-      if (!response.ok) throw new Error('Server responded with an error.');
-      return response.text();
-    })
+    
+    fetch(this.action, { method: this.method,
+									       headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+									       body: formData  })
+    .then(res => res.text())
     .then(result => {
-      if(result === "success") {
-        alert("✅ 환불 신청이 완료되었습니다. 비회원 주문조회 페이지로 이동합니다.");
-        submitPostRedirect();
-      } else {
-        alert("❌ 환불 신청에 실패했습니다: " + result);
-      }
+	    if(result === "success"){
+	      alert("신청이 정상적으로 접수되었습니다.");
+	      $form.hide();
+	      const newStatusText = (orderStatus == 1) ? "주문취소 요청" : "환불요청";
+	      showStatus(newStatusText);
+	    }else{
+	      alert("신청 실패: " + result);
+	      $button.prop('disabled', false).text(originalButtonText);
+	    }
     })
     .catch(err => {
-      console.error("환불 신청 오류:", err);
       alert("처리 중 오류가 발생했습니다: " + err.message);
+      $button.prop('disabled', false).text(originalButtonText);
     });
   });
 });
 
+// ---------------------공통 헬퍼(Helper) 함수들--------------------- //
 function submitPostRedirect() {
 	const guestEmail = document.getElementById('guestEmailForRedirect').value;
 	const orderPassword = document.getElementById('orderPasswordForRedirect').value;
-
 	const form = document.createElement('form');
   form.method = 'POST';
-  form.action = '<%=request.getContextPath()%>/guest/guestOrderInfo.do';
+  form.action = `${contextPath}/guest/guestOrderInfo.do`;
   const emailInput = document.createElement('input');
   emailInput.type = 'hidden';
   emailInput.name = 'guestEmail';
@@ -199,32 +230,15 @@ function submitPostRedirect() {
   form.submit();
 }
 
-function checkExistingRefund() {
-  const orderId = "${order.orderId}";
-  const paymentNo = "${not empty order.payment ? order.payment.paymentNo : order.paymentNo}";
-
-  if (!orderId || !paymentNo || paymentNo === '0') return;
-  
-  fetch(`<%=request.getContextPath()%>/refund/status.do?orderId=\${orderId}&paymentNo=\${paymentNo}`)
-    .then(res => res.text()) 
-    .then(text => {
-      if(text) {
-        try {
-          const refund = JSON.parse(text);
-          if(refund && refund.refundStatus) {
-            $("#guestRefundForm").hide();
-            const statusText = getRefundStatusText(refund.refundStatus);
-            $("#refundStatusText").text(statusText);
-            $("#refundStatusBox").show();
-          }
-        } catch (e) {
-          console.error("JSON 파싱 오류:", e);
-        }
-      }
-    });
+function showStatus(text) {
+  $("#deliveryStatusText").text(text);
+  $("#refundStatusText").text(text);
+  $("#refundStatusBox").show();
 }
 
-function getRefundStatusText(status) {
+function getRefundStatusText(status, orderStatus) {
+  if(status === 1 && orderStatus == 1){ return "주문취소 요청"; }
+  
   switch (status) {
     case 1: return "환불요청";
     case 2: return "환불처리중";

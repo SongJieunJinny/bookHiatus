@@ -117,38 +117,6 @@ public class OrderServiceImpl implements OrderService {
     }
   }
   
-  @Transactional
-  @Override
-  public OrderVO createGuestOrder(Map<String, Object> orderData) throws Exception {
-    OrderVO newOrder = new OrderVO();
-    newOrder.setOrderKey(newOrderKey());
-    newOrder.setOrderType(2);
-    newOrder.setOrderStatus(1);
-    newOrder.setTotalPrice(((Number)orderData.getOrDefault("totalPrice",0)).intValue());
-    newOrder.setReceiverName((String) orderData.get("receiverName"));
-    newOrder.setReceiverPhone((String) orderData.get("receiverPhone"));
-    newOrder.setReceiverPostCode((String) orderData.get("receiverPostCode"));
-    newOrder.setReceiverRoadAddress((String) orderData.get("receiverRoadAddress"));
-    newOrder.setReceiverDetailAddress((String) orderData.get("receiverDetailAddress"));
-    newOrder.setDeliveryRequest((String) orderData.get("deliveryRequest"));
-    orderDAO.insertOrder(newOrder);
-
-    @SuppressWarnings("unchecked")
-    List<Map<String,Object>> items = (List<Map<String,Object>>) orderData.get("items");
-    List<OrderDetailVO> list = new ArrayList<>();
-    for (Map<String,Object> it : items) {
-      OrderDetailVO d = new OrderDetailVO();
-      d.setOrderId(newOrder.getOrderId());
-      d.setBookNo(((Number)it.get("bookNo")).intValue());
-      d.setOrderCount(((Number)it.get("quantity")).intValue());
-      d.setOrderPrice(((Number)it.get("priceAtPurchase")).intValue());
-      d.setRefundCheck(0);
-      list.add(d);
-    }
-    if (!list.isEmpty()) orderDAO.insertOrderDetailList(list);
-    return newOrder;
-  }
-  
   @Override
   @Transactional
   public int createOrderWithDetails(Map<String, Object> orderData) throws IllegalStateException {
@@ -213,6 +181,38 @@ public class OrderServiceImpl implements OrderService {
     
     return generatedOrderId;
   }
+  
+  @Transactional
+  @Override
+  public OrderVO createGuestOrder(Map<String, Object> orderData) throws Exception {
+    OrderVO newOrder = new OrderVO();
+    newOrder.setOrderKey(newOrderKey());
+    newOrder.setOrderType(2);
+    newOrder.setOrderStatus(1);
+    newOrder.setTotalPrice(((Number)orderData.getOrDefault("totalPrice",0)).intValue());
+    newOrder.setReceiverName((String) orderData.get("receiverName"));
+    newOrder.setReceiverPhone((String) orderData.get("receiverPhone"));
+    newOrder.setReceiverPostCode((String) orderData.get("receiverPostCode"));
+    newOrder.setReceiverRoadAddress((String) orderData.get("receiverRoadAddress"));
+    newOrder.setReceiverDetailAddress((String) orderData.get("receiverDetailAddress"));
+    newOrder.setDeliveryRequest((String) orderData.get("deliveryRequest"));
+    orderDAO.insertOrder(newOrder);
+
+    @SuppressWarnings("unchecked")
+    List<Map<String,Object>> items = (List<Map<String,Object>>) orderData.get("items");
+    List<OrderDetailVO> list = new ArrayList<>();
+    for (Map<String,Object> it : items) {
+      OrderDetailVO d = new OrderDetailVO();
+      d.setOrderId(newOrder.getOrderId());
+      d.setBookNo(((Number)it.get("bookNo")).intValue());
+      d.setOrderCount(((Number)it.get("quantity")).intValue());
+      d.setOrderPrice(((Number)it.get("priceAtPurchase")).intValue());
+      d.setRefundCheck(0);
+      list.add(d);
+    }
+    if (!list.isEmpty()) orderDAO.insertOrderDetailList(list);
+    return newOrder;
+  }
 
   @Transactional
   @Override
@@ -237,6 +237,9 @@ public class OrderServiceImpl implements OrderService {
       guestService.registerGuest(guest);
     } else {
       guestId = guest.getGuestId();
+      guest.setGuestName(guestName);
+      guest.setGuestPhone(guestPhone);
+      guestService.updateGuestInfo(guest);
     }
 
     @SuppressWarnings("unchecked")
@@ -258,9 +261,9 @@ public class OrderServiceImpl implements OrderService {
     total += (total >= 50000 ? 0 : 3000); // 배송비 추가
 
     OrderVO orderToInsert = new OrderVO();
-    orderToInsert.setOrderType(2); // 비회원
-    
     orderToInsert.setGuestId(guestId); 
+    orderToInsert.setOrderType(2); // 비회원
+    orderToInsert.setOrderStatus(1); // 배송준비중
     
     orderToInsert.setOrderKey(newOrderKey()); // 고유 키 생성
     orderToInsert.setOrderPassword((String) orderData.get("orderPassword"));
@@ -270,7 +273,6 @@ public class OrderServiceImpl implements OrderService {
     orderToInsert.setReceiverRoadAddress((String) orderData.get("receiverRoadAddress"));
     orderToInsert.setReceiverDetailAddress((String) orderData.get("receiverDetailAddress"));
     orderToInsert.setDeliveryRequest((String) orderData.get("deliveryRequest"));
-    orderToInsert.setOrderStatus(1); // 배송준비중
     orderToInsert.setTotalPrice(total);
 
     orderDAO.insertOrder(orderToInsert);

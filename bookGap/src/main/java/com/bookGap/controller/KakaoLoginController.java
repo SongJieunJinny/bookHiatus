@@ -6,13 +6,10 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 import org.springframework.http.*;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
-import java.util.*;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -21,12 +18,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 
 import com.bookGap.service.KakaoUserDetails;
 import com.bookGap.service.UserService;
 import com.bookGap.vo.UserInfoVO;
-import com.bookGap.vo.UserVO;
 
 @Controller
 public class KakaoLoginController {

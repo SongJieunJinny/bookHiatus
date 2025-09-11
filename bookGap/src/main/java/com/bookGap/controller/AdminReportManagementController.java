@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.bookGap.service.ComplainService;
-import com.bookGap.vo.BookVO;
 import com.bookGap.vo.ComplainSummaryVO;
 import com.bookGap.vo.ComplainVO;
 
