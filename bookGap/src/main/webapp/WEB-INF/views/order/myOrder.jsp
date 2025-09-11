@@ -88,10 +88,11 @@
 								  <c:choose>
 								    <c:when test="${not empty order.refundStatus}">
 								      <c:choose>
-								        <c:when test="${order.refundStatus == 1}">환불요청</c:when>
-								        <c:when test="${order.refundStatus == 2}">환불처리중</c:when>
-								        <c:when test="${order.refundStatus == 3}">환불완료</c:when>
-								        <c:when test="${order.refundStatus == 4}">환불거절</c:when>
+								        <c:when test="${order.refundStatus == 1 and order.orderStatus == 1}">주문취소 요청</c:when>
+				                <c:when test="${order.refundStatus == 1}">환불요청</c:when>
+				                <c:when test="${order.refundStatus == 2}">환불처리중</c:when>
+				                <c:when test="${order.refundStatus == 3}">환불완료</c:when>
+				                <c:when test="${order.refundStatus == 4}">환불거절</c:when>
 								      </c:choose>
 								    </c:when>
 								    <c:otherwise>
@@ -99,7 +100,8 @@
 								        <c:when test="${order.orderStatus == 1}">배송준비중</c:when>
 								        <c:when test="${order.orderStatus == 2}">배송중</c:when>
 								        <c:when test="${order.orderStatus == 3}">배송완료</c:when>
-								        <c:when test="${order.orderStatus == 4}">배송취소</c:when>
+								        <c:when test="${order.orderStatus == 4}">주문취소</c:when>
+								        <c:when test="${order.orderStatus == 5}">교환 및 반품</c:when>
 								      </c:choose>
 								    </c:otherwise>
 								  </c:choose>

@@ -1,9 +1,7 @@
 package com.bookGap.controller;
 
-import java.util.LinkedHashSet;
+
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,9 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.bookGap.service.BookService;
 import com.bookGap.service.RecommendBookService;
-import com.bookGap.vo.ProductApiVO;
 import com.bookGap.vo.RecommendBookVO;
 import com.bookGap.vo.SearchVO;
 

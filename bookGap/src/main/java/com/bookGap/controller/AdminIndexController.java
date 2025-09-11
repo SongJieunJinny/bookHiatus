@@ -1,23 +1,13 @@
 package com.bookGap.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.bookGap.service.AdminBookService;
 import com.bookGap.service.AdminSalesService;
 import com.bookGap.service.AdminScheduleService;
-import com.bookGap.service.AdminUserInfoService;
-import com.bookGap.service.BookService;
-import com.bookGap.service.ProductApiService;
-import com.bookGap.vo.BookVO;
-import com.bookGap.vo.UserInfoVO;
 
 @Controller
 public class AdminIndexController {

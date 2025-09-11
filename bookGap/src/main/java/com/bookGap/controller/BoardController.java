@@ -17,7 +17,6 @@ import com.bookGap.service.BoardService;
 import com.bookGap.service.BookService;
 import com.bookGap.util.PagingUtil;
 import com.bookGap.vo.BoardVO;
-import com.bookGap.vo.BookVO;
 import com.bookGap.vo.SearchVO;
 
 @Controller

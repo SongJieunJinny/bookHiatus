@@ -23,5 +23,10 @@ public class GuestServiceImpl implements GuestService {
   public GuestVO getGuestByEmail(String email) {
     return guestDAO.findGuestByEmail(email);
   }
+  
+  @Override
+  public void updateGuestInfo(GuestVO guestVO) {
+    guestDAO.updateGuestInfo(guestVO);
+  }
 
 }

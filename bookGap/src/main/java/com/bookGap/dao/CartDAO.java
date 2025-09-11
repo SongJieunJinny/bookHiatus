@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 
 import com.bookGap.vo.BookVO;
 import com.bookGap.vo.CartVO;
-import com.bookGap.vo.MypageVO;
 
 @Repository
 public class CartDAO {
