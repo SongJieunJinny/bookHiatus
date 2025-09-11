@@ -12,15 +12,33 @@
 		<security:intercept-url pattern="/**" requires-channel="https"/>
 		<!-- permitAll태그는 모든 사용자에게 허용 -->
 		<security:intercept-url pattern="/" access="permitAll"/>	
+		
 		<security:intercept-url pattern="/guest/guestOrder.do" access="permitAll"/>
-		<!-- 게스트 주문 생성은 POST만 허용 -->
-		<security:intercept-url pattern="/order/guest/create" method="POST" access="permitAll"/>
-		<!-- 게스트 주문 조회(번호+이메일로 조회) POST만 허용 -->
-		<security:intercept-url pattern="/guest/guestOrderInfo.do" method="POST" access="permitAll"/>
 		<!-- 게스트 주문 상세 페이지(조회 후 이동) -->
 		<security:intercept-url pattern="/guest/guestOrderDetailsView.do" access="permitAll"/>	
-				
+		<!-- 게스트 주문 조회(번호+이메일로 조회) POST만 허용 -->
+		<security:intercept-url pattern="/guest/guestOrderInfo.do" method="POST" access="permitAll"/>
+		<security:intercept-url pattern="/order/orderComplete.do" access="permitAll"/>
+						<!-- 게스트 주문 생성은 POST만 허용 -->
+		<security:intercept-url pattern="/order/guest/create" method="POST" access="permitAll"/>
+		<security:intercept-url pattern="/product/**" access="permitAll"/>
+		<security:intercept-url pattern="/board/eventList.do" access="permitAll"/>
+		<security:intercept-url pattern="/board/eventView.do"  access="permitAll"/>
+		<security:intercept-url pattern="/board/noticeList.do" access="permitAll"/>
+		<security:intercept-url pattern="/board/noticeView.do"  access="permitAll"/>
+		<security:intercept-url pattern="/board/qnaList.do" access="permitAll"/>
+		<security:intercept-url pattern="/board/qnaView.do"  access="permitAll"/>
+		<security:intercept-url pattern="/choice/choiceList.do"  access="permitAll"/>
+		<security:intercept-url pattern="/popup/bookPopup.do"  access="permitAll"/>
+		
+		<!-- 인증 필요  -->
 		<security:intercept-url pattern="/order/**" access="isAuthenticated()"/>
+		<security:intercept-url pattern="/board/noticeWrite.do"  access="isAuthenticated()"/>
+		<security:intercept-url pattern="/board/noticeModify.do"  access="isAuthenticated()"/>
+		<security:intercept-url pattern="/board/eventWrite.do"  access="isAuthenticated()"/>
+		<security:intercept-url pattern="/board/eventModify.do" access="isAuthenticated()"/>
+		<security:intercept-url pattern="/board/qnaWrite.do" access="isAuthenticated()"/>
+		<security:intercept-url pattern="/board/qnaModify.do" access="isAuthenticated()"/>
 
 		<!-- hasAnyRole 제시된 권한 중 하나라도 가지고 있으면 true 하나만 가지고 있으면 false -->
 		<security:intercept-url pattern="/user/**" access="hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_USER_KAKAO')"/>
