@@ -32,12 +32,48 @@
   
 --- 
 
-## 기술 및 컨벤션
-- **사용자 영역(User-facing)**: JSP, JSTL(`c:`), Spring Security Tags(`sec:`), jQuery(Ajax)
-- **관리자 영역(Admin)**: **Bootstrap 5 기반 관리자 레이아웃** + jQuery + simple-datatables + Chart.js + FullCalendar
-- **공통 레이아웃**: `adminHeader.jsp`, `adminNav.jsp`, `adminFooter.jsp`
-- **외부 연동**: Naver Book 검색 API(도서 등록 자동화), Toss/KakaoPay 결제취소 API(환불 처리)
-- **UX 강화**: 데이터 검증(송장 영숫자, 배송상태 전이 조건), 금액·날짜 포맷(`toLocaleString`, `Date.toLocaleString("ko-KR")`), 반응형 테이블, 차트 시각화
+## ⚙️ 기술 및 컨벤션
+### 🧑‍💻 사용자 영역 (User-facing)
+- JSP + JSTL(c:), Spring Security 태그(sec:) 기반 뷰 렌더링
+- jQuery Ajax 통신으로 비동기 처리 (로그인/회원가입/주문/댓글 등)
+- 회원 비밀번호: BCryptPasswordEncoder 단방향 암호화
+- ROLE_USER / ROLE_ADMIN 권한 기반 접근 제어
+
+### 🛠 관리자 영역 (Admin)
+- Bootstrap 5 관리자 레이아웃 (SB Admin)
+- jQuery + simple-datatables (리스트/검색/페이징)
+- Chart.js (매출·통계 시각화), FullCalendar (일정 관리)
+- Ajax 요청 컨벤션: /admin/도메인/액션 (/admin/books/bookInsert)
+- 응답 포맷: {success:true, data:...} 구조 통일
+
+### 🧩 공통 레이아웃
+- adminHeader.jsp, adminNav.jsp, adminFooter.jsp로 모듈화
+- header.jsp, footer.jsp (사용자 영역 공통 레이아웃)
+- err401.jsp, err404.jsp, err500.jsp 에러 페이지 분리
+
+###🌐 외부 연동
+- Naver Book API: 도서 등록 자동화 (관리자 페이지 검색 → 자동 입력)
+- KakaoPay / TossPayments API: 결제 승인·취소·환불 처리
+- API Key/Secret 값은 환경변수·properties 파일로 분리 관리
+
+###🎨 UX / UI 컨벤션
+- 데이터 검증: 송장번호 영숫자, 배송상태 전이 조건(배송중→완료) 필수 검증
+- 금액: toLocaleString("ko-KR") / 날짜: Date.toLocaleString("ko-KR")
+- 반응형 CSS (@media) 적용 — PC·Tablet·Mobile 대응
+- 공통 스크립트 함수화 (updateCartCount(), normalizeCartItems())
+- Mapper XML 네임스페이스 규칙: 도메인Mapper (예: BookMapper, OrderMapper)
+
+### 🏗 아키텍처 & DB 설계
+- 계층 구조: Controller → Service → DAO → MyBatis Mapper → DB
+- VO 클래스 일관된 네이밍(*VO)
+- DB 정규화 및 FK 관계 명확화
+- 작성일(BOARD_RDATE) vs 수정일(BOARD_UDATE) 분리 관리
+- 비회원 주문: UUID 기반 orderKey 발급 → 이메일 + orderKey 조합 조회
+
+### 🔄 운영 & 유지보수
+- contextPath 기반 리소스 참조 (<c:url>, ${pageContext.request.contextPath})
+- InventoryScheduler (5분 주기) → 도서 재고 상태 자동 갱신
+- 공통 에러 처리: ControllerAdvice or try-catch 기반 JSON 응답 일관성 유지
   
 --- 
 ## 트러블슈팅
