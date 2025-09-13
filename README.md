@@ -16,14 +16,14 @@
 
 --- 
 
-## 개요
-- 온라인 서점 웹서비스로, 사용자·비회원 주문/결제, 도서 검색·상세·장바구니, 게시판(공지/Q&A/이벤트) 등 커머스 핵심 흐름을 end-to-end로 구현했습니다.
-- Spring MVC + MyBatis + MySQL 기반 백엔드와 JSP/jQuery/Bootstrap UI, Spring Security 인증/인가, 외부 연동(Naver Book, Kakao 로그인, KakaoPay·TossPay 결제)을 통합했습니다.
-- 비회원은 UUID 기반 주문키로 안전하게 조회하고, 배송 시작 전/후를 기준으로 취소·환불을 분기 처리하여 정합성과 보안을 강화했습니다.
-- 관리자 콘솔에서는 도서/추천/재고/주문·환불/신고/매출·일정 관리와 대시보드 차트를 제공해 운영 효율을 높였습니다.
+## 📌개요
+- 온라인 독립서점 웹서비스로, 사용자·비회원 주문/결제, 도서 검색·상세·장바구니, 게시판(공지/Q&A/이벤트) 등 커머스 핵심 흐름을 end-to-end로 구현.
+- Spring MVC + MyBatis + MySQL 기반 백엔드와 JSP/jQuery/Bootstrap UI, Spring Security 인증/인가, 외부 연동(Naver Book, Kakao 로그인, KakaoPay·TossPay 결제)을 통합.
+- 비회원은 UUID 기반 주문키로 안전하게 조회하고, 배송 시작 전/후를 기준으로 취소·환불을 분기 처리하여 보안성 강화.
+- 관리자 콘솔에서는 도서/추천/재고/주문·환불/신고/매출·일정 관리와 대시보드 차트를 제공해 운영 효율성을 중시.
   
 --- 
-## 주요기능
+## 📝주요기능
 
 - 사용자 기능: 도서 목록/상세, 리뷰, 장바구니·주문
 - 관리자 기능: 도서/추천/재고/주문·배송/환불/신고/매출/일정/회원 관리
@@ -76,7 +76,7 @@
 - 공통 에러 처리: ControllerAdvice or try-catch 기반 JSON 응답 일관성 유지
   
 --- 
-## 트러블슈팅
+## 🐞트러블슈팅
 
 # 트러블슈팅 심화 정리
 - [회원,비회원 결제로직 혼재문제](../../wiki/회원,비회원-결제로직-혼재문제)
@@ -259,7 +259,7 @@ function normalizeCartItems(items) {
 ```
 --- 
 
-## 개발환경
+## 💻개발환경
 
 - JDK 1.8, MySQL 8.0, TOMCAT 9.0, SPRING FRAMEWORK 4.3.3.RELEASE, SPRING SECURITY 3.2.10.RELEASE, MyBatis 3.4.1
 - JAVA8, HTML5, CSS3, JSP4, JavaScript, jQuery, Ajax
@@ -267,7 +267,7 @@ function normalizeCartItems(items) {
   
 --- 
 
-## ERD
+## 🔗ERD
 
 ```mermaid
 erDiagram
@@ -540,7 +540,7 @@ erDiagram
 
 
 ---
-## 프로젝트 파일 구조
+## 📂프로젝트 파일 구조
 
 
 ### BackEnd (Java + Spring)
@@ -899,8 +899,8 @@ src/
 ```
 --- 
 
-## 명세서 API Reference
-- [📖API Reference](../../wiki/API-Reference)
+## 📖명세서 API Reference
+- [API Reference](../../wiki/API-Reference)
 
 --- 
 
