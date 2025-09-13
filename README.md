@@ -51,12 +51,12 @@
 - header.jsp, footer.jsp (사용자 영역 공통 레이아웃)
 - err401.jsp, err404.jsp, err500.jsp 에러 페이지 분리
 
-###🌐 외부 연동
+### 🌐 외부 연동
 - Naver Book API: 도서 등록 자동화 (관리자 페이지 검색 → 자동 입력)
 - KakaoPay / TossPayments API: 결제 승인·취소·환불 처리
 - API Key/Secret 값은 환경변수·properties 파일로 분리 관리
 
-###🎨 UX / UI 컨벤션
+### 🎨 UX / UI 컨벤션
 - 데이터 검증: 송장번호 영숫자, 배송상태 전이 조건(배송중→완료) 필수 검증
 - 금액: toLocaleString("ko-KR") / 날짜: Date.toLocaleString("ko-KR")
 - 반응형 CSS (@media) 적용 — PC·Tablet·Mobile 대응
