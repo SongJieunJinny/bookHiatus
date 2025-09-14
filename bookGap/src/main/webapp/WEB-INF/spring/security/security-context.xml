@@ -8,95 +8,169 @@
 	<!-- 제외 url pattern -->
 	<security:http pattern="/resources/**" security="none" />
 	<security:http auto-config="true" use-expressions="true" create-session="ifRequired">
-	
-		<security:intercept-url pattern="/**" requires-channel="https"/>
-		<!-- permitAll태그는 모든 사용자에게 허용 -->
-		<security:intercept-url pattern="/" access="permitAll"/>	
+        <!-- 모든 요청은 HTTPS 강제 (개발환경에서 필요시 주석) -->
+        <!-- <security:intercept-url pattern="/**" requires-channel="https"/>-->
+
+        <!-- 1) 누구나 접근 허용 (permitAll) : 콜백/홈/상품목록/검색/게스트 주문 진입·조회/게시판 목록·뷰 등 -->
+        <security:intercept-url pattern="/" access="permitAll"/>
+        <security:intercept-url pattern="/login.do" access="permitAll"/>
+        <security:intercept-url pattern="/join.do" access="permitAll"/>
+        <security:intercept-url pattern="/joinOk.do" method="POST" access="permitAll"/>
+
+        <!-- 비밀번호 찾기(이메일 인증 포함) -->
+        <security:intercept-url pattern="/findPw.do" access="permitAll"/>
+        <security:intercept-url pattern="/findPw/sendVerificationCode.do" method="POST" access="permitAll"/>
+        <security:intercept-url pattern="/findPw/resetPassword.do" method="POST" access="permitAll"/>
+
+        <!-- 카카오 로그인 콜백/서버 로그아웃(세션 해제용) -->
+        <security:intercept-url pattern="/kakaoLoginCallback.do" method="POST" access="permitAll"/>
+        <security:intercept-url pattern="/kakaoServerLogout.do" method="POST" access="permitAll"/>
+
+        <!-- 상품/검색/메인/선택 리스트/팝업/장바구니 페이지(게스트도 진입) -->
+        <security:intercept-url pattern="/product/**" access="permitAll"/>
+        <security:intercept-url pattern="/choice/choiceList.do" access="permitAll"/>
+        <security:intercept-url pattern="/popup/bookPopup.do" access="permitAll"/>
+
+        <!-- 게스트 주문 플로우(페이지/생성/조회/상세) -->
+        <security:intercept-url pattern="/guest/guestOrder.do" access="permitAll"/>
+        <security:intercept-url pattern="/order/guest/create" method="POST" access="permitAll"/>
+        <security:intercept-url pattern="/guest/guestOrderInfo.do" method="POST" access="permitAll"/>
+        <security:intercept-url pattern="/guest/guestOrderDetailsView.do" access="permitAll"/>
+
+        <!-- 결제(회원/비회원 공용) 준비/성공/실패 콜백 -->
+        <security:intercept-url pattern="/payment/ready/kakaopay" method="POST" access="permitAll"/>
+        <security:intercept-url pattern="/payment/success/kakaopay" access="permitAll"/>
+        <security:intercept-url pattern="/payment/prepare" method="POST" access="permitAll"/>
+        <security:intercept-url pattern="/payment/success" access="permitAll"/>
+        <security:intercept-url pattern="/payment/fail" access="permitAll"/>
+
+        <!-- 주문 완료 페이지(게스트 리다이렉트 포함) -->
+        <security:intercept-url pattern="/order/orderComplete.do" access="permitAll"/>
+
+        <!-- 게시판 목록/뷰는 공개 -->
+        <security:intercept-url pattern="/noticeList.do" access="permitAll"/>
+        <security:intercept-url pattern="/noticeView.do" access="permitAll"/>
+        <security:intercept-url pattern="/qnaList.do" access="permitAll"/>
+        <security:intercept-url pattern="/qnaView.do" access="permitAll"/>
+        <security:intercept-url pattern="/eventList.do" access="permitAll"/>
+        <security:intercept-url pattern="/eventView.do" access="permitAll"/>
+
+        <!-- 개별 댓글 목록 로딩은 공개(뷰에서 페이징 호출) -->
+        <security:intercept-url pattern="/comment/loadComment.do" access="permitAll"/>
+        <security:intercept-url pattern="/qComment/loadComment.do" access="permitAll"/>
+        <security:intercept-url pattern="/eComment/loadComment.do" access="permitAll"/>
+
+        <!-- 2) 로그인 필요 (isAuthenticated) : 내 정보/주소/장바구니 조작/회원 주문/게시글 작성·수정/댓글 작성·수정·삭제·신고/평점/좋아요/결제 취소 등 -->
+        <!-- 마이페이지/회원 전용 정보 수정 흐름 -->
+        <security:intercept-url pattern="/mypage.do" access="isAuthenticated()"/>
+        <security:intercept-url pattern="/user/mypage.do" method="POST" access="isAuthenticated()"/>
+        <security:intercept-url pattern="/user/mypageInfo.do" access="isAuthenticated()"/>
+        <security:intercept-url pattern="/user/mypageInfo/sendMail.do" method="POST" access="isAuthenticated()"/>
+        <security:intercept-url pattern="/user/mypageInfo/pwChange.do" method="POST" access="isAuthenticated()"/>
+        <security:intercept-url pattern="/deleteMembership.do" access="isAuthenticated()"/>
+
+        <!-- 주소록 API -->
+        <security:intercept-url pattern="/address/**" access="isAuthenticated()"/>
+
+        <!-- 장바구니 조작(AJAX) : 조회 count는 공개, 나머지 조작은 인증 필요 -->
+        <security:intercept-url pattern="/product/getCartCount.do" access="permitAll"/>
+        <security:intercept-url pattern="/product/getCartByUser.do" access="isAuthenticated()"/>
+        <security:intercept-url pattern="/product/syncCart.do" method="POST" access="isAuthenticated()"/>
+        <security:intercept-url pattern="/product/updateCart.do" method="POST" access="isAuthenticated()"/>
+        <security:intercept-url pattern="/product/deleteCart.do" method="POST" access="isAuthenticated()"/>
+        <security:intercept-url pattern="/product/addOrUpdateCart.do" method="POST" access="isAuthenticated()"/>
+        <!-- 재고 사전 점검은 게스트 주문에서도 쓰므로 공개 -->
+        <security:intercept-url pattern="/product/checkStockBeforeOrder.do" method="POST" access="permitAll"/>
+
+        <!-- 회원 주문 플로우 -->
+        <security:intercept-url pattern="/order/myOrder.do" access="isAuthenticated()"/>
+        <security:intercept-url pattern="/order/orderMain.do" method="POST" access="isAuthenticated()"/>
+        <security:intercept-url pattern="/order/create" method="POST" access="isAuthenticated()"/>
+        <security:intercept-url pattern="/order/addAddress.do" method="POST" access="isAuthenticated()"/>
+        <security:intercept-url pattern="/order/deleteAddress.do" method="POST" access="isAuthenticated()"/>
+        <security:intercept-url pattern="/order/orderDetailsView.do" access="isAuthenticated()"/>
+
+        <!-- 게시판 작성/수정/삭제 -->
+        <security:intercept-url pattern="/noticeWrite.do" access="isAuthenticated()"/>
+        <security:intercept-url pattern="/noticeWriteOk.do" method="POST" access="isAuthenticated()"/>
+        <security:intercept-url pattern="/noticeModify.do" access="isAuthenticated()"/>
+        <security:intercept-url pattern="/noticeModifyOk.do" method="POST" access="isAuthenticated()"/>
+        <security:intercept-url pattern="/noticeDelete.do" method="POST" access="isAuthenticated()"/>
+
+        <security:intercept-url pattern="/qnaWrite.do" access="isAuthenticated()"/>
+        <security:intercept-url pattern="/qnaWriteOk.do" method="POST" access="isAuthenticated()"/>
+        <security:intercept-url pattern="/qnaModify.do" access="isAuthenticated()"/>
+        <security:intercept-url pattern="/qnaModifyOk.do" method="POST" access="isAuthenticated()"/>
+        <security:intercept-url pattern="/qnaDelete.do" method="POST" access="isAuthenticated()"/>
+
+        <security:intercept-url pattern="/eventWrite.do" access="isAuthenticated()"/>
+        <security:intercept-url pattern="/eventWriteOk.do" method="POST" access="isAuthenticated()"/>
+        <security:intercept-url pattern="/eventModify.do" access="isAuthenticated()"/>
+        <security:intercept-url pattern="/eventModifyOk.do" method="POST" access="isAuthenticated()"/>
+        <security:intercept-url pattern="/eventDelete.do" method="POST" access="isAuthenticated()"/>
+
+        <!-- 댓글/평점/좋아요(쓰기 계열 전부 인증) -->
+        <security:intercept-url pattern="/comment/write.do"  method="POST" access="isAuthenticated()"/>
+        <security:intercept-url pattern="/comment/modify.do" method="POST" access="isAuthenticated()"/>
+        <security:intercept-url pattern="/comment/delete.do" method="POST" access="isAuthenticated()"/>
+        <security:intercept-url pattern="/comment/report.do" method="POST" access="isAuthenticated()"/>
+        <security:intercept-url pattern="/comment/toggleLove.do" method="POST" access="isAuthenticated()"/>
+
+        <security:intercept-url pattern="/comment/saveRating.do"   method="POST" access="isAuthenticated()"/>
+        <security:intercept-url pattern="/comment/updateRating.do" method="POST" access="isAuthenticated()"/>
+        <security:intercept-url pattern="/comment/getUserRating.do" access="isAuthenticated()"/>
+
+        <security:intercept-url pattern="/qComment/write.do"  method="POST" access="isAuthenticated()"/>
+        <security:intercept-url pattern="/qComment/modify.do" method="POST" access="isAuthenticated()"/>
+        <security:intercept-url pattern="/qComment/delete.do" method="POST" access="isAuthenticated()"/>
+
+        <security:intercept-url pattern="/eComment/write.do"  method="POST" access="isAuthenticated()"/>
+        <security:intercept-url pattern="/eComment/modify.do" method="POST" access="isAuthenticated()"/>
+        <security:intercept-url pattern="/eComment/delete.do" method="POST" access="isAuthenticated()"/>
+
+        <!-- 환불 신청(사용자) -->
+        <security:intercept-url pattern="/refund/**" access="isAuthenticated()"/>
+
+        <!-- 사용자 결제 취소(로그인 사용자) / 관리자 환불은 /admin/** 에서 진입 -->
+        <security:intercept-url pattern="/payment/kakao/cancelPayment.do" method="POST" access="isAuthenticated()"/>
+        <security:intercept-url pattern="/payment/toss/cancelPayment.do"  method="POST" access="isAuthenticated()"/>
+
+        <!-- 3) 관리자 전용 -->
+        <security:intercept-url pattern="/admin/**" access="hasRole('ROLE_ADMIN')"/>
+
+        <!-- 로그인/로그아웃/세션/헤더/CSRF 등 기존 설정 유지 -->
+        <security:form-login login-page="/login.do"
+                             login-processing-url="/loginOk.do"
+                             authentication-success-handler-ref="userLoginSuccessHandler"
+                             authentication-failure-handler-ref="userLoginFailureHandler"
+                             username-parameter="USER_ID"
+                             password-parameter="USER_PW"/>
+
+        <security:logout logout-url="/logout.do"
+                        logout-success-url="/"
+                        invalidate-session="true"
+                        delete-cookies="JSESSIONID,SPRING_SECURITY_REMEMBER_ME_COOKIE"/>
+
+        <security:access-denied-handler ref="userDeniedHandler"/>
+
+       <!-- 기존 <security:csrf/> 를 아래로 교체 
+		<security:csrf request-matcher-ref="csrfProtectionMatcher"/>
 		
-		<security:intercept-url pattern="/guest/guestOrder.do" access="permitAll"/>
-		<!-- 게스트 주문 상세 페이지(조회 후 이동) -->
-		<security:intercept-url pattern="/guest/guestOrderDetailsView.do" access="permitAll"/>	
-		<!-- 게스트 주문 조회(번호+이메일로 조회) POST만 허용 -->
-		<security:intercept-url pattern="/guest/guestOrderInfo.do" method="POST" access="permitAll"/>
-		<security:intercept-url pattern="/order/orderComplete.do" access="permitAll"/>
-						<!-- 게스트 주문 생성은 POST만 허용 -->
-		<security:intercept-url pattern="/order/guest/create" method="POST" access="permitAll"/>
-		<security:intercept-url pattern="/product/**" access="permitAll"/>
-		<security:intercept-url pattern="/board/eventList.do" access="permitAll"/>
-		<security:intercept-url pattern="/board/eventView.do"  access="permitAll"/>
-		<security:intercept-url pattern="/board/noticeList.do" access="permitAll"/>
-		<security:intercept-url pattern="/board/noticeView.do"  access="permitAll"/>
-		<security:intercept-url pattern="/board/qnaList.do" access="permitAll"/>
-		<security:intercept-url pattern="/board/qnaView.do"  access="permitAll"/>
-		<security:intercept-url pattern="/choice/choiceList.do"  access="permitAll"/>
-		<security:intercept-url pattern="/popup/bookPopup.do"  access="permitAll"/>
-		
-		<!-- 인증 필요  -->
-		<security:intercept-url pattern="/order/**" access="isAuthenticated()"/>
-		<security:intercept-url pattern="/board/noticeWrite.do"  access="isAuthenticated()"/>
-		<security:intercept-url pattern="/board/noticeModify.do"  access="isAuthenticated()"/>
-		<security:intercept-url pattern="/board/eventWrite.do"  access="isAuthenticated()"/>
-		<security:intercept-url pattern="/board/eventModify.do" access="isAuthenticated()"/>
-		<security:intercept-url pattern="/board/qnaWrite.do" access="isAuthenticated()"/>
-		<security:intercept-url pattern="/board/qnaModify.do" access="isAuthenticated()"/>
+		-->
 
-		<!-- hasAnyRole 제시된 권한 중 하나라도 가지고 있으면 true 하나만 가지고 있으면 false -->
-		<security:intercept-url pattern="/user/**" access="hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_USER_KAKAO')"/>
-	    <security:intercept-url pattern="/mypage/**" access="hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_USER_KAKAO')"  />
-		<!-- hasRole 로그인한 사용자가 제시한 권한이 있으면 true, 없으면 false -->
-		<security:intercept-url pattern="/admin/**" access="hasRole('ROLE_ADMIN')"/>
+        <security:session-management session-fixation-protection="migrateSession" invalid-session-url="/login.do?expired">
+            <security:concurrency-control max-sessions="1" error-if-maximum-exceeded="true"/>
+        </security:session-management>
 
-		<security:form-login login-page="/login.do"
-							 login-processing-url="/loginOk.do"
-							 authentication-success-handler-ref="userLoginSuccessHandler"
-							 authentication-failure-handler-ref="userLoginFailureHandler"
-							 username-parameter="USER_ID" password-parameter="USER_PW"/>
-	
-		<!-- 로그아웃 설정 -->
-		<security:logout logout-url="/logout.do" 
-						 logout-success-url="/" 
-						 invalidate-session="true"
-						 delete-cookies="JSESSIONID,SPRING_SECURITY_REMEMBER_ME_COOKIE"/>
-						 
-						 
-		<!-- 로그인은 했으나 경로 접근 권한 없을시 호출 객체 설정 -->
-		<security:access-denied-handler ref="userDeniedHandler"/>
-		
-
-	    <!-- ===== CSRF 보호 ===== -->
-	    <!-- 기본 값이면 로그인/POST/PUT/DELETE 요청에 CSRF 토큰 필요 -->
-		<security:csrf/>
-
-	    <!-- ===== 세션 보안 ===== -->
-	     <security:session-management session-fixation-protection="migrateSession" invalid-session-url="/login.do?expired">
-	      	<security:concurrency-control max-sessions="1" error-if-maximum-exceeded="true"/>
-	     </security:session-management>
-
-	    <!-- ===== 보안 헤더 ===== -->
-	    <security:headers>
-	      <!-- 동일 출처 프레임만 허용 -->
-	      <security:frame-options policy="SAMEORIGIN"/>
-	      <!-- MIME 스니핑 방지 -->
-	      <security:content-type-options/>
-	      <!-- 기본 XSS 필터(구형 브라우저용) -->
-	      <security:xss-protection block="true"/>
-	      <!-- HSTS: HTTPS 고정(1년) + 서브도메인 포함 -->
-	      <security:hsts include-subdomains="true" max-age-seconds="31536000"/>
-	      <!-- (선택) CSP: 리소스 로딩 출처를 엄격히 제한하고 싶을 때 활성화
-	      <security:content-security-policy policy-directives="
-	          default-src 'self';
-	          img-src 'self' data:;
-	          script-src 'self';
-	          style-src 'self' 'unsafe-inline';
-	          object-src 'none'"/>
-	      -->
-	      <!-- (선택) 캐시 제어: 민감 페이지 캐시 금지
-	      <security:cache-control/>
-	      -->
-	    </security:headers>
-
-		
+        <security:headers>
+            <security:frame-options policy="SAMEORIGIN"/>
+            <security:content-type-options/>
+            <security:xss-protection block="true"/>
+            <security:hsts include-subdomains="true" max-age-seconds="31536000"/>
+        </security:headers>
+       
 	</security:http>
+	
 	
 	<bean id="userLoginSuccessHandler" class="com.bookGap.service.UserLoginSuccessHandler" />
 	<bean id="userLoginFailureHandler" class="com.bookGap.service.UserLoginFailureHandler" />

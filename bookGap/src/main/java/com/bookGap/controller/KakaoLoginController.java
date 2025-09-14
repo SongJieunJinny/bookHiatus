@@ -89,36 +89,54 @@ public class KakaoLoginController {
 	}
 	
 	
-    @PostMapping("/kakaoServerLogout.do")
-    @ResponseBody
-    public Map<String, Object> kakaoServerLogout(HttpSession session) {
-        String accessToken = (String) session.getAttribute("KAKAO_ACCESS_TOKEN");
-        String url = "https://kapi.kakao.com/v1/user/unlink";
-        Map<String, Object> result = new HashMap<>();
+	@PostMapping("/kakaoServerLogout.do")
+	@ResponseBody
+	public Map<String, Object> kakaoServerLogout(
+	        javax.servlet.http.HttpServletRequest request,
+	        javax.servlet.http.HttpServletResponse response,
+	        HttpSession session) {
 
-        if (accessToken != null && !accessToken.isEmpty()) {
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("Authorization", "Bearer " + accessToken);
-            HttpEntity<String> entity = new HttpEntity<>(headers);
+	    String accessToken = (String) session.getAttribute("KAKAO_ACCESS_TOKEN");
 
-            RestTemplate restTemplate = new RestTemplate();
-            try {
-                restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
-                result.put("message", "카카오 계정 연결 해제 완료");
-            } catch (Exception e) {
-                result.put("message", "카카오 unlink 실패: " + e.getMessage());
-            }
-        }
+	   
+	    if (accessToken != null && !accessToken.isEmpty()) {
+	        try {
+	            org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
+	            headers.set("Authorization", "Bearer " + accessToken);
+	            org.springframework.web.client.RestTemplate rt = new org.springframework.web.client.RestTemplate();
 
-        // Spring Security 세션 초기화
-        SecurityContextHolder.clearContext();
-        session.invalidate();
+	            String url = "https://kapi.kakao.com/v1/user/logout";
+	            rt.exchange(url, org.springframework.http.HttpMethod.POST,
+	                    new org.springframework.http.HttpEntity<>(headers), String.class);
+	        } catch (Exception ignore) {
+	            
+	        }
+	    }
 
-        result.put("status", "success");
-        // 로그아웃 후 Spring Security logout 처리 URL로 리디렉션
-        result.put("redirect", "/logout.do");
-        return result;
-    }
+	    // 2) Spring 보안 컨텍스트/세션 정리
+	    org.springframework.security.core.context.SecurityContextHolder.clearContext();
+	    try { session.invalidate(); } catch (Exception ignore) {}
+
+	    // 3) JSESSIONID/remember-me 쿠키 즉시 삭제 (경로 주의)
+	    String path = request.getContextPath();
+	    String cookiePath = (path == null || path.isEmpty()) ? "/" : path;
+
+	    javax.servlet.http.Cookie js = new javax.servlet.http.Cookie("JSESSIONID", null);
+	    js.setPath(cookiePath);
+	    js.setMaxAge(0);
+	    js.setHttpOnly(true);
+	    response.addCookie(js);
+
+	    javax.servlet.http.Cookie rm = new javax.servlet.http.Cookie("SPRING_SECURITY_REMEMBER_ME_COOKIE", null);
+	    rm.setPath(cookiePath);
+	    rm.setMaxAge(0);
+	    rm.setHttpOnly(true);
+	    response.addCookie(rm);
+
+	    Map<String, Object> result = new HashMap<>();
+	    result.put("status", "success");
+	    return result; 
+	}
 
 	
 	
