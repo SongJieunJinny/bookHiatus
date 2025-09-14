@@ -62,7 +62,7 @@ public class PaymentController {
   @PostMapping("/ready/kakaopay")
   @ResponseBody
   public KakaoReadyResponse kakaopayReady(@RequestBody KakaoPayRequestVO req,
-                                          HttpSession session, Principal principal) {
+                                          HttpSession session, Principal principal,  HttpServletRequest request) {
     try{
       log.info("[KAKAO READY][REQ] 요청 수신: orderId={}", req);
       
@@ -124,6 +124,9 @@ public class PaymentController {
       int paymentNo = payment.getPaymentNo();
 
       paymentService.logPayment(paymentNo, "[KAKAO][READY] 결제 레코드 생성, amount=" + totalAmount);
+      
+      String origin = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
+      String ctx    = request.getContextPath(); // 예: /bookGap 또는 ""
 
       // ===== 카카오 요청 파라미터 =====
       req.setPaymentNo(paymentNo);
@@ -132,9 +135,10 @@ public class PaymentController {
       req.setItemName(itemName);
       req.setQuantity(qty);
       req.setCid(CID);
-      req.setApprovalUrl("http://localhost:8080/controller/payment/success/kakaopay");
-      req.setCancelUrl("http://localhost:8080/controller/payment/fail?code=cancel");
-      req.setFailUrl("http://localhost:8080/controller/payment/fail?code=fail");
+
+      req.setApprovalUrl(origin + ctx + "/payment/success/kakaopay");
+      req.setCancelUrl(origin + ctx + "/payment/fail?code=cancel");
+      req.setFailUrl(origin + ctx + "/payment/fail?code=fail");
       req.setTaxFreeAmount(0);
       paymentService.insertKakaoRequest(req);
 
