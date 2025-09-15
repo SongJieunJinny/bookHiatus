@@ -861,9 +861,12 @@ src/
 
 ## 서비스화면
 - 🎥 데모 영상 (회원USER 주문 → 주문이력확인 → 주문취소 및 환불완료)
-  <video src="https://github.com/SongJieunJinny/bookHiatus/releases/download/v1.0.0/User_pay_refund.mp4" controls width="600"></video>  
+  
+  [![회원 데모 영상](assets/user-demo-thumbnail.png)](https://github.com/SongJieunJinny/bookHiatus/releases/download/v1.0.0/User_pay_refund.mp4)
+
 - 🎥 데모 영상 (비회원GUEST 주문취소 → 환불완료)
-  <video src="https://github.com/SongJieunJinny/bookHiatus/releases/download/v1.0.0/Guest_refund.mp4" controls width="600"></video>
+  
+  [![비회원 데모 영상](assets/guest-demo-thumbnail.png)](https://github.com/SongJieunJinny/bookHiatus/releases/download/v1.0.0/Guest_refund.mp4)
 
   
 --- 
