@@ -859,12 +859,20 @@ src/
 
 --- 
 
+## 서비스화면
+- 회원(USER) 로그인 후 장바구니-> 주문-> 주문상태 및 배송상태확인 -> 환불요청 및 환불완료내용 확인
+  
+- 비회원(GUEST) 주문상태확인 및 주문취소진행-> 환불완료내용 확
+
+  
+--- 
+
 ## 👤 Team Members (역할/깃계정)
 
 | Name   | Role                | GitHub | Main Modules | One-liner | Detail |
 |--------|---------------------|--------|--------------|-----------|--------|
 | 김상화 | Full-stack Developer | [@gimsanghwa](https://github.com/kimsanghw) | 사용자 기능(목록/상세/장바구니/추천/소개), **관리자 기능(도서/추천/재고/주문·배송/환불/신고/매출/일정/회원)**, 대시보드/차트 | “사용자 경험부터 운영 도구까지 전 과정 구현” | - **Front-end**: JSP + jQuery, Bootstrap 기반 UI/UX 개발<br>- **Back-end**: Spring MVC + MyBatis + MySQL, API 연동(Naver Book, Kakao, TossPay)<br>- **운영자 기능**: 환불·신고 처리 자동화, 재고/주문 관리, 매출 차트 시각화<br>- **보안/인증**: Spring Security 적용(로그인/접근 제어), Kakao 소셜 로그인 |
-| 송지은 | Full-stack Developer | [@SongJieunJinny](https://github.com/SongJieunJinny) | **회원/비회원 인증 및 주문/결제**, 게시판 시스템 | “전체적인 회원,비회원 사용자 작동 과정 구현” | - **[회원 인증 시스템 (Spring Security)]** 회원가입: BCryptPasswordEncoder를 이용한 비밀번호 단방향 암호화 적용, 로그인/권한: Spring Security를 통한 인증(Authentication) 및 인가(Authorization) 관리, ROLE_USER, ROLE_ADMIN에 따른 접근 제어 구현, 비밀번호 찾기: JavaMailSender와 Naver SMTP 서버를 연동하여, 이메일로 인증번호를 발송하고 검증하는 기능 구현.<br> - **[비회원 주문 시스템(보안 강화)]** 고유 주문키 발급: 비회원 주문 시 UUID를 기반으로 예측 불가능한 고유 주문키(ORDER_KEY)를 생성하여 DB에 저장, 안전한 주문 조회: 이메일과 비밀번호 대신, 고유 주문키와 주문자 이메일의 조합으로만 조회가 가능하도록 설계하여 개인정보 노출 및 데이터 조회 충돌 문제를 원천적으로 해결.<br> - **[게시판 시스템]** 3종 게시판 구현: 공지사항, Q&A, 이벤트 목적의 게시판 CRUD 기능 구현, 이벤트-상품 연동: 관리자가 이벤트 게시글 작성 시 AJAX 기반의 팝업창을 통해 등록된 상품(Book)을 검색하고 연동하는 CMS 기능 개발. |
+| 송지은 | Full-stack Developer | [@SongJieunJinny](https://github.com/SongJieunJinny) | **사용자(USER/GUEST) 기능**, **본인(USER/GUEST)인증 및 주문/결제/배송/취소/환불**, 게시판 CRUD 및 댓글 좋아요 별점기능,  | “전체적인 회원,비회원 사용자 작동 과정 구현” | - **[회원 인증 시스템 (Spring Security)]** 회원가입: BCryptPasswordEncoder를 이용한 비밀번호 단방향 암호화 적용, 로그인/권한: Spring Security를 통한 인증(Authentication) 및 인가(Authorization) 관리, ROLE_USER, ROLE_ADMIN에 따른 접근 제어 구현, 비밀번호 찾기: JavaMailSender와 Naver SMTP 서버를 연동하여, 이메일로 인증번호를 발송하고 검증하는 기능 구현.<br> - **[비회원 주문 시스템(보안 강화)]** 고유 주문키 발급: 비회원 주문 시 UUID를 기반으로 예측 불가능한 고유 주문키(ORDER_KEY)를 생성하여 DB에 저장, 안전한 주문 조회: 이메일과 비밀번호 대신, 고유 주문키와 주문자 이메일의 조합으로만 조회가 가능하도록 설계하여 개인정보 노출 및 데이터 조회 충돌 문제를 원천적으로 해결.<br> - **[게시판 시스템]** 3종 게시판 구현: 공지사항, Q&A, 이벤트 목적의 게시판 CRUD 및 댓글 좋아요 별점기능 구현, 이벤트-상품 연동: 관리자가 이벤트 게시글 작성 시 AJAX 기반의 팝업창을 통해 등록된 상품(Book)을 검색하고 연동하는 CMS 기능 개발. |
 
 ---
 
