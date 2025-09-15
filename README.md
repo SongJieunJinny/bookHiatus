@@ -54,6 +54,7 @@
 ### 🌐 외부 연동
 - Naver Book API: 도서 등록 자동화 (관리자 페이지 검색 → 자동 입력)
 - KakaoPay / TossPayments API: 결제 승인·취소·환불 처리
+- Kakao 로그인 API: 카카오간편로그인 
 - API Key/Secret 값은 환경변수·properties 파일로 분리 관리
 
 ### 🎨 UX / UI 컨벤션
