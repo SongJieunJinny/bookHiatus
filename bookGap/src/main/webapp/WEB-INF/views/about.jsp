@@ -13,7 +13,7 @@
 section {
 	width: 100%;
 	height: auto;
-}
+}  
 .BookStore{
   display: flex;
 }
