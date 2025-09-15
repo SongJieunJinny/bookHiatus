@@ -243,8 +243,6 @@ $(function () {
 	      // 모달에 환불번호 보관
 	      $("#orderModal").data("refundNo", refundNo);
 	      $("#orderModal").data("paymentMethod", Number(result?.paymentMethod));
-	      $("#orderModal").data("paymentNo", Number(result?.paymentNo));
-	      $("#orderModal").data("orderId", Number(result?.orderId));
 	      
 	      const refundStatus = Number(result?.refundStatus || 1);
 	      const createdAt = result?.createdAt;
@@ -317,8 +315,6 @@ $(function () {
   $("#saveOrder").on("click", function () {
     const refundNo = Number($("#orderModal").data("refundNo"));
     const paymentMethod = Number($("#orderModal").data("paymentMethod")); // 1: 토스, 2: 카카오
-    const paymentNo = Number($("#orderModal").data("paymentNo")); 
-    const orderId = Number($("#orderModal").data("orderId")); 
 
     if (!refundNo) {
       alert("환불 번호를 확인할 수 없습니다.");
@@ -330,8 +326,6 @@ $(function () {
 
     const csrfHeader = $("meta[name='_csrf_header']").attr("content");
     const csrfToken  = $("meta[name='_csrf']").attr("content");
-    
-    
 
     // 환불 완료로 바꾸는 경우에만 결제 취소 API 호출
     if (refundStatus === 3) {
@@ -341,7 +335,7 @@ $(function () {
           url: "<%=request.getContextPath()%>/payment/toss/cancelPayment.do",
           method: "POST",
           contentType: "application/json",
-          data: JSON.stringify({ refundNo, paymentNo, orderId}),
+          data: JSON.stringify({ refundNo }),
           beforeSend: function (xhr) {
             if (csrfHeader && csrfToken) xhr.setRequestHeader(csrfHeader, csrfToken);
           },
@@ -360,7 +354,7 @@ $(function () {
           url: "<%=request.getContextPath()%>/payment/kakao/cancelPayment.do",
           method: "POST",
           contentType: "application/json",
-          data: JSON.stringify({ refundNo, paymentNo, orderId }),
+          data: JSON.stringify({ refundNo }),
           beforeSend: function (xhr) {
             if (csrfHeader && csrfToken) xhr.setRequestHeader(csrfHeader, csrfToken);
           },
