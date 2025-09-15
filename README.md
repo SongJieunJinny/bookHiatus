@@ -860,9 +860,10 @@ src/
 --- 
 
 ## 서비스화면
-- 회원(USER) 로그인 후 장바구니-> 주문-> 주문상태 및 배송상태확인 -> 환불요청 및 환불완료내용 확인
-  
-- 비회원(GUEST) 주문상태확인 및 주문취소진행-> 환불완료내용 확
+- 🎥 데모 영상 (회원USER 주문 → 주문이력확인 → 주문취소 및 환불완료)
+  <video src="https://github.com/SongJieunJinny/bookHiatus/releases/download/v1.0.0/User_pay_refund.mp4" controls width="600"></video>  
+- 🎥 데모 영상 (비회원GUEST 주문취소 → 환불완료)
+  <video src="https://github.com/SongJieunJinny/bookHiatus/releases/download/v1.0.0/Guest_refund.mp4" controls width="600"></video>
 
   
 --- 
