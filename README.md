@@ -71,10 +71,28 @@
 --- 
 
 ## 💻개발환경
+### Backend
+- JDK 1.8 / JAVA 8
+- Spring Framework 4.3.3.RELEASE
+- Spring Security 3.2.10.RELEASE
+- MyBatis 3.4.1
 
-- JDK 1.8, MySQL 8.0, TOMCAT 9.0, SPRING FRAMEWORK 4.3.3.RELEASE, SPRING SECURITY 3.2.10.RELEASE, MyBatis 3.4.1
-- JAVA8, HTML5, CSS3, JSP4, JavaScript, jQuery, Ajax
-- SpringToolSuite 4, Visual Studio Code, ERMaster, MySQL (Workbench 8.0),GitHub, Notion
+### Backend
+- HTML5 / CSS3 / JavaScript
+- JSP 4 / Ajax
+- jQuery
+
+### Database & Server
+- MySQL 8.0
+- Apache Tomcat 9.0
+ 
+### Tools & Collaboration
+- Spring Tool Suite 4 (STS)
+- Visual Studio Code
+- MySQL Workbench 8.0
+- ERMaster
+- Git & GitHub
+- Notion
   
 --- 
 
