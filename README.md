@@ -5,7 +5,7 @@
 - [프로젝트 진행기간](#프로젝트-진행기간)
 - [개요](#개요)
 - [주요기능](#주요기능)
-- [아키텍처 및 기술 상세](#아키텍쳐-및-기술-상세) 
+- [아키텍처 및 기술 상세](#아키텍처-및-기술-상세) 
 - [트러블슈팅](#트러블슈팅)
 - [개발환경](#개발환경)
 - [ERD](#erd)
@@ -34,7 +34,7 @@
   
 --- 
 
-## 🛠️ 아키텍처 및 기술 상세(Architecture & Tech Details)
+## 🛠️ 아키텍처 및 기술 상세
 ### 🏗️백엔드 아키텍처(Backend Architecture)
 - **계층형 구조 (Layered Architecture)**: **Controller - Service - DAO - Mapper 구조**를 채택하여 각 계층의 역할을 명확히 분리하고 코드의 결합도를 낮췄습니다.
 - **인증/인가 (Authentication & Authorization)**: Spring Security를 사용하여 **폼 기반 로그인**과 **소셜 로그인(Kakao)**을 통합 관리했습니다. ROLE_USER, ROLE_ADMIN 권한에 따라 URL 접근과 서비스 메서드 호출을 제어하여 보안을 강화했습니다.
