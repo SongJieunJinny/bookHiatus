@@ -740,9 +740,7 @@ src/
 --- 
 
 ## 📽️서비스화면
-
-장바구니 담기/삭제 흐름
-
+-장바구니 담기/삭제 흐름
 ![장바구니 데모](./images/cartMove.gif)
 
 --- 
@@ -752,7 +750,7 @@ src/
 | Name   | Role                | GitHub | Main Modules | One-liner | Detail |
 |--------|---------------------|--------|--------------|-----------|--------|
 | 김상화 | Full-stack Developer | [@gimsanghwa](https://github.com/kimsanghw) | 사용자 기능(목록/상세/장바구니/추천/소개), **관리자 기능(도서/추천/재고/주문·배송/환불/신고/매출/일정/회원)**, 대시보드/차트 | “사용자 경험부터 운영 도구까지 전 과정 구현” | **북틈 소개 페이지**: Kakao 지도 API(`dapi.kakao.com/v2/maps/sdk.js`)를 이용해 서점 위치 및 소개 페이지 구현 <br>- **도서 관리 (운영자)**: Naver Book API + Spring Scheduler 연동 → 최신 도서 검색·등록 및 DB 저장 후 사용자 페이지에서 활용 가능 <br>- **사용자 기능 (도서/장바구니)**: 도서 목록·상세 페이지 CRUD / 비로그인 사용자는 LocalStorage 기반 장바구니, 로그인 시 DB와 동기화 처리 <br>- **소셜 로그인/로그아웃**: Kakao 간편 로그인 API를 이용한 OAuth2 인증 처리, Spring Security 기반 권한 관리(ROLE_USER_KAKAO). 로그아웃은 `https://kapi.kakao.com/v1/user/logout` API와 세션/쿠키 동기화 처리 <br>- **결제/환불 시스템**: KakaoPay / Toss Payments API를 운영자 페이지에 연동, 환불 처리 시 PG사 API 호출과 동시에 ORDERS·PAYMENTS·REFUND DB 동기화. 관리자 환불 관리 페이지에서 실시간 처리 가능 <br>- **이벤트/일정 관리**: FullCalendar.js 기반 관리자 전용 일정/이벤트 관리 모듈 구축 <br>- **매출 분석/시각화**: Chart.js 기반 매출 차트(막대/원형) 구현 → 관리자 대시보드에서 일별 매출 시각화. Simple-DataTables와 결합하여 도서별 판매 현황·일별 매출을 직관적으로 파악 가능  |
-| 송지은 | Full-stack Developer | [@SongJieunJinny](https://github.com/SongJieunJinny) | **회원/비회원 인증 및 주문/결제**, 게시판 시스템 | “전체적인 회원,비회원 사용자 작동 과정 구현” | - **[회원 인증 시스템 (Spring Security)]** 회원가입: BCryptPasswordEncoder를 이용한 비밀번호 단방향 암호화 적용, 로그인/권한: Spring Security를 통한 인증(Authentication) 및 인가(Authorization) 관리, ROLE_USER, ROLE_ADMIN에 따른 접근 제어 구현, 비밀번호 찾기: JavaMailSender와 Naver SMTP 서버를 연동하여, 이메일로 인증번호를 발송하고 검증하는 기능 구현.<br> - **[비회원 주문 시스템(보안 강화)]** 고유 주문키 발급: 비회원 주문 시 UUID를 기반으로 예측 불가능한 고유 주문키(ORDER_KEY)를 생성하여 DB에 저장, 안전한 주문 조회: 이메일과 비밀번호 대신, 고유 주문키와 주문자 이메일의 조합으로만 조회가 가능하도록 설계하여 개인정보 노출 및 데이터 조회 충돌 문제를 원천적으로 해결.<br> - **[게시판 시스템]** 3종 게시판 구현: 공지사항, Q&A, 이벤트 목적의 게시판 CRUD 기능 구현, 이벤트-상품 연동: 관리자가 이벤트 게시글 작성 시 AJAX 기반의 팝업창을 통해 등록된 상품(Book)을 검색하고 연동하는 CMS 기능 개발. |
+| 송지은 | Full-stack Developer | [@SongJieunJinny](https://github.com/SongJieunJinny) | **회원/비회원 인증 및 주문내역및확인/결제/취소·환불**, 게시판(공지/EVENT/Q&A)CRUD 및 댓글좋아요/별점기능 시스템 | “전반적인 사용자 작동 전 과정 구현” | - **[회원 인증 시스템 (Spring Security)]** 회원가입: BCryptPasswordEncoder를 이용한 비밀번호 단방향 암호화 적용, 로그인/권한: Spring Security를 통한 인증(Authentication) 및 인가(Authorization) 관리, ROLE_USER, ROLE_ADMIN에 따른 접근 제어 구현, 비밀번호 찾기: JavaMailSender와 Naver SMTP 서버를 연동하여, 이메일로 인증번호를 발송하고 검증하는 기능 구현.<br> - **[비회원 주문 시스템(보안 강화)]** 고유 주문키 발급: 비회원 주문 시 UUID를 기반으로 예측 불가능한 고유 주문키(ORDER_KEY)를 생성하여 DB에 저장, 안전한 주문 조회: 이메일과 비밀번호 대신, 고유 주문키와 주문자 이메일의 조합으로만 조회가 가능하도록 설계하여 개인정보 노출 및 데이터 조회 충돌 문제를 원천적으로 해결.<br> - **[게시판 시스템]** 3종 게시판 구현: 공지사항, Q&A, EVENT 목적의 게시판 CRUD 및 댓글좋아요/별점기능 구현, 이벤트-상품 연동: 관리자가 이벤트 게시글 작성 시 AJAX 기반의 팝업창을 통해 등록된 상품(Book)을 검색하고 연동하는 CMS 기능 개발. |
 
 ---
 
