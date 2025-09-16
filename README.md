@@ -738,6 +738,12 @@ src/
 
 ![장바구니 데모](./images/cartMove.gif)
 
+회원(USER)결제 및 주문확인 및 배송취소 흐름
+![회원(USER)결제 데모](./images/User_pay_refundGIF.gif)
+
+비회원(GUEST)주문확인 및 주문취소 흐름
+![비회원(GUEST)주문확인 데모](./images/Guest_refundGIF.gif)
+
 
 --- 
 
