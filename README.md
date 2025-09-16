@@ -5,7 +5,7 @@
 - [프로젝트 진행기간](#프로젝트-진행기간)
 - [개요](#개요)
 - [주요기능](#주요기능)
-- [기술 및 컨벤션](#기술-및-컨벤션) 
+- [아키텍처 및 기술 상세](#아키텍쳐-및-기술-상세) 
 - [트러블슈팅](#트러블슈팅)
 - [개발환경](#개발환경)
 - [ERD](#erd)
@@ -34,49 +34,29 @@
   
 --- 
 
-## ⚙️ 기술 및 컨벤션
-### 🧑‍💻 사용자 영역 (User-facing)
-- JSP + JSTL(c:), Spring Security 태그(sec:) 기반 뷰 렌더링
-- jQuery Ajax 통신으로 비동기 처리 (로그인/회원가입/주문/댓글 등)
-- 회원 비밀번호: BCryptPasswordEncoder 단방향 암호화
-- ROLE_USER / ROLE_ADMIN 권한 기반 접근 제어
+## 🛠️ 아키텍처 및 기술 상세(Architecture & Tech Details)
+### 🏗️백엔드 아키텍처(Backend Architecture)
+- **계층형 구조 (Layered Architecture)**: **Controller - Service - DAO - Mapper 구조**를 채택하여 각 계층의 역할을 명확히 분리하고 코드의 결합도를 낮췄습니다.
+- **인증/인가 (Authentication & Authorization)**: Spring Security를 사용하여 **폼 기반 로그인**과 **소셜 로그인(Kakao)**을 통합 관리했습니다. ROLE_USER, ROLE_ADMIN 권한에 따라 URL 접근과 서비스 메서드 호출을 제어하여 보안을 강화했습니다.
+- **데이터 영속성 (Persistence)**: MyBatis를 사용하여 SQL 문을 XML에 분리함으로써 코드와 쿼리의 유지보수성을 높였습니다. mybatis-config.xml에서 VO 별칭(typeAliases)을 설정하여 코드 가독성을 확보했습니다.
+- **비동기 처리 (Asynchronous Task)**: Spring Scheduler를 이용해 **5분마다 도서 재고 상태를 자동으로 갱신**하는 백그라운드 작업을 구현했습니다.
+- **공통 예외 처리**: @ControllerAdvice를 활용하여 프로젝트 전역에서 발생하는 예외를 한 곳에서 처리하고, 일관된 오류 응답을 반환하도록 설계했습니다.
 
-### 🛠 관리자 영역 (Admin)
-- Bootstrap 5 관리자 레이아웃 (SB Admin)
-- jQuery + simple-datatables (리스트/검색/페이징)
-- Chart.js (매출·통계 시각화), FullCalendar (일정 관리)
-- Ajax 요청 컨벤션: /admin/도메인/액션 (/admin/books/bookInsert)
-- 응답 포맷: {success:true, data:...} 구조 통일
+### 🎨프론트엔드(Frontend)
+- **뷰 템플릿**: JSP와 JSTL, Spring Security Taglib을 사용하여 동적인 웹 페이지를 렌더링했습니다.
+- **비동기 통신**: jQuery Ajax를 프로젝트의 모든 CUD(생성, 수정, 삭제) 기능에 적용하여 **SPA(Single Page Application)와 유사한 사용자 경험**을 제공했습니다.
+- **UI 라이브러리**: Bootstrap 5를 기본 레이아웃으로 사용하고, **simple-datatables**, **Chart.js**, **FullCalendar.js** 등의 라이브러리를 커스터마이징하여 관리자 페이지의 복잡한 UI를 효율적으로 구현했습니다.
+- **모듈화 및 일관성**: 모든 페이지는 **header.jsp**, **footer.jsp** 등의 공통 레이아웃을 include하여 중복을 최소화했으며, contextPath 기반의 경로 설정으로 이식성을 높였습니다.
 
-### 🧩 공통 레이아웃
-- adminHeader.jsp, adminNav.jsp, adminFooter.jsp로 모듈화
-- header.jsp, footer.jsp (사용자 영역 공통 레이아웃)
-- err401.jsp, err404.jsp, err500.jsp 에러 페이지 분리
+### 🌐외부 API 연동(External APIs)
+- Naver Book API, KakaoPay, TossPayments, Daum Postcode 등 다양한 외부 API를 연동했습니다.
+- **보안**: 모든 API Key와 Secret 값은 Git 저장소에 노출되지 않도록 **.properties 파일로 분리하여 관리**하고, .gitignore에 등록하여 보안을 확보했습니다.
 
-### 🌐 외부 연동
-- Naver Book API: 도서 등록 자동화 (관리자 페이지 검색 → 자동 입력)
-- KakaoPay / TossPayments API: 결제 승인·취소·환불 처리
-- Kakao 로그인 API: 카카오간편로그인 
-- API Key/Secret 값은 환경변수·properties 파일로 분리 관리
-
-### 🎨 UX / UI 컨벤션
-- 데이터 검증: 송장번호 영숫자, 배송상태 전이 조건(배송중→완료) 필수 검증
-- 금액: toLocaleString("ko-KR") / 날짜: Date.toLocaleString("ko-KR")
-- 반응형 CSS (@media) 적용 — PC·Tablet·Mobile 대응
-- 공통 스크립트 함수화 (updateCartCount(), normalizeCartItems())
-- Mapper XML 네임스페이스 규칙: 도메인Mapper (예: BookMapper, OrderMapper)
-
-### 🏗 아키텍처 & DB 설계
-- 계층 구조: Controller → Service → DAO → MyBatis Mapper → DB
-- VO 클래스 일관된 네이밍(*VO)
-- DB 정규화 및 FK 관계 명확화
-- 작성일(BOARD_RDATE) vs 수정일(BOARD_UDATE) 분리 관리
-- 비회원 주문: UUID 기반 orderKey 발급 → 이메일 + orderKey 조합 조회
-
-### 🔄 운영 & 유지보수
-- contextPath 기반 리소스 참조 (<c:url>, ${pageContext.request.contextPath})
-- InventoryScheduler (5분 주기) → 도서 재고 상태 자동 갱신
-- 공통 에러 처리: ControllerAdvice or try-catch 기반 JSON 응답 일관성 유지
+### 📝개발 컨벤션(Conventions)
+- **Git & GitHub**: main 브랜치를 중심으로 각자 기능별 브랜치에서 작업 후 Pull Request를 통해 코드 리뷰를 진행하는 **GitHub Flow** 전략을 사용했습니다.
+- **커밋 메시지**: Type: Subject (예: Feat: 로그인 기능 추가, Fix: 장바구니 카운트 버그 수정) 형식으로 커밋 메시지를 통일하여 히스토리 가독성을 높였습니다.
+- **코딩 스타일**: Google Java Style Guide를 기준으로 변수명(camelCase), 클래스명(PascalCase), 상수(SNAKE_CASE) 등의 네이밍 컨벤션을 준수했습니다.
+- **API 설계**: 관리자 API는 **/admin/{도메인}/{액션}** 형식으로 URI를 통일했으며, Ajax 응답은 **{success: boolean, data: ...}** 구조로 통일하여 프론트엔드에서의 처리를 용이하게 했습니다.
   
 --- 
 
