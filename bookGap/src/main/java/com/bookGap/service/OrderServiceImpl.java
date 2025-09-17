@@ -67,13 +67,13 @@ public class OrderServiceImpl implements OrderService {
   }
   
   @Override
-  public int getTotalOrderCount(String userId) {
-    return orderDAO.getTotalOrderCount(userId);
+  public int getTotalOrderCount(String userId, String startDate, String endDate) {
+    return orderDAO.getTotalOrderCount(userId, startDate, endDate);
   }
 
   @Override
-  public List<OrderVO> getOrdersPaging(String userId, int start, int perPage) {
-    return orderDAO.getOrdersPaging(userId, start, perPage);
+  public List<OrderVO> getOrdersPaging(String userId, int start, int perPage, String startDate, String endDate) {
+    return orderDAO.getOrdersPaging(userId, start, perPage, startDate, endDate);
   }
 
   @Override

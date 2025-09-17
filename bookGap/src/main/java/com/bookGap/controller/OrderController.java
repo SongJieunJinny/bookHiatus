@@ -33,35 +33,43 @@ public class OrderController {
   
   private static final Logger log = LoggerFactory.getLogger(OrderController.class);
   
-  @Autowired
-  private OrderService orderService;
+  @Autowired private OrderService orderService;
   @Autowired private PaymentService paymentService;
 	
   //===================== 공통: 주문내역 페이지 =====================
   @GetMapping("/order/myOrder.do")
   public String orderDetails(@RequestParam(name="page", defaultValue="1") int page,
-                             Principal principal,
-                             Model model) {
+                             @RequestParam(name="startDate", required=false) String startDate,
+                             @RequestParam(name="endDate",   required=false) String endDate,
+                             Principal principal, Model model) {
+    
     if (principal == null) return "redirect:/login.do";
     String userId = principal.getName();
 
-    int total   = orderService.getTotalOrderCount(userId); // 전체 주문 수
-    int perPage = 3;                                       // 페이지당 3개
+    // 양끝 공백 방지
+    if (startDate != null && startDate.trim().isEmpty()) startDate = null;
+    if (endDate   != null && endDate.trim().isEmpty())   endDate   = null;
+    
+    int perPage = 3;
+    int total = orderService.getTotalOrderCount(userId, startDate, endDate); 
 
     // 페이징 계산
     PagingUtil paging = new PagingUtil(page, total, perPage);
 
     // 페이지 범위 보정(선택)
-    if (page > paging.getLastPage() && paging.getLastPage() > 0) {
-        page = paging.getLastPage();
-        paging = new PagingUtil(page, total, perPage);
+    if(page > paging.getLastPage() && paging.getLastPage() > 0){
+      page = paging.getLastPage();
+      paging = new PagingUtil(page, total, perPage);
     }
 
     // 목록 조회 (LIMIT offset, count)
-    List<OrderVO> orderList = orderService.getOrdersPaging(userId, paging.getStart(), paging.getPerPage());
+    List<OrderVO> orderList = orderService.getOrdersPaging(userId, paging.getStart(), paging.getPerPage(), startDate, endDate);
 
     model.addAttribute("orderList", orderList);
     model.addAttribute("paging", paging);
+    model.addAttribute("startDate", startDate);
+    model.addAttribute("endDate", endDate);
+    
     return "order/myOrder";
   }
   

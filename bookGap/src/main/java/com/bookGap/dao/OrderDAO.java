@@ -71,11 +71,13 @@ public class OrderDAO {
   }
 
   //페이징
-  public List<OrderVO> getOrdersPaging(String userId, int start, int perPage) {
+  public List<OrderVO> getOrdersPaging(String userId, int start, int perPage, String startDate, String endDate) {
     Map<String, Object> p = new HashMap<>();
     p.put("userId", userId);
     p.put("start", start);
     p.put("perPage", perPage);
+    p.put("startDate", startDate);
+    p.put("endDate", endDate);
     return sqlSession.selectList(NS + "getOrdersPaging", p);
   }
 
@@ -99,8 +101,13 @@ public class OrderDAO {
     return sqlSession.selectOne(NS + "findGuestOrderByKey", orderKey);
   }
 
-  public int getTotalOrderCount(String userId) {
-	  return sqlSession.selectOne(NS + "getTotalOrderCount", userId);
+  //전체 카운트 메서드
+  public int getTotalOrderCount(String userId, String startDate, String endDate) {
+    Map<String, Object> p = new HashMap<>();
+    p.put("userId", userId);
+    p.put("startDate", startDate);
+    p.put("endDate", endDate);
+    return sqlSession.selectOne(NS + "getTotalOrderCount", p);
   }
   
   /* 주문 취소하기" 버튼을 눌렀을 때 실행 */

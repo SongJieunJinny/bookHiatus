@@ -8,19 +8,12 @@
 <head>
 <meta charset="UTF-8">
 <title>myOrder</title>
-<script src="<%=request.getContextPath()%>/resources/js/jquery-3.7.1.js"></script>
 <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/resources/css/index.css"/>
 <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/resources/css/book/order.css"/>
 </head>
 <body>
-<sec:authorize access="isAuthenticated()">
-  <script>
-    const isLoggedIn = true;
-  </script>
-</sec:authorize>
-<sec:authorize access="isAnonymous()">
-  <script>const isLoggedIn = false;</script>
-</sec:authorize>
+<sec:authorize access="isAuthenticated()"> <script>const isLoggedIn = true;</script> </sec:authorize>
+<sec:authorize access="isAnonymous()"> <script>const isLoggedIn = false;</script> </sec:authorize>
 <jsp:include page="/WEB-INF/views/include/header.jsp" />
 <section>
   <div id="navOrderDetails">
@@ -41,20 +34,23 @@
           <input class="orderWeekButton" type="button" value="3개월">
         </div>
         <div class="orderDateInfo">
-          <input class="orderDate" id="orderDateStart" type="date">
+          <input class="orderDate" id="myOrderStartDate" type="date" value="${startDate}">
           &nbsp;<div class="orderDateSign">～</div>&nbsp;
-          <input class="orderDate" id="orderDateLast" type="date">
+          <input class="orderDate" id="myOrderEndDate" type="date" value="${endDate}">
           &nbsp;&nbsp;&nbsp;
           <input class="orderDateButton" type="button" value="조회">
         </div>
       </div>
-      <div class="orderMsg">조회할 기간을 선택해주세요.</div>
+      <c:if test="${empty orderList}">
+        <div class="orderMsg" style="display:block;">
+          <c:choose>
+            <c:when test="${not empty startDate or not empty endDate}"> 해당 기간의 주문내역이 없습니다. </c:when>
+            <c:otherwise> 주문내역이 없습니다. </c:otherwise>
+          </c:choose>
+        </div>
+      </c:if>
     </div><br>
     <div id="orderDetailsEnd">
-    	<c:if test="${empty orderList}">
-				<div class="orderMsg" style="display:block;">주문내역이 없습니다.</div>
-      </c:if>
-      
       <c:forEach var="order" items="${orderList}">
       	<!-- 하나의 주문을 감싸는 컨테이너 -->
         <div class="orderContainer" data-order-date="<fmt:formatDate value='${order.orderDate}' pattern='yyyy-MM-dd'/>">
@@ -112,128 +108,104 @@
         </div>
       </c:forEach>
     </div>
+    
     <!-- 페이징 -->
 		<c:if test="${paging.lastPage > 1}">
 		  <div class="paging">
 		    <ul class="pagination">
-		      <!-- 처음/이전 묶음 -->
-		      <li class="${paging.startPage == 1 ? 'disabled' : ''}">
-		        <a href="<c:url value='/order/myOrder.do'><c:param name='page' value='1'/></c:url>">«</a>
+		
+		      <!-- « 처음 -->
+		      <li class="${paging.nowPage == 1 ? 'disabled' : ''}">
+		        <c:url var="firstPageUrl" value="/order/myOrder.do">
+		          <c:param name="page" value="1"/>
+		          <c:if test="${not empty startDate}"><c:param name="startDate" value="${startDate}"/></c:if>
+		          <c:if test="${not empty endDate}"><c:param name="endDate" value="${endDate}"/></c:if>
+		        </c:url>
+		        <a href="${firstPageUrl}">«</a>
 		      </li>
+		
+		      <!-- ‹ 이전 -->
+		      <li class="${paging.nowPage == 1 ? 'disabled' : ''}">
+		        <c:url var="prevPageUrl" value="/order/myOrder.do">
+		          <c:param name="page" value="${paging.nowPage - 1}"/>
+		          <c:if test="${not empty startDate}"><c:param name="startDate" value="${startDate}"/></c:if>
+		          <c:if test="${not empty endDate}"><c:param name="endDate" value="${endDate}"/></c:if>
+		        </c:url>
+		        <a href="${prevPageUrl}">&lt;</a>
+		      </li>
+		
+		      <!-- 숫자 -->
 		      <c:forEach var="p" begin="${paging.startPage}" end="${paging.endPage}">
 		        <li class="${p == paging.nowPage ? 'active' : ''}">
-		          <a href="<c:url value='/order/myOrder.do'><c:param name='page' value='${p}'/></c:url>">
-		            ${p}
-		          </a>
+		          <c:url var="pageUrl" value="/order/myOrder.do">
+		            <c:param name="page" value="${p}"/>
+		            <c:if test="${not empty startDate}"><c:param name="startDate" value="${startDate}"/></c:if>
+		            <c:if test="${not empty endDate}"><c:param name="endDate" value="${endDate}"/></c:if>
+		          </c:url>
+		          <a href="${pageUrl}">${p}</a>
 		        </li>
 		      </c:forEach>
-		      <!-- 끝/다음 묶음 -->
-		      <li class="${paging.endPage == paging.lastPage ? 'disabled' : ''}">
-		        <a href="<c:url value='/order/myOrder.do'><c:param name='page' value='${paging.lastPage}'/></c:url>">»</a>
+		
+		      <!-- › 다음 -->
+		      <li class="${paging.nowPage == paging.lastPage ? 'disabled' : ''}">
+		        <c:url var="nextPageUrl" value="/order/myOrder.do">
+		          <c:param name="page" value="${paging.nowPage + 1}"/>
+		          <c:if test="${not empty startDate}"><c:param name="startDate" value="${startDate}"/></c:if>
+		          <c:if test="${not empty endDate}"><c:param name="endDate" value="${endDate}"/></c:if>
+		        </c:url>
+		        <a href="${nextPageUrl}">&gt;</a>
 		      </li>
+		
+		      <!-- » 마지막 -->
+		      <li class="${paging.nowPage == paging.lastPage ? 'disabled' : ''}">
+		        <c:url var="lastPageUrl" value="/order/myOrder.do">
+		          <c:param name="page" value="${paging.lastPage}"/>
+		          <c:if test="${not empty startDate}"><c:param name="startDate" value="${startDate}"/></c:if>
+		          <c:if test="${not empty endDate}"><c:param name="endDate" value="${endDate}"/></c:if>
+		        </c:url>
+		        <a href="${lastPageUrl}">»</a>
+		      </li>
+		
 		    </ul>
 		  </div>
 		</c:if>
   </div>
 </section>
 <jsp:include page="/WEB-INF/views/include/footer.jsp" />
+<script src="<%=request.getContextPath()%>/resources/js/jquery-3.7.1.js"></script>
 <script>
 $(function () {
-	let isbn = $("#isbn").val(); // <input type="hidden" id="isbn" value="...">
-	if (!isbn) {
-	  const m = location.search.match(/[?&]isbn=([^&]+)/);
-	  if (m) isbn = decodeURIComponent(m[1]);
-	}
-	if (!isbn) {
-	  isbn = "${bookDetail.isbn}";
-	}
-	if (!isbn) {
-	  isbn = "${bookDetail.productInfo != null ? bookDetail.productInfo.isbn : ''}";
-	}
+	updateCartCount();
+	initHeaderEvents();
 
-	// 이제만 호출
-	if (isbn) {
-	  loadComment(isbn);
-	} else {
-	  console.error("isbn이 비어 있어 댓글을 불러올 수 없습니다.");
-	}
+  function updateDateRange(label){ const today = new Date();
+																   let start = new Date();
+																   if(label === "오늘") start = new Date();
+																   else if(label === "1주일") start.setDate(today.getDate()-7);
+																   else if(label === "1개월") start.setMonth(today.getMonth()-1);
+																   else if(label === "3개월") start.setMonth(today.getMonth()-3);
+																   $("#myOrderStartDate").val(start.toISOString().split("T")[0]);
+																   $("#myOrderEndDate").val(today.toISOString().split("T")[0]); }
 	
-  updateCartCount();
-  initHeaderEvents();
-
-  //✅ 기간 필터링
-  function filterAndDisplayOrders() {
-    const s = $("#orderDateStart").val();
-    const e = $("#orderDateLast").val();
-    if (!s || !e) {
-      $(".orderContainer").hide();
-      $(".orderMsg").text("조회할 기간을 선택해주세요.").show();
-      return;
-    }
-    const start = new Date(s);
-    const end = new Date(e); end.setHours(23,59,59,999);
-    let found = 0;
-    $(".orderContainer").each(function(){
-      const d = $(this).data("order-date");
-      if (!d) return;
-      const od = new Date(d);
-      const hit = od >= start && od <= end;
-      $(this).toggle(hit);
-      if (hit) found++;
-    });
-    $(".orderMsg").toggle(found === 0)
-                  .text(found === 0 ? "해당 기간의 주문내역이 없습니다." : "");
-  }
-
-  function updateDateRange(v){
-    const label = String(v).trim();
-    const today = new Date();
-    let start = new Date();
-    if (label === "오늘") start = new Date();
-    else if (label === "1주일") start.setDate(today.getDate() - 7);
-    else if (label === "1개월") start.setMonth(today.getMonth() - 1);
-    else if (label === "3개월") start.setMonth(today.getMonth() - 3);
-
-    $("#orderDateStart").val(start.toISOString().split("T")[0]);
-    $("#orderDateLast").val(today.toISOString().split("T")[0]);
-  }
-
-  //초기 상태: 아무 값도 세팅하지 않고, 버튼 선택도 없음
-  $("#orderDateStart, #orderDateLast").val("");
-	$(".orderWeekButton").removeClass("selected").css({backgroundColor:"white", color:"black"});
-	$(".orderContainer").hide();                           // ← 초기엔 안 보이게
-	$(".orderMsg").text("조회할 기간을 선택해주세요.").show();
-	
-	// 주문 없으면 메시지만 바꾸고 필터 UI 숨김(선택)
-	if ($(".orderContainer").length === 0) {
-	  $(".orderMsg").text("주문내역이 없습니다.");
-	  $("#orderDetailsMid .orderDetailsDiv").hide();
-	}
-
   $(".orderWeekButton").on("click", function(){
 	  $(".orderWeekButton").removeClass("selected").css({backgroundColor:"white", color:"black"});
 	  $(this).addClass("selected").css({backgroundColor:"black", color:"white"});
 	  updateDateRange($(this).val());
-	  filterAndDisplayOrders();  // 버튼 누르면 즉시 필터
 	});
-
-	$(".orderDateButton").on("click", filterAndDisplayOrders);
 	
-  // 버튼 스타일 & 동작
-  $(".orderWeekButton").on("mouseenter", function(){
-    if (!$(this).hasClass("selected")) $(this).css({backgroundColor:"black", color:"white"});
-  }).on("mouseleave", function(){
-    if (!$(this).hasClass("selected")) $(this).css({backgroundColor:"white", color:"black"});
+	//'조회' 버튼 클릭 시, 올바른 URL로 페이지 이동
+  $(".orderDateButton").on("click", function(){
+    const s = $("#myOrderStartDate").val();
+    const e = $("#myOrderEndDate").val();
+    if(!s || !e){ alert("조회할 시작일과 종료일을 모두 선택해주세요."); return; }
+    location.href = "<%=request.getContextPath()%>/order/myOrder.do?page=1&startDate=" + s + "&endDate=" + e;
   });
-
 });
 
 //✅ 상세 페이지 이동 함수
 function goOrderDetailsView(orderId) {
 	location.href = "<%=request.getContextPath()%>/order/orderDetailsView.do?orderId=" + orderId;
 }
-
-
 </script>
 </body>
 </html>
