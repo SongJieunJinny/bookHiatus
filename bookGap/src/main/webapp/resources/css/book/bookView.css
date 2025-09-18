@@ -281,7 +281,7 @@ section{
   width: 90%;
   border-radius: 10px;
   border: solid 1px black;
-  padding: 10px 10px 13px 10px;
+  padding: 1% 1% 1% 1%;
   margin: 2% 5% 0% 5%;
 }
 .reviewId{
@@ -314,12 +314,14 @@ section{
 .reviewContent {
   flex-grow: 1; 
   width: auto; /* 자동 너비 */
-  margin: 0% 2% 0% 2%;
+  line-height: 1.8;
+  margin: 0.5% 2% 0.5% 2%;
 }
 .comment-list .contentContainer {
   display: flex; 
   justify-content: space-between;
   align-items: flex-start;
+  flex-direction: column;
 }
 /* 하트 컨테이너 */
 .reviewLike {
@@ -449,7 +451,7 @@ section{
 .reviewOptions {
   margin-left: 0;
   position: relative;
-  padding: 0px 20px 0px 0px;
+  padding: 0px 20px 0px 1125px;
   cursor: pointer;
 }
 .optionsToggle {
