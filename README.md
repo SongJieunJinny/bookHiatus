@@ -743,6 +743,15 @@ src/
 -장바구니 담기/삭제 흐름
 ![장바구니 데모](./images/cartMove.gif)
 
+-회원 주문 흐름
+![회원 주문 데모](./images/User_payGIF.gif)
+
+-회원 환불확인 흐름
+![회원 환불확인 데모](./images/User_refund.gif)
+
+-회원 주문취소 흐름
+![회원 주문취소 데모](./images/tosspay_cancle.gif)
+
 -비회원 주문취소/환불 흐름
 ![비회원 주문취소 데모](./images/Guest_refundGIF.gif)
 
