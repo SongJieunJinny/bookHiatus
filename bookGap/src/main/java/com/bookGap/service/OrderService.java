@@ -16,8 +16,8 @@ public interface OrderService {
   
   //회원 주문 조회
   public List<OrderVO> getOrdersByUserId(String userId);
-  public List<OrderVO> getOrdersPaging(String userId, int start, int perPage);
-  public int getTotalOrderCount(String userId);
+  public List<OrderVO> getOrdersPaging(String userId, int start, int perPage, String startDate, String endDate);
+  public int getTotalOrderCount(String userId, String startDate, String endDate);
 
   // 상품 관련
   public BookVO getBookByIsbn(String isbn);

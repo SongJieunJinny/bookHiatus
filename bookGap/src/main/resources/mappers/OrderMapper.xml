@@ -271,6 +271,10 @@
     LEFT JOIN book b          ON od.BOOK_NO = b.BOOK_NO
     LEFT JOIN product_api api ON b.isbn = api.isbn
     WHERE o.USER_ID = #{userId}
+    <if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
+      AND o.ORDER_DATE &gt;= STR_TO_DATE(CONCAT(#{startDate}, ' 00:00:00'), '%Y-%m-%d %H:%i:%s')
+      AND o.ORDER_DATE &lt;= STR_TO_DATE(CONCAT(#{endDate},   ' 23:59:59'), '%Y-%m-%d %H:%i:%s')
+    </if>
     ORDER BY o.ORDER_DATE DESC
     LIMIT #{start}, #{perPage}
   </select>
@@ -367,8 +371,13 @@
   </select>
 
   <!-- 주문갯수 조회 -->
-	<select id="getTotalOrderCount" parameterType="string" resultType="int">
-    SELECT COUNT(*) FROM ORDERS WHERE USER_ID = #{userId}
+	<select id="getTotalOrderCount" parameterType="map" resultType="int">
+    SELECT COUNT(*) FROM ORDERS o
+     WHERE o.USER_ID = #{userId}
+    <if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
+      AND o.ORDER_DATE &gt;= STR_TO_DATE(CONCAT(#{startDate}, ' 00:00:00'), '%Y-%m-%d %H:%i:%s')
+      AND o.ORDER_DATE &lt;= STR_TO_DATE(CONCAT(#{endDate},   ' 23:59:59'), '%Y-%m-%d %H:%i:%s')
+    </if>
   </select>
 
   <!-- 주문 취소하기 버튼을 눌렀을 때 업데이트하는 쿼리 -->
