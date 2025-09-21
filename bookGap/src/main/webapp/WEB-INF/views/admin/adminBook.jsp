@@ -417,7 +417,7 @@
 			    // 삭제 버튼 클릭 시
 			    $(document).on('click', '.deleteBook', function() {
 			      const row = $(this).closest('tr');
-			      const bookNo = row.find('td:eq(9)').text();
+			      const bookNo = row.find('td:eq(0)').text();
 	
 			      if (confirm("정말 삭제하시겠습니까?")) {
 			        $.ajax({
