@@ -755,8 +755,19 @@ src/
 -비회원 주문취소/환불 흐름
 ![비회원 주문취소 데모](./images/Guest_refundGIF.gif)
 
--관리자 도서추가 흐픔
-![비회원 주문취소 데모](./images/adminBookS.gif)
+-관리자 도서추가 흐름
+![관리자 도서추가 데모](./images/adminBookS.gif)
+
+-관리자 회원/비회원 주문배송관리 흐름
+![관리자 회원/비회원 주문배송관리 데모](./images/adminOrderS.gif)
+
+-관리자 환불/신고 관리 흐름
+![관리자 회원/비회원 주문배송관리 데모](./images/adminRefund.gif)
+
+-관리자 추천도서 관리,일정 추가/확인 ,매출확인 흐름
+![관리자 추천도서 관리,일정 추가/확인 ,매출확인 데모](./images/adminRecommendBook.gif)
+
+
 
 --- 
 
