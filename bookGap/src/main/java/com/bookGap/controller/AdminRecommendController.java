@@ -49,7 +49,7 @@ public class AdminRecommendController {
     }
 
     // 추천 도서 등록 (Upsert)
-    @PostMapping("/admin/recommend/add")
+    @PostMapping("/admin/recommend/add.do")
     @ResponseBody
     public String add(@RequestParam int bookNo,
 			                      @RequestParam(defaultValue = "BASIC") String recommendType,
@@ -69,14 +69,14 @@ public class AdminRecommendController {
     }
 
     // 추천 도서 삭제
-    @PostMapping("/admin/recommend/delete")
+    @PostMapping("/admin/recommend/delete.do")
     @ResponseBody
     public String delete(@RequestParam int bookNo, @RequestParam String recommendType) {
         recommendBookService.removeRecommendBook(bookNo, recommendType);
         return "success";
     }
 
-    @PostMapping("/admin/recommend/update")
+    @PostMapping("/admin/recommend/update.do")
     @ResponseBody
     public String update(@RequestParam int bookNo,
                          @RequestParam String oldRecommendType,
