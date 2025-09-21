@@ -472,25 +472,30 @@ document.getElementById("kakaoLogin").addEventListener("click", function () {
 });
 
 function kakaoLogout() {
-  const ctx = '<%=request.getContextPath()%>';
-  const clientId = '56c7bb3d435c0c4f0d2b67bfa7d4407e';
-  const redirectUri = window.location.origin + ctx + '/';
+	  const ctx = '<%=request.getContextPath()%>';
 
-  const goKakaoLogout = () => {
-    try { if (window.Kakao && Kakao.Auth) Kakao.Auth.setAccessToken(null); } catch(e) {}
-    window.location.href =
-      'https://kauth.kakao.com/oauth/logout?client_id=' + clientId +
-      '&logout_redirect_uri=' + encodeURIComponent(redirectUri);
-  };
+	  // 1) SDK 토큰 정리 (가능하면 logout, 최소 setAccessToken(null))
+	  try {
+	    if (window.Kakao && Kakao.Auth) {
+	      if (Kakao.Auth.logout) {
+	        Kakao.Auth.logout(function(){ /* noop */ });
+	      } else {
+	        Kakao.Auth.setAccessToken(null);
+	      }
+	    }
+	  } catch (e) { console.warn(e); }
 
-  fetch(ctx + '/kakaoServerLogout.do', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' }
-  })
-  .then(res => { if (!res.ok) console.warn('서버 로그아웃 응답 코드:', res.status); })
-  .catch(err => console.error('서버 로그아웃 호출 실패:', err))
-  .finally(goKakaoLogout); // 리디렉트는 여기서 한 번만
-}
+	  // 2) 우리 서버에 카카오 로그아웃(= Kakao /v1/user/logout + 세션/쿠키 정리) 요청
+	  fetch(ctx + '/kakaoServerLogout.do', {
+	    method: 'POST',
+	    headers: { 'Content-Type': 'application/json' }
+	  })
+	  .catch(err => console.error('서버 로그아웃 호출 실패:', err))
+	  .finally(() => {
+	    // 3) kauth 로그아웃은 로컬/HTTP/Safari에선 401 나기 쉬우니 생략하고 바로 홈으로
+	    window.location.href = ctx + '/';
+	  });
+	}
 
 document.addEventListener("DOMContentLoaded", function () {
   const logoutBtn = document.getElementById("kakaoLogoutBtn");
@@ -501,6 +506,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 });
+
 function updateCartCount() {
 	  const cartCountElement = document.getElementById("cart-count");
 	  const cartCountTitle = document.getElementById("cartCountTitle");
