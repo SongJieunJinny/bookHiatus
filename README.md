@@ -752,6 +752,12 @@ src/
 -회원 주문취소 흐름
 ![회원 주문취소 데모](./images/tosspay_cancle.gif)
 
+-비회원 주문/장바구니이용 흐름
+![비회원 주문취소 데모](./images/guest_cart_kakaopay.gif)
+
+-비회원 주문확인 흐름
+![비회원 주문취소 데모](./images/guest_order_check.gif)
+
 -비회원 주문취소/환불 흐름
 ![비회원 주문취소 데모](./images/Guest_refundGIF.gif)
 
@@ -769,8 +775,6 @@ src/
 
 -관리자 일정/매출 관리 흐름
 ![관리자 일정/매출 관리 데모](./images/adminSchedule.gif)
-
-
 
 --- 
 
