@@ -759,6 +759,16 @@ src/
 ![관리자 주문배송 관리  데모](./images/adminOrderS.gif)
 
 -관리자 환불/댓글신고 관리 흐름
+![관리자 환불/댓글신고 관리 데모](./images/adminReport.gif)
+
+-관리자 추천도서 관리 흐름
+![관리자 추천도서 관리 데모](./images/adminRecommendBook.gif)
+
+-관리자 도서 관리 흐름
+![관리자 도서 관리 데모](./images/adminBookS.gif)
+
+-관리자 일정/매출 관리 흐름
+![관리자 일정/매출 관리 데모](./images/adminSchedule.gif)
 
 
 
