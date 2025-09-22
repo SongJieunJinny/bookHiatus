@@ -177,8 +177,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // 필터 기능
 function filterType(type){
-  window.location.href =
-    '${pageContext.request.contextPath}/admin/adminRecommendBooks.do?recommendType=' + encodeURIComponent(type || '');
+    window.location.href = '${pageContext.request.contextPath}/admin/recommend/list?recommendType=' + type;
 }
 
 $(document).ready(function(){
@@ -204,7 +203,7 @@ $(document).ready(function(){
             return;
         }
 
-        $.post('${pageContext.request.contextPath}/admin/recommend/add.do', {
+        $.post('${pageContext.request.contextPath}/admin/recommend/add', {
             bookNo: bookNo,
             recommendType: recommendType,
             recommendComment: recommendComment
@@ -330,7 +329,7 @@ $(document).ready(function(){
 	        return;
 	    }
 
-	    $.post('${pageContext.request.contextPath}/admin/recommend/update.do', {
+	    $.post('${pageContext.request.contextPath}/admin/recommend/update', {
 	        bookNo: bookNo,
 	        oldRecommendType: oldRecommendType,
 	        recommendType: recommendType,
@@ -350,7 +349,7 @@ $(document).ready(function(){
         const recommendType = row.find('.recommendType').val();
 
         if(confirm('정말 삭제하시겠습니까?')){
-            $.post('${pageContext.request.contextPath}/admin/recommend/delete.do',
+            $.post('${pageContext.request.contextPath}/admin/recommend/delete',
                 { bookNo: bookNo, recommendType: recommendType },
                 function(){ row.remove(); alert('삭제 완료'); }
             ).fail(function(){ alert('삭제 실패'); });
