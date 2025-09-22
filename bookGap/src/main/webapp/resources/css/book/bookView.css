@@ -271,7 +271,7 @@ section{
   border-radius: 8px;
   cursor: pointer;
 }
-.commentBoxHeader{
+.commentBoxHeader{ 
 	width: 100%;
 	display: flex;
 	justify-content: flex-end;
