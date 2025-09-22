@@ -762,7 +762,7 @@ src/
 ![관리자 회원/비회원 주문배송관리 데모](./images/adminOrderS.gif)
 
 -관리자 환불/신고 관리 흐름
-![관리자 회원/비회원 주문배송관리 데모](./images/adminRefund.gif)
+![관리자 회원/비회원 주문배송관리 데모](./images/adminReport.gif)
 
 -관리자 추천도서 관리,일정 추가/확인 ,매출확인 흐름
 ![관리자 추천도서 관리,일정 추가/확인 ,매출확인 데모](./images/adminRecommendBook.gif)
