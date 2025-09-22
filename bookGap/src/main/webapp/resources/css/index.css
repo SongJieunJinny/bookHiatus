@@ -38,6 +38,7 @@ nav{
   align-items: flex-end;
   flex-wrap: wrap;
   margin-bottom: 0.3%;
+  justify-content: center;
 }
 #menu, header, #menuDiv {
   overflow: visible;

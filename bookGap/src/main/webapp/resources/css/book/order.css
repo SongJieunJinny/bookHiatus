@@ -330,7 +330,7 @@ section{
   .deliveryContainer, .requestContainer {
     flex-direction:column; align-items:flex-start; gap:10px; width:90%;
   }
-  .deliveryAddress1 { flex-direction:column; align-items:flex-start; }
+  .deliveryAddress1 { align-items:flex-start; }
 }
 
 /* ===========================
@@ -892,7 +892,6 @@ font-size: 13px;
   }
 
   .deliveryAddress1 {
-    flex-direction: column;
     align-items: flex-start;
   }
 
@@ -1149,26 +1148,19 @@ font-size: 13px;
    📱 모바일 전용 ≤768px
    =========================== */
 @media (max-width: 768px) {
-  section { width:100%; padding:10px; margin:0; }
+  section{width:100%;max-width:1440px;margin:0 auto;padding:10px;}
 
   /* 상단 기간/조회 UI */
   #orderDetailsMid, #orderDetailsEnd { width:100%; margin:0; }
-  .orderDetailsDiv {
-    width:100%; padding:12px; border:1px solid #000;
-    display:flex; flex-direction:column; gap:10px;
-  }
-  .orderDateInfo {
-    display:flex; flex-wrap:wrap; gap:8px; justify-content:space-between;
-  }
+  .orderDetailsDiv { width:100%; padding:12px; border:1px solid #000; display:flex; flex-direction:column; gap:10px; }
+  .orderDateInfo { display:flex; flex-wrap:wrap; gap:8px; justify-content:space-between; }
   .orderWeekButton, .orderDateButton { width:100%; font-size:16px; padding:12px; }
 
   /* 주문 카드 정렬 */
   .orderContainer { margin:16px 0; border:1px solid #ccc; border-radius:8px; background:#fdfdfd; }
-  .orderPayCompl {
-    display:flex; align-items:center; justify-content:space-between;
-    gap:12px; padding:14px;
-  }
+  .orderPayCompl { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px; }
   .orderThumb { width:84px; aspect-ratio:3/4; object-fit:cover; border-radius:6px; }
+  .orderWeekButton,.orderDateButton{width:100%;padding:12px;font-size:16px;}
   .orderInfo { flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:6px; }
   .orderShip { min-width:120px; text-align:center; font-weight:700; color:#7a7a7a; }
 
@@ -1176,9 +1168,7 @@ font-size: 13px;
   #orderMain { display:flex; flex-direction:column; align-items:center; gap:10px; }
   #orderMainNav, #orderMainSection, #orderMainAside { width:100%; }
 
-  .deliveryContainer, .requestContainer {
-    flex-direction:column; align-items:stretch; width:90%; margin:10px auto; gap:10px;
-  }
+  .deliveryContainer, .requestContainer { flex-direction:column; align-items:stretch; width:90%; margin:10px auto; gap:10px; }
   .deliveryAddress1 { flex-direction:column; align-items:flex-start; gap:10px; }
 
   /* 결제 방법 섹션 */
@@ -1192,7 +1182,8 @@ font-size: 13px;
 
   /* 페이징 */
   .pagination { gap:6px; margin:20px 0 40px; }
-  .pagination a { padding:8px 12px; }
+  .pagination a{min-height:44px;min-width:44px;display:inline-flex;align-items:center;justify-content:center;}
+
 }
 
 /* ===========================
@@ -1200,8 +1191,8 @@ font-size: 13px;
    =========================== */
 @media (min-width: 769px) and (max-width: 1024px) {
   section { width:min(95%, 1320px); padding:16px; margin:0 auto; }
+  
   #orderDetailsMid, #orderDetailsEnd { width:min(90%, 1320px); margin:0 auto; }
-
   .orderDetailsDiv { flex-direction:row; align-items:center; gap:16px; }
   .orderDateInfo { gap:12px; flex-wrap:wrap; }
   .orderWeekButton, .orderDateButton { padding:.8rem 1rem; font-size:16px; }
@@ -1213,12 +1204,9 @@ font-size: 13px;
   /* 본문 1열 유지 + 폭 완화 */
   #orderMain { display:flex; flex-direction:column; align-items:center; gap:20px; }
   #orderMainNav, #orderMainSection, #orderMainAside { width:100%; max-width:700px; }
-  .orderDetailLayout, .paymentMethodLayout, .paymentTableLayout { width:90%; margin:0 auto; }
+  .orderDetailLayout, .paymentMethodLayout, .paymentTableLayout { width:90%; }
 
-  .deliveryContainer, .requestContainer {
-    flex-direction:column; align-items:flex-start; gap:10px; width:90%;
-  }
-  .deliveryAddress1 { flex-direction:column; align-items:flex-start; }
+  .deliveryContainer, .requestContainer { flex-direction:column; align-items:flex-start; gap:10px; width:90%; }
   .orderTable { font-size: 16px; }
   .refundFormButton { width: 20%; margin-left: 40%; }
   #backMyOrder { width: 20%; margin-left: 40%; }
@@ -1229,6 +1217,7 @@ font-size: 13px;
    =========================== */
 @media (min-width: 1025px) and (max-width: 1440px) {
   section { width:min(92%, 1320px); margin:0 auto; }
+  
   #orderDetailsMid, #orderDetailsEnd { width:min(80%, 1320px); margin:0 auto; }
 
   .orderDetailsDivLine { border-bottom:7px solid #000; }
@@ -1237,7 +1226,7 @@ font-size: 13px;
   .orderShip { min-width:160px; }
 
   /* 데스크톱 기본이 3열이라면, 노트북에서 2~3열 유연 */
-  #orderMain { display:grid; grid-template-columns: 1fr 1fr 1fr; gap:24px; }
-  #orderMainNav, #orderMainSection, #orderMainAside { width:auto; }
-  .orderDetailLayout, .paymentMethodLayout, .paymentTableLayout { width:100%; }
+  #orderMain{display:grid; grid-template-columns:1fr 1fr 1fr; gap:24px;}
+  #orderMainNav,#orderMainSection,#orderMainAside{width:auto;}
+  .orderDetailLayout,.paymentMethodLayout,.paymentTableLayout{width:100%;}
 }

@@ -444,3 +444,92 @@ section{
   text-decoration: none;
   color: white;
 }
+/* =========================== 📱 모바일 ≤768px =========================== */
+@media (max-width: 768px) {
+  section { width:100%; padding:10px; margin:0; }
+
+  /* 공통 폰트/간격 축소 */
+  body { font-size: 14px; }
+  #myInfoDiv, #deleteMembershipHeadDiv, #mypage { font-size: 20px; }
+
+  /* 배치: 단일 컬럼 */
+  #mypageMid, #myInfoMid, #deleteMembershipMid { width:100%; margin:0; }
+  #mypageDiv { width: 95%; border-radius: 16px; }
+  #mypageContainer { font-size: 16px; }
+  #mypageId, #mypagePw { width: 90%; margin-bottom: 10px; }
+
+  /* 입력/라벨 폭 확장 */
+  #myInfoInput { width:100%; padding: 0 10px; }
+  #title, #titleAddressCode, #titleAddress { width:auto; font-size:16px; min-width:70px; }
+  #userName, #userPhone, #userEmail, #userAddressCode, #userAddress { flex-direction: column; align-items: stretch; }
+
+  #userNameInput, #userPhoneInput, #userEmailInput { width: 100%; }
+  #userAddressCodeDiv, #userAddressDiv { width: 100%; }
+  #userAddressCodeInput { width: 70%; }
+  #userAddressCodeBtn { width: 28%; font-size: 14px; padding: 8px; }
+  #userAddress1Input, #userAddress2Input { width: 100%; }
+
+  /* 버튼류 크게/세로 배치 */
+  #mypageBtn, #myInfoBtn, #myInfoCancelBtn, #changePwBtn { width:100%; font-size:16px; padding:12px; }
+  #myInfoBtnDiv { width:100%; display:flex; flex-direction:column; gap:10px; align-items:stretch; }
+
+  /* 탈퇴 버튼 */
+  #deleteMembershipBtn { width: 100%; padding:12px; font-size:18px; }
+
+  /* 모달 */
+  .modal-content { width: 92%; max-width:none; margin: 25% auto; }
+  #emailDiv, #emailCheckDiv, #newPwDiv, #newPwCheckDiv { width: 30%; font-size: 14px; }
+  #emailInput, #code, #newPwInput, #newPwCheckInput { width: 70%; }
+  #emailBtn, #emailCheckBtn { width: 28%; font-size:14px; padding:8px; }
+  #changePasswordBtn { width: 100%; font-size:16px; padding:12px; }
+}
+
+/* =========================== 📗 태블릿 769–1024px =========================== */
+@media (min-width: 769px) and (max-width: 1024px) {
+  section { width: 90%; margin: 0 auto; }
+
+  #mypageMid, #myInfoMid { width: 100%; }
+  #mypageDiv { width: 90%; }
+  #mypageId, #mypagePw { width: 70%; }
+
+  #myInfoInput { width:100%; }
+  #title, #titleAddressCode, #titleAddress { width: 10%; font-size: 18px; }
+  #userNameInput, #userPhoneInput, #userEmailInput { width: 60%; padding: 10px; }
+  #userAddressCodeDiv, #userAddressDiv { width: 60%; }
+  #userAddressCodeInput { width: 72%; }
+  #userAddressCodeBtn { width: 26%; font-size: 15px; }
+
+  #myInfoBtnDiv{ width: 100%; display: flex; justify-content: center; }
+  #myInfoBtn, #myInfoCancelBtn { width: 20%; font-size: 18px; }
+
+  #deleteMembershipBtn { width: 40%; padding: 12px; }
+
+  .modal-content { width: 80%; max-width: 520px; }
+  #emailDiv, #emailCheckDiv, #newPwDiv, #newPwCheckDiv { width: 25%; }
+  #emailInput, #code, #newPwInput, #newPwCheckInput { width: 75%; }
+  #changePasswordBtn { width: 50%; }
+}
+
+/* =========================== 💻 노트북 1025–1440px =========================== */
+@media (min-width: 1025px) and (max-width: 1440px) {
+  section { width: min(92%, 1320px); margin: 0 auto; }
+
+  #mypageMid, #myInfoMid { width: 100%; }
+  #mypageDiv { width: 80%; }
+  #mypageId, #mypagePw { width: 50%; }
+
+  #title, #titleAddressCode, #titleAddress { width: 8%; font-size: 18px; }
+  #userNameInput, #userPhoneInput, #userEmailInput { width: 40%; padding: 8px; }
+  #userAddressCodeDiv, #userAddressDiv { width: 40%; }
+  #userAddressCodeInput { width: 72%; }
+  #userAddressCodeBtn { width: 26%; }
+
+  #myInfoBtnDiv{ width: 100%; display: flex; justify-content: center; }
+  #myInfoBtn, #myInfoCancelBtn { width: 20%; }
+  #changePwBtn { width: 240px; }
+
+  #deleteMembershipBtn { width: 18%; }
+
+  .modal-content { width: 60%; max-width: 640px; }
+  #changePasswordBtn { width: 30%; }
+}

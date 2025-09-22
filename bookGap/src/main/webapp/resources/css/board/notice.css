@@ -427,7 +427,7 @@ td a{
 	#noticeViewwrite, #noticeViewlist, #noticeViewmodify{
 		font-size: 15px;
 		padding: 0.5%;
-		width: 12%;
+		width: 13%;
 	}
 	#noticeWriteButton{
     justify-content: flex-end;

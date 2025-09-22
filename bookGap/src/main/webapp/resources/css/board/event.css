@@ -593,9 +593,13 @@ textarea.eventCommentContent{
   #eventWriteButton, #eventModifyButton, #resetButton{
     width: 11%;
   }
+  #eventCommentTitle{
+    width: 18%;
+  }
   #eventCommentButton{
-    font-size: 13px;
-    padding: 2px;
+    width: 8%;
+    font-size: 15px;
+    padding: 5px;
   }
   .pagination{
     font-size: 18px;
