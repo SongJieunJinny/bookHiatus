@@ -759,7 +759,7 @@ src/
 ![관리자 도서추가 데모](./images/adminBookS.gif)
 
 -관리자 회원/비회원 주문배송관리 흐름
-<video src="images/output.mp4" autoplay loop muted playsinline ></video>
+<video src="images/output.mp4" autoplay loop muted playsinline width="600" ></video>
 
 -관리자 환불/신고 관리 흐름
 ![관리자 회원/비회원 주문배송관리 데모](./images/adminReport.gif)
