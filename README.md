@@ -756,10 +756,10 @@ src/
 ![비회원 주문취소 데모](./images/Guest_refundGIF.gif)
 
 -관리자 주문배송 관리 흐름
-![관리자 주문배송 관리  데모](./images/adminOrderS_optimized.gif)
+![관리자 주문배송 관리  데모](./images/adminOrderS.gif)
 
 -관리자 환불/댓글신고 관리 흐름
-<video src="https://github.com/SongJieunJinny/bookHiatus/blob/main/images/output.mp4" autoplay loop muted playsinline width="600"></video>
+
 
 
 --- 
