@@ -63,13 +63,7 @@ public class UserController {
 	  return "redirect:/";
 	}
 	
-	@PostMapping("/auth/saveRedirect.do")
-	@ResponseBody
-	public ResponseEntity<?> saveRedirect(@RequestParam("redirectUrl") String redirectUrl, HttpSession session) {
-    session.setAttribute("redirectAfterLogin", redirectUrl);
 
-    return ResponseEntity.ok().build();
-	}
 	
 	@RequestMapping("/login.do")
   public String loginPage() {

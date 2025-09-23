@@ -8,6 +8,7 @@
 	<!-- 제외 url pattern -->
 	<security:http pattern="/resources/**" security="none" />
 	<security:http auto-config="true" use-expressions="true" create-session="ifRequired">
+	
         <!-- 모든 요청은 HTTPS 강제 (개발환경에서 필요시 주석) -->
         <!-- <security:intercept-url pattern="/**" requires-channel="https"/>-->
 
@@ -23,8 +24,8 @@
         <security:intercept-url pattern="/findPw/resetPassword.do" method="POST" access="permitAll"/>
 
         <!-- 카카오 로그인 콜백/서버 로그아웃(세션 해제용) -->
-        <security:intercept-url pattern="/kakaoLoginCallback.do" method="POST" access="permitAll"/>
-        <security:intercept-url pattern="/kakaoServerLogout.do" method="POST" access="permitAll"/>
+        <security:intercept-url pattern="/kakaoLoginCallback.do" access="permitAll"/>
+        <security:intercept-url pattern="/kakaoServerLogout.do"  access="permitAll"/>
 
         <!-- 상품/검색/메인/선택 리스트/팝업/장바구니 페이지(게스트도 진입) -->
         <security:intercept-url pattern="/product/**" access="permitAll"/>
@@ -137,6 +138,8 @@
 
         <!-- 3) 관리자 전용 -->
         <security:intercept-url pattern="/admin/**" access="hasRole('ROLE_ADMIN')"/>
+        <security:intercept-url pattern="/auth/saveRedirect.do" method="POST" access="permitAll"/>
+        <security:intercept-url pattern="/loginOk.do" access="permitAll"/>
 
         <!-- 로그인/로그아웃/세션/헤더/CSRF 등 기존 설정 유지 -->
         <security:form-login login-page="/login.do"
@@ -153,12 +156,7 @@
 
         <security:access-denied-handler ref="userDeniedHandler"/>
 
-       <!-- 기존 <security:csrf/> 를 아래로 교체 
-		<security:csrf request-matcher-ref="csrfProtectionMatcher"/>
-		
-		-->
-
-        <security:session-management session-fixation-protection="migrateSession" invalid-session-url="/login.do?expired">
+        <security:session-management session-fixation-protection="migrateSession" invalid-session-url="/">
             <security:concurrency-control max-sessions="1" error-if-maximum-exceeded="true"/>
         </security:session-management>
 
@@ -168,8 +166,11 @@
             <security:xss-protection block="true"/>
             <security:hsts include-subdomains="true" max-age-seconds="31536000"/>
         </security:headers>
-       
+        
+        
 	</security:http>
+	
+	
 	
 	
 	<bean id="userLoginSuccessHandler" class="com.bookGap.service.UserLoginSuccessHandler" />

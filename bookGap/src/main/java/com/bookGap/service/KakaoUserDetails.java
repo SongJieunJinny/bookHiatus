@@ -19,7 +19,11 @@ public class KakaoUserDetails implements UserDetails {
 	    // 권한 반환
 	    @Override
 	    public Collection<? extends GrantedAuthority> getAuthorities() {
-	        return Collections.singleton(new SimpleGrantedAuthority(user.getUserAuthority()));
+	        String role = user.getUserAuthority();
+	        if (role == null || role.trim().isEmpty()) {
+	            role = "ROLE_USER_KAKAO"; // 카카오 기본 권한 명확히
+	        }
+	        return Collections.singleton(new SimpleGrantedAuthority(role));
 	    }
 
 	    @Override
