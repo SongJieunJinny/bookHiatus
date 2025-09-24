@@ -196,38 +196,35 @@
 </div>
 <script type="text/javascript">
 var isbn = null;
-
 const userId = '<sec:authentication property="name" htmlEscape="false" />';
 const userRole = '<sec:authentication property="authorities" htmlEscape="false" />';
 
 $(document).ready(function() {
-
 	updateCartCount();
 	initHeaderEvents();
 
-  if (isLoggedIn) {
-    syncLocalCartToDB();
-  }
-    
+  if(isLoggedIn){ syncLocalCartToDB(); }
+
   isbn = $("#isbn").val();
-  if (!isbn) {
+  
+  if(!isbn){
     const m = location.search.match(/[?&]isbn=([^&]+)/);
     if (m) isbn = decodeURIComponent(m[1]);
   }
-  if (!isbn) {
-    isbn = "${bookDetail.isbn}";
-  }
-  if (!isbn) {
-    isbn = "${bookDetail.productInfo != null ? bookDetail.productInfo.isbn : ''}";
-  }
+  if(!isbn){ isbn = "${bookDetail.isbn}"; }
+  if(!isbn){ isbn = "${bookDetail.productInfo != null ? bookDetail.productInfo.isbn : ''}"; }
 
-  if (isbn) {
+  if(isbn){
     loadComment(isbn);
-  } else {
+  }else{
     console.error("isbn이 비어 있어 댓글을 불러올 수 없습니다.");
   }
 
-  //===== 댓글 이벤트 바인딩 =====
+  //======================================================================
+  //                 댓글 관련 이벤트 핸들러
+  //======================================================================
+
+	// 옵션 메뉴(⋯) 토글
   $(document).on('click', '.reviewOptions', function (e) {
     e.stopPropagation();
     let cmt = $(this).data("reviewBox");
@@ -236,35 +233,50 @@ $(document).ready(function() {
   });
   $(document).click(() => $(".optionsMenu").hide());
   $(document).on('click', '.optionsMenu', e => e.stopPropagation());
+
+  // 댓글 폼 제출
   $("#commentForm").on("submit", function (e) { e.preventDefault(); commentInsert(); });
+  
+  // 수정/삭제/신고 버튼
   $(document).on('click', '.editReviewButton', function () { editReview($(this).data("commentno")); });
   $(document).on('click', '.deleteReviewButton', function () { deleteReview($(this).data("commentno")); });
   $(document).on('click', '.reportReviewButton', function () { reportReview($(this).data("commentno")); });
-  $(document).on("change", "div.comment-list .reviewLikeInput", function () {
-    const cmt = $(this).data("commentno");
-    if (cmt) { toggleLove(cmt, isbn, userId, this); }
-  });
-  $(document).on("change", ".reviewLikeInput", function () {
-    $(this).closest(".reviewLike").toggleClass("active", this.checked);
+  
+  // click, change 핸들러
+  $(document).on("click", ".reviewLikeInput", function (e) {
+    const checkbox = this;
+    const commentNo = $(checkbox).data("commentno");
+    const author = ($(checkbox).data("author") || "").trim();
+    const me = (userId || "").trim();
+    const isEditBox = $(checkbox).closest('.reviewEditBox').length > 0;
+
+    if(!me || me === 'anonymousUser'){ e.preventDefault();  alert("로그인 후 이용해주세요."); return; }
+
+    if(!isEditBox && author === me){ e.preventDefault(); return; }
+    
+    if(isEditBox && author !== me){ e.preventDefault(); return; }
+
+    setTimeout(function(){ $(checkbox).closest(".reviewLike").toggleClass("active", checkbox.checked); }, 0);
+
+    if(commentNo){ toggleLove(commentNo, isbn, userId, checkbox); }
   });
   
-  //===== 수량/가격 =====
+  //======================================================================
+  //                수량/가격 등 나머지 이벤트 핸들러
+  //======================================================================
   const minusBtn = document.querySelector(".minus");
   const plusBtn = document.querySelector(".plus");
   const numInput = document.querySelector(".num");
   const totalPrice = document.getElementById("totalPrice");
 
-  if(minusBtn && plusBtn && numInput && totalPrice) {
+  if(minusBtn && plusBtn && numInput && totalPrice){
     const unitPrice = ${bookPrice};
     const maxStock = ${bookDetail.bookStock != null && bookDetail.bookStock > 0 ? bookDetail.bookStock : 999};
-
-    const updateTotalPrice = () => {
-      let qty = parseInt(numInput.value) || 1;
-      if (qty < 1) qty = 1;
-      if (maxStock > 0 && qty > maxStock) qty = maxStock;
-      numInput.value = qty;
-      totalPrice.textContent = (unitPrice * qty).toLocaleString() + "원";
-    };
+    const updateTotalPrice = () => { let qty = parseInt(numInput.value) || 1;
+															       if (qty < 1) qty = 1;
+															       if (maxStock > 0 && qty > maxStock) qty = maxStock;
+															       numInput.value = qty;
+															       totalPrice.textContent = (unitPrice * qty).toLocaleString() + "원"; };
 
     minusBtn.addEventListener("click", () => {
       if(parseInt(numInput.value) > 1){
@@ -297,7 +309,10 @@ $(document).ready(function() {
     updateTotalPrice();
   }
   
-  //===== 장바구니 =====
+  //======================================================================
+  //                장바구니, 바로구매, 펼쳐보기, 신고 등 나머지 코드
+  //======================================================================
+  // 장바구니
   $(document).on("click", "#bookChartBtn", function () {
     const quantity = parseInt($(".num").val()) || 1;
     const title = "${bookDetail.title}";
@@ -335,16 +350,16 @@ $(document).ready(function() {
 				                  if(confirm("장바구니 페이지로 이동하시겠습니까?")){ window.location.href = contextPath + "/product/cart.do"; }
             						},
 			         error: function(){ alert("서버 오류로 장바구니 저장에 실패했습니다."); }
-        });
+      });
     });
   });
 
-  //===== 바로구매 =====
+  // 바로구매
   $(document).on("click", "#bookOrderBtn", function (event) {
     event.preventDefault();
     
-    if (isLoggedIn === false) { // 비회원
-      if (!userId || userId === 'anonymousUser') {
+    if(isLoggedIn === false){ // 비회원
+      if(!userId || userId === 'anonymousUser'){
         alert("로그인 후 이용 가능합니다.");
         const loginModal = document.getElementById('loginModal');
         if (loginModal) loginModal.classList.add('show');
@@ -357,17 +372,13 @@ $(document).ready(function() {
     }
     
     const quantity = parseInt($(".num").val()) || 1;
-    if (quantity < 1) { alert("구매 수량은 1권 이상이어야 합니다."); return; }
+    if(quantity < 1){ alert("구매 수량은 1권 이상이어야 합니다."); return; }
     
     const maxStock = parseInt('${bookDetail.bookStock != null ? bookDetail.bookStock : 999}');
-    if (quantity > maxStock) {
-      alert(`죄송합니다. 이 도서는 현재 재고가 ${maxStock}권이므로 최대 ${maxStock}권까지 구매 가능합니다.`);
-      return;
-    }
+    if(quantity > maxStock){ alert(`죄송합니다. 이 도서는 현재 재고가 ${maxStock}권이므로 최대 ${maxStock}권까지 구매 가능합니다.`); return; }
+    if(!isbn){ alert("오류: 도서 정보를 가져올 수 없습니다. 다시 시도해주세요."); return; }
     
-    if (!isbn) { alert("오류: 도서 정보를 가져올 수 없습니다. 다시 시도해주세요."); return; }
-    
-   // 회원: POST 폼 제출
+    // 회원: POST 폼 제출
     const form = $('<form></form>');
     form.attr('method', 'post');
     form.attr('action', contextPath + '/order/orderMain.do');
@@ -408,17 +419,14 @@ $(document).ready(function() {
   
   $('#reportForm').on('submit', function(e) {
 		e.preventDefault();
-		
 		const commentNo = $('#reportCommentNo').val();
 		const complainType = $('input[name="complainType"]:checked').val();
 		
-		if (!commentNo || !complainType) { alert("오류: 신고 정보를 찾을 수 없습니다."); return; }
+		if(!commentNo || !complainType){ alert("오류: 신고 정보를 찾을 수 없습니다."); return; }
 		
 		$.ajax({ url: contextPath + "/comment/report.do",
 						 type: "POST",
-						 data: { commentNo: commentNo,
-										 complainType: complainType,
-										 userId: userId },
+						 data: { commentNo, complainType, userId },
 						 success: function(response) {
 												if(response === "Success"){
 													alert("신고가 정상적으로 접수되었습니다.");
@@ -437,14 +445,18 @@ $(document).ready(function() {
 
 	// 신고 모달 취소 버튼
 	$('#cancelReportBtn').on('click', function(){ $('#reportModal').removeClass('show'); });
+	
 	// 모달 배경 클릭 시 닫기
 	$('#reportModal').on('click', function(e){ if($(e.target).is('#reportModal')){ $(this).removeClass('show'); }});
 	
 });
 
+//======================================================================
+//                          JavaScript 함수들
+//======================================================================
 //두번째 변수 생략시 1로 들어감
 function loadComment(isbn, page = 1) {
-	if (!isbn) { console.error("ISBN 값이 비어있어 댓글을 로드할 수 없습니다."); return; }
+	if(!isbn){ console.error("ISBN 값이 비어있어 댓글을 로드할 수 없습니다."); return; }
 	
   $.ajax({
     url: "<%= request.getContextPath()%>/comment/loadComment.do",
@@ -453,76 +465,72 @@ function loadComment(isbn, page = 1) {
     dataType: "json",
     success : function(data) { 
     	const commentList = $(".comment-list");
-        commentList.empty();
-        let html = "";
-        const cleanedUserRole = userRole.replace(/[\[\]]/g, '');
-        let roles = cleanedUserRole.split(',').map(s => s.trim());
-        
-        if (data.commentList && data.commentList.length > 0) {
-          for (let cvo of data.commentList) {
-        	const isLiked = cvo.likeCount > 0;
-            const isCheckedByMe = cvo.lovedByLoginUser;
-            const isAuthor = cvo.userId && cvo.userId.trim() === userId.trim();
-            const isAdmin = roles.includes("ROLE_ADMIN");
-            const canInteract = isAdmin || isAuthor;
-        	  
-					 html += `<div id="reviewBox\${cvo.commentNo}" class="reviewBox">
-											<div class="reviewIdBox">`;
-					     html += `<div class="reviewId">\${cvo.userId}</div>`; 
-					     html += `  <div class="reviewIdRdate">|</div>
-					                  <div class="reviewRdate">\${cvo.formattedCommentRdate}</div>
-					                  <div class="reviewLikeStar">
-					                    <div class="reviewLike \${isLiked ? 'active' : ''}">
-					                      <label>
-					                        <input type="checkbox" class="reviewLikeInput" data-commentno="\${cvo.commentNo}" \${isCheckedByMe ? 'checked' : ''} \${!isLoggedIn ? 'disabled' : ''} />
-					                        <span class="heartSymbol">♥</span>
-					                      </label>
-					                    </div>
-					                    <div class="starBox">
-					                      <label class="starLabel">
-					                        <input type="range" class="reviewStar" min="0" max="5" step="1" value="\${cvo.commentRating || 0}" disabled />
-					                        <div class="starsOverlay"></div>
-					                      </label>
-					                    </div>
-					                  </div>
-					                </div>
-					                <div id="contentContainer\${cvo.commentNo}" class="contentContainer">
-					                  <div class="reviewContent">\${cvo.commentContent}</div>`;
-						    if(isLoggedIn){
-						      html += `<div class="reviewOptions" data-review-box="\${cvo.commentNo}">⋯
-						                 <div id="optionsMenu\${cvo.commentNo}" class="optionsMenu">`;
-						      if(isAdmin){ // 관리자
-						        html += `<button class="reportReviewButton" data-commentno="\${cvo.commentNo}">신고</button>
-						                 <button class="deleteReviewButton" data-commentno="\${cvo.commentNo}">삭제</button>`;
-						      }else if(isAuthor){ // 글 작성자
-						        html += `<button class="editReviewButton" data-commentno="\${cvo.commentNo}">수정</button>
-						                 <button class="deleteReviewButton" data-commentno="\${cvo.commentNo}">삭제</button>`;
-						      }else{ // 일반 로그인 사용자 (타인의 글)
-						         html += `<button class="reportReviewButton" data-commentno="\${cvo.commentNo}">신고</button>`;
-						      }
-						      html += ` </div></div>`;
-						    }
-								 html += `</div></div>`;
-          }
-				}else{
-					html = "<div class='no-comments' style='text-align:center; padding: 20px; color: #888;'>작성된 리뷰가 없습니다.</div>";
-				}
-        if (data.paging && data.commentList && data.commentList.length > 0) {
+      commentList.empty();
+      let html = "";
+      const cleanedUserRole = userRole.replace(/[\[\]]/g, '');
+      let roles = cleanedUserRole.split(',').map(s => s.trim());
+      if(data.commentList && data.commentList.length > 0){
+        for(let cvo of data.commentList){
+      	  const isLiked = cvo.likeCount > 0;
+          const isCheckedByMe = cvo.lovedByLoginUser;
+          const isAuthor = cvo.userId && cvo.userId.trim() === (userId||"").trim();
+          const isAdmin = roles.includes("ROLE_ADMIN");
+
+					html += `<div id="reviewBox\${cvo.commentNo}" class="reviewBox">
+									   <div class="reviewIdBox">
+                       <div class="reviewId">\${cvo.userId}</div> 
+                       <div class="reviewIdRdate">|</div>
+				               <div class="reviewRdate">\${cvo.formattedCommentRdate}</div>
+				                 <div class="reviewLikeStar">
+				                   <div class="reviewLike \${isLiked ? 'active' : ''}">
+				                     <label>
+				                       <input type="checkbox"  class="reviewLikeInput" 
+				                              data-commentno="\${cvo.commentNo}" data-author="\${cvo.userId}" 
+				                              \${isCheckedByMe ? 'checked' : ''} ${isAuthor ? 'disabled' : ''}/>
+				                       <span class="heartSymbol">♥</span>
+				                     </label>
+				                   </div>
+				                   <div class="starBox">
+				                     <label class="starLabel">
+				                       <input type="range" class="reviewStar" min="0" max="5" step="1" value="\${cvo.commentRating || 0}" disabled />
+				                       <div class="starsOverlay"></div>
+				                     </label>
+				                   </div>
+				                 </div>
+				               </div>
+				               <div id="contentContainer\${cvo.commentNo}" class="contentContainer">
+				                 <div class="reviewContent">\${cvo.commentContent}</div>`;
+		if(isLoggedIn){
+					      html += `<div class="reviewOptions" data-review-box="\${cvo.commentNo}">⋯
+					                 <div id="optionsMenu\${cvo.commentNo}" class="optionsMenu">`;
+		if(isAdmin){ // 관리자
+					          html += `<button class="reportReviewButton" data-commentno="\${cvo.commentNo}">신고</button>
+					                   <button class="deleteReviewButton" data-commentno="\${cvo.commentNo}">삭제</button>`;
+		}else if(isAuthor){ // 글 작성자
+					          html += `<button class="editReviewButton" data-commentno="\${cvo.commentNo}">수정</button>
+					                   <button class="deleteReviewButton" data-commentno="\${cvo.commentNo}">삭제</button>`;
+		}else{ // 일반 로그인 사용자 (타인의 글)
+					          html += `<button class="reportReviewButton" data-commentno="\${cvo.commentNo}">신고</button>`;
+			}
+					       html += ` </div></div>`;
+		}
+		  					 html += `</div></div>`;
+        }
+			}else{
+								html = "<div class='no-comments' style='text-align:center; padding: 20px; color: #888;'>작성된 리뷰가 없습니다.</div>";
+			}
+        if(data.paging && data.commentList && data.commentList.length > 0){
           let paging = data.paging;
           html += `<div class="pagination">`;
-          if (paging.startPage > 1) {
-            html += `<a class="paging-link" href="#" data-page="\${paging.startPage - 1}"><</a>`;
-          } 
-          for (let cnt = paging.startPage; cnt <= paging.endPage; cnt++) {
-            if (paging.nowPage == cnt) {
+          if(paging.startPage > 1){ html += `<a class="paging-link" href="#" data-page="\${paging.startPage - 1}"><</a>`; } 
+          for(let cnt = paging.startPage; cnt <= paging.endPage; cnt++){
+            if(paging.nowPage == cnt){
               html += `<a id="default" style="color:#FF5722; cursor:default;">\${cnt}</a>`;
-            } else {
+            }else{
               html += `<a class="paging-link" href="#" data-page="\${cnt}">\${cnt}</a>`;
             }
           }	
-          if (paging.endPage < paging.lastPage) {
-            html += `<a class="paging-link" href="#" data-page="\${paging.endPage + 1}">></a>`;
-          }
+          if(paging.endPage < paging.lastPage){ html += `<a class="paging-link" href="#" data-page="\${paging.endPage + 1}">></a>`; }
           html += `</div>`;
         }
 			
@@ -533,10 +541,7 @@ function loadComment(isbn, page = 1) {
 	      $(".reviewStar").each(function () { requestAnimationFrame(() => drawStar(this)); });
 
 	      // 페이징 링크에 이벤트 바인딩
-	      $(".paging-link").click(function(e) {
-	    	  e.preventDefault();
-          loadComment(isbn, $(this).data("page"));
-        });
+	      $(".paging-link").click(function(e) { e.preventDefault(); loadComment(isbn, $(this).data("page")); });
 		},
 		error: function(xhr, status, error){
 						 console.error(`AJAX Error: Status ${xhr.status} - ${error}`);  // AJAX 오류 상태 및 에러 메시지 출력
@@ -551,15 +556,13 @@ function commentInsert() {
   const rating = $('#ratingInput').val(); // 정확한 별점 input에서 가져옴
   const liked = $('#commentForm .reviewLikeInput').is(':checked');
 	
-  if (!userId || userId === 'anonymousUser') {
+  if(!userId || userId === 'anonymousUser'){
     alert("로그인 후 댓글을 작성할 수 있습니다.");
-    if(confirm("로그인 페이지로 이동하시겠습니까?")) {
-      window.location.href = "<%= request.getContextPath() %>/login.do";
-    }
+    if(confirm("로그인 페이지로 이동하시겠습니까?")) { window.location.href = "<%= request.getContextPath() %>/login.do"; }
     return;
   }
 
-  if (!content.trim()) { alert("리뷰 내용을 입력해주세요."); return; }
+  if(!content.trim()){ alert("리뷰 내용을 입력해주세요."); return; }
   
   const commentData = { isbn: isbn,
 									      commentContent: content,
@@ -571,14 +574,12 @@ function commentInsert() {
     type : "POST",
     data : commentData,  
     success : function(res){
-					    	if (res === "Success") {
+					    	if(res === "Success"){
 						      alert("댓글이 성공적으로 등록되었습니다.");
 						      // UI 초기화
 						      $('textarea.reviewComment').val("");
 					        $('#commentForm .reviewLikeInput').prop('checked', false).closest('.reviewLike').removeClass('active');
-					        $('#ratingInput').val(0);
-					        drawStar($('#ratingInput')[0]);
-						
+					        $('#ratingInput').val(0); drawStar($('#ratingInput')[0]);
 						      loadComment(isbn); // 댓글 목록 새로고침
 				    		}else{
 			    	    	alert("댓글 등록에 실패했습니다: " + res);
@@ -593,12 +594,12 @@ function editReview(commentNo) {
 	const contentElement = commentElement.find(".reviewContent");
 	const ratingValue = commentElement.find(".reviewStar").val() || 0;
 	const isLiked = commentElement.find(".reviewLikeInput").is(":checked");
-
   const editFormHtml = `<div class="reviewEditBox">
 												  <div class="reviewIdEditBox">
 												  	<div class="reviewLike \${isLiked ? 'active' : ''}">
 										          <label>
-										          	<input type="checkbox" class="reviewLikeInput" \${isLiked ? 'checked' : ''} />
+										          	<input type="checkbox" class="reviewLikeInput" 
+										          	       data-commentno="\${commentNo}" data-author="\${userId}" \${isLiked ? 'checked' : ''} />
 										          	<span class="heartSymbol">♥</span>
 										          </label>
 											      </div>
@@ -619,71 +620,48 @@ function editReview(commentNo) {
 										    </div>`;
 	
 	const inputElement = $(editFormHtml);
-	
 	commentElement.hide().after(inputElement);
 	drawStar(inputElement.find(".reviewStar")[0]);
 
 	// 취소 버튼
-  inputElement.find(".cancelEditBtn").on("click", function () {
-	  inputElement.remove();
-    commentElement.show();
-  });
-	
-	//'수정완료' 버튼 클릭
-  inputElement.find(".saveEditBtn").on("click", function () {
-	const newText = inputElement.find(".reviewCommentEdit").val().trim();
-	const newRating = inputElement.find(".reviewStar").val();
-	const newLiked = inputElement.find(".reviewLikeInput").is(":checked");
+  inputElement.find(".cancelEditBtn").on("click", function () { inputElement.remove(); commentElement.show(); });
 
-    if(!newText){
-      alert("리뷰 내용을 입력해주세요.");
-      return;
-    }
+  inputElement.find(".saveEditBtn").on("click", function () {
+    const newText = inputElement.find(".reviewCommentEdit").val().trim();
+    const newRating = inputElement.find(".reviewStar").val();
+    const newLiked = inputElement.find(".reviewLikeInput").is(":checked");
+    if(!newText){ alert("리뷰 내용을 입력해주세요."); return; }
     
-	const modifiedData = { commentNo: commentNo,
-    											 isbn: isbn,
+	  const modifiedData = { commentNo: commentNo,
+    										   isbn: isbn,
 							             commentContent: newText,
 							             commentRating: newRating,
 							             commentLiked: newLiked };
-    
-    //console.log("댓글 수정 요청 데이터:", modifiedData);
   
-    $.ajax({
-      url: "<%= request.getContextPath()%>/comment/modify.do",
-      type: "POST",
-      data: modifiedData,
-      success: function(res){
-				    	   if(res === "Success"){
-	             	   alert("댓글이 수정되었습니다.");
-	                 loadComment(isbn);  // 수정 후 목록 전체 새로고침
-	               }else{
-	                 alert("댓글 수정에 실패했습니다: " + res);  // 실패 시 수정 폼을 그대로 두어 다시 시도할 수 있게 함
-	               }
-	             },
-      error: function(){
-               alert("서버 오류로 인해 수정에 실패했습니다.");
-      			 }
-    });
+	  $.ajax({
+	    url: "<%= request.getContextPath()%>/comment/modify.do",
+	    type: "POST",
+	    data: modifiedData,
+	    success: function(res){
+	      if(res === "Success"){ alert("댓글이 수정되었습니다."); loadComment(isbn); }
+	      else{ alert("댓글 수정에 실패했습니다: " + res); }
+	    },
+	    error: function(){ alert("서버 오류로 인해 수정에 실패했습니다."); }
+	  });
   });
 }
 	
 function deleteReview(commentNo){
-	$.ajax({
-		url : "<%= request.getContextPath()%>/comment/delete.do",
-		type : "POST",
-		data : {commentNo},
-		success : function(result){
-								if(result === "Success"){
-									alert("댓글이 삭제 되었습니다.");
-									loadComment(isbn);
-								}else{
-									alert("댓글 삭제에 실패하였습니다." + result);
-								}
-							},
-		error: function(){
-						alert("삭제 요청 중 오류 발생");
-					 }
-	});
+  $.ajax({
+    url : "<%= request.getContextPath()%>/comment/delete.do",
+    type : "POST",
+    data : {commentNo},
+    success : function(result){
+      if(result === "Success"){ alert("댓글이 삭제 되었습니다."); loadComment(isbn); }
+      else{ alert("댓글 삭제에 실패하였습니다." + result); }
+    },
+    error: function(){ alert("삭제 요청 중 오류 발생"); }
+  });
 }
 
 function reportReview(commentNo) {
@@ -697,11 +675,9 @@ function reportReview(commentNo) {
 }
 
 function toggleLove(commentNo, isbn, userId, checkbox){
-	console.log("toggleLove 전송:", { commentNo, userId, isbn });            
-
 	if(!userId || userId === 'anonymousUser'){
     alert("로그인 후 이용해주세요.");
-    checkbox.checked = !checkbox.checked; // 체크박스 원상 복구
+    checkbox.checked = !checkbox.checked;
     $(checkbox).closest(".reviewLike").toggleClass("active", checkbox.checked);
     return;
   }
@@ -731,21 +707,17 @@ function drawStar(el) {
   if (!el) return;
   const overlay = el.parentNode?.querySelector('.starsOverlay');
   const value = parseInt(el.value, 10) || 0;
-  if (overlay) {
-    requestAnimationFrame(() => {
-      overlay.style.setProperty('--rating', value);
-    });
-  }
+  if(overlay){ requestAnimationFrame(() => { overlay.style.setProperty('--rating', value); }); }
 }
 
 //비회원 장바구니 로컬스토리지 가져오기
 function getCartItemsFromLocalStorage() {
   const raw = localStorage.getItem("cartItems");
   if (!raw) return [];
-  try {
+  try{
     const parsed = JSON.parse(raw);
     return Array.isArray(parsed) ? parsed : Object.values(parsed).filter(i => typeof i === 'object');
-  } catch (e) {
+  }catch(e){
     console.error("localStorage 파싱 오류", e);
     return [];
   }
@@ -782,7 +754,7 @@ function syncLocalCartToDB() {
 function fetchCartCountFromDB() {
   $.get(contextPath + "/product/getCartCount.do", function(count) {
     const cartCountElement = document.getElementById("cart-count");
-    if (cartCountElement) {
+    if(cartCountElement){
       cartCountElement.textContent = count;
       cartCountElement.style.visibility = count > 0 ? "visible" : "hidden";
     }

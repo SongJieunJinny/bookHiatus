@@ -311,6 +311,14 @@ section{
   justify-content: flex-end;
   gap: 3%;
 }
+.reviewLikeInput:disabled + .heartSymbol {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.reviewLike.active .heartSymbol,
+.reviewLikeInput:checked + .heartSymbol {
+  color: #e53935;
+}
 .reviewContent {
   flex-grow: 1; 
   width: auto; /* 자동 너비 */
